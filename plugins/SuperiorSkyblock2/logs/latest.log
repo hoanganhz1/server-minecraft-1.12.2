@@ -1,0 +1,86 @@
+[20:03:28 INFO]: Enabling SuperiorSkyblock2 v2026.3
+[20:03:28 INFO]: Registered mission miner_1
+[20:03:28 INFO]: Registered mission miner_2
+[20:03:28 INFO]: Registered mission miner_3
+[20:03:28 INFO]: Registered mission miner_4
+[20:03:28 INFO]: Registered mission miner_5
+[20:03:28 INFO]: Registered mission slayer_1
+[20:03:28 INFO]: Registered mission slayer_2
+[20:03:28 INFO]: Registered mission slayer_3
+[20:03:28 INFO]: Registered mission slayer_4
+[20:03:29 INFO]: Registered mission farmer_1
+[20:03:29 INFO]: Registered mission farmer_2
+[20:03:29 INFO]: Registered mission farmer_3
+[20:03:29 INFO]: Registered mission farmer_4
+[20:03:29 INFO]: Registered mission farmer_5
+[20:03:29 INFO]: Registered mission fisherman_1
+[20:03:29 INFO]: Registered mission fisherman_2
+[20:03:29 INFO]: Registered mission fisherman_3
+[20:03:29 INFO]: Registered mission explorer_1
+[20:03:29 INFO]: Registered mission explorer_2
+[20:03:29 INFO]: Enabling the module nashorn-engine...
+[20:03:30 INFO]: Finished enabling the module nashorn-engine (Took 339ms)
+[20:03:30 WARNING]: This version is old and you may experience issues with block changes detection
+[20:03:30 INFO]: Enabling the module bank...
+[20:03:30 INFO]: Finished enabling the module bank (Took 4ms)
+[20:03:30 INFO]: Enabling the module missions...
+[20:03:30 INFO]: Finished enabling the module missions (Took 3ms)
+[20:03:30 INFO]: Enabling the module generators...
+[20:03:30 INFO]: Finished enabling the module generators (Took 0ms)
+[20:03:30 INFO]: Enabling the module upgrades...
+[20:03:30 INFO]: Finished enabling the module upgrades (Took 15ms)
+[20:03:30 INFO]: Loading messages started...
+[20:03:31 INFO]:  - Found 760 messages in the language files.
+[20:03:31 INFO]: Loading messages done (Took 743ms)
+[20:03:31 INFO]: Loading 13 schematics using 13 threads...
+[20:03:31 WARNING]: Schematic island1 was created in a different version, may cause issues.
+[20:03:31 WARNING]: Schematic island was created in a different version, may cause issues.
+[20:03:31 INFO]: Successfully loaded schematic island.schematic (DefaultSchematicParser)
+[20:03:31 INFO]: Successfully loaded schematic island1.schematic (DefaultSchematicParser)
+[20:03:31 WARNING]: Schematic mycel was created in a different version, may cause issues.
+[20:03:31 WARNING]: Schematic desert_nether was created in a different version, may cause issues.
+[20:03:31 WARNING]: Schematic desert was created in a different version, may cause issues.
+[20:03:31 INFO]: Successfully loaded schematic mycel.schematic (DefaultSchematicParser)
+[20:03:31 WARNING]: Schematic mycel_nether was created in a different version, may cause issues.
+[20:03:31 WARNING]: Schematic island_nether was created in a different version, may cause issues.
+[20:03:31 WARNING]: Schematic normal was created in a different version, may cause issues.
+[20:03:31 WARNING]: Schematic island_the_end was created in a different version, may cause issues.
+[20:03:31 WARNING]: Schematic mycel_the_end was created in a different version, may cause issues.
+[20:03:31 WARNING]: Schematic desert_the_end was created in a different version, may cause issues.
+[20:03:31 INFO]: Successfully loaded schematic desert.schematic (DefaultSchematicParser)
+[20:03:31 INFO]: Successfully loaded schematic normal.schematic (DefaultSchematicParser)
+[20:03:31 WARNING]: Schematic normal_the_end was created in a different version, may cause issues.
+[20:03:31 INFO]: Successfully loaded schematic mycel_nether.schematic (DefaultSchematicParser)
+[20:03:31 INFO]: Successfully loaded schematic island_nether.schematic (DefaultSchematicParser)
+[20:03:31 INFO]: Successfully loaded schematic desert_nether.schematic (DefaultSchematicParser)
+[20:03:31 INFO]: Successfully loaded schematic normal_nether.schematic (DefaultSchematicParser)
+[20:03:31 INFO]: Successfully loaded schematic mycel_the_end.schematic (DefaultSchematicParser)
+[20:03:31 INFO]: Successfully loaded schematic island_the_end.schematic (DefaultSchematicParser)
+[20:03:31 INFO]: Successfully loaded schematic desert_the_end.schematic (DefaultSchematicParser)
+[20:03:31 INFO]: Successfully loaded schematic normal_the_end.schematic (DefaultSchematicParser)
+[20:03:31 INFO]: Successfully loaded 13 schematics.
+[20:03:32 WARNING]: [member-role.yml] Invalid role name: Member
+[20:03:32 WARNING]: [member-role.yml] Invalid role name: Moderator
+[20:03:32 WARNING]: [member-role.yml] Invalid role name: Admin
+[20:03:32 WARNING]: [member-role.yml] Invalid role name: Leader
+[20:03:32 INFO]: Trying to connect to local database (SQLite)...
+[20:03:32 INFO]: Successfully established connection with local database!
+[20:03:32 INFO]: Creating a backup file...
+[20:03:32 INFO]: Backup done!
+[20:03:32 INFO]: Starting to load players...
+[20:03:32 INFO]: Finished loading 2 players (Took 12ms)
+[20:03:32 INFO]: Starting to load islands...
+[20:03:32 INFO]: Finished loading 2 islands (Took 58ms)
+[20:03:32 INFO]: Starting to load grid...
+[20:03:32 INFO]: Finished grid!
+[20:03:32 INFO]: Starting to load stacked blocks...
+[20:03:32 INFO]: Finished stacked blocks!
+[20:03:37 SEVERE]: Plugin SuperiorSkyblock2 v2026.3 has failed to register events for class net.skinsrestorer.bukkit.listener.ForceAliveListener because org/bukkit/event/server/ServerLoadEvent does not exist.
+[20:03:37 INFO]: Using WildStacker as a spawners provider.
+[20:03:37 INFO]: Using WildStacker as a stacked-blocks provider.
+[20:03:37 INFO]: Using LuckPerms as a permissions provider.
+[20:03:37 INFO]: Using EconomyShopGUI as a prices provider.
+[20:03:37 INFO]: Hooked into Essentials for support of vanish status of players.
+[20:03:37 INFO]: Hooked into Essentials for support of afk status of players.
+[20:03:37 INFO]: Using Vault as an economy provider.
+[20:03:37 INFO]: Using PlaceholderAPI for placeholders support.

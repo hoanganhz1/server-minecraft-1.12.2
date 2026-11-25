@@ -1,0 +1,57 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+title: '&lĐiểm Dịch Chuyển Đảo'
+previous-menu: true
+
+pattern:
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ @ @ @ @ @ @ @ @'
+  - '$ $ $ $ $ $ $ $ $'
+  - '# # % # * # ^ # #'
+
+slots: '@'
+previous-page: '%'
+current-page: '*'
+next-page: '^'
+
+# This lore is added to warp icons.
+edit-lore:
+  - '&f '
+  - '&f '
+  - '&7&o(( &f&oChuột trái &7&ođể dịch chuyển tới đây. ))'
+  - '&7&o(( &f&oChuột phải &7&ođể chỉnh sửa điểm warp. ))'
+
+items:
+  '@':
+    type: BOOK
+    name: '&e{0} {2}'
+    lore:
+      - '&7Tọa độ: {1}.'
+  '%':
+    type: PAPER
+    name: '{0}Trang Trước'
+  '*':
+    type: DOUBLE_PLANT
+    name: '&aTrang Hiện Tại'
+    lore:
+      - '&7Trang {0}'
+  '^':
+    type: PAPER
+    name: '{0}Trang Sau'
+  '$':
+    type: STAINED_GLASS_PANE
+    data: 15
+    name: '&f'
+
+sounds:
+  '@':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2

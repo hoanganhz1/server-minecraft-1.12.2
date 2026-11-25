@@ -1,0 +1,346 @@
+#Help translate this file over on our Crowdin: https://crowdin.com/project/economyshopgui
+#StartUp/Reload
+creating-latest-shops: Đang tạo các cửa hàng mặc định cho phiên bản mới nhất vì hiện không tìm thấy bố cục nào phù hợp với phiên bản %version%, vui lòng sử dụng một phiên bản được hỗ trợ.
+default-shops-created: Bố cục cửa hàng mặc định tương thích với %version% đã được tạo tại %path%
+loaded-shop-configurations: Đã hoàn tất tải %total% cấu hình cửa hàng từ /shops/
+default-sections-created: Bố cục phần mặc định được tạo tại %path%
+loaded-section-configurations: Đã hoàn tất tải cấu hình mục %total% từ /sections/
+updating-shop-settings: Đang cập nhật cài đặt Cửa hàng...
+creating-new-shop-config: Tạo cấu hình cửa hàng mới cho '%section%' vì không tìm thấy cấu hình cửa hàng nào trong khi có cấu hình mục. Loại bỏ một cách không chính xác?
+creating-new-section-config: Đang tạo cấu hình mục mới cho '%section%' vì không tìm thấy cấu hình phần nào trong khi có cấu hình cửa hàng. Loại bỏ một cách không chính xác?
+adding-new-shop-shops,yml: Đang thêm cửa hàng mới có tên %shopsection% vào shops.yml.
+adding-new-shop-sections,yml: Đang thêm cửa hàng mới có tên %shopsection% vào sections.yml.
+disabled-due-no-vault: Đã tắt do không tìm thấy phần phụ thuộc Vault, vui lòng cài đặt Vault.
+disabled-due-no-economy: Đã tắt do không có plugin nền kinh tế, vui lòng cài một plugin như EssentialsX.
+update-available: Có một bản cập nhật cho EconomyShopGUI, bạn đang chạy v%plugin_version% nhung tìm thấy v%latest_version%.
+done: Đã khởi tạo - mất %millis%ms để hoàn thành
+updating-sections-config: Đang cập nhật cấu hình các phần...
+debug-mode-enabled: Chế độ gỡ lỗi được bật.
+economy-provider-null: Nhà cung cấp kinh tế không có giá trị.
+successfully-hooked-into-vault: Đã kết nối thành công vào Vault.
+language-file-using: Sử dụng %languagefile% làm tệp ngôn ngữ.
+cannot-find-language-file: Không thể tìm thấy tệp ngôn ngữ!
+minecraft-version-using: Sử dụng phiên bản minecraft %version%...
+checking-each-item: Kiểm tra từng mục để tìm các giá trị sai/thiếu...
+loading-items: Đang tải tất cả các mục...
+could-not-find-valid-version: Không thể tìm thấy triển khai hợp lệ cho phiên bản máy chủ này. Điều này sẽ khiến plugin không có phiên bản để sử dụng và dẫn đến nhiều items/methods không hoạt động. Vui lòng sử dụng phiên bản minecraft được hỗ trợ.
+updating-configs: Đang cập nhật cấu hình vì đã tìm thấy phiên bản mới hơn...
+creating-backup: Tạo bản sao lưu từ %fileName% cũ, có thể tìm thấy tệp trong thư mục sao lưu bên trong thư mục của plugin EconomyShopGUI.
+discounts-feature-unavailable: Không thể bật tính năng giảm giá vì không tìm thấy plugin quyền nào.
+cannot-hook-permissions: Không thể tìm thấy plugin cấp quyền được hỗ trợ
+enabled-plugin-hook: Đã bật liên kết %plugin%...
+failed-plugin-integration: Không thể liên kết với %plugin%, plugin bị tắt hoặc không tìm thấy...
+loading-season-modifiers: Đang tải công cụ sửa đổi mùa từ cấu hình...
+loaded-season-modifiers: Đã hoàn tất tải công cụ mùa %total% cho mùa '%season%' trong thế giới '%world%'
+no-season-modifiers-found: Không tìm thấy công cụ sửa đổi mùa nào cho mùa %season% trong cấu hình
+season-change: Đã phát hiện sự thay đổi mùa trong thế giới '%world%', đang tải công cụ sửa đổi cho mùa %season%...
+economy-providers-loaded: Đã hoàn tất tải các plugin cung cấp tiền tệ %total% cho tất cả các mục cửa hàng %shops%.
+section-economy-provider-loaded: Sử dụng '%economy%' làm giá trị tiền tệ mặc định cho cửa hàng '%shop%'
+loaded-shop-stand-module: Đã hoàn tất việc tải %count% gian hàng từ stands.json
+saving-shop-stands: Đang lưu %count% gian hàng trong cửa hàng vào 'stands.json'...
+#Shop prefix
+shop-prefix: '&9&lCửa hàng &8&l>> '
+#Main Shop Inventory
+inventory-main-shop-title: '&8&lCửa Hàng Server'
+profile: '&aHồ Sơ'
+name: '&6Tên'
+money: '&6Giá trị'
+level: '&6Cấp'
+#SellGUI inventory
+inventory-sellgui-title: '&8&lBán Nhanh Đồ (/sellgui)'
+#Buystacks Inventory title
+inventory-buystacks-title: '&8Chọn số lượng &lStacks &8của vật phẩm'
+#Transaction screen
+inventory-howmuchsell-title: '&8Chọn số lượng hàng để &lbán'
+inventory-howmuchbuy-title: '&8Chọn số lượng để &lmua'
+plus-one: '&b+1'
+min-one: '&5-1'
+plus-sixteen: '&b+16'
+min-sixteen: '&5-16'
+plus-thirty-two: '&b+32'
+min-thirty-two: '&5-32'
+sell: '&aBán?'
+sell-all: '&cBạn muốn bán tất cả ư?'
+buy: '&aẤn để mua'
+buy-stacks: '&cNhấp để mua 1 stacks'
+transaction-screen-total-price: '&3%price%'
+transaction-screen-total-amount: '&5x %amount%'
+max-amount-reached: '&cĐã đạt đến số tiền tối đa'
+min-amount-reached: '&cĐã đến số tiền tối thiểu'
+#ShopStands transactions
+shopstand-buy-screen-title: '&8Mua &a&l> &r&8%item%'
+shopstand-sell-screen-title: '&8Bán &c&l> &r&8%item%'
+shopstand-click-to-buy: '&aẤn để mua %amount%'
+shopstand-click-to-sell: '&aẤn để bán %amount%'
+shopstand-total-price: '&cTổng giá: &7%price%'
+#Shop stands module
+default-shop-stand-item-name: '&eShopStand'
+default-shop-stand-item-lore: '&fĐặt vật phẩm này xuống để tạo\n&fmột &6ShopStand mới &fở vị trí đã đặt\n&fcho mục cửa hàng &c%item%'
+shop-stands-management-inventory-title: '&8&lQuản lý gian hàng'
+shop-stand-info-item-name: '&6&lThông tin gian hàng:'
+shop-stand-info-item-lore: '&aID gian hàng: &f%id%\n&aVị trí: &f%location%\n&aMặt hàng trong cửa hàng: &f%item%\n&aLoại gian hàng: &f%type%\n&aĐã tải: &f%loaded%'
+force-reload-stand-item-name: '&e&lBắt buộc tải lại gian hàng'
+force-reload-stand-item-lore: '&fNhấp vào đây sẽ tải lại gian hàng\n&fsẽ tạo lại vật phẩm hiển thị và gian hàng'
+destroy-stand-item-name: '&4&lPhá hủy gian hàng'
+destroy-stand-item-lore: '&eẤn để phá hủy gian hàng này'
+reload-shop-stand: '&aCửa hàng được bắt buộc tải lại với ID %id%'
+shop-stand-browse-inventory-title: '&8&lDanh sách gian hàng'
+shop-stand-location-format: Thế giới '%world%', x%pos_x%, y%pos_y%, z%pos_z%
+created-new-shop-stand: '&aĐã tạo thành công ShopStand mới cho &f%item%'
+error-creating-new-shop-stand: '&cKhông tạo được gian hàng mới: %reason%'
+#All Inventory's
+back: '&4Quay Lại'
+cancel: '&4Hủy bỏ'
+#Previous/Next/Current page
+previous-page: '&dTrang trước'
+next-page: '&bTrang tiếp theo'
+current-page: '&7Trang:'
+#ShopItem lore
+left-click-buy: \n &a&lGiá mua\n &a■ &f%buyPrice%
+seasonal-buy-price: \n &a&lGiá mua\n &a■ &f&m%buyPrice%&r &f%seasonalBuyPrice%
+discounted-buy-price: \n &a&lGiá mua\n &a■ &f&m%buyPrice%&r &f%discountedPrice%
+right-click-sell: \n &c&lGiá bán\n &c■ &f%sellPrice%
+seasonal-sell-price: \n &c&lGiá bán\n &c■ &f&m%sellPrice%&r &f%seasonalSellPrice%
+multiplied-sell-price: \n &c&lGiá bán\n &c■ &f&m%sellPrice%&r &f%multipliedPrice%
+shift-right-click-sell-all: '&bShift + Nhấp chuột phải: Bán tất cả'
+item-location-in-shop: '&8Phần: %shopsection%, Mục lục: %itemLoc%'
+item-cannot-be-bought: \n &a&lGiá mua\n &a■ &fKhông thể mua được
+item-cannot-be-sold: \n &c&lGiá bán\n &c■ &fKhông thể bán được
+item-seasonal-price: '&e&lGiá theo mùa %season-icon%'
+decoration-lore: '\n &e&lCách sử dụng:'
+decoration-lore-buy: '&e ╚&e&l» &fChuột trái để mua'
+decoration-lore-sell-all: '&e ╚&e&l» &fShift + Chuột phải để bán tất cả'
+decoration-lore-sell: '&e ╚&e&l» &fNhấp chuột phải để bán'
+time-requirement-lore: '&c&lChỉ có thể mua trong khoảng thời gian\n&c%minTime% &lvà &c%maxTime% &ltrong thời gian chơi.'
+#Buy/Sell Messages
+discord-srv-player-transaction: '%player_name% đã %bought/sold% %amount% x %items% với giá %price%'
+pay-confirmation: '&aBạn đã mua thành công &e%amount%x &b%material% &avới giá &e%amounttopay%'
+sell-confirmation: '&aBạn đã bán thành công &e%amount%x &b%material% &anhận được &e%amounttopay%'
+sell-confirmation-multiple-items: '&aBạn đã bán thành công &e%amount% &avật phẩm nhận được &e%amounttopay%'
+no-item-to-be-sold: '&cBạn không có vật phẩm nào phù hợp trong túi đồ.'
+cannot-purchase-item: '&cKhông thể mua vật phẩm này.'
+cannot-sell-item: '&cVật phẩm này không thể bán được.'
+player-made-transaction: '%playername% đã %bought/sold% %amount%x %material% với giá %amountofmoney% qua %buy/sell-method%.'
+player-made-transaction-multiple-items: '%playername% đã %bought/sold% %items% với giá %amountofmoney% qua %buy/sell-method%.'
+time-requirement-not-met: '&cVật phẩm này chỉ có thể mua/bán trong khoảng &f%minTime% &cđến &f%maxTime%&c, thời gian hiện tại là &f%progress%&c.'
+buy-screen: cửa hàng mua
+sell-screen: cửa hàng bán
+buystacks-screen: mua theo stack
+sellall-screen: bán tất cả
+sellall-command: lệnh bán tất cả
+sellgui-screen: giao diện bán đồ
+quick-buy: mua nhanh
+quick-sell: bán nhanh
+shopstand-buy-screen: gian hàng mua
+shopstand-sell-screen: gian hàng bán
+auto-sell-chest: Rương tự bán
+bought: mua
+sold: bán
+on-screen-title-sold: '&a+%price%'
+on-screen-title-bought: '&c-%price%'
+#CurrencySymbol
+currencysymbol: $%price%
+symbol-pricing-format: '%symbol%%price%'
+named-pricing-format: '%price% &l%currency-format%'
+#XP Currency name format
+xp-currency-name-singular: Điểm kinh nghiệm
+xp-currency-name-plural: Điểm kinh nghiệm
+#All commands
+command-disabled-in-world: '&cLệnh này bị tắt trong thế giới này.'
+#Edit-shop subcommand descriptions
+editshop-add-item-subcommand-desc: '&aThêm vật phẩm vào cửa hàng.'
+editshop-edit-item-subcommand-desc: '&aChỉnh sửa vật phẩm trong cửa hàng.'
+editshop-remove-item-subcommand-desc: '&aXóa vật phẩm khỏi cửa hàng.'
+editshop-import-subcommand-desc: '&aNhập dữ liệu từ vị trí hoặc plugin khác.'
+editshop-add-hand-item-subcommand-desc: '&aThêm vật phẩm đang cầm trên tay vào cửa hàng.'
+editshop-add-section-subcommand-desc: '&aThêm mục vào cửa hàng.'
+editshop-edit-section-subcommand-desc: '&aChỉnh sửa mục cửa hàng hiện có.'
+editshop-remove-section-subcommand-desc: '&aXóa mục cửa hàng hiện có.'
+editshop-migrate-subcommand-desc: '&aDi chuyển dữ liệu từ vị trí hoặc plugin khác.'
+editshop-shopstands-subcommand-desc: '&aQuản lý gian hàng hiện có hoặc tạo gian hàng mới.'
+editshop-shopstands-give-subcommand-desc: '&aNhận vật phẩm gian hàng để đặt xuống.'
+editshop-shopstands-destroy-subcommand-desc: '&aPhá hủy gian hàng theo ID.'
+editshop-shopstands-browse-subcommand-desc: '&aMở giao diện danh sách các gian hàng.'
+#Edit-shop subcommand syntaxes
+editshop-add-item-subcommand-syntax: '&a/editshop additem <section> <material> <buy price> <sell price> [displayname]'
+editshop-edit-item-subcommand-syntax: '&a/editshop edititem <section> <item> <action> <key> <value>'
+editshop-remove-item-subcommand-syntax: '&a/editshop deleteitem <section> <item>'
+editshop-import-subcommand-syntax: '&a/editshop import <plugin> <file>'
+editshop-add-hand-item-subcommand-syntax: '&a/editshop addhanditem <section> <buy price> <sell price>'
+editshop-add-section-subcommand-syntax: '&a/editshop addsection <section> <material> <displayname> <slot>'
+editshop-edit-section-subcommand-syntax: '&a/editshop editsection <section> <action> <key> <value>'
+editshop-remove-section-subcommand-syntax: '&a/editshop deletesection <section>'
+editshop-migrate-subcommand-syntax: '&a/editshop migrate <plugin> <image> [flags]'
+editshop-shopstands-subcommand-syntax: '&a/editshop shopstands <give/destroy> ...'
+editshop-shopstands-give-subcommand-syntax: '&a/editshop shopstands give <standType> <section> <index>'
+editshop-shopstands-destroy-subcommand-syntax: '&a/eshop shopstands destroy <standID>'
+editshop-shopstands-browse-subcommand-syntax: '&a/eshop shopstands browse'
+#Edit-shop command messages
+editshop-adding-item: '&aĐang thêm vật phẩm mới vào shops.yml...'
+editshop-add-item-successful: '&aĐã thêm vật phẩm vào cửa hàng tại ''%itemPath%''.'
+editshop-adding-section: '&aĐang thêm danh mục mới vào sections.yml...'
+editshop-add-section-successful: '&aĐã thêm danh mục mới tại ''%itemPath%''.'
+editshop-editing-item: '&aĐang cập nhật vật phẩm...'
+editshop-edit-item-successful: '&aĐã cập nhật ''%itemPath%''.'
+editshop-editing-section: '&aĐang cập nhật danh mục...'
+editshop-removing-item: '&aĐang xóa vật phẩm khỏi cửa hàng...'
+editshop-remove-item-successful: '&aĐã xóa ''%itemPath%'' khỏi cửa hàng.'
+editshop-removing-section: '&aĐang xóa danh mục khỏi cửa hàng...'
+editshop-removed-section: '&aĐã xóa danh mục ''%itemPath%'' khỏi cửa hàng.'
+editshop-reload-shop-to-see-changes: '&aDùng lệnh /sreload để tải lại thay đổi cửa hàng.'
+file-replaced: '&aTệp %fileName% cũ đã được thay thế (bản sao lưu nằm trong thư mục backups).'
+shop-stand-item-received: '&aBạn đã nhận &c%amount%x &agian hàng cho vật phẩm &f%item%.'
+#Edit-shop command errors
+section-does-not-contain-item: '&cDanh mục ''%shopsection%'' không chứa vật phẩm ''%itemLoc%''.'
+no-valid-action: '&cHành động không hợp lệ ''%action%''. Các hành động hỗ trợ: %actions%.'
+no-valid-key: '&cKhóa không hợp lệ ''%key%''. Các khóa hỗ trợ: %keys%.'
+action-not-valid-on-key: '&cKhông thể thực hiện ''%action%'' với khóa ''%key%''.'
+edit-item-material-invalid: '&cVật liệu ''%material%'' không hợp lệ.'
+key-already-defined: '&cKhóa ''%key%'' đã tồn tại trên vật phẩm này.'
+key-is-not-found: '&cKhông tìm thấy khóa ''%key%'' để xóa khỏi vật phẩm.'
+plugin-not-found: '&cKhông tìm thấy plugin hỗ trợ với tên này.'
+file-not-found: '&cKhông thể tìm thấy tệp %fileName% trong thư mục của %pluginName%.'
+no-valid-slot-for-item: '&cVị trí ''%slot%'' không hợp lệ (cần từ 1 đến %maxShopSize%).'
+slot-already-in-use: '&cVị trí này đã có vật phẩm khác. Các ô trống: %available-slots%'
+slot-needs-to-be-number: '&cVị trí ô phải là một con số.'
+invalid-shop-stand-type: '&cLoại gian hàng không hợp lệ. Giá trị hợp lệ: %values%'
+unknown-shop-stand-id: '&cKhông tìm thấy gian hàng có ID &f%id%'
+stand-type-not-supported: '&cLoại gian hàng &f%type% &ckhông được hỗ trợ ở phiên bản Minecraft hiện tại.'
+#Reload Command
+configs-reloaded: '&aĐã tải lại toàn bộ cấu hình cửa hàng.'
+#Sellall command usages
+sellall-command-usages: '&aHướng dẫn dùng lệnh bán nhanh:'
+sellall-inventory-command-usage: '&7/sellall inventory &f- &7Bán toàn bộ vật phẩm phù hợp trong túi đồ'
+sellall-hand-command-usage: '&7/sellall hand &8[số lượng] &f- &7Bán vật phẩm đang cầm trên tay'
+sellall-item-command-usage: '&7/sellall <vật phẩm> &8[số lượng] &f- &7Bán vật phẩm chỉ định trong túi đồ'
+#ShopGive command
+shop-item-given: '&aBạn đã nhận &c%amount%x &6%material%'
+shop-item-received: '&aBạn đã nhận &c%amount%x &avật phẩm từ mục &6%section% &avị trí &6%itemIndex%'
+#Balance Command
+check-balance: '&bSố dư hiện tại của bạn là &c%amountofmoney%&b.'
+check-balance-other-player: '&b%playername% &ahiện có &c%amountofmoney%&a.'
+#Givemoney Command
+givemoneycommand-example: '&9/givemoney <người chơi> <số tiền>'
+givemoney-complete: '&aĐã cấp tiền thành công.'
+#Pay Command
+minimum-amount: '&cSố tiền tối thiểu để chuyển là %minimumamount%.'
+payment-complete: '&aĐã chuyển tiền thành công.'
+player-received-money: '&aBạn nhận được &c%amounttogive% &atừ &2%playername%&a!'
+need-player-and-amount: '&9Bạn cần nhập tên người chơi và số tiền.'
+need-amount: '&9Bạn cần nhập số tiền.'
+paycommand-example: '&9/pay <người chơi> <số tiền>'
+#Player breaks spawner
+default-spawner-name: '&9&l%spawner-type% &rSpawner'
+spawner-broke-and-applied-to-inventory: '&aBạn đã khai thác thành công 1 &9%spawner-type%&a, mặt hàng đc áp dụng trong kho của bạn.'
+need-silk-touch: '&cBạn cần cúp mềm mại để khai thác thứ này!'
+#JoinMessage
+join-message: '&2Xin chào, số dư của bạn là &c%balance%!'
+#Level event
+level-event-message: '&2[Levels] &5Của bạn đây, &c%amount% &5đã được thêm vào tài khoản của bạn!'
+#Item error's
+displayname-null: Không thể lấy tên hiển thị.
+item-name-null: Không thể lấy tên của vật phẩm.
+need-item-material: Không thể tạo mặt hàng có giá trị trống.
+item-material-null: Không tải được nội dung vật phẩm như '%material%', có thể nội dung đó không tồn tại hoặc sai chính tả.
+item-enchantment-null: Không thể lấy các dòng enchant của vật phẩm.
+need-item-enchantment: Không thể tạo enchant với giá trị 0.
+item-enchantment-not-supported: Enchant này không được hỗ trợ tại phiên bản này.
+enchantment-cannot-apply-to-item: Để enchant lên vật phẩm, vật liệu cần phải là sách enchant hoặc một công cụ phù hợp với enchantment.
+item-spawnertype-null: Không thể lấy loại vật phẩm Spawner.
+need-item-spawnertype: Không thể tạo spawner với loại trình spawner trống.
+material-needs-to-be-spawner: Để áp dụng Loại spawner (Loại thực thể) cho vật phẩm, vật liệu của nó phải là một vật liệu sinh sản.
+item-potiontype-null: Không thể lấy loại thuốc của vật phẩm.
+need-item-potiontype: Không thể tạo 1 loại thuốc có giá trị trống.
+potiontype-not-supported: loại thuốc này không được hỗ trợ ở phiên bản này.
+material-needs-to-be-potion: Để áp dụng hiệu ứng thuốc, vật liệu cần phải là một loại thuốc hoặc mũi tên có đầu.
+cant-bind-multiple-applyments: Không thể tạo một vật phẩm có nhiều ứng dụng như enchantment/spawner hoặc loại hiệu ứng thuốc.
+item-error: '&cMục lỗi, tìm trên bảng điều khiển.'
+material-not-supported: Vật phẩm này không được hỗ trợ tại phiên bản này.
+item-needs-buy-and-sell-value: Mỗi mặt hàng cần phải có giá trị mua/bán.
+sell-value-wrong: Giá bán cần phải có thập phân hoặc giá trị số.
+buy-value-wrong: Giá trị mua phải là số thập phân hoặc số.
+option-type-changed: Vui lòng thay đổi tùy chọn 'type' thành tùy chọn 'spawnertype' để tạo một spawner trong cửa hàng. Tên của tùy chọn đã thay đổi trong phiên bản 2.2 cho rõ ràng.
+option-meta-changed: Vui lòng thay đổi tùy chọn 'meta' thành tùy chọn 'tên hiển thị' để tạo một mặt hàng có tên hiển thị trong cửa hàng. Tên của tùy chọn đã thay đổi trong phiên bản 2.2 cho rõ ràng.
+cannot-display-shopsection: Không thể tạo mục cửa hàng '%shopsection%' vì vị trí của vật phẩm cần nằm trong phạm vi từ 0 - %maxInvSize%.
+need-recipe-material: Không thể tạo tài liệu công thức có giá trị trống.
+cannot-get-recipe-material: Không thể tạo nguyên liệu công thức, vui lòng kiểm tra tên nguyên liệu xem có lỗi chính tả nào không và nếu có.
+recipe-material-not-supported: Nguyên liệu công thức đã cho không được hỗ trợ trong phiên bản minecraft này.
+material-needs-to-be-book: Để áp dụng công thức cho vật phẩm, tài liệu của vật phẩm cần phải là sách.
+need-skullowner: Không thể tạo PlayerHead mà không có người chơi cụ thể (Skull Owner).
+material-needs-to-be-skull: Để áp dụng họa tiết đầu lâu (Skull Owner) cho vật phẩm, vật liệu của vật phẩm cần phải là Đầu người chơi.
+material-needs-to-be-leather-armor: Để Để áp dụng màu sắc cho một mảnh áo giáp, vật liệu cần phải là áo giáp da.
+invalid-item-requirement-type: Loại yêu cầu vật phẩm không hợp lệ cho '%type%'
+#Item path
+items-path-in-shops-config: 'Đường dẫn mục trong shops.yml: %location%'
+items-path-in-sections-config: 'Item path in sections.yml: %location%'
+items-path-in-config: 'Item path in config.yml: %location%'
+#Compatibility
+mineablespawners-compatibility-enabled: Spawner provider set to MineableSpawners in config
+mineablespawners-found: MineableSpawners found, integrating...
+mineablespawners-not-found: MineableSpawners was not found
+could-not-intergrate-with-mineablespawners: Could not integrate with MineableSpawners
+using-mineablespawners-spawners: Using MineableSpawners as spawner provider...
+rosestacker-compatibility-enabled: Spawner provider set to RoseStacker in config
+rosestacker-not-found: RoseStacker was not found
+could-not-integrate-with-rosestacker: Could not integrate with RoseStacker
+rosestacker-found: RoseStacker found, integrating...
+using-rosestacker-spawners: Using RoseStacker as spawner provider...
+ultimatestacker-compatibility-enabled: Spawner provider set to UltimateStacker in config
+ultimatestacker-not-found: UltimateStacker was not found
+could-not-integrate-with-ultimatestacker: Could not integrate with UltimateStacker
+ultimatestacker-found: UltimateStacker found, integrating...
+using-ultimatestacker-spawners: Using UltimateStacker as spawner provider...
+wildstacker-compatibility-enabled: Nhà cung cấp Spawner được đặt thành WildStacker trong cấu hình
+wildstacker-not-found: Không tìm thấy WildStacker
+wildstacker-found: Đã tìm thấy WildStacker, tích hợp...
+could-not-integrate-with-wildstacker: Không thể tích hợp với WildStacker
+using-wildstacker-spawners: Sử dụng WildStacker làm nhà cung cấp spawner.
+spawner-compatibility-enabled: Nhà cung cấp Spawner được đặt thành %provider% trong cấu hình
+spawner-provider-not-found: Không tìm thấy %provider%
+spawner-provider-found: '%provider% được tìm thấy, tích hợp...'
+failed-spawner-provider-integration: Không thể tích hợp với %provider%
+using-external-spawners: Sử dụng %provider% làm nhà cung cấp spawner.
+silkspawners-compatibility-enabled: SilkSpawners compatibility has been enabled in config.
+silkspawners-not-found: SilkSpawners was not found
+silkspawners-found: SilkSpawners found, integrating...
+could-not-integrate-with-silkspawners: Could not integrate with SilkSpawners.
+using-silkspawners-spawners: Using SilkSpawners spawners...
+using-default-spawners: Using plugin default spawners...
+not-spawn-able: This entity type is not spawn able. '%spawnertype%'
+real-player: Chỉ người chơi mới có thể sử dụng lệnh này.
+player-not-online: '&cNgười chơi này không tồn tại hoặc chưa trực tuyến.'
+cannot-sell-air: '&cBạn không thể bán không khí...'
+no-permissions: '&cBạn không có quyền thực hiện thao tác này.'
+no-permissions-to-open-shop: '&cBạn không có quyền mở danh mục cửa hàng này.'
+cannot-do-that: '&4Bạn không thể làm điều này!!'
+more-space-needed: '&cVui lòng chừa thêm chỗ trống trong túi đồ rồi thử lại.'
+could-not-store-all-items: '&c%amount% vật phẩm không thể thêm vào túi đồ vì đã đầy.'
+not-enough-space-inside-inventory: '&4Túi đồ không đủ chỗ trống, vật phẩm còn dư đã rơi xuống đất.'
+insufficient-money: '&cBạn không có đủ %currency%.'
+canceling-transaction-no-space: '&4Túi đồ không đủ chỗ trống, đã hủy giao dịch. Vui lòng dọn trống túi đồ và thử lại.'
+no-items-in-section: Không thể mở mục %shopsection% vì chưa có vật phẩm nào!
+no-item-found: '&cKhông tìm thấy vật phẩm nào.'
+item-null: '&cVật phẩm này không tồn tại.'
+item-cannot-be-sold-to-server: '&cKhông thể bán %material% cho máy chủ vì lỗi cấu hình. Vui lòng báo quản trị viên.'
+could-not-save-shops,yml: '&4Không thể lưu cấu hình shops.yml.'
+could-not-save-sections,yml: '&4Không thể lưu cấu hình sections.yml.'
+could-not-save-config: Không thể lưu cấu hình %fileName%.
+rgb-color-formatted-wrong: Mã màu RGB không đúng định dạng tại %path%.
+no-shop-found: '&cKhông tìm thấy danh mục cửa hàng với tên đó.'
+no-valid-amount: '&cSố lượng không hợp lệ.'
+restart-plugin: Không thể mở mục cửa hàng, vui lòng tải lại plugin.
+could-not-check-for-updates: '&cKhông thể kiểm tra bản cập nhật.'
+cannot-update-config: '&cKhông thể cập nhật tệp config.yml.'
+cannot-read-config: Không thể đọc tệp cấu hình %fileName% do lỗi cú pháp YAML.
+error-occured-while-reloading: '&4Đã xảy ra lỗi khi tải lại plugin, hãy kiểm tra console.'
+could-not-get-the-limitedstock-mode: 'Không lấy được chế độ giới hạn kho: %limitedStockMode%'
+error-occurred-while-connecting-to-database: Lỗi khi kết nối cơ sở dữ liệu.
+invalid-item-type: '&cLoại vật phẩm không hợp lệ cho %type%'
+cannot-enter-shop-banned-gamemode: '&cBạn không thể mua/bán vật phẩm khi đang ở %gamemode%.'
+cannot-use-command-banned-gamemode: '&cBạn không thể sử dụng lệnh này khi đang ở %gamemode%.'
+cannot-load-season-modifier: Không thể tải công cụ sửa đổi mùa cho '%path%' bởi vì không tìm thấy mục/vật phẩm được tải.
+invalid-season-modifier: Công cụ sửa đổi không hợp lệ được tìm thấy tại '%path%', nó cần phải là một tỷ lệ phần trăm hợp lệ giữa -100 và 100 như là '-75%', '+25%', ... Nhưng nhận được %current%
+cannot-load-economy-provider: Không thể tải hỗ trợ tiền tệ cho cửa hàng '%shop%' với lý do '%reason%', sử dụng mặc định...
+cannot-find-economy-provider: Không thể tìm được hỗ trợ tiền tệ cho cửa hàng '%shop%' như là '%type%', sử dụng mặc định...
+cannot-find-default-economy-provider: Không thể tìm thấy loại tiền tệ được chỉ định bên trong config.yml, chẳng hạn như '%economy%', đang cố gắng tự động tìm loại tiền tệ được hỗ trợ...
+cannot-load-default-economy-provider: Không thể tải hỗ trợ tiền tệ mặc định có lý do '%reason%', cố gắng tự động tìm tiền tệ được hỗ trợ

@@ -1,0 +1,212 @@
+import:
+    org.black_ixx.playerpoints.PlayerPoints
+
+# =====================================================================
+# HẠ TẦNG KHUNG GIAO DIỆN & TIỆN ÍCH DÙNG CHUNG (00_z_ui_core.sk)
+# Nạp ngay sau 00_visual_art_lib.sk và trước toàn bộ module 01..14
+# Cung cấp: createStandardUI, openStandardUI, routerFormatNumber, makePlayerProfileHead
+# =====================================================================
+
+# ---------------------------------------------------------------------
+# 1. BỘ HÀM ĐỊNH DẠNG SỐ & ĐẦU 3D HẢI TẶC
+# ---------------------------------------------------------------------
+
+function routerFormatNumber(n: number) :: text:
+    if {_n} is not set:
+        return "0"
+    set {_val} to round({_n})
+    set {_prefix} to ""
+    if {_val} < 0:
+        set {_prefix} to "-"
+        set {_val} to abs({_val})
+    set {_str} to "%{_val}%"
+    set {_len} to length of {_str}
+    if {_len} <= 3:
+        return "%{_prefix}%%{_str}%"
+    set {_res} to ""
+    set {_count} to 0
+    loop {_len} times:
+        set {_charIdx} to {_len} - loop-number + 1
+        set {_char} to subtext of {_str} from character {_charIdx} to character {_charIdx}
+        if {_count} is 3:
+            set {_res} to "%{_char}%,%{_res}%"
+            set {_count} to 1
+        else:
+            set {_res} to "%{_char}%%{_res}%"
+            add 1 to {_count}
+    return "%{_prefix}%%{_res}%"
+
+function makePlayerProfileHead(p: player, pName: text, pLore: texts, customTitle: text = "") :: item:
+    set {_head} to 1 of player head
+    set data value of {_head} to 3
+    set damage of {_head} to 3
+    if {_customTitle} is not "":
+        set name of {_head} to colored {_customTitle}
+    else:
+        set name of {_head} to colored "&6&l✦ HỒ SƠ HẢI TẶC: &e&l%{_pName}% &6&l✦"
+    if {_pLore::*} is set:
+        set lore of {_head} to {_pLore::*}
+    add "{SkullOwner:""%{_pName}%"",HideFlags:63}" to nbt of {_head}
+    return {_head}
+
+# ---------------------------------------------------------------------
+# 2. HÀM DỰNG KHUNG GIAO DIỆN CHUẨN (createStandardUI)
+# Lưu ý: Hàm này CHỈ dựng giao diện và trả về inventory, KHÔNG gán {ui_active}
+# ---------------------------------------------------------------------
+
+function createStandardUI(p: player, uiId: text, title: text, rows: number, themeGlass: item, parentId: text, parentName: text) :: inventory:
+    set {_inv} to chest inventory with {_rows} rows named colored {_title}
+    set {_blackPane} to black stained glass pane named " "
+    set {_totalSlots} to {_rows} * 9
+
+    # Phủ toàn bộ lưới ô bằng kính đen phân cách
+    loop {_totalSlots} times:
+        set slot (loop-number - 1) of {_inv} to {_blackPane}
+
+    # Đặt kính màu chủ đề tại 2 góc trên
+    if {_themeGlass} is set:
+        set slot 0 of {_inv} to {_themeGlass}
+        set slot 8 of {_inv} to {_themeGlass}
+
+    # Tính toán tọa độ thanh điều hướng đáy
+    set {_footerStart} to ({_rows} - 1) * 9
+    set {_backSlot} to {_footerStart}
+    set {_homeSlot} to {_footerStart} + 1
+    set {_closeSlot} to {_footerStart} + 8
+
+    # Nút Quay Lại Menu Cha
+    if {_parentId} is "NONE":
+        if {_themeGlass} is set:
+            set slot {_backSlot} of {_inv} to {_themeGlass}
+    else:
+        delete {_backLore::*}
+        set {_backLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_backLore::2} to "&7Nhấp để quay lại menu cấp trước."
+        set {_backLore::3} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_backLore::4} to "&e▸ Click: &fQuay về %{_parentName}%"
+        set {_backItem} to arrow named colored "&e&l« QUAY LẠI: %{_parentName}%" with lore {_backLore::*}
+        set slot {_backSlot} of {_inv} to {_backItem}
+
+        # Nếu là Menu Cấp 3: Tự động đặt thêm nút Về Menu Tổng
+        if {_parentId} is not "UI_ROOT":
+            delete {_homeLore::*}
+            set {_homeLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+            set {_homeLore::2} to "&7Trở về Trung Tâm Hải Tặc Cấp 1."
+            set {_homeLore::3} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+            set {_homeLore::4} to "&b▸ Click: &fVề Menu Tổng (/menu)"
+            set {_homeItem} to compass named colored "&b&l✦ VỀ MENU TỔNG (/menu)" with lore {_homeLore::*}
+            set slot {_homeSlot} of {_inv} to {_homeItem}
+
+    # Nút Đóng Giao Diện cố định góc phải dưới
+    delete {_closeLore::*}
+    set {_closeLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_closeLore::2} to "&7Đóng cửa sổ giao diện hiện tại."
+    set {_closeLore::3} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_closeLore::4} to "&c▸ Click: &fĐóng giao diện"
+    set {_closeItem} to barrier named colored "&c&l✖ ĐÓNG GIAO DIỆN" with lore {_closeLore::*}
+    set slot {_closeSlot} of {_inv} to {_closeItem}
+
+    return {_inv}
+
+# ---------------------------------------------------------------------
+# 3. HÀM MỞ GIAO DIỆN CHUẨN & CHỐNG MẤT TRẠNG THÁI (openStandardUI)
+# Thứ tự chuẩn: set switching -> open -> set active & parent -> delete switching
+# ---------------------------------------------------------------------
+
+function openStandardUI(p: player, inv: inventory, uiId: text, parentId: text):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    open {_inv} to {_p}
+    set {ui_active::%{_u}%} to {_uiId}
+    set {ui_parent::%{_u}%} to {_parentId}
+    delete {ui_switching::%{_u}%}
+
+# ---------------------------------------------------------------------
+# 4. HÀM ĐẾM & TRỪ VẬT PHẨM THEO TAG NBT (DÙNG CHUNG CHO TOÀN BỘ SCRIPTS)
+# ---------------------------------------------------------------------
+
+function countPlayerItemByTag(p: player, tagVal: text) :: number:
+    set {_total} to 0
+    loop integers from 0 to 40:
+        set {_it} to slot loop-integer of {_p}'s inventory
+        if {_it} is set:
+            if {_it} is not air:
+                if type of {_it} is not air:
+                    set {_tag} to string tag "SkyblockItem" of nbt compound of {_it}
+                    if {_tag} is {_tagVal}:
+                        add item amount of {_it} to {_total}
+    return {_total}
+
+function removePlayerItemByTag(p: player, tagVal: text, amount: number) :: boolean:
+    set {_rem} to {_amount}
+    set {_has} to countPlayerItemByTag({_p}, {_tagVal})
+    if {_has} < {_amount}:
+        return false
+    loop integers from 0 to 40:
+        if {_rem} <= 0:
+            exit loop
+        set {_it} to slot loop-integer of {_p}'s inventory
+        if {_it} is set:
+            if {_it} is not air:
+                if type of {_it} is not air:
+                    set {_tag} to string tag "SkyblockItem" of nbt compound of {_it}
+                    if {_tag} is {_tagVal}:
+                        set {_amt} to item amount of {_it}
+                        if {_amt} <= {_rem}:
+                            set slot loop-integer of {_p}'s inventory to air
+                            subtract {_amt} from {_rem}
+                        else:
+                            set item amount of (slot loop-integer of {_p}'s inventory) to ({_amt} - {_rem})
+                            set {_rem} to 0
+                            exit loop
+    return true
+
+
+# ---------------------------------------------------------------------
+# 5. HẠ TẦNG HÀM COIN (PLAYERPOINTS) DÙNG CHUNG TOÀN HỆ THỐNG
+# ---------------------------------------------------------------------
+
+function getCoinBalance(p: player) :: number:
+    if {_p} is not online:
+        return 0
+    set {_api} to PlayerPoints.getInstance().getAPI()
+    if {_api} is not set:
+        return 0
+    set {_bal} to {_api}.look({_p}.getUniqueId())
+    if {_bal} is set:
+        return {_bal}
+    return 0
+
+function takeCoinBalance(p: player, amt: number) :: boolean:
+    if {_p} is not online:
+        return false
+    if {_amt} <= 0:
+        return false
+    set {_api} to PlayerPoints.getInstance().getAPI()
+    if {_api} is not set:
+        return false
+    set {_cur} to {_api}.look({_p}.getUniqueId())
+    if {_cur} < {_amt}:
+        return false
+    return {_api}.take({_p}.getUniqueId(), round({_amt}))
+
+function giveCoinBalance(p: player, amt: number) :: boolean:
+    if {_p} is not online:
+        return false
+    if {_amt} <= 0:
+        return false
+    set {_api} to PlayerPoints.getInstance().getAPI()
+    if {_api} is not set:
+        return false
+    return {_api}.give({_p}.getUniqueId(), round({_amt}))
+
+function giveItemSafely(p: player, item: item):
+    if {_p} is not online:
+        stop
+    if {_p} can hold {_item}:
+        give {_item} to {_p}
+    else:
+        drop {_item} at location of {_p}
+        sendSystemMsg({_p}, "warning", "Túi đồ đầy! Vật phẩm đã rơi xuống chân bạn.")

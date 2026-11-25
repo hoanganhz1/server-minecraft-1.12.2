@@ -1,0 +1,111 @@
+package xyz.pixelatedw.mineminenomi.datagen.advancements;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementType;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.critereon.ConsumeItemTrigger;
+import net.minecraft.advancements.critereon.ContextAwarePredicate;
+import net.minecraft.advancements.critereon.DamageSourcePredicate;
+import net.minecraft.advancements.critereon.EffectsChangedTrigger;
+import net.minecraft.advancements.critereon.EntityEquipmentPredicate;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.critereon.ItemUsedOnLocationTrigger;
+import net.minecraft.advancements.critereon.KilledTrigger;
+import net.minecraft.advancements.critereon.LocationPredicate;
+import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.critereon.MobEffectsPredicate;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentPredicate;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
+import net.neoforged.neoforge.common.data.AdvancementProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import xyz.pixelatedw.mineminenomi.abilities.haki.BusoshokuHakiEmissionAbility;
+import xyz.pixelatedw.mineminenomi.abilities.haki.BusoshokuHakiFullBodyHardeningAbility;
+import xyz.pixelatedw.mineminenomi.abilities.haki.BusoshokuHakiHardeningAbility;
+import xyz.pixelatedw.mineminenomi.abilities.haki.BusoshokuHakiImbuingAbility;
+import xyz.pixelatedw.mineminenomi.abilities.haki.BusoshokuHakiInternalDestructionAbility;
+import xyz.pixelatedw.mineminenomi.abilities.haki.HaoshokuHakiInfusionAbility;
+import xyz.pixelatedw.mineminenomi.abilities.haki.KenbunshokuHakiAuraAbility;
+import xyz.pixelatedw.mineminenomi.abilities.haki.KenbunshokuHakiFutureSightAbility;
+import xyz.pixelatedw.mineminenomi.api.abilities.AbilityCore;
+import xyz.pixelatedw.mineminenomi.data.triggers.DFEncyclopediaCompletionTrigger$TriggerInstance;
+import xyz.pixelatedw.mineminenomi.data.triggers.ObtainBellyTrigger$TriggerInstance;
+import xyz.pixelatedw.mineminenomi.data.triggers.SubtleTweaksTrigger$TriggerInstance;
+import xyz.pixelatedw.mineminenomi.data.triggers.UnlockAbilityTrigger$TriggerInstance;
+import xyz.pixelatedw.mineminenomi.init.ModBlocks;
+import xyz.pixelatedw.mineminenomi.init.ModDataComponents;
+import xyz.pixelatedw.mineminenomi.init.ModEffects;
+import xyz.pixelatedw.mineminenomi.init.ModItems;
+import xyz.pixelatedw.mineminenomi.init.ModTags$Items;
+import xyz.pixelatedw.mineminenomi.init.ModWeapons;
+import xyz.pixelatedw.mineminenomi.init.i18n.ModI18nAdvancements;
+import xyz.pixelatedw.mineminenomi.items.AbilityIconItem;
+
+public class AdventureAdvancements implements AdvancementProvider.AdvancementGenerator {
+	// Fields
+	private static final ResourceLocation BACKGROUND = ResourceLocation.parse("textures/gui/advancements/backgrounds/adventure.png");
+	private ExistingFileHelper fileHelper;
+
+	public AdventureAdvancements(ExistingFileHelper var1) {
+		this.fileHelper = var1;
+	}
+	public void generate(HolderLookup.Provider var1, Consumer<AdvancementHolder> var2, ExistingFileHelper var3) {
+		ItemStack var4 = AbilityIconItem.getIcon(BusoshokuHakiHardeningAbility.INSTANCE);
+		ItemStack var5 = AbilityIconItem.getIcon(HaoshokuHakiInfusionAbility.INSTANCE);
+		AdvancementHolder var6 = Advancement.Builder.advancement().display(((ItemLike)(ModBlocks.FLAG.get())),(Component)(Component.translatable("advancements.adventure.root.title")),(Component)(Component.translatable("advancements.adventure.root.description")),BACKGROUND,AdvancementType.TASK,false,false,false).requirements(AdvancementRequirements.Strategy.OR).addCriterion("killed_something",KilledTrigger.TriggerInstance.playerKilledEntity()).addCriterion("killed_by_something",KilledTrigger.TriggerInstance.entityKilledPlayer()).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/root"),this.fileHelper);
+		AdvancementHolder var7 = Advancement.Builder.advancement().parent(var6).display(((ItemLike)(ModItems.SEA_KING_MEAT.get())),ModI18nAdvancements.ADVENTURE_MEAT.title(),ModI18nAdvancements.ADVENTURE_MEAT.description(),(ResourceLocation)(null),AdvancementType.TASK,true,false,false).requirements(AdvancementRequirements.Strategy.OR).addCriterion("sea_king_meat",ConsumeItemTrigger.TriggerInstance.usedItem(((ItemLike)(ModItems.SEA_KING_MEAT.get())))).addCriterion("cooked_sea_king_meat",ConsumeItemTrigger.TriggerInstance.usedItem(((ItemLike)(ModItems.COOKED_SEA_KING_MEAT.get())))).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/meat"),this.fileHelper);
+		AdvancementHolder var8 = Advancement.Builder.advancement().parent(var6).display(((ItemLike)(ModItems.BELLY_POUCH.get())),ModI18nAdvancements.ADVENTURE_CAT_BURGLAR.title(),ModI18nAdvancements.ADVENTURE_CAT_BURGLAR.description(),(ResourceLocation)(null),AdvancementType.TASK,true,false,false).addCriterion("obtain_belly",ObtainBellyTrigger$TriggerInstance.collectBelly(100000)).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/cat_burglar"),this.fileHelper);
+		AdvancementHolder var9 = Advancement.Builder.advancement().parent(var8).display(((ItemLike)(ModItems.BELLY_POUCH.get())),ModI18nAdvancements.ADVENTURE_MY_TREASURE.title(),ModI18nAdvancements.ADVENTURE_MY_TREASURE.description(),(ResourceLocation)(null),AdvancementType.CHALLENGE,true,true,true).addCriterion("obtain_belly",ObtainBellyTrigger$TriggerInstance.collectBelly(10000000)).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/my_treasure"),this.fileHelper);
+		AdvancementHolder var10 = Advancement.Builder.advancement().parent(var6).display(var4,ModI18nAdvancements.ADVENTURE_WHATS_KAIROSEKI.title(),ModI18nAdvancements.ADVENTURE_WHATS_KAIROSEKI.description(),(ResourceLocation)(null),AdvancementType.GOAL,true,false,false).requirements(AdvancementRequirements.Strategy.OR).addCriterion("unlock_busoshoku_hardening",UnlockAbilityTrigger$TriggerInstance.ability(((AbilityCore)(BusoshokuHakiHardeningAbility.INSTANCE.get())))).addCriterion("unlock_busoshoku_imbuing",UnlockAbilityTrigger$TriggerInstance.ability(((AbilityCore)(BusoshokuHakiImbuingAbility.INSTANCE.get())))).addCriterion("unlock_kenbunshoku_aura",UnlockAbilityTrigger$TriggerInstance.ability(((AbilityCore)(KenbunshokuHakiAuraAbility.INSTANCE.get())))).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/whats_kairoseki"),this.fileHelper);
+		AdvancementHolder var11 = Advancement.Builder.advancement().parent(var10).display(var5,ModI18nAdvancements.ADVENTURE_HAKI_MASTER.title(),ModI18nAdvancements.ADVENTURE_HAKI_MASTER.description(),(ResourceLocation)(null),AdvancementType.GOAL,true,false,false).requirements(AdvancementRequirements.Strategy.AND).addCriterion("unlock_busoshoku_hardening",UnlockAbilityTrigger$TriggerInstance.ability(((AbilityCore)(BusoshokuHakiHardeningAbility.INSTANCE.get())))).addCriterion("unlock_busoshoku_imbuing",UnlockAbilityTrigger$TriggerInstance.ability(((AbilityCore)(BusoshokuHakiImbuingAbility.INSTANCE.get())))).addCriterion("unlock_busoshoku_fullbody",UnlockAbilityTrigger$TriggerInstance.ability(((AbilityCore)(BusoshokuHakiFullBodyHardeningAbility.INSTANCE.get())))).addCriterion("unlock_busoshoku_emission",UnlockAbilityTrigger$TriggerInstance.ability(((AbilityCore)(BusoshokuHakiEmissionAbility.INSTANCE.get())))).addCriterion("unlock_busoshoku_internal_destruction",UnlockAbilityTrigger$TriggerInstance.ability(((AbilityCore)(BusoshokuHakiInternalDestructionAbility.INSTANCE.get())))).addCriterion("unlock_kenbunshoku_aura",UnlockAbilityTrigger$TriggerInstance.ability(((AbilityCore)(KenbunshokuHakiAuraAbility.INSTANCE.get())))).addCriterion("unlock_kenbunshoku_future_sight",UnlockAbilityTrigger$TriggerInstance.ability(((AbilityCore)(KenbunshokuHakiFutureSightAbility.INSTANCE.get())))).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/haki_master"),this.fileHelper);
+		MobEffectsPredicate.Builder var12 = MobEffectsPredicate.Builder.effects().and((Holder)(ModEffects.DRUNK),new MobEffectsPredicate.MobEffectInstancePredicate(MinMaxBounds.Ints.atLeast(4),MinMaxBounds.Ints.ANY,Optional.empty(),Optional.empty()));
+		AdvancementHolder var13 = Advancement.Builder.advancement().parent(var6).display(((ItemLike)(ModItems.BOTTLE_OF_RUM.get())),ModI18nAdvancements.ADVENTURE_WHY_IS_THE_RUM_GONE.title(),ModI18nAdvancements.ADVENTURE_WHY_IS_THE_RUM_GONE.description(),(ResourceLocation)(null),AdvancementType.TASK,true,false,true).addCriterion("the_rum_is_indeed_gone",EffectsChangedTrigger.TriggerInstance.hasEffects(var12)).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/why_is_the_rum_gone"),this.fileHelper);
+		LootItemCondition[] var14 = new LootItemCondition[]{LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS,EntityPredicate.Builder.entity().effects(var12).build()).build()};
+		ContextAwarePredicate var15 = ContextAwarePredicate.create(var14);
+		ItemLike[] var16 = new ItemLike[]{((ItemLike)(ModItems.BOTTLE_OF_RUM.get()))};
+		ItemPredicate var17 = ItemPredicate.Builder.item().of(var16).build();
+		ItemLike[] var18 = new ItemLike[]{((ItemLike)(ModItems.SAKE_BOTTLE.get()))};
+		ItemPredicate var19 = ItemPredicate.Builder.item().of(var18).build();
+		AdvancementHolder var20 = Advancement.Builder.advancement().parent(var13).display(((ItemLike)(ModItems.BOTTLE_OF_RUM.get())),ModI18nAdvancements.ADVENTURE_ALL_FOR_ME_GROG.title(),ModI18nAdvancements.ADVENTURE_ALL_FOR_ME_GROG.description(),(ResourceLocation)(null),AdvancementType.CHALLENGE,true,false,true).requirements(AdvancementRequirements.Strategy.OR).addCriterion("me_jolly_jolly_rum_grog",CriteriaTriggers.CONSUME_ITEM.createCriterion((CriterionTriggerInstance)(new ConsumeItemTrigger.TriggerInstance(Optional.of(var15),Optional.of(var17))))).addCriterion("me_jolly_jolly_sake_grog",CriteriaTriggers.CONSUME_ITEM.createCriterion((CriterionTriggerInstance)(new ConsumeItemTrigger.TriggerInstance(Optional.of(var15),Optional.of(var19))))).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/all_for_me_grog"),this.fileHelper);
+		DataComponentPredicate var21 = DataComponentPredicate.builder().expect(((DataComponentType)(ModDataComponents.IS_CLONE.get())),Boolean.valueOf(false)).build();
+		ItemPredicate var22 = ItemPredicate.Builder.item().of(ModTags$Items.SUPREME_GRADE).hasComponents(var21).build();
+		ItemPredicate[] var23 = new ItemPredicate[]{var22};
+		AdvancementHolder var24 = Advancement.Builder.advancement().parent(var6).display(((ItemLike)(ModWeapons.ACE.get())),ModI18nAdvancements.ADVENTURE_PRICELESS_BLADE.title(),ModI18nAdvancements.ADVENTURE_PRICELESS_BLADE.description(),(ResourceLocation)(null),AdvancementType.CHALLENGE,true,false,false).requirements(AdvancementRequirements.Strategy.OR).addCriterion("obtain_supreme_grade",InventoryChangeTrigger.TriggerInstance.hasItems(var23)).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/priceless_blade"),this.fileHelper);
+		AdvancementHolder var25 = Advancement.Builder.advancement().parent(var6).display(((ItemLike)(ModItems.DEVIL_FRUIT_ENCYCLOPEDIA.get())),ModI18nAdvancements.ADVENTURE_HALFWAY_THERE.title(),ModI18nAdvancements.ADVENTURE_HALFWAY_THERE.description(),(ResourceLocation)(null),AdvancementType.CHALLENGE,true,false,true).addCriterion("encyclopedia_completion",DFEncyclopediaCompletionTrigger$TriggerInstance.completion(0.5F)).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/halfway_there"),this.fileHelper);
+		AdvancementHolder var26 = Advancement.Builder.advancement().parent(var25).display(((ItemLike)(ModItems.DEVIL_FRUIT_ENCYCLOPEDIA.get())),ModI18nAdvancements.ADVENTURE_ONE_FOR_THE_BOOKS.title(),ModI18nAdvancements.ADVENTURE_ONE_FOR_THE_BOOKS.description(),(ResourceLocation)(null),AdvancementType.CHALLENGE,true,true,true).addCriterion("encyclopedia_completion",DFEncyclopediaCompletionTrigger$TriggerInstance.completion(1F)).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/one_for_the_books"),this.fileHelper);
+		AdvancementHolder var27 = Advancement.Builder.advancement().parent(var6).display(((ItemLike)(ModItems.DEVIL_FRUIT_ENCYCLOPEDIA.get())),ModI18nAdvancements.ADVENTURE_SUBTLE_TWEAKS.title(),ModI18nAdvancements.ADVENTURE_SUBTLE_TWEAKS.description(),(ResourceLocation)(null),AdvancementType.CHALLENGE,true,false,true).addCriterion("subtle_tweaks",SubtleTweaksTrigger$TriggerInstance.create()).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/subtle_tweaks"),this.fileHelper);
+		ItemLike[] var28 = new ItemLike[]{Items.AIR};
+		Optional var29 = Optional.of(ItemPredicate.Builder.item().of(var28).build());
+		EntityEquipmentPredicate var30 = new EntityEquipmentPredicate(Optional.empty(),Optional.empty(),Optional.empty(),Optional.empty(),Optional.empty(),var29,Optional.empty());
+		Optional var31 = Optional.of(EntityPredicate.Builder.entity().effects(var12).equipment(var30).build());
+		DamageSourcePredicate var32 = new DamageSourcePredicate((List)(new ArrayList()),Optional.empty(),var31,Optional.of(Boolean.valueOf(true)));
+		AdvancementHolder var33 = Advancement.Builder.advancement().parent(var13).display(((ItemLike)(ModItems.BOTTLE_OF_RUM.get())),ModI18nAdvancements.ADVENTURE_DRUNKEN_FIST.title(),ModI18nAdvancements.ADVENTURE_DRUNKEN_FIST.description(),(ResourceLocation)(null),AdvancementType.CHALLENGE,true,false,true).addCriterion("drunked_fist_kill",KilledTrigger.TriggerInstance.playerKilledEntity(Optional.empty(),Optional.of(var32))).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/drunken_fist"),this.fileHelper);
+		Block[] var34 = new Block[]{((Block)(ModBlocks.PONEGLYPH.get()))};
+		ItemLike[] var35 = new ItemLike[]{Items.PAPER};
+		AdvancementHolder var36 = Advancement.Builder.advancement().parent(var6).display(((ItemLike)(ModBlocks.PONEGLYPH.get())),ModI18nAdvancements.ADVENTURE_PAST_MEMORIES.title(),ModI18nAdvancements.ADVENTURE_PAST_MEMORIES.description(),(ResourceLocation)(null),AdvancementType.GOAL,true,false,false).addCriterion("unlock_challenge",ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(var34)),ItemPredicate.Builder.item().of(var35))).save(var2,ResourceLocation.fromNamespaceAndPath("mineminenomi","adventure/past_memories"),this.fileHelper);
+	}
+}

@@ -1,0 +1,27 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "items/mineminenomi/items/den_den_mushi"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "translation": [
+        0.5,
+        4.75,
+        -1.75
+      ]
+    },
+    "gui": {
+      "rotation": [
+        48,
+        150,
+        0
+      ],
+      "translation": [
+        -0.75,
+        4.25,
+        0
+      ]
+    }
+  }
+}

@@ -1,0 +1,49 @@
+package xyz.pixelatedw.mineminenomi.effects;
+
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import xyz.pixelatedw.mineminenomi.api.helpers.AttributeHelper;
+import xyz.pixelatedw.mineminenomi.init.ModAttributes;
+
+public class PlayDeadEffect extends BaseEffect {
+	public PlayDeadEffect() {
+		super(MobEffectCategory.NEUTRAL,0);
+		this.addAttributeModifier(Attributes.MOVEMENT_SPEED,AttributeHelper.EFFECT_MOVEMENT_SPEED_ID,-1D,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+		this.addAttributeModifier(NeoForgeMod.SWIM_SPEED,AttributeHelper.EFFECT_SWIM_SPEED_ID,-1D,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+		this.addAttributeModifier(ModAttributes.JUMP_HEIGHT,AttributeHelper.EFFECT_JUMP_HEIGHT_ID,-1D,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+		this.addAttributeModifier(Attributes.ATTACK_SPEED,AttributeHelper.EFFECT_ATTACK_SPEED_ID,-4D,AttributeModifier.Operation.ADD_VALUE);
+		this.addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE,AttributeHelper.EFFECT_KNOCKBACK_RESISTANCE_ID,1D,AttributeModifier.Operation.ADD_VALUE);
+	}
+	public boolean shouldApplyEffectTickThisTick(int var1, int var2) {
+		int var3 = (20) >> (var2);
+		if ((var3) > (0)){
+			return ((var1) % (var3)) == (0);
+		}else{
+			return true;
+		}
+	}
+	public boolean applyEffectTick(LivingEntity var1, int var2) {
+		if ((var1.getHealth()) < (var1.getMaxHealth())){
+			var1.heal(5F);
+		}
+		return true;
+	}
+	public boolean shouldUpdateClient() {
+		return true;
+	}
+	public boolean isBlockingRotation() {
+		return true;
+	}
+	public boolean isBlockingSwings() {
+		return true;
+	}
+	public boolean isRemoveable() {
+		return false;
+	}
+}

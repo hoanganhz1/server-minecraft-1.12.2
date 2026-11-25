@@ -1,0 +1,72 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+title: '&8&l{}'
+previous-menu: true
+
+pattern:
+  - '$ $ $ $ $ $ $ $ $'
+  - '$ # # # # # # # $'
+  - '$ @ # % # & # * $'
+  - '$ # # # # # # # $'
+  - '$ $ $ $ $ $ $ $ $'
+
+items:
+  '$':
+    type: STAINED_GLASS_PANE
+    data: 15
+    name: '&f'
+  '@':
+    role: Member
+    type: LEATHER_CHESTPLATE
+    name: '&eThành Viên'
+    lore:
+      - '&7Nhấp để đặt chức vụ thành Thành Viên.'
+    flags:
+      - HIDE_ATTRIBUTES
+  '%':
+    role: Moderator
+    type: GOLD_CHESTPLATE
+    name: '&eĐiều Hành Viên'
+    lore:
+      - '&7Nhấp để đặt chức vụ thành Điều Hành Viên.'
+    flags:
+      - HIDE_ATTRIBUTES
+  '&':
+    role: Admin
+    type: IRON_CHESTPLATE
+    name: '&eQuản Lý Đảo'
+    lore:
+      - '&7Nhấp để đặt chức vụ thành Quản Lý.'
+    flags:
+      - HIDE_ATTRIBUTES
+  '*':
+    role: Leader
+    type: DIAMOND_CHESTPLATE
+    name: '&eChủ Đảo'
+    lore:
+      - '&7Nhấp để chuyển quyền Chủ Đảo cho người này.'
+    flags:
+      - HIDE_ATTRIBUTES
+
+sounds:
+  '@':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '%':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '&':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '*':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2

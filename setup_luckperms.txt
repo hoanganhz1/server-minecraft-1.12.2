@@ -1,0 +1,189 @@
+# =====================================================================
+# QUY HOẠCH PHÂN QUYỀN 4 RANK (LUCKPERMS) - RPG SKYBLOCK 1.12.2
+# Cấu trúc kế thừa: default -> vip -> king -> master
+# Áp dụng nhanh: Lưu file này và gõ lệnh /applyranks trên Console
+# =====================================================================
+
+# 1. KHỞI TẠO NHÓM, TRỌNG SỐ & KẾ THỪA
+lp creategroup vip
+lp creategroup king
+lp creategroup master
+lp group default setweight 10
+lp group vip setweight 20
+lp group king setweight 30
+lp group master setweight 40
+lp group vip parent add default
+lp group king parent add vip
+lp group master parent add king
+
+# Xóa quyền thừa/lỗi từ cấu hình cũ
+lp group default permission unset essentials.kits.*
+
+# =====================================================================
+# 2. RANK MẶC ĐỊNH (default) - ĐẦY ĐỦ QUYỀN CHƠI CƠ BẢN
+# =====================================================================
+lp group default meta setprefix 10 "&7[Thành Viên] "
+
+# --- Quyền Xây dựng, Đập phá & Tương tác cơ bản (EssentialsXAntiBuild) ---
+lp group default permission set essentials.build true
+lp group default permission set essentials.build.* true
+
+# --- Quyền Bukkit & Minecraft cơ bản ---
+lp group default permission set bukkit.command.help true
+lp group default permission set minecraft.command.help true
+lp group default permission set minecraft.command.me false
+
+# --- ChestCommands (/menu, /coinshop, /help) ---
+lp group default permission set chestcommands.command.open true
+lp group default permission set chestcommands.command.help true
+lp group default permission set chestcommands.command.list true
+lp group default permission set chestcommands.open.* true
+lp group default permission set chestcommands.open.main_menu.yml true
+lp group default permission set chestcommands.open.coin_shop.yml true
+lp group default permission set chestcommands.item.main_menu.yml true
+lp group default permission set chestcommands.item.coin_shop.yml true
+
+# --- SuperiorSkyblock2 (Đầy đủ lệnh chơi đảo, khóa /is fly cho VIP+) ---
+lp group default permission set superior.island.* true
+lp group default permission set superior.island.fly false
+
+# --- WildStacker (Đặt/Phá Spawner, Barrel & Đào Spawner bằng Silk Touch) ---
+lp group default permission set wildstacker.place.* true
+lp group default permission set wildstacker.break.* true
+lp group default permission set wildstacker.silktouch true
+lp group default permission set wildstacker.nextspawner true
+lp group default permission set wildstacker.stackinfo true
+
+# --- EssentialsX: Di chuyển, Giao tiếp, Home, Kit Tân Thủ & Bảng hiệu ---
+lp group default permission set essentials.help true
+lp group default permission set essentials.helpop true
+lp group default permission set essentials.motd true
+lp group default permission set essentials.rules true
+lp group default permission set essentials.list true
+lp group default permission set essentials.afk true
+lp group default permission set essentials.afk.auto true
+lp group default permission set essentials.ping true
+lp group default permission set essentials.seen true
+lp group default permission set essentials.playtime true
+lp group default permission set essentials.suicide true
+lp group default permission set essentials.spawn true
+lp group default permission set essentials.warp true
+lp group default permission set essentials.warp.list true
+lp group default permission set essentials.warps.* true
+lp group default permission set essentials.tpa true
+lp group default permission set essentials.tpaccept true
+lp group default permission set essentials.tpdeny true
+lp group default permission set essentials.tpahere true
+lp group default permission set essentials.tpacancel true
+lp group default permission set essentials.tptoggle true
+lp group default permission set essentials.home true
+lp group default permission set essentials.sethome true
+lp group default permission set essentials.delhome true
+lp group default permission set essentials.back true
+lp group default permission set essentials.balance true
+lp group default permission set essentials.balancetop true
+lp group default permission set essentials.pay true
+lp group default permission set essentials.worth true
+lp group default permission set essentials.msg true
+lp group default permission set essentials.r true
+lp group default permission set essentials.mail true
+lp group default permission set essentials.mail.send true
+lp group default permission set essentials.ignore true
+lp group default permission set essentials.kit true
+lp group default permission set essentials.kits.tools true
+lp group default permission set essentials.kits.starter true
+lp group default permission set essentials.kits.tanthu true
+lp group default permission set essentials.kits.member true
+lp group default permission set essentials.signs.use.* true
+
+# --- EconomyShopGUI (/shop, /sellgui, /sellall) ---
+lp group default permission set EconomyShopGUI.shop true
+lp group default permission set EconomyShopGUI.shop.* true
+lp group default permission set EconomyShopGUI.sellall true
+lp group default permission set EconomyShopGUI.sellall.* true
+lp group default permission set EconomyShopGUI.sellallhand true
+lp group default permission set EconomyShopGUI.sellallhand.* true
+lp group default permission set EconomyShopGUI.sellallitem true
+lp group default permission set EconomyShopGUI.sellallitem.* true
+lp group default permission set EconomyShopGUI.sellgui true
+
+# --- PlayerPoints v3.3.5 (/points, /points pay, /points lead) ---
+lp group default permission set playerpoints.points true
+lp group default permission set playerpoints.me true
+lp group default permission set playerpoints.pay true
+lp group default permission set playerpoints.leaderboard true
+lp group default permission set playerpoints.lead true
+
+# --- CrazyAuctionsPlus (/ah, /ah sell, /ah bid, /ah expired) ---
+lp group default permission set crazyauctionsplus.command.access true
+lp group default permission set crazyauctionsplus.command.gui true
+lp group default permission set crazyauctionsplus.command.help true
+lp group default permission set crazyauctionsplus.command.view true
+lp group default permission set crazyauctionsplus.command.mail true
+lp group default permission set crazyauctionsplus.command.listed true
+lp group default permission set crazyauctionsplus.command.sell true
+lp group default permission set crazyauctionsplus.command.buy true
+lp group default permission set crazyauctionsplus.command.bid true
+lp group default permission set crazyauctionsplus.group.default true
+lp group default permission set crazyauctions.access true
+lp group default permission set crazyauctions.view true
+lp group default permission set crazyauctions.sell true
+lp group default permission set crazyauctions.bid true
+
+# --- CrazyEnchantments (/ce, Tinker, Blacksmith, Scroll, Dust) ---
+lp group default permission set crazyenchantments.access true
+lp group default permission set crazyenchantments.gui true
+lp group default permission set crazyenchantments.info true
+lp group default permission set crazyenchantments.tinker true
+lp group default permission set crazyenchantments.blacksmith true
+lp group default permission set crazyenchantments.lostbook true
+lp group default permission set crazyenchantments.scroll.* true
+lp group default permission set crazyenchantments.crystal.* true
+lp group default permission set crazyenchantments.dust.* true
+
+# =====================================================================
+# 3. RANK VIP (300 Coin) - Kế thừa toàn bộ quyền của default
+# =====================================================================
+lp group vip meta setprefix 20 "&b&l[VIP] "
+lp group vip permission set rank.vip true
+lp group vip permission set superior.island.fly true
+lp group vip permission set essentials.workbench true
+lp group vip permission set essentials.hat true
+lp group vip permission set essentials.sethome.multiple true
+lp group vip permission set essentials.sethome.multiple.vip true
+lp group vip permission set essentials.kits.vip true
+lp group vip permission set essentials.chat.color true
+lp group vip permission set EconomyShopGUI.sell-multipliers.vip true
+lp group vip permission set crazyauctionsplus.group.vip true
+
+# =====================================================================
+# 4. RANK KING (700 Coin) - Kế thừa toàn bộ quyền của vip
+# =====================================================================
+lp group king meta setprefix 30 "&d&l[KING] "
+lp group king permission set rank.king true
+lp group king permission set essentials.enderchest true
+lp group king permission set essentials.feed true
+lp group king permission set essentials.keepxp true
+lp group king permission set essentials.back.ondeath true
+lp group king permission set essentials.sethome.multiple.king true
+lp group king permission set essentials.kits.king true
+lp group king permission set essentials.chat.format true
+lp group king permission set EconomyShopGUI.sell-multipliers.king true
+lp group king permission set crazyauctionsplus.group.king true
+
+# =====================================================================
+# 5. RANK MASTER (1500 Coin) - Kế thừa toàn bộ quyền của king
+# =====================================================================
+lp group master meta setprefix 40 "&6&l[MASTER] "
+lp group master permission set rank.master true
+lp group master permission set essentials.heal true
+lp group master permission set essentials.repair true
+lp group master permission set essentials.repair.all true
+lp group master permission set essentials.repair.armor true
+lp group master permission set essentials.repair.enchanted true
+lp group master permission set essentials.anvil true
+lp group master permission set essentials.keepinv true
+lp group master permission set essentials.sethome.multiple.master true
+lp group master permission set essentials.kits.master true
+lp group master permission set EconomyShopGUI.sell-multipliers.master true
+lp group master permission set crazyauctionsplus.group.master true

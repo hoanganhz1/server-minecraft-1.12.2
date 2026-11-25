@@ -1,0 +1,4 @@
+// 1.21.1	2026-09-21T16:28:18.749342528	Tags for minecraft:entity_type mod id mineminenomi
+e3208a75f80aaaa824d9c6245860ed2b247e383c data/minecraft/tags/entity_type/can_breathe_under_water.json
+1368bf2461861092a008907695070bbbccbd6931 data/mineminenomi/tags/entity_type/kairoseki.json
+06802309310c4256ca828350f1ade128f9b1a8ba data/mineminenomi/tags/entity_type/magnetic.json

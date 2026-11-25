@@ -1,0 +1,26 @@
+// 1.21.1	2026-09-28T14:00:35.617810689	Tags for minecraft:worldgen/biome mod id mineminenomi
+9093173c1fc90e8fb11c0e8c886d286c7267b075 data/mineminenomi/tags/worldgen/biome/can_spawn/bananawani.json
+df68ac6714e26ef82fb5c383dd282e2a61b8df2f data/mineminenomi/tags/worldgen/biome/can_spawn/big_duck.json
+048e01faeaf7690def917eb55e86bc5c1b2b1c73 data/mineminenomi/tags/worldgen/biome/can_spawn/den_den_mushi.json
+4b5b0d251b388854aaeb1ddb6147945ce1301f92 data/mineminenomi/tags/worldgen/biome/can_spawn/dugongs.json
+89c9f78db44544dff1780ae7095fc930c33ec6f0 data/mineminenomi/tags/worldgen/biome/can_spawn/fighting_fish.json
+b32c1cd6aaee18b1a95d47268017af022691c214 data/mineminenomi/tags/worldgen/biome/can_spawn/fish.json
+56573502b34c5243671cd028dd56eabdab73f439 data/mineminenomi/tags/worldgen/biome/can_spawn/flying_fish.json
+6b35771c8d400b0921c04386d79e88b834c282ad data/mineminenomi/tags/worldgen/biome/can_spawn/gorillas.json
+490705c560974f023f9fca41a8e913323f11d0c0 data/mineminenomi/tags/worldgen/biome/can_spawn/humandrill.json
+0cbf0c2b65852f54c53fcf414b7d38e2f157d255 data/mineminenomi/tags/worldgen/biome/can_spawn/humans.json
+627894a56d6c84e39bb30d7d9c879335f21af270 data/mineminenomi/tags/worldgen/biome/can_spawn/lapahn.json
+1ae26e21634e8742a6caefb42fea21b600403ade data/mineminenomi/tags/worldgen/biome/can_spawn/wandering_dugong.json
+549cdf5ea9d4ebbcb29f66f9bd57238639df99cb data/mineminenomi/tags/worldgen/biome/can_spawn/white_walkie.json
+ec7bbb0c9b5fc5378f8716f54862806404f04360 data/mineminenomi/tags/worldgen/biome/has_structure/big_ship.json
+dc63de63d72a323fccb2782cdc1c5589a7cb4752 data/mineminenomi/tags/worldgen/biome/has_structure/camp.json
+4a56258d808f99f37720ebc3efd068d21fc0a1f9 data/mineminenomi/tags/worldgen/biome/has_structure/ghost_ship.json
+a547f249f61700a3863010e27e7f26fd31688382 data/mineminenomi/tags/worldgen/biome/has_structure/large_base.json
+74a855e481dd684fc14e843ffbf7634328669190 data/mineminenomi/tags/worldgen/biome/has_structure/medium_ship.json
+b23a905c1424fcace91315970c531b5519e772aa data/mineminenomi/tags/worldgen/biome/has_structure/sky_island.json
+a547f249f61700a3863010e27e7f26fd31688382 data/mineminenomi/tags/worldgen/biome/has_structure/small_base.json
+afd9da16b8e57511d3b12c69ccd4555d71ebb29f data/mineminenomi/tags/worldgen/biome/has_structure/small_ship.json
+a547f249f61700a3863010e27e7f26fd31688382 data/mineminenomi/tags/worldgen/biome/has_structure/trainer_building.json
+dc63de63d72a323fccb2782cdc1c5589a7cb4752 data/mineminenomi/tags/worldgen/biome/has_structure/watch_tower.json
+3e00d0ecf4c9744bbf1b1c80ff5270a55488fc87 data/mineminenomi/tags/worldgen/biome/is_swamp.json
+5933f022ef9c14f6184ed073d6517f36a284287e data/mineminenomi/tags/worldgen/biome/ores/kairoseki.json

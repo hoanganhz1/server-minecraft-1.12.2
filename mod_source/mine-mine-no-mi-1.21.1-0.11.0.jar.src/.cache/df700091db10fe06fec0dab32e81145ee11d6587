@@ -1,0 +1,14 @@
+// 1.21.1	2026-08-07T17:34:05.533120751	Tags for minecraft:worldgen/structure mod id mineminenomi
+e09cb1897d9254e69228f00d322d2e35d02cc107 data/mineminenomi/tags/worldgen/structure/bandit.json
+359a32014fdc8c2e377cef2761683340a503f016 data/mineminenomi/tags/worldgen/structure/is_camp.json
+8d5bac97380457ea915ebf81fecf665cfc13dea0 data/mineminenomi/tags/worldgen/structure/is_large_base.json
+0d553ddbde34798a9f309a95c943844c6b4c06a5 data/mineminenomi/tags/worldgen/structure/is_large_ship.json
+1f60328caecd2fec8402c6c914ae4b7b2724b03f data/mineminenomi/tags/worldgen/structure/is_medium_ship.json
+98d2ae7706292008515487a3675029cb06d0aa3b data/mineminenomi/tags/worldgen/structure/is_ship.json
+11d26f9dd55218c1e71e25facf8384ce3054cca5 data/mineminenomi/tags/worldgen/structure/is_sky_island.json
+932eba7204e11dd5e8ea659ac19a6ce9743d99ed data/mineminenomi/tags/worldgen/structure/is_small_base.json
+29501d067331a3f7dde90c30d70ae23d99783411 data/mineminenomi/tags/worldgen/structure/is_small_ship.json
+5e520ea74c9df40b794c48c5faf0779093bc2e2c data/mineminenomi/tags/worldgen/structure/is_training_structure.json
+763371e8137c35128ad3008e29d7ce3e11b3f9ee data/mineminenomi/tags/worldgen/structure/is_watch_tower.json
+22cc6b0dc913dea22cdadb80061537c51c620dfa data/mineminenomi/tags/worldgen/structure/marine.json
+2704bf8ac084206be9a0884a4bdf6d0eb235321a data/mineminenomi/tags/worldgen/structure/pirate.json

@@ -1,0 +1,44 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "items/mineminenomi/items/flame_dial"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        0,
+        0,
+        87
+      ],
+      "translation": [
+        -5.5,
+        2.75,
+        2.5
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        96,
+        0
+      ],
+      "translation": [
+        0,
+        8.25,
+        0.75
+      ]
+    },
+    "gui": {
+      "rotation": [
+        43,
+        -49,
+        0
+      ],
+      "translation": [
+        -0.5,
+        5,
+        0
+      ]
+    }
+  }
+}

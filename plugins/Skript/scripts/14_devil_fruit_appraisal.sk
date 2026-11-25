@@ -1,0 +1,917 @@
+# =====================================================================
+# HỆ THỐNG GIÁM ĐỊNH & TRÁI ÁC QUỶ MỞ RỘNG TIER S (PHASE 14 - SKBEE + REFLECT)
+# - Trái Ác Quỷ Bí Ẩn (unidentified_df) với 10 ngoại hình generic_fruit_1..10
+# - Bàn Giám Định Vegapunk (UI_G1_C): Tỷ lệ 70% Epic & 30% Huyền Thoại Tier S
+# - Chuỗi kinh tế khép kín 6 vật phẩm: Rương Thần Thoại, Trái Bí Ẩn, Rumble Ball,
+#   Thuốc Xóa Trái, Đá Thức Tỉnh, Bùa Thức Tỉnh, Chiết Xuất Tinh Hoa Ác Quỷ
+# - Bách Khoa Toàn Thư Trái Ác Quỷ (UI_G1_D): Thưởng sưu tập vĩnh viễn
+# =====================================================================
+
+import:
+    java.lang.System
+    java.util.UUID
+    org.bukkit.Bukkit
+    org.bukkit.Material
+    org.bukkit.Sound
+    org.bukkit.entity.Player
+    org.bukkit.inventory.ItemStack
+    org.bukkit.event.inventory.InventoryDragEvent
+    org.black_ixx.playerpoints.PlayerPoints
+
+# ---------------------------------------------------------------------
+# 1. HÀM TẠO VẬT PHẨM TRÁI BÍ ẨN & VẬT PHẨM HỖ TRỢ
+# ---------------------------------------------------------------------
+
+function getUnidentifiedFruitItem() :: item:
+    set {_rIdx} to random integer between 1 and 10
+    set {_modelKey} to "generic_fruit_%{_rIdx}%"
+    delete {_lore::*}
+    set {_lore::1} to "&8&m----------------------------------------"
+    set {_lore::2} to "&7Loại: &dKho Báu Đại Dương &8(Chưa Giám Định)"
+    set {_lore::3} to "&7Nguồn gốc: &fThu thập từ Đô Đốc / Rương Hoang Dã / Mỏ Cấp 5"
+    set {_lore::4} to ""
+    set {_lore::5} to "&e&l✦ NĂNG LỰC ẨN CHỨA BÊN TRONG:"
+    set {_lore::6} to "&f• &a70%% Tỷ lệ: &bNhóm Sử Thi (Mera, Gomu, Ope, Seiryu)"
+    set {_lore::7} to "&f• &630%% Tỷ lệ: &dNhóm Huyền Thoại Tier S"
+    set {_lore::8} to "  &e(Gura Gura, Pika Pika, Goro Goro, Phoenix)"
+    set {_lore::9} to ""
+    set {_lore::10} to "&e▶ Mang đến &d/vegapunk &e(Phòng Thí Nghiệm Vegapunk)!"
+    set {_lore::11} to "&8&m----------------------------------------"
+
+    set {_item} to makeCustomRPItem({_modelKey}, "&d&l✦ TRÁI ÁC QUỶ BÍ ẨN ✦", {_lore::*})
+    set {_nbt} to nbt compound of {_item}
+    set string tag "SkyblockItem" of {_nbt} to "unidentified_df"
+    set string tag "CustomModelKey" of {_nbt} to {_modelKey}
+    return {_item}
+
+function giveUnidentifiedFruit(p: player):
+    if {_p} is not online:
+        stop
+    set {_fruit} to getUnidentifiedFruitItem()
+    if {_p} can hold {_fruit}:
+        give {_fruit} to {_p}
+    else:
+        drop {_fruit} at location of {_p}
+        sendSystemMsg({_p}, "warning", "Túi đồ đầy! Trái Ác Quỷ Bí Ẩn đã rơi xuống chân bạn.")
+    sendSystemMsg({_p}, "training", "Bạn đã nhận được &d1 Trái Ác Quỷ Bí Ẩn&f! Hãy mang đi &e/giamdinh&f.")
+    play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to {_p}
+
+function getRumbleBallItem() :: item:
+    delete {_lore::*}
+    set {_lore::1} to "&8&m----------------------------------------"
+    set {_lore::2} to "&7Loại: &eDược Liệu Thần Bí &8(Tiêu Hao)"
+    set {_lore::3} to "&7Tác dụng: &6Cường Hóa Biến Hình Hệ Zoan"
+    set {_lore::4} to ""
+    set {_lore::5} to "&6&l✦ HIỆU QUẢ TRONG 60 GIÂY (CD 90s):"
+    set {_lore::6} to "&f• &c+15%% Sát thương kỹ năng hệ Zoan"
+    set {_lore::7} to "&f• &b+40 DEF &7và hiệu ứng &fSpeed I"
+    set {_lore::8} to "&f• Áp dụng cho cả Bản Thân & Đệ Tử có trái Zoan"
+    set {_lore::9} to ""
+    set {_lore::10} to "&e▶ Chuột Phải ngoài chế độ chiến đấu để dùng!"
+    set {_lore::11} to "&8&m----------------------------------------"
+    set {_item} to makeCustomRPItem("rumble_ball", "&e&l✦ VIÊN BIẾN HÌNH RUMBLE BALL ✦", {_lore::*})
+    set string tag "SkyblockItem" of nbt compound of {_item} to "rumble_ball"
+    return {_item}
+
+function getEncyclopediaItem() :: item:
+    delete {_lore::*}
+    set {_lore::1} to "&8&m----------------------------------------"
+    set {_lore::2} to "&7Loại: &bBách Khoa Thần Bí &8(Sách Cổ)"
+    set {_lore::3} to "&7Tác dụng: &fGhi chép toàn bộ 8 Trái Ác Quỷ trên biển"
+    set {_lore::4} to ""
+    set {_lore::5} to "&6&l✦ THƯỞNG BỘ SƯU TẬP VĨNH VIỄN:"
+    set {_lore::6} to "&f• &e+1.5%% Sát thương kỹ năng &7mỗi trái mở khóa"
+    set {_lore::7} to "&f• Mở khóa đủ &b8/8 trái &7nhận &c+12%% Sát Thương&7!"
+    set {_lore::8} to ""
+    set {_lore::9} to "&e▶ Chuột Phải hoặc gõ &b/bachkhoatrai &eđể tra cứu!"
+    set {_lore::10} to "&8&m----------------------------------------"
+    set {_item} to makeCustomRPItem("devil_fruit_encyclopedia", "&b&l✦ ĐỒ GIÁM TRÁI ÁC QUỶ ✦", {_lore::*})
+    set string tag "SkyblockItem" of nbt compound of {_item} to "df_encyclopedia"
+    return {_item}
+
+function getDevilFruitEssenceItem() :: item:
+    delete {_lore::*}
+    set {_lore::1} to "&8&m----------------------------------------"
+    set {_lore::2} to "&7Loại: &dNguyên Liệu Thần Bí &8(Quy Đổi Kinh Tế)"
+    set {_lore::3} to "&7Nguồn gốc: &fChiết xuất từ Trái Ác Quỷ tại Phòng Vegapunk"
+    set {_lore::4} to ""
+    set {_lore::5} to "&6&l✦ CÔNG DỤNG CHÍNH:"
+    set {_lore::6} to "&f• &eĐổi Rương Trái Thần Thoại &8(10 Tinh Hoa + $500,000)"
+    set {_lore::7} to "&f• &bMua Rumble Ball Zoan &8(1 Tinh Hoa + $25,000)"
+    set {_lore::8} to "&f• &dĐiều Chế Thuốc Xóa Trái &8(2 Tinh Hoa + $100,000)"
+    set {_lore::9} to "&f• &6Chế Tạo Đá Thức Tỉnh &8(5 Tinh Hoa + $250,000)"
+    set {_lore::10} to "&f• &aHợp Thành Bùa Thức Tỉnh Tinh Tú &8(5 Tinh Hoa + 1 Đá)"
+    set {_lore::11} to "&8&m----------------------------------------"
+    set {_item} to makeGlowingItem(purple dye, "&5&l✦ TINH HOA ÁC QUỶ ✦", {_lore::*})
+    set string tag "SkyblockItem" of nbt compound of {_item} to "df_essence"
+    return {_item}
+
+function getAwakeningTalismanItem() :: item:
+    delete {_lore::*}
+    set {_lore::1} to "&8&m----------------------------------------"
+    set {_lore::2} to "&7Loại: &6Bảo Vật Thần Bí &8(Tiêu Hao)"
+    set {_lore::3} to "&7Công dụng: &fDùng để &6&lTHỨC TỈNH TRÁI ÁC QUỶ"
+    set {_lore::4} to "&7hoặc &a&lTHỨC TỈNH VÕ HỌC &7khi đạt &bMastery Lv.100&7."
+    set {_lore::5} to ""
+    set {_lore::6} to "&a✔ Tỷ lệ thành công 100%% tuyệt đối an toàn"
+    set {_lore::7} to "&e▶ Có thể thay thế hoàn toàn Đá Thức Tỉnh!"
+    set {_lore::8} to "&8&m----------------------------------------"
+    set {_item} to makeGlowingItem(paper, "&6&l✦ BÙA THỨC TỈNH TINH TÚ ✦", {_lore::*})
+    set string tag "SkyblockItem" of nbt compound of {_item} to "awakening_talisman"
+    return {_item}
+
+# ---------------------------------------------------------------------
+# 2. HÀM TIỆN ÍCH KIỂM TRA & TRỪ NGUYÊN LIỆU THEO TAG NBT
+# ---------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------
+# 3. HỆ THỐNG ĐỒ GIÁM & THƯỞNG SƯU TẬP VĨNH VIỄN
+# ---------------------------------------------------------------------
+
+function registerFruitToPokedex(p: player, fruitId: text):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    if {df_unlocked_pokedex::%{_u}%::%{_fruitId}%} is not set:
+        set {df_unlocked_pokedex::%{_u}%::%{_fruitId}%} to true
+        set {_count} to size of {df_unlocked_pokedex::%{_u}%::*}
+        set {_bonusDmg} to roundOneDecimal({_count} * 1.5)
+        set {_dfName} to getDevilFruitDisplayName({_fruitId})
+        sendSystemMsg({_p}, "talent", "Mở khóa Đồ Giám: %{_dfName}%&f! Tiến trình: &b%{_count}%/8 &8(+%{_bonusDmg}%%% ST Kỹ Năng)")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.8 to {_p}
+
+function getPokedexBonusMult(p: player) :: number:
+    if {_p} is not online:
+        return 1.0
+    set {_u} to uuid of {_p}
+    set {_cnt} to size of {df_unlocked_pokedex::%{_u}%::*}
+    if {_cnt} > 8:
+        set {_cnt} to 8
+    set {_mult} to 1.0 + ({_cnt} * 0.015)
+    return {_mult}
+
+# ---------------------------------------------------------------------
+# 4. GIAO DIỆN BÁCH KHOA TOÀN THƯ POKEDEX (UI_G1_D - 54 Ô)
+# ---------------------------------------------------------------------
+
+function openPokedexGUI(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G1_D", "&9&l✦ BÁCH KHOA TRÁI ÁC QUỶ ✦", 6, blue stained glass pane named " ", "UI_G1", "Năng Lực & Võ Học")
+
+    # Hàng 2: 4 Trái Epic (Slot 10, 12, 14, 16)
+    set {_epicFruits::1} to "mera"
+    set {_epicFruits::2} to "gomu"
+    set {_epicFruits::3} to "ope"
+    set {_epicFruits::4} to "seiryu"
+    set {_epicSlots::1} to 10
+    set {_epicSlots::2} to 12
+    set {_epicSlots::3} to 14
+    set {_epicSlots::4} to 16
+
+    loop 4 times:
+        set {_f} to {_epicFruits::%loop-number%}
+        set {_s} to {_epicSlots::%loop-number%}
+        set {_fName} to getDevilFruitDisplayName({_f})
+        delete {_pLore::*}
+        set {_pLore::1} to "&8&m----------------------------------------"
+        if {df_unlocked_pokedex::%{_u}%::%{_f}%} is true:
+            set {_pLore::2} to "&a✔ Trạng thái: &eĐÃ MỞ KHÓA TRONG ĐỒ GIÁM"
+            set {_pLore::3} to "&7Phẩm cấp: &bSử Thi (Epic)"
+            set {_pLore::4} to "&7Thưởng vĩnh viễn: &c+1.5%% Sát Thương Kỹ Năng"
+            set {_pLore::5} to "&8&m----------------------------------------"
+            set {_item} to getDevilFruitItem({_f})
+            set slot {_s} of {_inv} to {_item}
+        else:
+            set {_pLore::2} to "&c✖ Trạng thái: &7CHƯA MỞ KHÓA"
+            set {_pLore::3} to "&7Phẩm cấp: &bSử Thi (Epic)"
+            set {_pLore::4} to "&7Hãy giám định hoặc sở hữu để kích hoạt"
+            set {_pLore::5} to "&7chỉ số cộng thêm cho bản thân."
+            set {_pLore::6} to "&8&m----------------------------------------"
+            set {_grayItem} to coal named "&8??? &7(Chưa Giám Định: %{_fName}%&7)" with lore {_pLore::*}
+            set slot {_s} of {_inv} to {_grayItem}
+
+    # Hàng 4: 4 Trái Tier S (Slot 28, 30, 32, 34)
+    set {_mythicFruits::1} to "gura"
+    set {_mythicFruits::2} to "pika"
+    set {_mythicFruits::3} to "goro"
+    set {_mythicFruits::4} to "phoenix"
+    set {_mythicSlots::1} to 28
+    set {_mythicSlots::2} to 30
+    set {_mythicSlots::3} to 32
+    set {_mythicSlots::4} to 34
+
+    loop 4 times:
+        set {_f} to {_mythicFruits::%loop-number%}
+        set {_s} to {_mythicSlots::%loop-number%}
+        set {_fName} to getDevilFruitDisplayName({_f})
+        delete {_pLore::*}
+        set {_pLore::1} to "&8&m----------------------------------------"
+        if {df_unlocked_pokedex::%{_u}%::%{_f}%} is true:
+            set {_pLore::2} to "&a✔ Trạng thái: &eĐÃ MỞ KHÓA TRONG ĐỒ GIÁM"
+            set {_pLore::3} to "&7Phẩm cấp: &dHuyền Thoại (Tier S)"
+            set {_pLore::4} to "&7Thưởng vĩnh viễn: &c+1.5%% Sát Thương Kỹ Năng"
+            set {_pLore::5} to "&8&m----------------------------------------"
+            set {_item} to getDevilFruitItem({_f})
+            set slot {_s} of {_inv} to {_item}
+        else:
+            set {_pLore::2} to "&c✖ Trạng thái: &7CHƯA MỞ KHÓA"
+            set {_pLore::3} to "&7Phẩm cấp: &dHuyền Thoại (Tier S)"
+            set {_pLore::4} to "&7Hãy giám định tại &d/vegapunk &7để khai mở"
+            set {_pLore::5} to "&7sức mạnh bảo vật tối thượng này."
+            set {_pLore::6} to "&8&m----------------------------------------"
+            set {_grayItem} to coal named "&8??? &7(Chưa Giám Định: %{_fName}%&7)" with lore {_pLore::*}
+            set slot {_s} of {_inv} to {_grayItem}
+
+    # Slot 49: Tổng kết thưởng sưu tập
+    set {_unlockedCount} to size of {df_unlocked_pokedex::%{_u}%::*}
+    set {_totalBonus} to roundOneDecimal({_unlockedCount} * 1.5)
+    delete {_sumLore::*}
+    set {_sumLore::1} to "&8&m----------------------------------------"
+    set {_sumLore::2} to "&7Tiến trình sưu tập: &b%{_unlockedCount}%&7/&b8 Trái Ác Quỷ"
+    set {_sumLore::3} to "&7Tổng sát thương kỹ năng cộng thêm: &c+%{_totalBonus}%%%"
+    set {_sumLore::4} to ""
+    set {_sumLore::5} to "&eMỗi trái mở khóa: &c+1.5%% ST Kỹ Năng &7(Tối đa: &c+12.0%%&7)"
+    set {_sumLore::6} to "&8&m----------------------------------------"
+    set {_sumItem} to makeCustomRPItem("devil_fruit_encyclopedia", "&6&l✦ TỔNG KẾT BỘ SƯU TẬP ✦", {_sumLore::*})
+    set slot 49 of {_inv} to {_sumItem}
+
+    openStandardUI({_p}, {_inv}, "UI_G1_D", "UI_G1")
+
+# ---------------------------------------------------------------------
+# 5. GIAO DIỆN PHÒNG THÍ NGHIỆM VEGAPUNK (UI_G1_C - 54 Ô)
+# ---------------------------------------------------------------------
+
+function openAppraisalGUI(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G1_C", "&d&l✦ PHÒNG THÍ NGHIỆM VEGAPUNK ✦", 6, purple stained glass pane named " ", "UI_G1", "Năng Lực & Võ Học")
+
+    # Đếm số lượng Tinh Hoa hiện có trong túi đồ
+    set {_essenceCount} to countPlayerItemByTag({_p}, "df_essence")
+
+    # Slot 13: Đổi Rương Trái Thần Thoại
+    delete {_cLore::*}
+    set {_cLore::1} to "&8&m----------------------------------------"
+    set {_cLore::2} to "&7Mở ngẫu nhiên 1 trong 4 Trái Ác Quỷ Thần Thoại:"
+    set {_cLore::3} to "&f• &6Mera Mera &8| &dGomu Gomu &8| &cOpe Ope &8| &bUouo: Seiryu"
+    set {_cLore::4} to ""
+    set {_cLore::5} to "&6&l✦ CHI PHÍ ĐỔI RƯƠNG:"
+    set {_cLore::6} to "&f• Tiền mặt: &a$500,000"
+    set {_cLore::7} to "&f• Nguyên liệu: &510x Tinh Hoa Ác Quỷ"
+    set {_cLore::8} to ""
+    set {_cLore::9} to "&a▶ Nhấp chuột để đổi rương!"
+    set {_cLore::10} to "&8&m----------------------------------------"
+    set {_cItem} to makeCustomRPItem("df_chest", "&6&l✦ ĐỔI RƯƠNG TRÁI THẦN THOẠI ✦", {_cLore::*})
+    set slot 13 of {_inv} to {_cItem}
+
+    # Slot 20: Mua Trái Ác Quỷ Bí Ẩn (50 Coin)
+    delete {_bLore::*}
+    set {_bLore::1} to "&8&m----------------------------------------"
+    set {_bLore::2} to "&7Trái Ác Quỷ thô thu thập từ vùng biển sâu,"
+    set {_bLore::3} to "&7chứa cấu trúc gen của 8 loại năng lực tối thượng."
+    set {_bLore::4} to ""
+    set {_bLore::5} to "&6&l✦ CHI PHÍ MUA TRÁI BÍ ẨN:"
+    set {_bLore::6} to "&f• Giá: &650 Coin &8(Đổi tại /nganhang)"
+    set {_bLore::7} to ""
+    set {_bLore::8} to "&a▶ Nhấp để sở hữu Trái Bí Ẩn!"
+    set {_bLore::9} to "&8&m----------------------------------------"
+    set {_bItem} to makeCustomRPItem("generic_fruit_1", "&d&l✦ MUA TRÁI ÁC QUỶ BÍ ẨN ✦", {_bLore::*})
+    set slot 20 of {_inv} to {_bItem}
+
+    # Slot 22 (TÂM): Lò Giám Định Vegapunk
+    delete {_appLore::*}
+    set {_appLore::1} to "&8&m----------------------------------------"
+    set {_appLore::2} to "&7Phân tách cấu trúc gen của &dTrái Ác Quỷ Bí Ẩn"
+    set {_appLore::3} to "&7thành Trái Ác Quỷ hoàn chỉnh và ghi danh Đồ Giám."
+    set {_appLore::4} to ""
+    set {_appLore::5} to "&6&l✦ TỶ LỆ XUẤT HIỆN:"
+    set {_appLore::6} to "&f• &b70%% Nhóm Sử Thi: &fMera, Gomu, Ope, Seiryu"
+    set {_appLore::7} to "&f• &d30%% Huyền Thoại Tier S: &eGura, Pika, Goro, Phoenix"
+    set {_appLore::8} to ""
+    set {_appLore::9} to "&6&l✦ CHI PHÍ MỖI LẦN:"
+    set {_appLore::10} to "&f• &a$50,000 &8| &b5 Điểm Thiên Phú (TP)"
+    set {_appLore::11} to ""
+    set {_appLore::12} to "&e• Chuột Trái:&f Giám định 1 trái trên tay/trong túi"
+    set {_appLore::13} to "&e• Chuột Phải:&f Giám định nhanh &6TOÀN BỘ&f trái bí ẩn"
+    set {_appLore::14} to "&8&m----------------------------------------"
+    set {_appItem} to makeCustomRPItem("generic_fruit_2", "&d&l✦ LÒ GIÁM ĐỊNH VEGAPUNK ✦", {_appLore::*})
+    set slot 22 of {_inv} to {_appItem}
+
+    # Slot 24: Mua Viên Biến Hình Rumble Ball
+    delete {_rbLore::*}
+    set {_rbLore::1} to "&8&m----------------------------------------"
+    set {_rbLore::2} to "&7Dược liệu cường hóa biến hình Zoan trong 25s:"
+    set {_rbLore::3} to "&f• &b-25%% Thời gian hồi chiêu toàn kỹ năng"
+    set {_rbLore::4} to "&f• &c+15%% Sát thương kỹ năng hệ Zoan"
+    set {_rbLore::5} to ""
+    set {_rbLore::6} to "&6&l✦ GIÁ BÁN:"
+    set {_rbLore::7} to "&f• &a$25,000 + 1 Tinh Hoa Ác Quỷ &7/ 1 viên"
+    set {_rbLore::8} to ""
+    set {_rbLore::9} to "&e• Chuột Trái:&7 Mua &e1 viên"
+    set {_rbLore::10} to "&e• Chuột Phải:&7 Mua cụm &65 viên &8($125k + 5 Tinh Hoa)"
+    set {_rbLore::11} to "&8&m----------------------------------------"
+    set {_rbItem} to makeCustomRPItem("rumble_ball", "&e&l✦ MUA RUMBLE BALL ZOAN ✦", {_rbLore::*})
+    set slot 24 of {_inv} to {_rbItem}
+
+    # Slot 29: Điều Chế Thuốc Xóa Trái Ác Quỷ
+    delete {_rmLore::*}
+    set {_rmLore::1} to "&8&m----------------------------------------"
+    set {_rmLore::2} to "&7Thanh tẩy an toàn toàn bộ 8 loại Trái Ác Quỷ,"
+    set {_rmLore::3} to "&7khôi phục 100%% nội tại Vô Quả Giả mà không bị nổ chết."
+    set {_rmLore::4} to ""
+    set {_rmLore::5} to "&6&l✦ CHI PHÍ ĐIỀU CHẾ:"
+    set {_rmLore::6} to "&f• Tiền mặt: &a$100,000"
+    set {_rmLore::7} to "&f• Nguyên liệu: &52x Tinh Hoa Ác Quỷ"
+    set {_rmLore::8} to ""
+    set {_rmLore::9} to "&a▶ Nhấp chuột để điều chế!"
+    set {_rmLore::10} to "&8&m----------------------------------------"
+    set {_rmItem} to makeCustomPotion(8388736, "&5&l✦ ĐIỀU CHẾ THUỐC XÓA TRÁI ✦", {_rmLore::*})
+    set slot 29 of {_inv} to {_rmItem}
+
+    # Slot 31: Chế Tạo Đá Thức Tỉnh Ác Quỷ 3D
+    delete {_awkLore::*}
+    set {_awkLore::1} to "&8&m----------------------------------------"
+    set {_awkLore::2} to "&7Dùng để &6&lTHỨC TỈNH TRÁI ÁC QUỶ &7hoặc &aVÕ HỌC"
+    set {_awkLore::3} to "&7khi đạt &bMastery Lv.100 &7mở khóa tiềm năng tối thượng."
+    set {_awkLore::4} to ""
+    set {_awkLore::5} to "&6&l✦ CHI PHÍ RÈN ĐÁ:"
+    set {_awkLore::6} to "&f• Tiền mặt: &a$250,000"
+    set {_awkLore::7} to "&f• Nguyên liệu: &55x Tinh Hoa Ác Quỷ"
+    set {_awkLore::8} to ""
+    set {_awkLore::9} to "&a▶ Nhấp để rèn Đá Thức Tỉnh!"
+    set {_awkLore::10} to "&8&m----------------------------------------"
+    set {_awkItem} to makeCustomRPItem("skill_awaken", "&e&l✦ CHẾ TẠO ĐÁ THỨC TỈNH ✦", {_awkLore::*})
+    set slot 31 of {_inv} to {_awkItem}
+
+    # Slot 33: Hợp Thành Bùa Thức Tỉnh Tinh Tú
+    delete {_talLore::*}
+    set {_talLore::1} to "&8&m----------------------------------------"
+    set {_talLore::2} to "&7Bùa chú thượng cổ dung hợp tinh hoa tinh tú,"
+    set {_talLore::3} to "&7đảm bảo &a100%% thành công &7khi thức tỉnh."
+    set {_talLore::4} to ""
+    set {_talLore::5} to "&6&l✦ NGUYÊN LIỆU HỢP THÀNH:"
+    set {_talLore::6} to "&f• &55x Tinh Hoa Ác Quỷ"
+    set {_talLore::7} to "&f• &e1x Đá Thức Tỉnh"
+    set {_talLore::8} to ""
+    set {_talLore::9} to "&a▶ Nhấp để hợp thành Bùa Thức Tỉnh!"
+    set {_talLore::10} to "&8&m----------------------------------------"
+    set {_talItem} to makeGlowingItem(paper, "&6&l✦ HỢP THÀNH BÙA THỨC TỈNH TINH TÚ ✦", {_talLore::*})
+    set slot 33 of {_inv} to {_talItem}
+
+    # Slot 40: Máy Chiết Xuất Tinh Hoa Ác Quỷ
+    delete {_extLore::*}
+    set {_extLore::1} to "&8&m----------------------------------------"
+    set {_extLore::2} to "&7Phân rã các Trái Ác Quỷ thừa hoặc trùng lặp"
+    set {_extLore::3} to "&7thành &5Tinh Hoa Ác Quỷ &7để tái sử dụng."
+    set {_extLore::4} to ""
+    set {_extLore::5} to "&6&l✦ TỶ LỆ QUY ĐỔI:"
+    set {_extLore::6} to "&f• 1 Trái Ác Quỷ bất kỳ &f▶ &51x Tinh Hoa Ác Quỷ"
+    set {_extLore::7} to ""
+    set {_extLore::8} to "&e• Chuột Trái:&7 Phân rã &e1 trái&7 thừa trong túi"
+    set {_extLore::9} to "&e• Chuột Phải:&7 Phân rã nhanh &6TOÀN BỘ&7 trái thừa"
+    set {_extLore::10} to "&8&m----------------------------------------"
+    set {_extItem} to makeGlowingItem(cauldron, "&d&l✦ MÁY CHIẾT XUẤT TINH HOA ✦", {_extLore::*})
+    set slot 40 of {_inv} to {_extItem}
+
+    # Slot 49: Số Lượng Tinh Hoa Hiện Có
+    delete {_sumLore::*}
+    set {_sumLore::1} to "&8&m----------------------------------------"
+    set {_sumLore::2} to "&7Số lượng trong túi đồ: &5%{_essenceCount}% Tinh Hoa"
+    set {_sumLore::3} to ""
+    set {_sumLore::4} to "&6&l✦ HỆ SINH THÁI KINH TẾ ÁC QUỶ:"
+    set {_sumLore::5} to "&f• Rương Thần Thoại: &e10 Tinh Hoa + $500k"
+    set {_sumLore::6} to "&f• Thuốc Xóa Trái: &e2 Tinh Hoa + $100k"
+    set {_sumLore::7} to "&f• Đá Thức Tỉnh: &e5 Tinh Hoa + $250k"
+    set {_sumLore::8} to "&f• Bùa Thức Tỉnh: &e5 Tinh Hoa + 1 Đá"
+    set {_sumLore::9} to "&f• Rumble Ball: &e1 Tinh Hoa + $25k"
+    set {_sumLore::10} to "&8&m----------------------------------------"
+    set {_sumItem} to makeGlowingItem(purple dye, "&5&l✦ VÍ TINH HOA ÁC QUỶ ✦", {_sumLore::*})
+    set slot 49 of {_inv} to {_sumItem}
+
+    openStandardUI({_p}, {_inv}, "UI_G1_C", "UI_G1")
+
+# ---------------------------------------------------------------------
+# 6. XỬ LÝ SỰ KIỆN CLICK GUI VEGAPUNK (UI_G1_C) & POKEDEX (UI_G1_D)
+# ---------------------------------------------------------------------
+
+on InventoryDragEvent:
+    set {_who} to event.getWhoClicked()
+    if {_who} is set:
+        set {_active} to {ui_active::%uuid of {_who}%}
+        if {_active} is "UI_G1_C" or "UI_G1_D":
+            cancel event
+
+on inventory click:
+    set {_p} to player
+    set {_u} to uuid of {_p}
+
+    if {ui_active::%{_u}%} is "UI_G1_D":
+        cancel event
+        if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+            player.updateInventory()
+        if clicked inventory is not player's current inventory:
+            stop
+        set {_slot} to index of event-slot
+        if {_slot} is 45 or 46 or 53:
+            stop
+        stop
+
+    if {ui_active::%{_u}%} is not "UI_G1_C":
+        stop
+
+    cancel event
+    if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+        player.updateInventory()
+    if clicked inventory is not player's current inventory:
+        stop
+
+    set {_slot} to index of event-slot
+    if {_slot} is 45 or 46 or 53:
+        stop
+    set {_clickType} to "%click type%"
+
+    # 1. Slot 13: Đổi Rương Trái Thần Thoại (10 Tinh Hoa + $500,000)
+    if {_slot} is 13:
+        if {_p}'s balance < 500000:
+            sendSystemMsg({_p}, "economy", "Bạn không đủ tiền! Cần &a$500,000&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        if countPlayerItemByTag({_p}, "df_essence") < 10:
+            sendSystemMsg({_p}, "warning", "Cần &510x Tinh Hoa Ác Quỷ&f trong túi đồ để đổi rương!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        if removePlayerItemByTag({_p}, "df_essence", 10) is false:
+            sendSystemMsg({_p}, "warning", "Không thể trừ Tinh Hoa Ác Quỷ!")
+            stop
+        remove 500000 from {_p}'s balance
+        set {_chest} to getRandomFruitChestItem()
+        if {_p} can hold {_chest}:
+            give {_chest} to {_p}
+        else:
+            drop {_chest} at location of {_p}
+            sendSystemMsg({_p}, "warning", "Túi đồ đầy! Rương đã rơi xuống chân bạn.")
+        sendSystemMsg({_p}, "training", "Đổi thành công &6Rương Trái Ác Quỷ Thần Bí&f!")
+        play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1.2 to {_p}
+        openAppraisalGUI({_p})
+
+    # 2. Slot 20: Mua Trái Ác Quỷ Bí Ẩn (50 Coin)
+    else if {_slot} is 20:
+        if getCoinBalance({_p}) < 50:
+            sendSystemMsg({_p}, "error", "Bạn thiếu Coin! Cần 50 Coin để mua Trái Bí Ẩn (Đổi tại /nganhang).")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        takeCoinBalance({_p}, 50)
+        set {_unFruit} to getUnidentifiedFruitItem()
+        giveItemSafely({_p}, {_unFruit})
+        sendSystemMsg({_p}, "economy", "Đã thanh toán 50 Coin mua Trái Bí Ẩn thành công!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to {_p}
+        openAppraisalGUI({_p})
+
+    # 3. Slot 22: Lò Giám Định Vegapunk ($50,000 + 5 TP)
+    else if {_slot} is 22:
+        # Chuột Phải: Giám định TOÀN BỘ trái bí ẩn
+        if {_clickType} contains "RIGHT":
+            set {_availCount} to countPlayerItemByTag({_p}, "unidentified_df")
+            if {_availCount} < 1:
+                sendSystemMsg({_p}, "warning", "Bạn không có Trái Ác Quỷ Bí Ẩn nào trong túi đồ!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+                stop
+
+            set {_totalAppraised} to 0
+            loop {_availCount} times:
+                if countPlayerItemByTag({_p}, "unidentified_df") < 1:
+                    exit loop
+                if {_p}'s balance < 50000:
+                    sendSystemMsg({_p}, "economy", "Hết tiền giám định tiếp!")
+                    exit loop
+                if ({talent::%{_u}%::points} ? 0) < 5:
+                    sendSystemMsg({_p}, "talent", "Hết Điểm Thiên Phú để giám định tiếp!")
+                    exit loop
+
+                if removePlayerItemByTag({_p}, "unidentified_df", 1) is false:
+                    exit loop
+
+                remove 50000 from {_p}'s balance
+                subtract 5 from {talent::%{_u}%::points}
+
+                set {_roll} to random integer between 1 and 100
+                set {_resFruit} to "mera"
+                set {_isTierS} to false
+                if {_roll} <= 70:
+                    set {_epicPool::1} to "mera"
+                    set {_epicPool::2} to "gomu"
+                    set {_epicPool::3} to "ope"
+                    set {_epicPool::4} to "seiryu"
+                    set {_resFruit} to random element out of {_epicPool::*}
+                else:
+                    set {_isTierS} to true
+                    set {_mythicPool::1} to "gura"
+                    set {_mythicPool::2} to "pika"
+                    set {_mythicPool::3} to "goro"
+                    set {_mythicPool::4} to "phoenix"
+                    set {_resFruit} to random element out of {_mythicPool::*}
+
+                set {_resItem} to getDevilFruitItem({_resFruit})
+                if {_p} can hold {_resItem}:
+                    give {_resItem} to {_p}
+                else:
+                    drop {_resItem} at location of {_p}
+                registerFruitToPokedex({_p}, {_resFruit})
+                add 1 to {_totalAppraised}
+
+            if {_totalAppraised} > 0:
+                sendSystemMsg({_p}, "training", "Đã giám định hoàn tất &b%{_totalAppraised}% Trái Ác Quỷ&f!")
+                play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to {_p}
+            openAppraisalGUI({_p})
+
+        # Chuột Trái: Giám định 1 trái (kiểm tra 3 điều kiện TRƯỚC khi trừ vật phẩm)
+        else:
+            if countPlayerItemByTag({_p}, "unidentified_df") < 1:
+                sendSystemMsg({_p}, "warning", "Bạn không có Trái Ác Quỷ Bí Ẩn nào trong túi đồ!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+                stop
+
+            if {_p}'s balance < 50000:
+                sendSystemMsg({_p}, "economy", "Bạn không đủ tiền giám định! Cần &a$50,000&f.")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+                stop
+
+            if ({talent::%{_u}%::points} ? 0) < 5:
+                sendSystemMsg({_p}, "talent", "Bạn không đủ Điểm Thiên Phú! Cần &b5 TP&f.")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+                stop
+
+            if removePlayerItemByTag({_p}, "unidentified_df", 1) is false:
+                sendSystemMsg({_p}, "warning", "Không thể lấy Trái Ác Quỷ Bí Ẩn khỏi túi đồ!")
+                stop
+
+            remove 50000 from {_p}'s balance
+            subtract 5 from {talent::%{_u}%::points}
+
+            set {_roll} to random integer between 1 and 100
+            set {_resFruit} to "mera"
+            set {_isTierS} to false
+
+            if {_roll} <= 70:
+                set {_epicPool::1} to "mera"
+                set {_epicPool::2} to "gomu"
+                set {_epicPool::3} to "ope"
+                set {_epicPool::4} to "seiryu"
+                set {_resFruit} to random element out of {_epicPool::*}
+            else:
+                set {_isTierS} to true
+                set {_mythicPool::1} to "gura"
+                set {_mythicPool::2} to "pika"
+                set {_mythicPool::3} to "goro"
+                set {_mythicPool::4} to "phoenix"
+                set {_resFruit} to random element out of {_mythicPool::*}
+
+            set {_resultItem} to getDevilFruitItem({_resFruit})
+            set {_resName} to getDevilFruitDisplayName({_resFruit})
+
+            if {_p} can hold {_resultItem}:
+                give {_resultItem} to {_p}
+            else:
+                drop {_resultItem} at location of {_p}
+                sendSystemMsg({_p}, "warning", "Túi đồ đầy! Trái Ác Quỷ đã rơi xuống chân bạn.")
+
+            registerFruitToPokedex({_p}, {_resFruit})
+
+            set {_pName} to name of {_p}
+            if {_isTierS} is true:
+                broadcastDualCard("&d&l✦ GIÁM ĐỊNH HUYỀN THOẠI", "%{_pName}% đã giám định thành công Trái Tier S %{_resName}%!", "Sức mạnh tối thượng của Đại Hải Trình chính thức thức tỉnh!")
+                play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1.5 and pitch 0.8 to {_p}
+                spawnVisualParticle("EXPLOSION_LARGE", location of {_p}, 15, 0.8, 1.2, 0.8, 0.1)
+                spawnVisualParticle("TOTEM", location of {_p}, 30, 0.6, 1.0, 0.6, 0.2)
+            else:
+                sendSystemMsg({_p}, "training", "Giám định thành công! Bạn nhận được &e%{_resName}%&f.")
+                play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to {_p}
+            openAppraisalGUI({_p})
+
+    # 4. Slot 24: Mua Rumble Ball ($25,000 + 1 Tinh Hoa)
+    else if {_slot} is 24:
+        set {_buyAmount} to 1
+        set {_costMoney} to 25000
+        set {_costEssence} to 1
+        if {_clickType} contains "RIGHT":
+            set {_buyAmount} to 5
+            set {_costMoney} to 125000
+            set {_costEssence} to 5
+
+        if {_p}'s balance < {_costMoney}:
+            sendSystemMsg({_p}, "economy", "Bạn không đủ tiền! Cần &a$%{_costMoney}%&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+
+        if countPlayerItemByTag({_p}, "df_essence") < {_costEssence}:
+            sendSystemMsg({_p}, "warning", "Cần &5%{_costEssence}%x Tinh Hoa Ác Quỷ&f trong túi đồ!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+
+        if removePlayerItemByTag({_p}, "df_essence", {_costEssence}) is false:
+            sendSystemMsg({_p}, "warning", "Không thể trừ Tinh Hoa Ác Quỷ!")
+            stop
+
+        remove {_costMoney} from {_p}'s balance
+        set {_rbItem} to getRumbleBallItem()
+        set item amount of {_rbItem} to {_buyAmount}
+        if {_p} can hold {_rbItem}:
+            give {_rbItem} to {_p}
+        else:
+            drop {_rbItem} at location of {_p}
+            sendSystemMsg({_p}, "warning", "Túi đồ đầy! Rumble Ball đã rơi xuống chân bạn.")
+        sendSystemMsg({_p}, "training", "Đã mua &e%{_buyAmount}%x Rumble Ball&f thành công!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to {_p}
+        openAppraisalGUI({_p})
+
+    # 5. Slot 29: Điều Chế Thuốc Xóa Trái Ác Quỷ ($100,000 + 2 Tinh Hoa)
+    else if {_slot} is 29:
+        if {_p}'s balance < 100000:
+            sendSystemMsg({_p}, "economy", "Bạn không đủ tiền! Cần &a$100,000&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        if countPlayerItemByTag({_p}, "df_essence") < 2:
+            sendSystemMsg({_p}, "warning", "Cần &52x Tinh Hoa Ác Quỷ&f trong túi đồ để điều chế!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        if removePlayerItemByTag({_p}, "df_essence", 2) is false:
+            sendSystemMsg({_p}, "warning", "Không thể trừ Tinh Hoa Ác Quỷ!")
+            stop
+        remove 100000 from {_p}'s balance
+        set {_rm} to getFruitRemoverItem()
+        if {_p} can hold {_rm}:
+            give {_rm} to {_p}
+        else:
+            drop {_rm} at location of {_p}
+            sendSystemMsg({_p}, "warning", "Túi đồ đầy! Thuốc Xóa Trái đã rơi xuống chân bạn.")
+        sendSystemMsg({_p}, "training", "Điều chế thành công &5Thuốc Xóa Trái Ác Quỷ&f!")
+        play sound "BLOCK_BREWING_STAND_BREW" with volume 1 and pitch 1 to {_p}
+        openAppraisalGUI({_p})
+
+    # 6. Slot 31: Chế Tạo Đá Thức Tỉnh Ác Quỷ ($250,000 + 5 Tinh Hoa)
+    else if {_slot} is 31:
+        if {_p}'s balance < 250000:
+            sendSystemMsg({_p}, "economy", "Bạn không đủ tiền! Cần &a$250,000&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        if countPlayerItemByTag({_p}, "df_essence") < 5:
+            sendSystemMsg({_p}, "warning", "Cần &55x Tinh Hoa Ác Quỷ&f trong túi đồ để rèn Đá!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        if removePlayerItemByTag({_p}, "df_essence", 5) is false:
+            sendSystemMsg({_p}, "warning", "Không thể trừ Tinh Hoa Ác Quỷ!")
+            stop
+        remove 250000 from {_p}'s balance
+        set {_stone} to getAwakeningStoneItem()
+        if {_p} can hold {_stone}:
+            give {_stone} to {_p}
+        else:
+            drop {_stone} at location of {_p}
+            sendSystemMsg({_p}, "warning", "Túi đồ đầy! Đá Thức Tỉnh đã rơi xuống chân bạn.")
+        sendSystemMsg({_p}, "training", "Chế tạo thành công &eĐá Thức Tỉnh Ánh Sao&f!")
+        play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1.2 to {_p}
+        openAppraisalGUI({_p})
+
+    # 7. Slot 33: Hợp Thành Bùa Thức Tỉnh Tinh Tú (5 Tinh Hoa + 1 Đá Thức Tỉnh)
+    else if {_slot} is 33:
+        if countPlayerItemByTag({_p}, "df_essence") < 5:
+            sendSystemMsg({_p}, "warning", "Cần &55x Tinh Hoa Ác Quỷ&f trong túi đồ!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        if countPlayerItemByTag({_p}, "awakening_stone") < 1:
+            sendSystemMsg({_p}, "warning", "Cần &61x Đá Thức Tỉnh&f trong túi đồ để hợp thành Bùa!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        if removePlayerItemByTag({_p}, "df_essence", 5) is false:
+            stop
+        if removePlayerItemByTag({_p}, "awakening_stone", 1) is false:
+            stop
+        set {_talisman} to getAwakeningTalismanItem()
+        if {_p} can hold {_talisman}:
+            give {_talisman} to {_p}
+        else:
+            drop {_talisman} at location of {_p}
+            sendSystemMsg({_p}, "warning", "Túi đồ đầy! Bùa Thức Tỉnh đã rơi xuống chân bạn.")
+        sendSystemMsg({_p}, "training", "Hợp thành thành công &6Bùa Thức Tỉnh Tinh Tú&f!")
+        play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1.5 to {_p}
+        openAppraisalGUI({_p})
+
+    # 8. Slot 40: Máy Chiết Xuất Tinh Hoa Ác Quỷ (Phân rã trái thừa)
+    else if {_slot} is 40:
+        # Chuột Phải: Phân rã TOÀN BỘ trái thừa
+        if {_clickType} contains "RIGHT":
+            set {_dissolvedCount} to 0
+            loop integers from 0 to 40:
+                set {_it} to slot loop-integer of {_p}'s inventory
+                if {_it} is set:
+                    if {_it} is not air:
+                        if type of {_it} is not air:
+                            set {_dfTag} to string tag "DevilFruit" of nbt compound of {_it}
+                            if {_dfTag} is set:
+                                if {_dfTag} is not "":
+                                    set {_amt} to item amount of {_it}
+                                    add {_amt} to {_dissolvedCount}
+                                    set slot loop-integer of {_p}'s inventory to air
+                                    registerFruitToPokedex({_p}, {_dfTag})
+
+            if {_dissolvedCount} > 0:
+                set {_essItem} to getDevilFruitEssenceItem()
+                set item amount of {_essItem} to {_dissolvedCount}
+                if {_p} can hold {_essItem}:
+                    give {_essItem} to {_p}
+                else:
+                    drop {_essItem} at location of {_p}
+                sendSystemMsg({_p}, "training", "Đã chiết xuất &b%{_dissolvedCount}% Trái Ác Quỷ&f thành &5%{_dissolvedCount}% Tinh Hoa Ác Quỷ&f!")
+                play sound "BLOCK_BREWING_STAND_BREW" with volume 1 and pitch 1.2 to {_p}
+            else:
+                sendSystemMsg({_p}, "warning", "Không tìm thấy Trái Ác Quỷ nào trong túi đồ để chiết xuất!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            openAppraisalGUI({_p})
+
+        # Chuột Trái: Phân rã 1 trái
+        else:
+            set {_dissolved} to false
+            loop integers from 0 to 40:
+                set {_it} to slot loop-integer of {_p}'s inventory
+                if {_it} is set:
+                    if {_it} is not air:
+                        if type of {_it} is not air:
+                            set {_dfTag} to string tag "DevilFruit" of nbt compound of {_it}
+                            if {_dfTag} is set:
+                                if {_dfTag} is not "":
+                                    set {_amt} to item amount of {_it}
+                                    if {_amt} <= 1:
+                                        set slot loop-integer of {_p}'s inventory to air
+                                    else:
+                                        set item amount of (slot loop-integer of {_p}'s inventory) to ({_amt} - 1)
+                                    registerFruitToPokedex({_p}, {_dfTag})
+                                    set {_dissolved} to true
+                                    exit loop
+
+            if {_dissolved} is true:
+                set {_essItem} to getDevilFruitEssenceItem()
+                if {_p} can hold {_essItem}:
+                    give {_essItem} to {_p}
+                else:
+                    drop {_essItem} at location of {_p}
+                sendSystemMsg({_p}, "training", "Đã chiết xuất &b1 Trái Ác Quỷ&f thành &51 Tinh Hoa Ác Quỷ&f!")
+                play sound "BLOCK_BREWING_STAND_BREW" with volume 1 and pitch 1.2 to {_p}
+            else:
+                sendSystemMsg({_p}, "warning", "Bạn không có Trái Ác Quỷ nào trong túi đồ để chiết xuất!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            openAppraisalGUI({_p})
+
+# ---------------------------------------------------------------------
+# 7. SỬ DỤNG RUMBLE BALL & SÁCH ĐỒ GIÁM KHI CLICK PHẢI
+# ---------------------------------------------------------------------
+
+function isZoanRumbleActive(p: player) :: boolean:
+    if {_p} is not online:
+        return false
+    set {_u} to uuid of {_p}
+    set {_endTime} to {rumble_ball_end::%{_u}%} ? 0
+    if System.currentTimeMillis() < {_endTime}:
+        return true
+    return false
+
+on rightclick:
+    set {_tool} to player's tool
+    if isValidItem({_tool}) is true:
+        set {_tag} to string tag "SkyblockItem" of nbt compound of {_tool}
+
+        # 1. Click mở Bách Khoa Toàn Thư
+        if {_tag} is "df_encyclopedia":
+            cancel event
+            openPokedexGUI(player)
+            stop
+
+        # 2. Click sử dụng Rumble Ball
+        else if {_tag} is "rumble_ball":
+            cancel event
+            set {_u} to uuid of player
+
+            # Kiểm tra xem có Trái Zoan không (Bản thân hoặc Đệ Tử)
+            set {_hasZoan} to false
+            if {df_data::%{_u}%::fruit} is "seiryu" or "phoenix":
+                set {_hasZoan} to true
+            if {disciple::%{_u}%::style} is "seiryu" or "phoenix":
+                set {_hasZoan} to true
+
+            if {_hasZoan} is not true:
+                sendSystemMsg(player, "warning", "Rumble Ball chỉ có tác dụng với người hoặc Đệ Tử mang Trái Hệ Zoan (Seiryu / Phoenix)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+                stop
+
+            set {_nowMs} to System.currentTimeMillis()
+            set {_lastUse} to {rumble_ball_cd::%{_u}%} ? 0
+            if ({_nowMs} - {_lastUse}) < 90000:
+                set {_remSec} to round((90000 - ({_nowMs} - {_lastUse})) / 1000)
+                send action bar "&c[Rumble Ball] Đang hồi! Chờ &e%{_remSec}%s&c nữa." to player
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+                stop
+
+            # Tiêu hao 1 viên
+            if item amount of {_tool} <= 1:
+                set player's tool to air
+            else:
+                set item amount of {_tool} to (item amount of {_tool} - 1)
+                set player's tool to {_tool}
+
+            set {rumble_ball_cd::%{_u}%} to {_nowMs}
+            set {rumble_ball_end::%{_u}%} to {_nowMs} + 60000
+            set {rumble_ball_def::%{_u}%} to {_nowMs} + 60000
+            apply speed 1 to player for 60 seconds
+
+            send action bar "&6&l✦ RUMBLE BALL: CƯỜNG HÓA BIẾN HÌNH ZOAN (60s)! ✦" to player
+            play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1.2 and pitch 1.2 to player
+            set {_pLoc} to location of player
+            add 1 to y-coordinate of {_pLoc}
+            spawnVisualParticle("DRAGON_BREATH", {_pLoc}, 30, 0.6, 0.8, 0.6, 0.1)
+            spawnVisualParticle("FIREWORKS_SPARK", {_pLoc}, 20, 0.5, 0.5, 0.5, 0.08)
+
+# ---------------------------------------------------------------------
+# 8. LỆNH NGƯỜI CHƠI & LỆNH QUẢN TRỊ ADMIN
+# ---------------------------------------------------------------------
+
+command /giamdinh:
+    aliases: /appraise, /vegapunk
+    trigger:
+        openAppraisalGUI(player)
+
+command /bachkhoatrai:
+    aliases: /pokedex, /dfpokedex, /encyclopedia
+    trigger:
+        openPokedexGUI(player)
+
+command /giveunidentified [<player>]:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        set {_p} to arg-1 ? player
+        giveUnidentifiedFruit({_p})
+        send "&a[Vegapunk] Đã trao 1 Trái Ác Quỷ Chưa Giám Định cho %name of {_p}%!" to player
+
+command /traibian [<player>]:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        set {_p} to arg-1 ? player
+        giveUnidentifiedFruit({_p})
+        send "&a[Vegapunk] Đã trao 1 Trái Ác Quỷ Chưa Giám Định cho %name of {_p}%!" to player
+
+command /dfextadmin [<text>] [<player>] [<text>]:
+    permission: op
+    permission message: &cBạn không có quyền quản trị Giám Định!
+    trigger:
+        if arg-1 is "giveunidentified":
+            set {_p} to arg-2 ? player
+            giveUnidentifiedFruit({_p})
+            send "&aĐã trao Trái Ác Quỷ Bí Ẩn cho %name of {_p}%!" to player
+
+        else if arg-1 is "giverumble":
+            set {_p} to arg-2 ? player
+            set {_rb} to getRumbleBallItem()
+            if {_p} can hold {_rb}:
+                give {_rb} to {_p}
+            else:
+                drop {_rb} at location of {_p}
+            send "&aĐã trao Rumble Ball cho %name of {_p}%!" to player
+
+        else if arg-1 is "giveencyclopedia":
+            set {_p} to arg-2 ? player
+            set {_enc} to getEncyclopediaItem()
+            if {_p} can hold {_enc}:
+                give {_enc} to {_p}
+            else:
+                drop {_enc} at location of {_p}
+            send "&aĐã trao Đồ Giám Trái Ác Quỷ cho %name of {_p}%!" to player
+
+        else if arg-1 is "giveessence":
+            set {_p} to arg-2 ? player
+            set {_ess} to getDevilFruitEssenceItem()
+            if {_p} can hold {_ess}:
+                give {_ess} to {_p}
+            else:
+                drop {_ess} at location of {_p}
+            send "&aĐã trao 1x Tinh Hoa Ác Quỷ cho %name of {_p}%!" to player
+
+        else if arg-1 is "givetalisman":
+            set {_p} to arg-2 ? player
+            set {_tal} to getAwakeningTalismanItem()
+            if {_p} can hold {_tal}:
+                give {_tal} to {_p}
+            else:
+                drop {_tal} at location of {_p}
+            send "&aĐã trao 1x Bùa Thức Tỉnh Tinh Tú cho %name of {_p}%!" to player
+
+        else:
+            send "&6&l✦ HỆ THỐNG QUẢN TRỊ GIÁM ĐỊNH & EXTENSION ✦" to player
+            send "&e• /dfextadmin giveunidentified [<player>]" to player
+            send "&e• /dfextadmin giverumble [<player>]" to player
+            send "&e• /dfextadmin giveencyclopedia [<player>]" to player
+            send "&e• /dfextadmin giveessence [<player>]" to player
+            send "&e• /dfextadmin givetalisman [<player>]" to player

@@ -1,0 +1,17 @@
+enable: true
+slot: 10
+title: '&2&lVật Liệu Xây Dựng'
+hidden: false
+sub-section: false
+display-item: false
+fill-item:
+  material: AIR
+nav-bar:
+  mode: INHERIT
+item:
+  material: GRASS_BLOCK
+  displayname: '&2&lKhối & Vật Liệu Xây Dựng'
+  name: '&2&lKhối & Vật Liệu Xây Dựng'
+  lore:
+  - '&7Mua đất, đá, gỗ, kính, thạch anh'
+  - '&7để mở rộng & trang trí Đảo Skyblock.'

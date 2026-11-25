@@ -1,0 +1,236 @@
+package xyz.pixelatedw.mineminenomi.init;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import xyz.pixelatedw.mineminenomi.api.enums.HandcuffType;
+import xyz.pixelatedw.mineminenomi.api.enums.NetType;
+import xyz.pixelatedw.mineminenomi.api.helpers.AttributeHelper;
+import xyz.pixelatedw.mineminenomi.effects.AntiBodyIceOniEffect;
+import xyz.pixelatedw.mineminenomi.effects.AntiBodyMummyVirusEffect;
+import xyz.pixelatedw.mineminenomi.effects.AntiKnockbackEffect;
+import xyz.pixelatedw.mineminenomi.effects.AntidoteEffect;
+import xyz.pixelatedw.mineminenomi.effects.BaseEffect;
+import xyz.pixelatedw.mineminenomi.effects.BindEffect;
+import xyz.pixelatedw.mineminenomi.effects.BlackBoxEffect;
+import xyz.pixelatedw.mineminenomi.effects.BubblyCoralEffect;
+import xyz.pixelatedw.mineminenomi.effects.CandleLockEffect;
+import xyz.pixelatedw.mineminenomi.effects.CandyStuckEffect;
+import xyz.pixelatedw.mineminenomi.effects.CarryingEffect;
+import xyz.pixelatedw.mineminenomi.effects.CaughtInNetEffect;
+import xyz.pixelatedw.mineminenomi.effects.ChiyuHormoneEffect;
+import xyz.pixelatedw.mineminenomi.effects.ChiyupopoEffect;
+import xyz.pixelatedw.mineminenomi.effects.CycloneTempoEffect;
+import xyz.pixelatedw.mineminenomi.effects.DFCurseEffect;
+import xyz.pixelatedw.mineminenomi.effects.DamageOverTimeEffect;
+import xyz.pixelatedw.mineminenomi.effects.DehydrationEffect;
+import xyz.pixelatedw.mineminenomi.effects.DizzyEffect;
+import xyz.pixelatedw.mineminenomi.effects.DoaVanishEffect;
+import xyz.pixelatedw.mineminenomi.effects.DokuPoisonEffect;
+import xyz.pixelatedw.mineminenomi.effects.DoorHeadEffect;
+import xyz.pixelatedw.mineminenomi.effects.DrunkEffect;
+import xyz.pixelatedw.mineminenomi.effects.FatigueEffect;
+import xyz.pixelatedw.mineminenomi.effects.FragileEffect;
+import xyz.pixelatedw.mineminenomi.effects.FrostbiteEffect;
+import xyz.pixelatedw.mineminenomi.effects.FrozenEffect;
+import xyz.pixelatedw.mineminenomi.effects.GanmenSeichoHormoneEffect;
+import xyz.pixelatedw.mineminenomi.effects.GenocideRaidEffect;
+import xyz.pixelatedw.mineminenomi.effects.GrabbedEffect;
+import xyz.pixelatedw.mineminenomi.effects.HakiOveruseEffect;
+import xyz.pixelatedw.mineminenomi.effects.HandcuffedEffect;
+import xyz.pixelatedw.mineminenomi.effects.HeatEggTempoEffect;
+import xyz.pixelatedw.mineminenomi.effects.HungerOverTimeEffect;
+import xyz.pixelatedw.mineminenomi.effects.IceOniEffect;
+import xyz.pixelatedw.mineminenomi.effects.ImpactFrameEffect;
+import xyz.pixelatedw.mineminenomi.effects.InEventEffect;
+import xyz.pixelatedw.mineminenomi.effects.LookoutEffect;
+import xyz.pixelatedw.mineminenomi.effects.LovestruckEffect;
+import xyz.pixelatedw.mineminenomi.effects.MovementBlockedEffect;
+import xyz.pixelatedw.mineminenomi.effects.MummyVirusEffect;
+import xyz.pixelatedw.mineminenomi.effects.NegativeEffect;
+import xyz.pixelatedw.mineminenomi.effects.NoHandsEffect;
+import xyz.pixelatedw.mineminenomi.effects.NoroSlownessEffect;
+import xyz.pixelatedw.mineminenomi.effects.OilCoveredEffect;
+import xyz.pixelatedw.mineminenomi.effects.ParalysisEffect;
+import xyz.pixelatedw.mineminenomi.effects.PlayDeadEffect;
+import xyz.pixelatedw.mineminenomi.effects.PunkCrossEffect;
+import xyz.pixelatedw.mineminenomi.effects.ReducedFallEffect;
+import xyz.pixelatedw.mineminenomi.effects.SeismicBubbleEffect;
+import xyz.pixelatedw.mineminenomi.effects.SilentEffect;
+import xyz.pixelatedw.mineminenomi.effects.SmokeEffect;
+import xyz.pixelatedw.mineminenomi.effects.StickyEffect;
+import xyz.pixelatedw.mineminenomi.effects.TensionHormoneEffect;
+import xyz.pixelatedw.mineminenomi.effects.TokudaiCandlePoisonEffect;
+import xyz.pixelatedw.mineminenomi.effects.UnconsciousEffect;
+import xyz.pixelatedw.mineminenomi.effects.VanishEffect;
+import xyz.pixelatedw.mineminenomi.effects.WashedEffect;
+import xyz.pixelatedw.mineminenomi.effects.WetEffect;
+
+public class ModEffects {
+	// Fields
+	public static final Holder<MobEffect> BUBBLY_CORAL = ModRegistry.registerEffect("Bubbly Coral",(Supplier)(((Supplier<BubblyCoralEffect>)(BubblyCoralEffect::new))));
+	public static final DeferredHolder<MobEffect, LookoutEffect> ANIMAL_LOOKOUT = ModRegistry.registerEffect("Animal Lookout",(Supplier)(((Supplier<LookoutEffect>)(LookoutEffect::new))));
+	public static final DeferredHolder<MobEffect, CandleLockEffect> CANDLE_LOCK = ModRegistry.registerEffect("Candle Lock",(Supplier)(((Supplier<CandleLockEffect>)(CandleLockEffect::new))));
+	public static final DeferredHolder<MobEffect, LovestruckEffect> LOVESTRUCK = ModRegistry.registerEffect("Lovestruck",(Supplier)(((Supplier<LovestruckEffect>)(LovestruckEffect::new))));
+	public static final DeferredHolder<MobEffect, NegativeEffect> NEGATIVE = ModRegistry.registerEffect("Negative",(Supplier)(((Supplier<NegativeEffect>)(NegativeEffect::new))));
+	public static final DeferredHolder<MobEffect, ChiyuHormoneEffect> CHIYU_HORMONE = ModRegistry.registerEffect("Chiyu Hormone",(Supplier)(((Supplier<ChiyuHormoneEffect>)(ChiyuHormoneEffect::new))));
+	public static final DeferredHolder<MobEffect, FrostbiteEffect> FROSTBITE = ModRegistry.registerEffect("Frostbite",(Supplier)(((Supplier<FrostbiteEffect>)(FrostbiteEffect::new))));
+	public static final DeferredHolder<MobEffect, FrozenEffect> FROZEN = ModRegistry.registerEffect("Frozen",(Supplier)(((Supplier<FrozenEffect>)(FrozenEffect::new))));
+	public static final DeferredHolder<MobEffect, TensionHormoneEffect> TENSION_HORMONE = ModRegistry.registerEffect("Tension Hormone",(Supplier)(((Supplier<TensionHormoneEffect>)(TensionHormoneEffect::new))));
+	public static final DeferredHolder<MobEffect, GanmenSeichoHormoneEffect> GANMEN_SEICHO_HORMONE = ModRegistry.registerEffect("Ganmen Seicho Hormone",(Supplier)(((Supplier<GanmenSeichoHormoneEffect>)(GanmenSeichoHormoneEffect::new))));
+	public static final DeferredHolder<MobEffect, DrunkEffect> DRUNK = ModRegistry.registerEffect("Drunk",(Supplier)(((Supplier<DrunkEffect>)(DrunkEffect::new))));
+	public static final DeferredHolder<MobEffect, DoorHeadEffect> DOOR_HEAD = ModRegistry.registerEffect("Door Head",(Supplier)(((Supplier<DoorHeadEffect>)(DoorHeadEffect::new))));
+	public static final DeferredHolder<MobEffect, DizzyEffect> DIZZY = ModRegistry.registerEffect("Dizzy",(Supplier)(((Supplier<DizzyEffect>)(DizzyEffect::new))));
+	public static final DeferredHolder<MobEffect, MovementBlockedEffect> MOVEMENT_BLOCKED = ModRegistry.registerEffect("Movement Blocked",(Supplier)(((Supplier<MovementBlockedEffect>)(MovementBlockedEffect::new))));
+	public static final DeferredHolder<MobEffect, UnconsciousEffect> UNCONSCIOUS = ModRegistry.registerEffect("Unconscious",(Supplier)(((Supplier<UnconsciousEffect>)(UnconsciousEffect::new))));
+	public static final DeferredHolder<MobEffect, WashedEffect> WASHED = ModRegistry.registerEffect("Washed",(Supplier)(((Supplier<WashedEffect>)(WashedEffect::new))));
+	public static final DeferredHolder<MobEffect, StickyEffect> STICKY = ModRegistry.registerEffect("Sticky",(Supplier)(((Supplier<StickyEffect>)(StickyEffect::new))));
+	public static final DeferredHolder<MobEffect, BlackBoxEffect> BLACK_BOX = ModRegistry.registerEffect("Black Box",(Supplier)(((Supplier<BlackBoxEffect>)(BlackBoxEffect::new))));
+	public static final DeferredHolder<MobEffect, CandyStuckEffect> CANDY_STUCK = ModRegistry.registerEffect("Candy Stuck",(Supplier)(((Supplier<CandyStuckEffect>)(CandyStuckEffect::new))));
+	public static final DeferredHolder<MobEffect, ParalysisEffect> PARALYSIS = ModRegistry.registerEffect("Paralysis",(Supplier)(((Supplier<ParalysisEffect>)(ParalysisEffect::new))));
+	public static final DeferredHolder<MobEffect, HakiOveruseEffect> HAKI_OVERUSE = ModRegistry.registerEffect("Haki Overuse",(Supplier)(((Supplier<HakiOveruseEffect>)(HakiOveruseEffect::new))));
+	public static final DeferredHolder<MobEffect, SmokeEffect> SMOKE = ModRegistry.registerEffect("Smoke",(Supplier)(((Supplier<SmokeEffect>)(SmokeEffect::new))));
+	public static final DeferredHolder<MobEffect, ReducedFallEffect> REDUCED_FALL = ModRegistry.registerEffect("Reduced Fall",(Supplier)(((Supplier<ReducedFallEffect>)(ReducedFallEffect::new))));
+	public static final DeferredHolder<MobEffect, HandcuffedEffect> HANDCUFFED;
+	public static final DeferredHolder<MobEffect, HandcuffedEffect> HANDCUFFED_KAIROSEKI;
+	public static final DeferredHolder<MobEffect, HandcuffedEffect> HANDCUFFED_EXPLOSIVE;
+	public static final DeferredHolder<MobEffect, BindEffect> BIND;
+	public static final DeferredHolder<MobEffect, NoHandsEffect> NO_HANDS;
+	public static final DeferredHolder<MobEffect, FatigueEffect> FATIGUE_EFFECT;
+	public static final DeferredHolder<MobEffect, NoroSlownessEffect> NORO_SLOWNESS;
+	public static final DeferredHolder<MobEffect, DamageOverTimeEffect> BLEEDING;
+	public static final DeferredHolder<MobEffect, SilentEffect> SILENT;
+	public static final DeferredHolder<MobEffect, DamageOverTimeEffect> SABOTEN_BOSHI;
+	public static final DeferredHolder<MobEffect, OilCoveredEffect> OIL_COVERED;
+	public static final DeferredHolder<MobEffect, DehydrationEffect> DEHYDRATION;
+	public static final DeferredHolder<MobEffect, GenocideRaidEffect> GENOCIDE_RAID;
+	public static final DeferredHolder<MobEffect, DokuPoisonEffect> DOKU_POISON;
+	public static final DeferredHolder<MobEffect, PunkCrossEffect> PUNK_CROSS;
+	public static final DeferredHolder<MobEffect, VanishEffect> VANISH;
+	public static final DeferredHolder<MobEffect, VanishEffect> SUKE_INVISIBILITY;
+	public static final DeferredHolder<MobEffect, DoaVanishEffect> DOA_INVISIBILITY;
+	public static final DeferredHolder<MobEffect, SeismicBubbleEffect> SEISMIC_BUBBLE;
+	public static final DeferredHolder<MobEffect, InEventEffect> IN_EVENT;
+	public static final DeferredHolder<MobEffect, AntidoteEffect> ANTIDOTE;
+	public static final DeferredHolder<MobEffect, HungerOverTimeEffect> HUNGER;
+	public static final DeferredHolder<MobEffect, MummyVirusEffect> MUMMY_VIRUS;
+	public static final DeferredHolder<MobEffect, AntiBodyMummyVirusEffect> MUMMY_VIRUS_ANTIBODY;
+	public static final DeferredHolder<MobEffect, IceOniEffect> ICE_ONI;
+	public static final DeferredHolder<MobEffect, AntiBodyIceOniEffect> ICE_ONI_ANTIBODY;
+	public static final DeferredHolder<MobEffect, FrostbiteEffect> ICE_ONI_FROSTBITE;
+	public static final DeferredHolder<MobEffect, ChiyupopoEffect> CHIYUPOPO;
+	public static final DeferredHolder<MobEffect, TokudaiCandlePoisonEffect> TOKUDAI_CANDLE_POISON;
+	public static final DeferredHolder<MobEffect, CycloneTempoEffect> CYCLONE_TEMPO;
+	public static final DeferredHolder<MobEffect, HeatEggTempoEffect> HEAT_EGG_TEMPO;
+	public static final DeferredHolder<MobEffect, DFCurseEffect> KAIROSEKI_WEAKNESS;
+	public static final DeferredHolder<MobEffect, DFCurseEffect> WATER_WEAKNESS;
+	public static final DeferredHolder<MobEffect, PlayDeadEffect> PLAY_DEAD;
+	public static final DeferredHolder<MobEffect, UnconsciousEffect> CHALLENGE_FAILED;
+	public static final DeferredHolder<MobEffect, CaughtInNetEffect> CAUGHT_IN_NET;
+	public static final DeferredHolder<MobEffect, CaughtInNetEffect> CAUGHT_IN_KAIROSEKI_NET;
+	public static final DeferredHolder<MobEffect, CarryingEffect> CARRYING;
+	public static final DeferredHolder<MobEffect, WetEffect> WET;
+	public static final DeferredHolder<MobEffect, MobEffect> SWIM_SLOWDOWN;
+	public static final DeferredHolder<MobEffect, GrabbedEffect> GRABBED;
+	public static final DeferredHolder<MobEffect, AntiKnockbackEffect> ANTI_KNOCKBACK;
+	public static final DeferredHolder<MobEffect, BaseEffect> LAUNCHED;
+	public static final DeferredHolder<MobEffect, FragileEffect> FRAGILE;
+	public static final DeferredHolder<MobEffect, ImpactFrameEffect> IMPACT_FRAME;
+
+	public static void init() {
+	}
+	static  {
+		Supplier<HandcuffedEffect> var0 = () -> {
+			return new HandcuffedEffect(HandcuffType.NORMAL);
+		};
+		HANDCUFFED = (DeferredHolder) (ModRegistry.registerEffect("Handcuffed",var0));
+		Supplier<HandcuffedEffect> var1 = () -> {
+			return new HandcuffedEffect(HandcuffType.KAIROSEKI);
+		};
+		HANDCUFFED_KAIROSEKI = (DeferredHolder) (ModRegistry.registerEffect("Handcuffed","handcuffed_kairoseki",var1));
+		Supplier<HandcuffedEffect> var2 = () -> {
+			return new HandcuffedEffect(HandcuffType.EXPLOSIVE);
+		};
+		HANDCUFFED_EXPLOSIVE = (DeferredHolder) (ModRegistry.registerEffect("Handcuffed","handcuffed_explosive",var2));
+		BIND = (DeferredHolder) (ModRegistry.registerEffect("Bind",(Supplier)(((Supplier<BindEffect>)(BindEffect::new)))));
+		NO_HANDS = (DeferredHolder) (ModRegistry.registerEffect("No Hands",(Supplier)(((Supplier<NoHandsEffect>)(NoHandsEffect::new)))));
+		FATIGUE_EFFECT = (DeferredHolder) (ModRegistry.registerEffect("Fatigue",(Supplier)(((Supplier<FatigueEffect>)(FatigueEffect::new)))));
+		NORO_SLOWNESS = (DeferredHolder) (ModRegistry.registerEffect("Noro Slowness",(Supplier)(((Supplier<NoroSlownessEffect>)(NoroSlownessEffect::new)))));
+		Supplier<DamageOverTimeEffect> var3 = () -> {
+			Function<LivingEntity, DamageSource> lv5_0 = (l2_0) -> {
+				return ModDamageSources.getInstance((LevelAccessor)(l2_0.level())).bleed();
+			};
+			return new DamageOverTimeEffect(lv5_0,2F,20);
+		};
+		BLEEDING = (DeferredHolder) (ModRegistry.registerEffect("Bleeding",var3));
+		SILENT = (DeferredHolder) (ModRegistry.registerEffect("Silent",(Supplier)(((Supplier<SilentEffect>)(SilentEffect::new)))));
+		Supplier<DamageOverTimeEffect> var4 = () -> {
+			Function<LivingEntity, DamageSource> lv7_0 = (l2_0) -> {
+				return l2_0.damageSources().cactus();
+			};
+			return new DamageOverTimeEffect(lv7_0,2F,40);
+		};
+		SABOTEN_BOSHI = (DeferredHolder) (ModRegistry.registerEffect("Saboten Boshi",var4));
+		OIL_COVERED = (DeferredHolder) (ModRegistry.registerEffect("Oil Covered",(Supplier)(((Supplier<OilCoveredEffect>)(OilCoveredEffect::new)))));
+		DEHYDRATION = (DeferredHolder) (ModRegistry.registerEffect("Dehydration",(Supplier)(((Supplier<DehydrationEffect>)(DehydrationEffect::new)))));
+		GENOCIDE_RAID = (DeferredHolder) (ModRegistry.registerEffect("Genocide Raid",(Supplier)(((Supplier<GenocideRaidEffect>)(GenocideRaidEffect::new)))));
+		DOKU_POISON = (DeferredHolder) (ModRegistry.registerEffect("Doku Poison",(Supplier)(((Supplier<DokuPoisonEffect>)(DokuPoisonEffect::new)))));
+		PUNK_CROSS = (DeferredHolder) (ModRegistry.registerEffect("Punk Cross",(Supplier)(((Supplier<PunkCrossEffect>)(PunkCrossEffect::new)))));
+		VANISH = (DeferredHolder) (ModRegistry.registerEffect("Vanish",(Supplier)(((Supplier<VanishEffect>)(VanishEffect::new)))));
+		SUKE_INVISIBILITY = (DeferredHolder) (ModRegistry.registerEffect("Suke Invisibility",(Supplier)(((Supplier<VanishEffect>)(VanishEffect::new)))));
+		DOA_INVISIBILITY = (DeferredHolder) (ModRegistry.registerEffect("Doa Invisibility",(Supplier)(((Supplier<DoaVanishEffect>)(DoaVanishEffect::new)))));
+		SEISMIC_BUBBLE = (DeferredHolder) (ModRegistry.registerEffect("Seismic Bubble",(Supplier)(((Supplier<SeismicBubbleEffect>)(SeismicBubbleEffect::new)))));
+		IN_EVENT = (DeferredHolder) (ModRegistry.registerEffect("In Event",(Supplier)(((Supplier<InEventEffect>)(InEventEffect::new)))));
+		ANTIDOTE = (DeferredHolder) (ModRegistry.registerEffect("Antidote",(Supplier)(((Supplier<AntidoteEffect>)(AntidoteEffect::new)))));
+		HUNGER = (DeferredHolder) (ModRegistry.registerEffect("Hunger",(Supplier)(((Supplier<HungerOverTimeEffect>)(HungerOverTimeEffect::new)))));
+		MUMMY_VIRUS = (DeferredHolder) (ModRegistry.registerEffect("Mummy",(Supplier)(((Supplier<MummyVirusEffect>)(MummyVirusEffect::new)))));
+		MUMMY_VIRUS_ANTIBODY = (DeferredHolder) (ModRegistry.registerEffect("Mummy Antibody",(Supplier)(((Supplier<AntiBodyMummyVirusEffect>)(AntiBodyMummyVirusEffect::new)))));
+		ICE_ONI = (DeferredHolder) (ModRegistry.registerEffect("Ice Oni",(Supplier)(((Supplier<IceOniEffect>)(IceOniEffect::new)))));
+		ICE_ONI_ANTIBODY = (DeferredHolder) (ModRegistry.registerEffect("Ice Oni Antibody",(Supplier)(((Supplier<AntiBodyIceOniEffect>)(AntiBodyIceOniEffect::new)))));
+		Supplier<FrostbiteEffect> var5 = () -> {
+			return new FrostbiteEffect(true);
+		};
+		ICE_ONI_FROSTBITE = (DeferredHolder) (ModRegistry.registerEffect("Ice Oni Frostbite",var5));
+		CHIYUPOPO = (DeferredHolder) (ModRegistry.registerEffect("Chiyupopo",(Supplier)(((Supplier<ChiyupopoEffect>)(ChiyupopoEffect::new)))));
+		TOKUDAI_CANDLE_POISON = (DeferredHolder) (ModRegistry.registerEffect("Tokudai Candle Poison",(Supplier)(((Supplier<TokudaiCandlePoisonEffect>)(TokudaiCandlePoisonEffect::new)))));
+		CYCLONE_TEMPO = (DeferredHolder) (ModRegistry.registerEffect("Cyclone Tempo",(Supplier)(((Supplier<CycloneTempoEffect>)(CycloneTempoEffect::new)))));
+		HEAT_EGG_TEMPO = (DeferredHolder) (ModRegistry.registerEffect("Heat Egg Tempo",(Supplier)(((Supplier<HeatEggTempoEffect>)(HeatEggTempoEffect::new)))));
+		KAIROSEKI_WEAKNESS = (DeferredHolder) (ModRegistry.registerEffect("Kairoseki Weakness",(Supplier)(((Supplier<DFCurseEffect>)(DFCurseEffect::new)))));
+		WATER_WEAKNESS = (DeferredHolder) (ModRegistry.registerEffect("Water Weakness",(Supplier)(((Supplier<DFCurseEffect>)(DFCurseEffect::new)))));
+		PLAY_DEAD = (DeferredHolder) (ModRegistry.registerEffect("Play Dead",(Supplier)(((Supplier<PlayDeadEffect>)(PlayDeadEffect::new)))));
+		CHALLENGE_FAILED = (DeferredHolder) (ModRegistry.registerEffect("Challenge Failed",(Supplier)(((Supplier<UnconsciousEffect>)(UnconsciousEffect::new)))));
+		Supplier<CaughtInNetEffect> var6 = () -> {
+			return new CaughtInNetEffect(NetType.NORMAL);
+		};
+		CAUGHT_IN_NET = (DeferredHolder) (ModRegistry.registerEffect("Caught in Net","caught_in_net",var6));
+		Supplier<CaughtInNetEffect> var7 = () -> {
+			return new CaughtInNetEffect(NetType.KAIROSEKI);
+		};
+		CAUGHT_IN_KAIROSEKI_NET = (DeferredHolder) (ModRegistry.registerEffect("Caught in Net","caught_in_kairoseki_net",var7));
+		CARRYING = (DeferredHolder) (ModRegistry.registerEffect("Carrying",(Supplier)(((Supplier<CarryingEffect>)(CarryingEffect::new)))));
+		WET = (DeferredHolder) (ModRegistry.registerEffect("Wet",(Supplier)(((Supplier<WetEffect>)(WetEffect::new)))));
+		Supplier<MobEffect> var8 = () -> {
+			return new BaseEffect(MobEffectCategory.HARMFUL,5926017).addAttributeModifier(NeoForgeMod.SWIM_SPEED,AttributeHelper.EFFECT_SWIM_SPEED_ID,-0.15D,AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+		};
+		SWIM_SLOWDOWN = (DeferredHolder) (ModRegistry.registerEffect("Swim Slowdown",var8));
+		GRABBED = (DeferredHolder) (ModRegistry.registerEffect("Grabbed",(Supplier)(((Supplier<GrabbedEffect>)(GrabbedEffect::new)))));
+		ANTI_KNOCKBACK = (DeferredHolder) (ModRegistry.registerEffect("Anti Knockback",(Supplier)(((Supplier<AntiKnockbackEffect>)(AntiKnockbackEffect::new)))));
+		Supplier<BaseEffect> var9 = () -> {
+			return new BaseEffect(MobEffectCategory.NEUTRAL,0);
+		};
+		LAUNCHED = (DeferredHolder) (ModRegistry.registerEffect("Launched",var9));
+		FRAGILE = (DeferredHolder) (ModRegistry.registerEffect("Fragile",(Supplier)(((Supplier<FragileEffect>)(FragileEffect::new)))));
+		IMPACT_FRAME = (DeferredHolder) (ModRegistry.registerEffect("Impact Frame",(Supplier)(((Supplier<ImpactFrameEffect>)(ImpactFrameEffect::new)))));
+	}
+}

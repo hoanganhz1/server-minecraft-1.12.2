@@ -1,0 +1,1 @@
+{"type":"neoforge:add_spawns","biomes":"#mineminenomi:can_spawn/humans","spawners":[{"type":"mineminenomi:pirate_grunt","maxCount":4,"minCount":2,"weight":94},{"type":"mineminenomi:pirate_brute","maxCount":2,"minCount":1,"weight":4},{"type":"mineminenomi:pirate_trader","maxCount":1,"minCount":1,"weight":2}]}

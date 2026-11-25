@@ -1,0 +1,8 @@
+no-open-permission: '&cBạn không có quyền &e{permission} &cđể mở menu này!'
+default-no-icon-permission: '&cBạn không có quyền sử dụng mục này!'
+no-required-item: '&cBạn cần có &e{amount}x {material} &c(độ bền/mã: {durability}) để thực hiện!'
+no-money: '&cBạn cần ít nhất &e${money} &cđể thực hiện!'
+no-exp: '&cBạn cần ít nhất &e{levels} cấp kinh nghiệm &cđể thực hiện!'
+no-points: '&cBạn cần ít nhất &6{points} Coin &cđể thực hiện!'
+menu-not-found: '&cKhông tìm thấy menu! Vui lòng báo cho Quản trị viên.'
+any: bất kỳ

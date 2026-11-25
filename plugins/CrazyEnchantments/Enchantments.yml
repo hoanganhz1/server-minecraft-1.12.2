@@ -1,0 +1,2384 @@
+# Enchantment Types:
+# - Armor ~ All armor
+# - Helmet
+# - Boots
+# - Bow
+# - Axe
+# - Sword
+# - PickAxe
+# - Hoe
+# - Tool ~ Pickaxes, Axes, Shovels, Hoes, and Shears
+# - All ~ All items listed here
+##########
+# Chance System
+#
+# Chance-System:
+#   Base: # Starting chance.
+#   Increase: # The amount it goes up each level.
+##########
+Enchantments:
+  #Do not change this line.
+  Glowing: #Do not change these lines. If so you will get errors in the console.
+    #Whether or not an enchantment is active
+    Enabled: true
+    #The in-game name of the enchantment.
+    Name: 'Glowing'
+    #The color of the enchantment on the item.
+    Color: '&7'
+    #The color of the enchantment on the book.
+    BookColor: '&b&l'
+    #Max lvl the enchantment goes up to.
+    MaxPower: 1
+    #The type of items that can be enchanted with the enchantment.
+    Enchantment-Type: 'Helmet'
+    #Info for the enchantment
+    Info:
+      #Name of the item in the info GUI.
+      Name: '&e&lDạ Nhãn &7(&bI&7)'
+      #The description of what it does.
+      Description:
+        - '&7Cho bạn hiệu ứng Nhìn Trong Đêm'
+        - '&7vĩnh viễn khi đội mũ.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aMũ'
+    #All the categories the Enchantment can be found in
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  BurnShield:
+    Enabled: true
+    Name: 'BurnShield'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lKháng Hỏa &7(&bI&7)'
+      Description:
+        - '&7Cho bạn hiệu ứng Kháng Lửa'
+        - '&7khi mặc trang bị trên người.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Piercing:
+    Enabled: true
+    Name: 'Piercing'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Bow'
+    Chance-System:
+      Base: 5
+      Increase: 5
+    Info:
+      Name: '&e&lXuyên Thấu &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ gây sát thương gấp đôi'
+        - '&7khi bắn trúng mục tiêu.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCung'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  OverLoad:
+    Enabled: false
+    Name: 'OverLoad'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lQuá Tải Sinh Lực &7(&bI-&bV&7)'
+      Description:
+        - '&7Tăng thêm giới hạn máu tối đa'
+        - '&7khi mặc trang bị trên người.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  SelfDestruct:
+    Enabled: true
+    Name: 'SelfDestruct'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lTự Hủy &7(&bI-&bV&7)'
+      Description:
+        - '&7Khi bạn tử trận sẽ tạo ra'
+        - '&7một vụ nổ tại vị trí ngã xuống.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Springs:
+    Enabled: true
+    Name: 'Springs'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Boots'
+    Info:
+      Name: '&e&lLò Xo &7(&bI-&bV&7)'
+      Description:
+        - '&7Cho bạn hiệu ứng Bật Cao'
+        - '&7khi mang đôi giày này.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiày'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Gears:
+    Enabled: true
+    Name: 'Gears'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Boots'
+    Info:
+      Name: '&e&lTăng Tốc &7(&bI-&bIII&7)'
+      Description:
+        - '&7Tăng tốc độ di chuyển'
+        - '&7khi mang đôi giày này.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiày'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Hulk:
+    Enabled: true
+    Name: 'Hulk'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 2
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lKhổng Lồ &7(&bI-&bII&7)'
+      Description:
+        - '&7Tăng Sức Mạnh và Kháng Sát Thương,'
+        - '&7nhưng làm giảm nhẹ tốc độ chạy.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Mermaid:
+    Enabled: true
+    Name: 'Mermaid'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Helmet'
+    Info:
+      Name: '&e&lTiên Cá &7(&bI-&bIII&7)'
+      Description:
+        - '&7Cho phép bạn thở dưới nước'
+        - '&7khi đội mũ trên đầu.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aMũ'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Ninja:
+    Enabled: true
+    Name: 'Ninja'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 2
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lNhẫn Giả &7(&bI-&bII&7)'
+      Description:
+        - '&7Tăng tốc độ di chuyển và máu tối đa'
+        - '&7khi mặc trang bị trên người.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Vampire:
+    Enabled: true
+    Name: 'Vampire'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 5
+      Increase: 5
+    Info:
+      Name: '&e&lHuyết Ma &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ hồi phục máu cho bạn'
+        - '&7trong lúc giao chiến.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  LifeSteal:
+    Enabled: true
+    Name: 'LifeSteal'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 15
+      Increase: 5
+    Info:
+      Name: '&e&lHút Máu &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ hút sinh lực từ kẻ địch'
+        - '&7để hồi máu cho bản thân.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Doctor:
+    Enabled: true
+    Name: 'Doctor'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Bow'
+    Info:
+      Name: '&e&lThần Y &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ hồi máu cho người chơi'
+        - '&7khi bạn bắn trúng họ.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCung'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Boom:
+    Enabled: true
+    Name: 'Boom'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Bow'
+    Chance-System:
+      Base: 20
+      Increase: 10
+    Info:
+      Name: '&e&lThuốc Nổ &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ tạo ra TNT phát nổ'
+        - '&7tại nơi mũi tên rơi xuống.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCung'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Venom:
+    Enabled: true
+    Name: 'Venom'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Bow'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lTên Độc &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ gây hiệu ứng Trúng Độc'
+        - '&7lên mục tiêu khi trúng tên.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCung'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  DoubleDamage:
+    Enabled: true
+    Name: 'DoubleDamage'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 5
+      Increase: 1
+    Info:
+      Name: '&e&lSong Kích &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ gây gấp đôi sát thương'
+        - '&7khi tấn công kẻ địch.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  SlowMo:
+    Enabled: true
+    Name: 'SlowMo'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 5
+      Increase: 5
+    Info:
+      Name: '&e&lLàm Chậm &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ làm chậm tốc độ di chuyển'
+        - '&7của kẻ địch khi chém trúng.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Blindness:
+    Enabled: true
+    Name: 'Blindness'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 2
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 5
+      Increase: 1
+    Info:
+      Name: '&e&lGây Mù &7(&bI-&bII&7)'
+      Description:
+        - '&7Có tỷ lệ làm mù tầm nhìn kẻ địch'
+        - '&7trong lúc giao chiến.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Viper:
+    Enabled: true
+    Name: 'Viper'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lRắn Độc &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ khiến kẻ địch bị Trúng Độc'
+        - '&7khi tấn công bằng kiếm.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  AntiGravity:
+    Enabled: true
+    Name: 'AntiGravity'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Boots'
+    Info:
+      Name: '&e&lPhản Trọng Lực &7(&bI-&bIII&7)'
+      Description:
+        - '&7Tăng mạnh độ cao khi nhảy'
+        - '&7lúc mang đôi giày này.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiày'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  FastTurn:
+    Enabled: true
+    Name: 'FastTurn'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 2
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 5
+      Increase: 5
+    Info:
+      Name: '&e&lPhản Đòn Nhanh &7(&bI-&bII&7)'
+      Description:
+        - '&7Có tỷ lệ gây thêm sát thương'
+        - '&7lên mục tiêu khi chém.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  LightWeight:
+    Enabled: true
+    Name: 'LightWeight'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 15
+      Increase: 5
+    Info:
+      Name: '&e&lNhẹ Nhàng &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ nhận hiệu ứng Đào Nhanh'
+        - '&7trong lúc chiến đấu.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Blessed:
+    Enabled: true
+    Name: 'Blessed'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Axe'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lBan Phước &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ hóa giải toàn bộ'
+        - '&7hiệu ứng bất lợi trên người.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aRìu'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  FeedMe:
+    Enabled: true
+    Name: 'FeedMe'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Axe'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lNo Đủ &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ hồi độ no cho bạn'
+        - '&7trong lúc chiến đấu.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aRìu'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Dizzy:
+    Enabled: true
+    Name: 'Dizzy'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Axe'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lChoáng Váng &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ gây hiệu ứng Buồn Nôn'
+        - '&7làm kẻ địch mất phương hướng.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aRìu'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Berserk:
+    Enabled: true
+    Name: 'Berserk'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Axe'
+    Chance-System:
+      Base: 10
+      Increase: 1
+    Info:
+      Name: '&e&lCuồng Chiến &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ nhận Sức Mạnh cực đại'
+        - '&7nhưng kèm theo Mệt Mỏi khi đánh.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aRìu'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Cursed:
+    Enabled: true
+    Name: 'Cursed'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Axe'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lNguyền Rủa &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ gây Mệt Mỏi Đào Bới'
+        - '&7khiến kẻ địch đánh chậm hơn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aRìu'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Rekt:
+    Enabled: true
+    Name: 'Rekt'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Axe'
+    Chance-System:
+      Base: 5
+      Increase: 1
+    Info:
+      Name: '&e&lHủy Diệt &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ gây sát thương gấp đôi'
+        - '&7khi bổ rìu vào kẻ địch.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aRìu'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Enlightened:
+    Enabled: true
+    Name: 'Enlightened'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Armor'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lGiác Ngộ &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ hồi phục máu cho bạn'
+        - '&7khi bị kẻ địch tấn công.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Freeze:
+    Enabled: true
+    Name: 'Freeze'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 2
+    Enchantment-Type: 'Armor'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lĐóng Băng &7(&bI-&bII&7)'
+      Description:
+        - '&7Có tỷ lệ làm chậm kẻ địch'
+        - '&7khi chúng tấn công bạn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Fortify:
+    Enabled: true
+    Name: 'Fortify'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Armor'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lKiên Cố &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ gây Suy Yếu lên kẻ địch'
+        - '&7khi chúng đánh trúng bạn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Molten:
+    Enabled: true
+    Name: 'Molten'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Armor'
+    Chance-System:
+      Base: 10
+      Increase: 1
+    Info:
+      Name: '&e&lNóng Chảy &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ thiêu đốt kẻ địch'
+        - '&7khi chúng tấn công bạn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  PainGiver:
+    Enabled: true
+    Name: 'PainGiver'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 4
+    Enchantment-Type: 'Armor'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lGieo Rắc Đau Đớn &7(&bI-&bIV&7)'
+      Description:
+        - '&7Có tỷ lệ khiến kẻ địch Trúng Độc'
+        - '&7khi chúng tấn công bạn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Savior:
+    Enabled: true
+    Name: 'Savior'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Armor'
+    Chance-System:
+      Base: 15
+      Increase: 5
+    Info:
+      Name: '&e&lCứu Tinh &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ giảm một nửa sát thương'
+        - '&7phải nhận từ đòn đánh.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Nursery:
+    Enabled: true
+    Name: 'Nursery'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Armor'
+    Chance-System:
+      Base: 5
+      Increase: 5
+    Info:
+      Name: '&e&lDưỡng Sinh &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ tự hồi phục máu'
+        - '&7trong khi bạn di chuyển.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  AutoSmelt:
+    Enabled: true
+    Name: 'AutoSmelt'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'PickAxe'
+    Chance-System:
+      Base: 25
+      Increase: 25
+    Info:
+      Name: '&e&lTự Nung Quặng &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ tự nung quặng vừa đào'
+        - '&7và rơi ra nhiều thỏi hơn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCúp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Experience:
+    Enabled: true
+    Name: 'Experience'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'PickAxe'
+    Chance-System:
+      Base: 25
+      Increase: 25
+    Info:
+      Name: '&e&lKinh Nghiệm &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ nhận gấp đôi hoặc nhiều hơn'
+        - '&7lượng XP khi đào quặng.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCúp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Telepathy:
+    Enabled: true
+    Name: 'Telepathy'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Tool'
+    Info:
+      Name: '&e&lThu Đồ Từ Xa &7(&bI&7)'
+      Description:
+        - '&7Tự động chuyển các khối vừa đào'
+        - '&7thẳng vào túi đồ của bạn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCông Cụ'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Haste:
+    Enabled: true
+    Name: 'Haste'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Tool'
+    Info:
+      Name: '&e&lĐào Nhanh &7(&bI-&bIII&7)'
+      Description:
+        - '&7Tăng tốc độ đào bới khi cầm'
+        - '&7công cụ này trên tay.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCông Cụ'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Oxygenate:
+    Enabled: true
+    Name: 'Oxygenate'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Tool'
+    Info:
+      Name: '&e&lTiếp Oxy &7(&bI&7)'
+      Description:
+        - '&7Giúp bạn thở dưới nước khi cầm'
+        - '&7công cụ này trên tay.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCông Cụ'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  IceFreeze:
+    Enabled: true
+    Name: 'IceFreeze'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Bow'
+    Chance-System:
+      Base: 25
+      Increase: 10
+    Info:
+      Name: '&e&lBăng Giá &7(&bI&7)'
+      Description:
+        - '&7Có tỷ lệ làm chậm kẻ địch'
+        - '&7khi bị mũi tên bắn trúng.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCung'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Lightning:
+    Enabled: true
+    Name: 'Lightning'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Bow'
+    Chance-System:
+      Base: 25
+      Increase: 10
+    Info:
+      Name: '&e&lThiên Lôi &7(&bI&7)'
+      Description:
+        - '&7Có tỷ lệ gọi sét đánh xuống'
+        - '&7nơi mũi tên rơi trúng.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCung'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Decapitation:
+    Enabled: true
+    Name: 'Decapitation'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Axe'
+    Chance-System:
+      Base: 10
+      Increase: 10
+    Info:
+      Name: '&e&lChặt Đầu &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ rơi đầu người chơi'
+        - '&7khi hạ gục đối thủ.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aRìu'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Confusion:
+    Enabled: true
+    Name: 'Confusion'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 4
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 15
+      Increase: 5
+    Info:
+      Name: '&e&lRối Loạn &7(&bI-&bIV&7)'
+      Description:
+        - '&7Có tỷ lệ gây Buồn Nôn'
+        - '&7làm kẻ địch choáng váng.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Disarmer:
+    Enabled: true
+    Name: 'Disarmer'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 5
+      Increase: 1
+    Info:
+      Name: '&e&lTước Giáp &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ gỡ ngẫu nhiên một món giáp'
+        - '&7trên người kẻ địch.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Execute:
+    Enabled: true
+    Name: 'Execute'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Sword'
+    Info:
+      Name: '&e&lKết Liễu &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ nhận Sức Mạnh bộc phát'
+        - '&7khi kẻ địch còn ít máu.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Headless:
+    Enabled: true
+    Name: 'Headless'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 10
+      Increase: 10
+    Info:
+      Name: '&e&lVô Đầu &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ rơi đầu mục tiêu'
+        - '&7khi bạn tiêu diệt chúng.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Inquisitive:
+    Enabled: true
+    Name: 'Inquisitive'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 50
+      Increase: 25
+    Info:
+      Name: '&e&lThông Thái &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ nhân đôi hoặc nhiều hơn XP'
+        - '&7rớt ra từ quái theo cấp phù phép.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Insomnia:
+    Enabled: true
+    Name: 'Insomnia'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Armor'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lMất Ngủ &7(&bI&7)'
+      Description:
+        - '&7Gây choáng, mệt mỏi và làm chậm,'
+        - '&7nhưng tăng cao tỷ lệ đánh chí mạng x2.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Nutrition:
+    Enabled: true
+    Name: 'Nutrition'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 15
+      Increase: 5
+    Info:
+      Name: '&e&lDinh Dưỡng &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ hồi thanh thức ăn'
+        - '&7trong lúc chiến đấu.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Obliterate:
+    Enabled: true
+    Name: 'Obliterate'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 15
+      Increase: 5
+    Info:
+      Name: '&e&lĐánh Bật &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ hất văng kẻ địch'
+        - '&7ra xa về phía sau.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Paralyze:
+    Enabled: true
+    Name: 'Paralyze'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 15
+      Increase: 5
+    Info:
+      Name: '&e&lTê Liệt &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ làm kẻ địch Mệt Mỏi nặng'
+        - '&7và bị Làm Chậm nghiêm trọng.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  SkillSwipe:
+    Enabled: true
+    Name: 'SkillSwipe'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 5
+      Increase: 5
+    Info:
+      Name: '&e&lĐoạt Kinh Nghiệm &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ cướp XP của đối thủ'
+        - '&7trong lúc giao tranh.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Snare:
+    Enabled: true
+    Name: 'Snare'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 10
+      Increase: 3
+    Info:
+      Name: '&e&lBẫy Trói &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ khiến đối thủ bị Làm Chậm'
+        - '&7và Mệt Mỏi Đào Bới.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Trap:
+    Enabled: true
+    Name: 'Trap'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 2
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lGiam Cầm &7(&bI-&bII&7)'
+      Description:
+        - '&7Có tỷ lệ gây Làm Chậm cực nặng'
+        - '&7lên mục tiêu bị chém.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Wither:
+    Enabled: true
+    Name: 'Wither'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 10
+      Increase: 3
+    Info:
+      Name: '&e&lHéo Úa &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ gây hiệu ứng Khô Héo'
+        - '&7cực mạnh lên kẻ địch.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Rage:
+    Enabled: true
+    Name: 'Rage'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Sword'
+    Info:
+      Name: '&e&lCuồng Nộ &7(&bI-&bIII&7)'
+      Description:
+        - '&7Đòn đánh ngày càng mạnh hơn'
+        - '&7khi bạn tấn công liên tục.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Valor:
+    Enabled: true
+    Name: 'Valor'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 2
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lDũng Cảm &7(&bI-&bII&7)'
+      Description:
+        - '&7Tăng khả năng Kháng Sát Thương'
+        - '&7dựa theo cấp phù phép.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  SmokeBomb:
+    Enabled: true
+    Name: 'SmokeBomb'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Armor'
+    Chance-System:
+      Base: 5
+      Increase: 5
+    Info:
+      Name: '&e&lBom Khói &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ làm mù và làm chậm'
+        - '&7kẻ địch để bạn tẩu thoát.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Drunk:
+    Enabled: true
+    Name: 'Drunk'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lSay Xỉn &7(&bI-&bIII&7)'
+      Description:
+        - '&7Tăng Sức Mạnh nhưng đi kèm Mệt Mỏi'
+        - '&7và Làm Chậm khi mặc giáp.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Voodoo:
+    Enabled: true
+    Name: 'Voodoo'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Armor'
+    Chance-System:
+      Base: 15
+      Increase: 5
+    Info:
+      Name: '&e&lBùa Ngải &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ gây hiệu ứng Suy Yếu'
+        - '&7lên kẻ địch tấn công bạn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  MultiArrow:
+    Enabled: true
+    Name: 'MultiArrow'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Bow'
+    Chance-System:
+      Base: 25
+      Increase: 10
+    Info:
+      Name: '&e&lLiên Tiễn &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ bắn ra nhiều mũi tên'
+        - '&7cùng một lúc.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCung'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Recover:
+    Enabled: true
+    Name: 'Recover'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lPhục Hồi &7(&bI&7)'
+      Description:
+        - '&7Khi hạ gục một người chơi,'
+        - '&7bạn nhận Giáp Ảo và Hồi Máu.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Cactus:
+    Enabled: true
+    Name: 'Cactus'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Armor'
+    Chance-System:
+      Base: 25
+      Increase: 25
+    Info:
+      Name: '&e&lXương Rồng &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ phản sát thương lên'
+        - '&7kẻ nào dám tấn công bạn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Rocket:
+    Enabled: true
+    Name: 'Rocket'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Boots'
+    Chance-System:
+      Base: 15
+      Increase: 5
+    Info:
+      Name: '&e&lTên Lửa &7(&bI-&bIII&7)'
+      Description:
+        - '&7Khi sắp hết máu có tỷ lệ'
+        - '&7phóng vọt lùi lại để thoát thân.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiày'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Angel:
+    Enabled: true
+    Name: 'Angel'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lThiên Thần &7(&bI-&bV&7)'
+      Description:
+        - '&7Hồi máu cho đồng đội ở gần'
+        - '&7khi bạn mặc bộ giáp này.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  HellForged:
+    Enabled: true
+    Name: 'HellForged'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 4
+    Enchantment-Type: 'Damaged-Items'
+    Chance-System:
+      Base: 5
+      Increase: 5
+    Info:
+      Name: '&e&lLò Rèn Địa Ngục &7(&bI-&bIV&7)'
+      Description:
+        - '&7Có tỷ lệ tự sửa độ bền'
+        - '&7cho vật phẩm khi bạn di chuyển.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp, Vũ Khí, Công Cụ, Cần Câu và Kéo'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Commander:
+    Enabled: true
+    Name: 'Commander'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Helmet'
+    Info:
+      Name: '&e&lChỉ Huy &7(&bI-&bV&7)'
+      Description:
+        - '&7Ban hiệu ứng Đào Nhanh cho đồng đội'
+        - '&7xung quanh khi bạn đội mũ.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aMũ'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  StormCaller:
+    Enabled: true
+    Name: 'StormCaller'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Armor'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lGọi Bão &7(&bI-&bV&7)'
+      Description:
+        - '&7Có tỷ lệ giáng sét xuống'
+        - '&7kẻ nào dám tấn công bạn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Leadership:
+    Enabled: true
+    Name: 'Leadership'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lThủ Lĩnh &7(&bI-&bV&7)'
+      Description:
+        - '&7Đòn đánh của bạn mạnh hơn khi'
+        - '&7có đồng minh đứng gần bên.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Implants:
+    Enabled: true
+    Name: 'Implants'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Helmet'
+    Chance-System:
+      Base: 5
+      Increase: 5
+    Info:
+      Name: '&e&lTự No &7(&bI-&bV&7)'
+      Description:
+        - '&7Tự động hồi thanh thức ăn'
+        - '&7dần dần khi bạn di chuyển.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aMũ'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Wings:
+    Enabled: true
+    Name: 'Wings'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Boots'
+    Info:
+      Name: '&e&lĐôi Cánh &7(&bI&7)'
+      Description:
+        - '&7Cho phép bạn bay tự do trong'
+        - '&7lãnh thổ đảo của mình.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiày'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Blast:
+    Enabled: true
+    Name: 'Blast'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'PickAxe'
+    Info:
+      Name: '&e&lNổ Mìn &7(&bI-&bIII&7)'
+      Description:
+        - '&7Đào khối theo vùng 3 x Cấp x 3'
+        - '&7tùy theo cấp độ phù phép.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCúp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Furnace:
+    Enabled: true
+    Name: 'Furnace'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'PickAxe'
+    Info:
+      Name: '&e&lLò Nung &7(&bI&7)'
+      Description:
+        - '&7Luôn tự nung quặng thành thỏi'
+        - '&7ngay khi vừa đào xong.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCúp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Blizzard:
+    Enabled: true
+    Name: 'Blizzard'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lBão Tuyết &7(&bI&7)'
+      Description:
+        - '&7Làm chậm kẻ địch trong bán kính'
+        - '&73 block trong thời gian ngắn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  AcidRain:
+    Enabled: true
+    Name: 'AcidRain'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lMưa Axit &7(&bI-&bIII&7)'
+      Description:
+        - '&7Gây Trúng Độc lên kẻ địch trong'
+        - '&7bán kính 3 block trong thời gian ngắn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  SandStorm:
+    Enabled: true
+    Name: 'SandStorm'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lBão Cát &7(&bI&7)'
+      Description:
+        - '&7Gây Mù Lòa lên kẻ địch trong'
+        - '&7bán kính 3 block trong thời gian ngắn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Radiant:
+    Enabled: true
+    Name: 'Radiant'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lChói Lòa &7(&bI-&bIII&7)'
+      Description:
+        - '&7Thiêu đốt kẻ địch đứng trong'
+        - '&7bán kính 3 block quanh bạn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Intimidate:
+    Enabled: true
+    Name: 'Intimidate'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 2
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lUy Hiếp &7(&bI-&bII&7)'
+      Description:
+        - '&7Gây Suy Yếu lên kẻ địch trong'
+        - '&7bán kính 3 block trong thời gian ngắn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Pull:
+    Enabled: true
+    Name: 'Pull'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Bow'
+    Chance-System:
+      Base: 25
+      Increase: 10
+    Info:
+      Name: '&e&lKéo Lại &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ kéo kẻ địch bị bắn'
+        - '&7bay ngược về phía bạn.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCung'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Tamer:
+    Enabled: true
+    Name: 'Tamer'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lThuần Hóa &7(&bI-&bV&7)'
+      Description:
+        - '&7Triệu hồi Sói chiến đấu giúp bạn'
+        - '&7khi gặp nguy hiểm.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Guards:
+    Enabled: true
+    Name: 'Guards'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lVệ Binh &7(&bI-&bIII&7)'
+      Description:
+        - '&7Triệu hồi Người Sắt bảo vệ bạn'
+        - '&7khi gặp nguy hiểm.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Infestation:
+    Enabled: true
+    Name: 'Infestation'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 2
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lỔ Côn Trùng &7(&bI-&bII&7)'
+      Description:
+        - '&7Triệu hồi Bọ Ender và Cá Bạc'
+        - '&7hỗ trợ khi bạn gặp nguy.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Necromancer:
+    Enabled: true
+    Name: 'Necromancer'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lTriệu Hồi Tử Thi &7(&bI-&bIII&7)'
+      Description:
+        - '&7Triệu hồi Xác Sống chiến đấu'
+        - '&7khi bạn gặp nguy hiểm.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  BeeKeeper:
+    Enabled: true
+    Name: 'BeeKeeper'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 2
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lNuôi Ong &7(&bI-&bII&7)'
+      Description:
+        - '&7Triệu hồi đàn Ong tấn công kẻ địch'
+        - '&7khi bạn gặp nguy hiểm.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Sticky-Shot:
+    Enabled: true
+    Name: 'StickyShot'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Bow'
+    Chance-System:
+      Base: 10
+      Increase: 10
+    Info:
+      Name: '&e&lTơ Nhện &7(&bI-&bIII&7)'
+      Description:
+        - '&7Có tỷ lệ tạo màng nhện tại nơi'
+        - '&7mũi tên rơi trúng.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&7 - &9&l&nHiếm'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCung'
+    Categories:
+      - 'Common'
+      - 'Rare'
+      - 'Legendary'
+  #Do not change this line.
+  Disorder:
+    Enabled: true
+    Name: 'Disorder'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 1
+      Increase: 1
+    Info:
+      Name: '&e&lXáo Trộn &7(&bI&7)'
+      Description:
+        - '&7Có tỷ lệ làm xáo trộn các ô đồ'
+        - '&7trên thanh nóng của đối thủ.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Legendary'
+  #Do not change this line.
+  Charge:
+    Enabled: true
+    Name: 'Charge'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Sword'
+    Info:
+      Name: '&e&lXung Phong &7(&bI-V&7)'
+      Description:
+        - '&7Khi hạ gục người chơi khác, bạn và'
+        - '&7đồng đội gần đó được tăng tốc chạy.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &9&l&nHiếm'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Rare'
+  #Do not change this line.
+  Revenge:
+    Enabled: true
+    Name: 'Revenge'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Sword'
+    Info:
+      Name: '&e&lBáo Thù &7(&bI&7)'
+      Description:
+        - '&7Khi đồng đội gần bên bị hạ, bạn nhận'
+        - '&7Tăng Tốc, Hồi Máu và Đào Nhanh.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &9&l&nHiếm'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Rare'
+  #Do not change this line.
+  BattleCry:
+    Enabled: true
+    Name: 'BattleCry'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 5
+    Enchantment-Type: 'Axe'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lTiếng Hét Xung Trận &7(&bI-V&7)'
+      Description:
+        - '&7Trong giao chiến có tỷ lệ &610% (+5%/cấp)'
+        - '&7đẩy văng người chơi xung quanh ra xa.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aRìu'
+    Categories:
+      - 'Legendary'
+  #Do not change this line.
+  Famished:
+    Enabled: true
+    Name: 'Famished'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Sword'
+    Chance-System:
+      Base: 10
+      Increase: 5
+    Info:
+      Name: '&e&lĐói Khát &7(&bI-III&7)'
+      Description:
+        - '&7Trong giao chiến có tỷ lệ &610% (+5%/cấp)'
+        - '&7gây hiệu ứng Đói cho kẻ địch.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &9&l&nHiếm'
+        - '&6Áp dụng cho: &aKiếm'
+    Categories:
+      - 'Rare'
+  #Do not change this line.
+  GreenThumb:
+    Enabled: true
+    Name: 'GreenThumb'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 3
+    Enchantment-Type: 'Hoe'
+    Chance-System:
+      Base: 10
+      Increase: 10
+    Info:
+      Name: '&e&lBàn Tay Xanh &7(&bI-III&7)'
+      Description:
+        - '&7Chuột phải vào mầm cây có &610% (+10%/cấp)'
+        - '&7tỷ lệ làm cây lớn tức thì (tốn độ bền cuốc).'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &9&l&nHiếm'
+        - '&6Áp dụng cho: &aCuốc'
+    Categories:
+      - 'Rare'
+  #Do not change this line.
+  Harvester:
+    Enabled: true
+    Name: 'Harvester'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Hoe'
+    Info:
+      Name: '&e&lThu Hoạch &7(&bI&7)'
+      Description:
+        - '&7Khi phá nông sản chín sẽ tự thu hoạch'
+        - '&7toàn bộ cây chín trong vùng 3x3.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&6Áp dụng cho: &aCuốc'
+    Categories:
+      - 'Common'
+  #Do not change this line.
+  Tiller:
+    Enabled: true
+    Name: 'Tiller'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Hoe'
+    Info:
+      Name: '&e&lCày Đất &7(&bI&7)'
+      Description:
+        - '&7Tự động cày đất theo vùng 3x3 và'
+        - '&7tự làm ẩm nếu cách nguồn nước 4 ô.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&6Áp dụng cho: &aCuốc'
+    Categories:
+      - 'Common'
+  #Do not change this line.
+  Planter:
+    Enabled: true
+    Name: 'Planter'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Hoe'
+    Info:
+      Name: '&e&lGieo Hạt &7(&bI&7)'
+      Description:
+        - '&7Khi cày đất sẽ tự gieo hạt giống từ'
+        - '&7tay phụ hoặc thanh nóng bên phải.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &a&l&nPhổ Thông'
+        - '&6Áp dụng cho: &aCuốc'
+    Categories:
+      - 'Common'
+  #Do not change this line.
+  Cyborg:
+    Enabled: true
+    Name: 'Cyborg'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 1
+    Enchantment-Type: 'Armor'
+    Info:
+      Name: '&e&lChiến Binh Cơ Khí &7(&bI&7)'
+      Description:
+        - '&7Ban cho bạn Tốc Độ, Sức Mạnh và Bật Cao'
+        - '&7để áp đảo mọi kẻ địch.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aGiáp'
+    Categories:
+      - 'Legendary'
+  #Do not change this line.
+  Sniper:
+    Enabled: true
+    Name: 'Sniper'
+    Color: '&7'
+    BookColor: '&b&l'
+    MaxPower: 2
+    Enchantment-Type: 'Bow'
+    Chance-System:
+      Base: 25
+      Increase: 5
+    Info:
+      Name: '&e&lXạ Thủ Bắn Tỉa &7(&bI-&bII&7)'
+      Description:
+        - '&7Bắn trúng kẻ địch có tỷ lệ cao'
+        - '&7gây sát thương Độc cực mạnh.'
+        - ''
+        - '&6Tìm thấy ở:'
+        - '&7 - &4&l&nSử Thi'
+        - '&6Áp dụng cho: &aCung'
+    Categories:
+      - 'Legendary'

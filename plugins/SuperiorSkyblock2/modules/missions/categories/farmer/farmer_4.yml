@@ -1,0 +1,170 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+# The mission file to use
+mission-file: FarmingMissions
+
+# Whether the mission should be given when completing all requirements.
+auto-reward: true
+
+# Should plant counts of players get reset when completing the mission?
+reset-after-finish: true
+
+# Rewards given when completing the mission.
+rewards:
+  commands:
+    - 'eco give %player% 25000'
+    - 'talentadmin addpoints %player% 7'
+    - 'is admin msg %player% &e&lNông Dân | &7Hoàn thành xuất sắc nhiệm vụ Nông Dân IV!'
+
+# List of required missions that must be completed before completing this one.
+required-missions:
+  - 'farmer_1'
+  - 'farmer_2'
+  - 'farmer_3'
+
+# List of all required plants must be gathered in order to complete the mission.
+required-plants:
+  '1':
+    types:
+      - 'CARROT'
+    amount: 64
+  '2':
+    types:
+      - 'POTATO'
+    amount: 64
+  '3':
+    types:
+      - 'WHEAT'
+    amount: 64
+  '4':
+    types:
+      - 'BEETROOT'
+    amount: 64
+  '5':
+    types:
+      - 'PUMPKIN'
+    amount: 64
+  '6':
+    types:
+      - 'MELON'
+    amount: 64
+  '7':
+    types:
+      - 'SUGAR_CANE'
+    amount: 64
+  '8':
+    types:
+      - 'CACTUS'
+    amount: 64
+
+# Icons used in the menus.
+icons:
+  locked:
+    type: PAPER
+    name: '&aNông Dân IV'
+    lore:
+      - '&7Giờ bạn đã là nông dân chuyên nghiệp,'
+      - '&7hãy bắt tay vào vụ mùa lớn nào.'
+      - '&7Trồng đủ x64 mỗi loại nông sản.'
+      - ''
+      - '&6Yêu Cầu Cây Trồng:'
+      - '&8 - &7Cà Rốt, Khoai Tây, Lúa Mì, Củ Dền,'
+      - '&8 - &7Bí Ngô, Dưa Hấu, Mía, Xương Rồng'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+7 Điểm Thiên Phú'
+      - '&8 - &7$25,000'
+      - ''
+      - '&6Cà Rốt đã trồng: &7{value_carrot}/64'
+      - '&6Khoai Tây đã trồng: &7{value_potato}/64'
+      - '&6Lúa Mì đã trồng: &7{value_wheat}/64'
+      - '&6Củ Dền đã trồng: &7{value_beetroot}/64'
+      - '&6Bí Ngô đã trồng: &7{value_pumpkin}/64'
+      - '&6Dưa Hấu đã trồng: &7{value_melon}/64'
+      - '&6Mía đã trồng: &7{value_sugar_cane}/64'
+      - '&6Xương Rồng đã trồng: &7{value_cactus}/64'
+      - '&c&l ✘ &7Chưa Mở Khóa'
+    amount: 4
+  not-completed:
+    type: PAPER
+    name: '&aNông Dân IV'
+    lore:
+      - '&7Giờ bạn đã là nông dân chuyên nghiệp,'
+      - '&7hãy bắt tay vào vụ mùa lớn nào.'
+      - '&7Trồng đủ x64 mỗi loại nông sản.'
+      - ''
+      - '&6Yêu Cầu Cây Trồng:'
+      - '&8 - &7Cà Rốt, Khoai Tây, Lúa Mì, Củ Dền,'
+      - '&8 - &7Bí Ngô, Dưa Hấu, Mía, Xương Rồng'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+7 Điểm Thiên Phú'
+      - '&8 - &7$25,000'
+      - ''
+      - '&6Cà Rốt đã trồng: &7{value_carrot}/64'
+      - '&6Khoai Tây đã trồng: &7{value_potato}/64'
+      - '&6Lúa Mì đã trồng: &7{value_wheat}/64'
+      - '&6Củ Dền đã trồng: &7{value_beetroot}/64'
+      - '&6Bí Ngô đã trồng: &7{value_pumpkin}/64'
+      - '&6Dưa Hấu đã trồng: &7{value_melon}/64'
+      - '&6Mía đã trồng: &7{value_sugar_cane}/64'
+      - '&6Xương Rồng đã trồng: &7{value_cactus}/64'
+      - '&6Tiến độ: &7{0}%'
+      - '&c&l ✘ &7Chưa Hoàn Thành'
+    amount: 4
+  can-complete:
+    type: PAPER
+    name: '&aNông Dân IV'
+    lore:
+      - '&7Giờ bạn đã là nông dân chuyên nghiệp,'
+      - '&7hãy bắt tay vào vụ mùa lớn nào.'
+      - '&7Trồng đủ x64 mỗi loại nông sản.'
+      - ''
+      - '&6Yêu Cầu Cây Trồng:'
+      - '&8 - &7Cà Rốt, Khoai Tây, Lúa Mì, Củ Dền,'
+      - '&8 - &7Bí Ngô, Dưa Hấu, Mía, Xương Rồng'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+7 Điểm Thiên Phú'
+      - '&8 - &7$25,000'
+      - ''
+      - '&6Cà Rốt đã trồng: &764/64'
+      - '&6Khoai Tây đã trồng: &764/64'
+      - '&6Lúa Mì đã trồng: &764/64'
+      - '&6Củ Dền đã trồng: &764/64'
+      - '&6Bí Ngô đã trồng: &764/64'
+      - '&6Dưa Hấu đã trồng: &764/64'
+      - '&6Mía đã trồng: &764/64'
+      - '&6Xương Rồng đã trồng: &764/64'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Nhấp để nhận phần thưởng.'
+    amount: 4
+    glow: true
+  completed:
+    type: MAP
+    name: '&aNông Dân IV'
+    lore:
+      - '&7Giờ bạn đã là nông dân chuyên nghiệp,'
+      - '&7hãy bắt tay vào vụ mùa lớn nào.'
+      - '&7Trồng đủ x64 mỗi loại nông sản.'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+7 Điểm Thiên Phú'
+      - '&8 - &7$25,000'
+      - ''
+      - '&6Cà Rốt đã trồng: &764/64'
+      - '&6Khoai Tây đã trồng: &764/64'
+      - '&6Lúa Mì đã trồng: &764/64'
+      - '&6Củ Dền đã trồng: &764/64'
+      - '&6Bí Ngô đã trồng: &764/64'
+      - '&6Dưa Hấu đã trồng: &764/64'
+      - '&6Mía đã trồng: &764/64'
+      - '&6Xương Rồng đã trồng: &764/64'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Đã Nhận Thưởng.'
+    amount: 4

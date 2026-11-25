@@ -1,0 +1,432 @@
+# =====================================================================
+# MENU TRUNG TÂM RPG SKYBLOCK (CHESTCOMMANDS v4.0.5 - MINECRAFT 1.12.2)
+# Lệnh mở: /menu (hoặc /hubmenu) | Hoặc Chuột Phải vào Đồng Hồ (WATCH)
+# =====================================================================
+menu-settings:
+  name: '&8✦ &b&lMENU TRUNG TÂM SKYBLOCK &8✦'
+  rows: 5
+  commands:
+    - 'old_chestcommands_menu'
+  auto-refresh: 3
+  open-with-item:
+    material: WATCH
+    left-click: false
+    right-click: true
+
+# =====================================================================
+# HÀNG 1: VIỀN & THÔNG TIN NHÂN VẬT (CỘT 5, HÀNG 1)
+# =====================================================================
+b_1_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 1
+  POSITION-Y: 1
+b_2_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 2
+  POSITION-Y: 1
+b_3_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 3
+  POSITION-Y: 1
+b_4_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 4
+  POSITION-Y: 1
+b_6_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 6
+  POSITION-Y: 1
+b_7_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 7
+  POSITION-Y: 1
+b_8_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 8
+  POSITION-Y: 1
+b_9_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 9
+  POSITION-Y: 1
+
+player_profile:
+  MATERIAL: SKULL_ITEM
+  DURABILITY: 3
+  SKULL-OWNER: '{player}'
+  NAME: '&e&lHỒ SƠ NHÂN VẬT: &f{player}'
+  LORE:
+    - '&8&m--------------------------------'
+    - '&7Rank: %talent_rank%'
+    - '&7Money: &a${money}'
+    - '&7Coin: &6%playerpoints_points% Coin'
+    - '&7Cấp Đảo: &b%superior_island_level%'
+    - '&8&m--------------------------------'
+    - '&e&lChỉ Số Thiên Phú Hiện Tại:'
+    - '&7 • Điểm chưa cộng: &6%talent_points% Điểm'
+    - '&7 • Tỷ Lệ Chí Mạng: &c%talent_crit_chance%%'
+    - '&7 • Sát Thương Chí Mạng: &4%talent_crit_damage%%'
+    - '&7 • Chính Xác: &b+%talent_accuracy%%'
+    - '&7 • Né Tránh: &a%talent_dodge%%'
+    - '&7 • Trang Bị LQ: &e%talent_aov_equipped%/%talent_aov_max% Món'
+    - '&7 • Giáp Set: %talent_set_active%'
+    - '&7 • Trái Ác Quỷ: %talent_df_name% &7(Lv.%talent_df_mastery%)'
+    - '&7 • Võ Học: %talent_martial_style% &7(Lv.%talent_martial_mastery%)'
+    - '&7 • Haki: %talent_haki%'
+    - '&7 • Tiền Truy Nã: &6%talent_bounty% Beri'
+    - '&7 • Băng Hải Tặc: %talent_crew_name%'
+    - '&7 • Cờ Hải Tặc: %talent_crew_flag%'
+    - '&7 • Chế Độ Chiến Đấu: &e/chiendau &7(Toggle)'
+    - '&8&m--------------------------------'
+  POSITION-X: 5
+  POSITION-Y: 1
+  KEEP-OPEN: true
+
+# =====================================================================
+# HÀNG 2: ĐẢO SKYBLOCK & HỆ THỐNG THIÊN PHÚ
+# =====================================================================
+b_1_2:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 1
+  POSITION-Y: 2
+b_9_2:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 9
+  POSITION-Y: 2
+
+island_panel:
+  MATERIAL: GRASS
+  NAME: '&a&lQUẢN LÝ ĐẢO &8(/is panel)'
+  LORE:
+    - '&7Mở bảng điều khiển Đảo Skyblock:'
+    - '&f• Thành viên, nâng cấp Generator'
+    - '&f• Cài đặt đảo, khách thăm & bảo vệ'
+    - ''
+    - '&a▶ Nhấn để mở Quản Lý Đảo!'
+  POSITION-X: 2
+  POSITION-Y: 2
+  ACTIONS:
+    - 'is panel'
+
+talent_upgrade:
+  MATERIAL: BLAZE_POWDER
+  NAME: '&b&lNÂNG CẤP THIÊN PHÚ &8(/thienphu)'
+  LORE:
+    - '&7Điểm Thiên Phú hiện có: &6%talent_points% Điểm'
+    - '&7Cộng điểm trực tiếp vào 4 chỉ số:'
+    - '&f• Chí Mạng, ST Chí Mạng, Chính Xác, Né Tránh'
+    - ''
+    - '&b▶ Nhấn để mở Bảng Thiên Phú!'
+  POSITION-X: 4
+  POSITION-Y: 2
+  ACTIONS:
+    - 'thienphu'
+
+talent_cards:
+  MATERIAL: CHEST
+  NAME: '&6&lTRANG BỊ LIÊN QUÂN &8(/trangbilq)'
+  LORE:
+    - '&7Đang lắp: &e%talent_aov_equipped%/%talent_aov_max% Món'
+    - '&7Khay 6 Ô Trang Bị theo Rank (default -> master)'
+    - '&f• Thánh Kiếm, Fenrir, Giáp Hộ Mệnh, Quỷ Kiếm...'
+    - ''
+    - '&6▶ Nhấn để mở Khay Trang Bị!'
+  POSITION-X: 6
+  POSITION-Y: 2
+  ACTIONS:
+    - 'trangbilq'
+
+island_missions:
+  MATERIAL: BOOK_AND_QUILL
+  NAME: '&e&lNHIỆM VỤ ĐẢO &8(/is missions)'
+  LORE:
+    - '&7Hoàn thành các thử thách Skyblock'
+    - '&7để nhận thưởng &aMoney &7và &6Điểm Thiên Phú&7!'
+    - ''
+    - '&e▶ Nhấn để xem Nhiệm Vụ Đảo!'
+  POSITION-X: 8
+  POSITION-Y: 2
+  ACTIONS:
+    - 'is missions'
+
+# =====================================================================
+# HÀNG 3: KINH TẾ, CHỢ & PHÙ PHÉP
+# =====================================================================
+b_1_3:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 1
+  POSITION-Y: 3
+b_9_3:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 9
+  POSITION-Y: 3
+
+money_shop:
+  MATERIAL: EMERALD
+  NAME: '&a&lCỬA HÀNG MONEY &8(/shop)'
+  LORE:
+    - '&7Mua vật liệu xây dựng, hạt giống,'
+    - '&7quặng và bán nông sản / đồ rơi quái.'
+    - '&7Số dư Money: &a${money}'
+    - ''
+    - '&a▶ Nhấn để mở Cửa Hàng Money!'
+  POSITION-X: 2
+  POSITION-Y: 3
+  ACTIONS:
+    - 'shop'
+
+coin_shop:
+  MATERIAL: GOLD_INGOT
+  NAME: '&6&lCỬA HÀNG COIN & MUA RANK &8(/coinshop)'
+  LORE:
+    - '&7Mua Rương Trang Bị LQ 3D, Rương Trái Ác Quỷ,'
+    - '&7Thuốc Xóa Ác Quỷ, Đá Thức Tỉnh & Rank VIP/KING!'
+    - '&7Số dư Coin: &6%playerpoints_points% Coin'
+    - ''
+    - '&6▶ Nhấn để mở CoinShop!'
+  POSITION-X: 4
+  POSITION-Y: 3
+  ACTIONS:
+    - 'open: coin_shop.yml'
+
+auction_house:
+  MATERIAL: ENDER_CHEST
+  NAME: '&5&lCHỢ ĐEN NGƯỜI CHƠI &8(/ah)'
+  LORE:
+    - '&7Tự do đấu giá, mua bán vật phẩm,'
+    - '&7Trang Bị Liên Quân và Giáp Set giữa người chơi.'
+    - ''
+    - '&5▶ Nhấn để mở Chợ Đen!'
+  POSITION-X: 6
+  POSITION-Y: 3
+  ACTIONS:
+    - 'ah'
+
+crazy_enchants:
+  MATERIAL: ENCHANTED_BOOK
+  NAME: '&c&lPHÙ PHÉP TRANG BỊ &8(/ce)'
+  LORE:
+    - '&7Mua Sách Custom Enchant cho Kiếm,'
+    - '&7Cung, Cúp, Rìu và ghép sách.'
+    - ''
+    - '&c▶ Nhấn để mở Cửa Hàng Phù Phép!'
+  POSITION-X: 8
+  POSITION-Y: 3
+  ACTIONS:
+    - 'ce'
+
+# =====================================================================
+# HÀNG 4: KHU VỰC FARM, SĂN QUÁI, RÈN ĐỒ & ĐUA TOP
+# =====================================================================
+b_1_4:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 1
+  POSITION-Y: 4
+b_9_4:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 9
+  POSITION-Y: 4
+
+warp_mine:
+  MATERIAL: DIAMOND_PICKAXE
+  NAME: '&b&lKHU MỎ CHUNG &8(/warp mine)'
+  LORE:
+    - '&7Dịch chuyển đến Khu Mỏ khoáng sản chung'
+    - '&7để đào tài nguyên nâng cấp đảo & rèn đồ.'
+    - ''
+    - '&b▶ Nhấn để dịch chuyển đến Khu Mỏ!'
+  POSITION-X: 2
+  POSITION-Y: 4
+  ACTIONS:
+    - 'warp mine'
+
+warp_pve:
+  MATERIAL: DIAMOND_SWORD
+  NAME: '&c&lĐẤU TRƯỜNG SĂN QUÁI &8(/warp pve)'
+  LORE:
+    - '&7Săn quái vật kiếm nguyên liệu rơi,'
+    - '&7thử sức mạnh Chí Mạng & Bộ Giáp Set!'
+    - ''
+    - '&c▶ Nhấn để đến Đấu Trường PvE!'
+  POSITION-X: 4
+  POSITION-Y: 4
+  ACTIONS:
+    - 'warp pve'
+
+armor_forge:
+  MATERIAL: ANVIL
+  NAME: '&6&lCHẾ TẠO GIÁP SET & VŨ KHÍ &8(/chetao)'
+  LORE:
+    - '&7Rèn 3 bộ Giáp Set kích hoạt mốc [1/4]-[4/4]'
+    - '&7cùng Kiếm, Cung, Cúp, Rìu chuyên dụng.'
+    - ''
+    - '&6▶ Nhấn để mở Lò Rèn!'
+  POSITION-X: 6
+  POSITION-Y: 4
+  ACTIONS:
+    - 'chetao'
+
+island_top:
+  MATERIAL: DIAMOND
+  NAME: '&e&lĐUA TOP ĐẢO &8(/is top)'
+  LORE:
+    - '&7Xem bảng xếp hạng những hòn đảo'
+    - '&7giàu có và cấp độ cao nhất máy chủ.'
+    - ''
+    - '&e▶ Nhấn để xem Top Đảo!'
+  POSITION-X: 8
+  POSITION-Y: 4
+  ACTIONS:
+    - 'is top'
+
+# =====================================================================
+# HÀNG 5: VIỀN DƯỚI, GHÉP THẺ & ĐÓNG MENU
+# =====================================================================
+b_1_5:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 1
+  POSITION-Y: 5
+combat_mode_toggle:
+  MATERIAL: IRON_SWORD
+  NAME: '&4&l⚔ CHẾ ĐỘ CHIẾN ĐẤU &8(/chiendau)'
+  LORE:
+    - '&7Bật/tắt chế độ Chiến Đấu & Phím tắt PK:'
+    - '&f• &aBẬT: &7Sidebar Combat & Phím tắt kỹ năng:'
+    - '  &e[F]&7: Đổi Chiêu (Trái Ác Quỷ / Võ Học 1-2-3)'
+    - '  &b[R/Q] &7hoặc &b[Shift+F]&7: Đổi Haki (Ken/Buso/Hao)'
+    - '  &c[Chuột Phải]&7: Tung chiêu Đang chọn'
+    - '  &d[Shift+Chuột Phải]&7: Kích hoạt Haki'
+    - '&f• &cTẮT: &7Trở về Sidebar Mặc Định, phím F & Q'
+    - '  &7hoạt động bình thường khi xây đảo & đào mỏ.'
+    - ''
+    - '&e▶ Nhấn để Bật/Tắt Chế Độ Chiến Đấu!'
+  POSITION-X: 2
+  POSITION-Y: 5
+  ACTIONS:
+    - 'chiendau'
+devil_fruit_menu:
+  MATERIAL: APPLE
+  NAME: '&c&lTRÁI ÁC QUỶ &8(/traiacquy)'
+  LORE:
+    - '&7Sở hữu năng lực One Piece huyền thoại:'
+    - '&f• Hiện tại: &e%talent_df_name%'
+    - '&f• Độ Thông Thạo: &b%talent_df_mastery%/100'
+    - '&f• Thức Tỉnh: &6%talent_df_awakened%'
+    - ''
+    - '&c▶ Nhấn để mở Kho Năng Lực Trái Ác Quỷ!'
+  POSITION-X: 3
+  POSITION-Y: 5
+  ACTIONS:
+    - 'traiacquy'
+vohoc_menu:
+  MATERIAL: DIAMOND_SWORD
+  NAME: '&a&lVÕ HỌC ĐẠI TÔNG SƯ &8(/vohoc)'
+  LORE:
+    - '&7Tu luyện thể thuật & kiếm khí Vô Quả Giả:'
+    - '&f• Môn phái: &e%talent_martial_style%'
+    - '&f• Độ Thông Thạo: &bLv.%talent_martial_mastery%/100'
+    - '&f• Nhánh: &aKiếm Đạo &8(Chí Mạng) &7| &eLục Thức &8(Né Tránh)'
+    - '&f• Nội tại: &bBá Chủ Biển Cả &7+ &aTinh Thông AoV'
+    - ''
+    - '&a▶ Nhấn để mở Bảng Tu Luyện Võ Học!'
+  POSITION-X: 4
+  POSITION-Y: 5
+  ACTIONS:
+    - 'vohoc'
+
+merge_cards_shortcut:
+  MATERIAL: ANVIL
+  NAME: '&6&lXƯỞNG RÈN LIÊN QUÂN &8(/shopaov)'
+  LORE:
+    - '&7Chế tạo 12 món Trang Bị Liên Quân Mobile'
+    - '&7bằng &eMoney ($) &7+ &bKhoáng sản cao cấp&7!'
+    - ''
+    - '&6▶ Nhấn để mở Xưởng Rèn /shopaov!'
+  POSITION-X: 5
+  POSITION-Y: 5
+  ACTIONS:
+    - 'shopaov'
+
+haki_menu:
+  MATERIAL: NETHER_STAR
+  NAME: '&b&lHỆ THỐNG HAKI &8(/haki)'
+  LORE:
+    - '&7Bản năng chiến đấu tối thượng One Piece:'
+    - '&f• Haki Quan Sát &7(+25%% Né, +20%% Chính Xác)'
+    - '&f• Haki Vũ Trang &7(Khắc chế Logia, +35%% ST Chí Mạng)'
+    - '&f• Haki Bá Vương &7(Làm choáng diện rộng, Sét giáng)'
+    - ''
+    - '&b▶ Nhấn để mở Bảng Kỹ Năng Haki!'
+  POSITION-X: 6
+  POSITION-Y: 5
+  ACTIONS:
+    - 'haki'
+
+bounty_menu:
+  MATERIAL: SKULL_ITEM
+  DURABILITY: 3
+  NAME: '&4&lBẢNG TRUY NÃ HẢI TẶC &8(/truyna)'
+  LORE:
+    - '&7Bảng truy nã các Hải Tặc khét tiếng:'
+    - '&f• Tiền truy nã của bạn: &6%talent_bounty% Beri'
+    - '&f• Săn lùng người chơi PvP nhận &aMoney ($) &7+ &6TP'
+    - '&f• Hạ Boss Đô Đốc & Vua Biển nhận &e+5,000,000 Beri'
+    - ''
+    - '&4▶ Nhấn để mở Bảng Truy Nã Wanted Posters!'
+  POSITION-X: 7
+  POSITION-Y: 5
+  ACTIONS:
+    - 'truyna'
+crew_koth_menu:
+  MATERIAL: BANNER
+  NAME: '&4&lBĂNG HẢI TẶC & KOTH &8(/banghaitac)'
+  LORE:
+    - '&7Liên kết Đảo Skyblock thành Băng Hải Tặc:'
+    - '&f• Tên Băng: &e%talent_crew_name%'
+    - '&f• Phân Hạng: %talent_crew_rank%'
+    - '&f• Tổng Tiền Truy Nã: &6%talent_crew_bounty% Beri'
+    - '&f• Cờ Đang Treo: %talent_crew_flag%'
+    - '&f• Đảo Kho Báu KOTH: &a%talent_koth_status%'
+    - ''
+    - '&4▶ Nhấn để mở Bảng Băng Hải Tặc & Cờ Đảo!'
+  POSITION-X: 8
+  POSITION-Y: 5
+  ACTIONS:
+    - 'banghaitac'
+
+close_menu:
+  MATERIAL: BARRIER
+  NAME: '&c&lĐÓNG MENU'
+  LORE:
+    - '&7Nhấn để đóng bảng điều khiển.'
+  POSITION-X: 9
+  POSITION-Y: 5

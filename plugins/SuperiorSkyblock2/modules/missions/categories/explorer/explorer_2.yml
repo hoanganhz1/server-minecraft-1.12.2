@@ -1,0 +1,79 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+# The mission file to use
+mission-file: IslandMissions
+
+# Whether the mission should be given when completing all requirements.
+auto-reward: true
+
+# Rewards given when completing the mission.
+rewards:
+  commands:
+    - 'eco give %player% 150000'
+    - 'talentadmin addpoints %player% 12'
+    - 'is admin msg %player% &e&lThám Hiểm | &7Hoàn thành xuất sắc nhiệm vụ Khám Phá Thế Giới Tận Cùng!'
+    - 'is admin msg %player% &e&lThám Hiểm | &7&oBạn đã đặt chân tới mọi thế giới trên máy chủ!'
+
+# List of events that will trigger the mission.
+events:
+  - IslandSchematicPasteEvent
+
+# Requirement of the event to complete the mission.
+success-check: 'event.getSchematic().endsWith("_the_end")'
+
+# List of required missions that must be completed before completing this one.
+required-missions:
+  - 'explorer_1'
+
+# Icons used in the menus.
+icons:
+  locked:
+    type: PAPER
+    name: '&aThám Hiểm Thế Giới Tận Cùng'
+    lore:
+      - '&7Đặt chân đến Thế Giới Tận Cùng (The End).'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+12 Điểm Thiên Phú'
+      - '&8 - &7$150,000'
+      - ''
+      - '&c&l ✘ &7Chưa Mở Khóa'
+  not-completed:
+    type: PAPER
+    name: '&aThám Hiểm Thế Giới Tận Cùng'
+    lore:
+      - '&7Đặt chân đến Thế Giới Tận Cùng (The End).'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+12 Điểm Thiên Phú'
+      - '&8 - &7$150,000'
+      - ''
+      - '&c&l ✘ &7Chưa Hoàn Thành'
+  can-complete:
+    type: PAPER
+    name: '&aThám Hiểm Thế Giới Tận Cùng'
+    lore:
+      - '&7Đặt chân đến Thế Giới Tận Cùng (The End).'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+12 Điểm Thiên Phú'
+      - '&8 - &7$150,000'
+      - ''
+      - '&a&l ✔ &7Nhấp để nhận phần thưởng.'
+    glow: true
+  completed:
+    type: MAP
+    name: '&aThám Hiểm Thế Giới Tận Cùng'
+    lore:
+      - '&7Đặt chân đến Thế Giới Tận Cùng (The End).'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+12 Điểm Thiên Phú'
+      - '&8 - &7$150,000'
+      - ''
+      - '&a&l ✔ &7Đã Nhận Thưởng.'

@@ -1,0 +1,116 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+# The mission file to use
+mission-file: BlocksMissions
+
+# Whether the mission should be given when completing all requirements.
+auto-reward: true
+
+# Nhiệm vụ Đồng Lòng Băng Hải Tặc (Co-op Island Mission)
+island: true
+
+# Should block counts of players get reset when completing the mission?
+reset-after-finish: true
+
+# Whether only naturally spawned blocks should be counted towards the mission or not.
+only-natural-blocks: true
+
+# Rewards given when completing the mission.
+rewards:
+  commands:
+    - 'eco give %player% 250000'
+    - 'talentadmin addpoints %player% 12'
+    - 'is admin msg %player% &e&lThợ Mỏ | &7Hoàn thành xuất sắc nhiệm vụ Thợ Mỏ V!'
+    - 'is admin msg %player% &e&lThợ Mỏ | &7Kim cương... toàn là kim cương!'
+    - 'is admin msg %player% &e&lThợ Mỏ | &7&oChúc mừng bạn đã trở thành Thợ Mỏ Chuyên Nghiệp!'
+
+# List of required missions that must be completed before completing this one.
+required-missions:
+  - 'miner_1'
+  - 'miner_2'
+  - 'miner_3'
+  - 'miner_4'
+
+# List of all required blocks must be gathered in order to complete the mission.
+required-blocks:
+  '1':
+    types:
+      - 'DIAMOND_ORE'
+    amount: 32
+
+# Icons used in the menus.
+icons:
+  locked:
+    type: PAPER
+    name: '&aThợ Mỏ V'
+    lore:
+      - '&7Đã đến lúc sở hữu những trang bị tốt nhất.'
+      - '&7Khai thác x32 Quặng Kim Cương.'
+      - ''
+      - '&6Yêu Cầu Khối:'
+      - '&8 - &7x32 Quặng Kim Cương'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+12 Điểm Thiên Phú'
+      - '&8 - &7$250,000'
+      - ''
+      - '&6Quặng Kim Cương đã đào: &7{1}/32'
+      - '&c&l ✘ &7Chưa Mở Khóa'
+    amount: 5
+  not-completed:
+    type: PAPER
+    name: '&aThợ Mỏ V'
+    lore:
+      - '&7Đã đến lúc sở hữu những trang bị tốt nhất.'
+      - '&7Khai thác x32 Quặng Kim Cương.'
+      - ''
+      - '&6Yêu Cầu Khối:'
+      - '&8 - &7x32 Quặng Kim Cương'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+12 Điểm Thiên Phú'
+      - '&8 - &7$250,000'
+      - ''
+      - '&6Quặng Kim Cương đã đào: &7{1}/32'
+      - '&6Tiến độ: &7{0}%'
+      - '&c&l ✘ &7Chưa Hoàn Thành'
+    amount: 5
+  can-complete:
+    type: PAPER
+    name: '&aThợ Mỏ V'
+    lore:
+      - '&7Đã đến lúc sở hữu những trang bị tốt nhất.'
+      - '&7Khai thác x32 Quặng Kim Cương.'
+      - ''
+      - '&6Yêu Cầu Khối:'
+      - '&8 - &7x32 Quặng Kim Cương'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+12 Điểm Thiên Phú'
+      - '&8 - &7$250,000'
+      - ''
+      - '&6Quặng Kim Cương đã đào: &732/32'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Nhấp để nhận phần thưởng.'
+    amount: 5
+    glow: true
+  completed:
+    type: MAP
+    name: '&aThợ Mỏ V'
+    lore:
+      - '&7Đã đến lúc sở hữu những trang bị tốt nhất.'
+      - '&7Khai thác x32 Quặng Kim Cương.'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+12 Điểm Thiên Phú'
+      - '&8 - &7$250,000'
+      - ''
+      - '&6Quặng Kim Cương đã đào: &732/32'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Đã Nhận Thưởng.'
+    amount: 5

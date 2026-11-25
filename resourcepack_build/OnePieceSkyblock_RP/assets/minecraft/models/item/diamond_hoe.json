@@ -1,0 +1,5870 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "items/diamond_hoe"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "damage": 0.0006085
+      },
+      "model": "item/custom/devil_fruits/fruit_mera"
+    },
+    {
+      "predicate": {
+        "damage": 0.0012491
+      },
+      "model": "item/custom/devil_fruits/fruit_gomu"
+    },
+    {
+      "predicate": {
+        "damage": 0.0018898
+      },
+      "model": "item/custom/devil_fruits/fruit_ope"
+    },
+    {
+      "predicate": {
+        "damage": 0.0025304
+      },
+      "model": "item/custom/devil_fruits/fruit_seiryu"
+    },
+    {
+      "predicate": {
+        "damage": 0.003171
+      },
+      "model": "item/custom/devil_fruits/df_chest"
+    },
+    {
+      "predicate": {
+        "damage": 0.0038116
+      },
+      "model": "item/custom/system/skill_slot_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.0044522
+      },
+      "model": "item/custom/system/skill_slot_2"
+    },
+    {
+      "predicate": {
+        "damage": 0.0050928
+      },
+      "model": "item/custom/system/skill_slot_3"
+    },
+    {
+      "predicate": {
+        "damage": 0.0057335
+      },
+      "model": "item/custom/system/skill_awaken"
+    },
+    {
+      "predicate": {
+        "damage": 0.0127802
+      },
+      "model": "item/custom/haki_martial/martial_kiem_dao"
+    },
+    {
+      "predicate": {
+        "damage": 0.0134208
+      },
+      "model": "item/custom/haki_martial/martial_luc_thuc"
+    },
+    {
+      "predicate": {
+        "damage": 0.0140614
+      },
+      "model": "item/custom/haki_martial/haki_ken"
+    },
+    {
+      "predicate": {
+        "damage": 0.0147021
+      },
+      "model": "item/custom/haki_martial/haki_buso"
+    },
+    {
+      "predicate": {
+        "damage": 0.0153427
+      },
+      "model": "item/custom/haki_martial/haki_hao"
+    },
+    {
+      "predicate": {
+        "damage": 0.0191864
+      },
+      "model": "item/custom/aov/aov_chest"
+    },
+    {
+      "predicate": {
+        "damage": 0.019827
+      },
+      "model": "item/custom/aov/thanh_kiem"
+    },
+    {
+      "predicate": {
+        "damage": 0.0204676
+      },
+      "model": "item/custom/aov/muramasa"
+    },
+    {
+      "predicate": {
+        "damage": 0.0211082
+      },
+      "model": "item/custom/aov/nanh_fenrir"
+    },
+    {
+      "predicate": {
+        "damage": 0.0217488
+      },
+      "model": "item/custom/aov/giap_ho_menh"
+    },
+    {
+      "predicate": {
+        "damage": 0.0223894
+      },
+      "model": "item/custom/aov/giap_gaia"
+    },
+    {
+      "predicate": {
+        "damage": 0.0230301
+      },
+      "model": "item/custom/aov/huan_chuong_troy"
+    },
+    {
+      "predicate": {
+        "damage": 0.0236707
+      },
+      "model": "item/custom/aov/song_dao"
+    },
+    {
+      "predicate": {
+        "damage": 0.0243113
+      },
+      "model": "item/custom/aov/quy_kiem"
+    },
+    {
+      "predicate": {
+        "damage": 0.0249519
+      },
+      "model": "item/custom/aov/thuong_xuyen_pha"
+    },
+    {
+      "predicate": {
+        "damage": 0.0255925
+      },
+      "model": "item/custom/aov/giap_thong_kho"
+    },
+    {
+      "predicate": {
+        "damage": 0.0262331
+      },
+      "model": "item/custom/aov/khien_that_truyen"
+    },
+    {
+      "predicate": {
+        "damage": 0.0268737
+      },
+      "model": "item/custom/aov/phu_chu_truong_sinh"
+    },
+    {
+      "predicate": {
+        "damage": 0.0319987
+      },
+      "model": "item/custom/system/talent_reset"
+    },
+    {
+      "predicate": {
+        "damage": 0.0326393
+      },
+      "model": "item/custom/crew_flags/flag_dragon"
+    },
+    {
+      "predicate": {
+        "damage": 0.0332799
+      },
+      "model": "item/custom/crew_flags/flag_gold"
+    },
+    {
+      "predicate": {
+        "damage": 0.0339205
+      },
+      "model": "item/custom/crew_flags/flag_phoenix"
+    },
+    {
+      "predicate": {
+        "damage": 0.0345611
+      },
+      "model": "item/custom/bosses/boss_akainu_icon"
+    },
+    {
+      "predicate": {
+        "damage": 0.0352017
+      },
+      "model": "item/custom/bosses/boss_aokiji_icon"
+    },
+    {
+      "predicate": {
+        "damage": 0.0358424
+      },
+      "model": "item/custom/system/bounty_poster"
+    },
+    {
+      "predicate": {
+        "damage": 0.0384048
+      },
+      "model": "item/custom/bosses/seaking_idle"
+    },
+    {
+      "predicate": {
+        "damage": 0.0390454
+      },
+      "model": "item/custom/bosses/seaking_attack"
+    },
+    {
+      "predicate": {
+        "damage": 0.039686
+      },
+      "model": "item/custom/bosses/seaking_roar"
+    },
+    {
+      "predicate": {
+        "damage": 0.0403267
+      },
+      "model": "item/custom/dummies/dummy_normal_idle"
+    },
+    {
+      "predicate": {
+        "damage": 0.0409673
+      },
+      "model": "item/custom/dummies/dummy_boss_idle"
+    },
+    {
+      "predicate": {
+        "damage": 0.0416079
+      },
+      "model": "item/custom/dummies/dummy_logia_idle"
+    },
+    {
+      "predicate": {
+        "damage": 0.0422485
+      },
+      "model": "item/custom/dummies/dummy_hit_shake"
+    },
+    {
+      "predicate": {
+        "damage": 0.0640294
+      },
+      "model": "item/mineminenomi/abilities/10000_kilo_press"
+    },
+    {
+      "predicate": {
+        "damage": 0.06467
+      },
+      "model": "item/mineminenomi/abilities/1_kilo_press"
+    },
+    {
+      "predicate": {
+        "damage": 0.0653106
+      },
+      "model": "item/mineminenomi/abilities/5000_kilo_punch"
+    },
+    {
+      "predicate": {
+        "damage": 0.0659513
+      },
+      "model": "item/mineminenomi/items/5t_hammer"
+    },
+    {
+      "predicate": {
+        "damage": 0.0665919
+      },
+      "model": "item/mineminenomi/items/5t_hammer_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.0672325
+      },
+      "model": "item/mineminenomi/abilities/abare_himatsuri"
+    },
+    {
+      "predicate": {
+        "damage": 0.0678731
+      },
+      "model": "item/mineminenomi/abilities/absorbed_blocks"
+    },
+    {
+      "predicate": {
+        "damage": 0.0685137
+      },
+      "model": "item/mineminenomi/items/ace"
+    },
+    {
+      "predicate": {
+        "damage": 0.0691543
+      },
+      "model": "item/mineminenomi/items/ace_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.069795
+      },
+      "model": "item/mineminenomi/items/aces_hat"
+    },
+    {
+      "predicate": {
+        "damage": 0.0704356
+      },
+      "model": "item/mineminenomi/items/aces_knife"
+    },
+    {
+      "predicate": {
+        "damage": 0.0710762
+      },
+      "model": "item/mineminenomi/items/aces_knife_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.0717168
+      },
+      "model": "item/mineminenomi/abilities/air_door"
+    },
+    {
+      "predicate": {
+        "damage": 0.0723574
+      },
+      "model": "item/mineminenomi/abilities/allosaurus_heavy_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.072998
+      },
+      "model": "item/mineminenomi/abilities/allosaurus_walk_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.0736386
+      },
+      "model": "item/mineminenomi/items/ama_no_murakumo"
+    },
+    {
+      "predicate": {
+        "damage": 0.0742793
+      },
+      "model": "item/mineminenomi/abilities/ama_no_murakumo"
+    },
+    {
+      "predicate": {
+        "damage": 0.0749199
+      },
+      "model": "item/mineminenomi/abilities/amaterasu"
+    },
+    {
+      "predicate": {
+        "damage": 0.0755605
+      },
+      "model": "item/mineminenomi/items/ame_no_habakiri"
+    },
+    {
+      "predicate": {
+        "damage": 0.0762011
+      },
+      "model": "item/mineminenomi/items/ame_no_habakiri_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.0768417
+      },
+      "model": "item/mineminenomi/items/ame_no_habakiri_sheathed"
+    },
+    {
+      "predicate": {
+        "damage": 0.0774823
+      },
+      "model": "item/mineminenomi/abilities/ancient_bite"
+    },
+    {
+      "predicate": {
+        "damage": 0.0781229
+      },
+      "model": "item/mineminenomi/abilities/ancient_stomp"
+    },
+    {
+      "predicate": {
+        "damage": 0.0787636
+      },
+      "model": "item/mineminenomi/abilities/ancient_sweep"
+    },
+    {
+      "predicate": {
+        "damage": 0.0794042
+      },
+      "model": "item/mineminenomi/abilities/ancient_tail_spin"
+    },
+    {
+      "predicate": {
+        "damage": 0.0800448
+      },
+      "model": "item/mineminenomi/abilities/ancient_trunk_shot"
+    },
+    {
+      "predicate": {
+        "damage": 0.0806854
+      },
+      "model": "item/mineminenomi/abilities/animal_forewarning"
+    },
+    {
+      "predicate": {
+        "damage": 0.081326
+      },
+      "model": "item/mineminenomi/abilities/animal_friend"
+    },
+    {
+      "predicate": {
+        "damage": 0.0819666
+      },
+      "model": "item/mineminenomi/abilities/animal_lookout"
+    },
+    {
+      "predicate": {
+        "damage": 0.0826073
+      },
+      "model": "item/mineminenomi/abilities/antidote_shot"
+    },
+    {
+      "predicate": {
+        "damage": 0.0832479
+      },
+      "model": "item/mineminenomi/abilities/antimanner_kick_course"
+    },
+    {
+      "predicate": {
+        "damage": 0.0838885
+      },
+      "model": "item/trangbilq/ao_choang_bang_gia"
+    },
+    {
+      "predicate": {
+        "damage": 0.0845291
+      },
+      "model": "item/trangbilq/ao_choang_than_ra"
+    },
+    {
+      "predicate": {
+        "damage": 0.0851697
+      },
+      "model": "item/mineminenomi/items/arlongs_hat"
+    },
+    {
+      "predicate": {
+        "damage": 0.0858103
+      },
+      "model": "item/mineminenomi/items/arlongs_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.0864509
+      },
+      "model": "item/mineminenomi/items/arlongs_shirt"
+    },
+    {
+      "predicate": {
+        "damage": 0.0870916
+      },
+      "model": "item/mineminenomi/items/arlongs_shoes"
+    },
+    {
+      "predicate": {
+        "damage": 0.0877322
+      },
+      "model": "item/mineminenomi/abilities/atomic_spurt"
+    },
+    {
+      "predicate": {
+        "damage": 0.0883728
+      },
+      "model": "item/mineminenomi/abilities/attack_command"
+    },
+    {
+      "predicate": {
+        "damage": 0.0890134
+      },
+      "model": "item/mineminenomi/abilities/attract"
+    },
+    {
+      "predicate": {
+        "damage": 0.089654
+      },
+      "model": "item/mineminenomi/items/awa_awa_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.0902946
+      },
+      "model": "item/mineminenomi/abilities/awase_baori"
+    },
+    {
+      "predicate": {
+        "damage": 0.0909352
+      },
+      "model": "item/mineminenomi/items/axe"
+    },
+    {
+      "predicate": {
+        "damage": 0.0915759
+      },
+      "model": "item/mineminenomi/items/models/axe_hand"
+    },
+    {
+      "predicate": {
+        "damage": 0.0922165
+      },
+      "model": "item/mineminenomi/items/axe_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.0928571
+      },
+      "model": "item/mineminenomi/items/axe_overlay_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.0934977
+      },
+      "model": "item/mineminenomi/abilities/axolotl_heal"
+    },
+    {
+      "predicate": {
+        "damage": 0.0941383
+      },
+      "model": "item/mineminenomi/abilities/axolotl_heavy_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.0947789
+      },
+      "model": "item/mineminenomi/abilities/axolotl_walk_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.0954196
+      },
+      "model": "item/mineminenomi/items/baku_baku_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.0960602
+      },
+      "model": "item/mineminenomi/abilities/baku_factory"
+    },
+    {
+      "predicate": {
+        "damage": 0.0967008
+      },
+      "model": "item/mineminenomi/abilities/baku_munch"
+    },
+    {
+      "predicate": {
+        "damage": 0.0973414
+      },
+      "model": "item/mineminenomi/abilities/baku_tsuiho"
+    },
+    {
+      "predicate": {
+        "damage": 0.097982
+      },
+      "model": "item/mineminenomi/abilities/bakudan"
+    },
+    {
+      "predicate": {
+        "damage": 0.0986226
+      },
+      "model": "item/mineminenomi/abilities/bakuretsu_kazan"
+    },
+    {
+      "predicate": {
+        "damage": 0.0992632
+      },
+      "model": "item/mineminenomi/items/bandana"
+    },
+    {
+      "predicate": {
+        "damage": 0.0999039
+      },
+      "model": "item/mineminenomi/items/bandit_knife"
+    },
+    {
+      "predicate": {
+        "damage": 0.1005445
+      },
+      "model": "item/mineminenomi/items/bandit_knife_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.1011851
+      },
+      "model": "item/mineminenomi/items/bane_bane_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.1018257
+      },
+      "model": "item/mineminenomi/abilities/bara_bara_car"
+    },
+    {
+      "predicate": {
+        "damage": 0.1024663
+      },
+      "model": "item/mineminenomi/abilities/bara_bara_festival"
+    },
+    {
+      "predicate": {
+        "damage": 0.1031069
+      },
+      "model": "item/mineminenomi/abilities/bara_bara_festival_shield"
+    },
+    {
+      "predicate": {
+        "damage": 0.1037475
+      },
+      "model": "item/mineminenomi/abilities/bara_bara_ho"
+    },
+    {
+      "predicate": {
+        "damage": 0.1043882
+      },
+      "model": "item/mineminenomi/items/bara_bara_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.1050288
+      },
+      "model": "item/mineminenomi/abilities/bara_split"
+    },
+    {
+      "predicate": {
+        "damage": 0.1056694
+      },
+      "model": "item/mineminenomi/items/bari_bari_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.10631
+      },
+      "model": "item/mineminenomi/abilities/bari_bari_no_pistol"
+    },
+    {
+      "predicate": {
+        "damage": 0.1069506
+      },
+      "model": "item/mineminenomi/abilities/barizodon"
+    },
+    {
+      "predicate": {
+        "damage": 0.1075912
+      },
+      "model": "item/mineminenomi/abilities/barjan"
+    },
+    {
+      "predicate": {
+        "damage": 0.1082319
+      },
+      "model": "item/mineminenomi/abilities/barrier"
+    },
+    {
+      "predicate": {
+        "damage": 0.1088725
+      },
+      "model": "item/mineminenomi/abilities/barrier_ball"
+    },
+    {
+      "predicate": {
+        "damage": 0.1095131
+      },
+      "model": "item/mineminenomi/abilities/barrier_crash"
+    },
+    {
+      "predicate": {
+        "damage": 0.1101537
+      },
+      "model": "item/mineminenomi/items/barrierbility_bat"
+    },
+    {
+      "predicate": {
+        "damage": 0.1107943
+      },
+      "model": "item/mineminenomi/abilities/barrierbility_bat"
+    },
+    {
+      "predicate": {
+        "damage": 0.1114349
+      },
+      "model": "item/mineminenomi/abilities/barrierbility_stairs"
+    },
+    {
+      "predicate": {
+        "damage": 0.1120755
+      },
+      "model": "item/mineminenomi/items/bastille_mask"
+    },
+    {
+      "predicate": {
+        "damage": 0.1127162
+      },
+      "model": "item/mineminenomi/abilities/batto_strike"
+    },
+    {
+      "predicate": {
+        "damage": 0.1133568
+      },
+      "model": "item/mineminenomi/items/models/bazooka"
+    },
+    {
+      "predicate": {
+        "damage": 0.1139974
+      },
+      "model": "item/mineminenomi/abilities/beak_grab"
+    },
+    {
+      "predicate": {
+        "damage": 0.114638
+      },
+      "model": "item/mineminenomi/abilities/belly_flop"
+    },
+    {
+      "predicate": {
+        "damage": 0.1152786
+      },
+      "model": "item/mineminenomi/items/belly_pouch_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.1159192
+      },
+      "model": "item/mineminenomi/items/belly_pouch_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.1165598
+      },
+      "model": "item/mineminenomi/items/belly_pouch_2"
+    },
+    {
+      "predicate": {
+        "damage": 0.1172005
+      },
+      "model": "item/mineminenomi/abilities/bero_cannon"
+    },
+    {
+      "predicate": {
+        "damage": 0.1178411
+      },
+      "model": "item/mineminenomi/abilities/beta_beta_chain"
+    },
+    {
+      "predicate": {
+        "damage": 0.1184817
+      },
+      "model": "item/mineminenomi/items/beta_beta_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.1191223
+      },
+      "model": "item/mineminenomi/abilities/beta_coating"
+    },
+    {
+      "predicate": {
+        "damage": 0.1197629
+      },
+      "model": "item/mineminenomi/abilities/beta_launcher"
+    },
+    {
+      "predicate": {
+        "damage": 0.1204035
+      },
+      "model": "item/mineminenomi/items/bicorne_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.1210442
+      },
+      "model": "item/mineminenomi/items/bicorne_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.1216848
+      },
+      "model": "item/mineminenomi/abilities/bien_cuit_grill_shot"
+    },
+    {
+      "predicate": {
+        "damage": 0.1223254
+      },
+      "model": "item/mineminenomi/items/big_red_nose"
+    },
+    {
+      "predicate": {
+        "damage": 0.122966
+      },
+      "model": "item/mineminenomi/abilities/bigan"
+    },
+    {
+      "predicate": {
+        "damage": 0.1236066
+      },
+      "model": "item/mineminenomi/abilities/bind"
+    },
+    {
+      "predicate": {
+        "damage": 0.1242472
+      },
+      "model": "item/mineminenomi/items/bisento"
+    },
+    {
+      "predicate": {
+        "damage": 0.1248878
+      },
+      "model": "item/mineminenomi/items/bisento_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.1255285
+      },
+      "model": "item/mineminenomi/items/bisento_overlay_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.1261691
+      },
+      "model": "item/mineminenomi/abilities/bison_heavy_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.1268097
+      },
+      "model": "item/mineminenomi/abilities/bison_smash"
+    },
+    {
+      "predicate": {
+        "damage": 0.1274503
+      },
+      "model": "item/mineminenomi/abilities/bison_walk_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.1280909
+      },
+      "model": "item/mineminenomi/abilities/black_box"
+    },
+    {
+      "predicate": {
+        "damage": 0.1287315
+      },
+      "model": "item/mineminenomi/abilities/black_hole"
+    },
+    {
+      "predicate": {
+        "damage": 0.1293721
+      },
+      "model": "item/mineminenomi/abilities/black_knight"
+    },
+    {
+      "predicate": {
+        "damage": 0.1300128
+      },
+      "model": "item/mineminenomi/abilities/black_road"
+    },
+    {
+      "predicate": {
+        "damage": 0.1306534
+      },
+      "model": "item/mineminenomi/abilities/black_world"
+    },
+    {
+      "predicate": {
+        "damage": 0.131294
+      },
+      "model": "item/mineminenomi/abilities/blue_bird"
+    },
+    {
+      "predicate": {
+        "damage": 0.1319346
+      },
+      "model": "item/mineminenomi/items/blue_sword"
+    },
+    {
+      "predicate": {
+        "damage": 0.1325752
+      },
+      "model": "item/mineminenomi/abilities/blue_sword"
+    },
+    {
+      "predicate": {
+        "damage": 0.1332158
+      },
+      "model": "item/mineminenomi/items/blue_sword_off"
+    },
+    {
+      "predicate": {
+        "damage": 0.1338565
+      },
+      "model": "item/mineminenomi/items/blugori_hood_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.1344971
+      },
+      "model": "item/mineminenomi/items/blugori_hood_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.1351377
+      },
+      "model": "item/mineminenomi/items/blugori_hood_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.1357783
+      },
+      "model": "item/mineminenomi/abilities/bomb_throw"
+    },
+    {
+      "predicate": {
+        "damage": 0.1364189
+      },
+      "model": "item/mineminenomi/items/bomu_bomu_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.1370595
+      },
+      "model": "item/mineminenomi/abilities/bon"
+    },
+    {
+      "predicate": {
+        "damage": 0.1377001
+      },
+      "model": "item/mineminenomi/items/bon_chari"
+    },
+    {
+      "predicate": {
+        "damage": 0.1383408
+      },
+      "model": "item/mineminenomi/items/bottle_of_rum"
+    },
+    {
+      "predicate": {
+        "damage": 0.1389814
+      },
+      "model": "item/mineminenomi/abilities/bouncy"
+    },
+    {
+      "predicate": {
+        "damage": 0.139622
+      },
+      "model": "item/mineminenomi/abilities/brachio_bomber"
+    },
+    {
+      "predicate": {
+        "damage": 0.1402626
+      },
+      "model": "item/mineminenomi/abilities/brachio_grab"
+    },
+    {
+      "predicate": {
+        "damage": 0.1409032
+      },
+      "model": "item/mineminenomi/abilities/brachiosaurus_guard_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.1415438
+      },
+      "model": "item/mineminenomi/abilities/brachiosaurus_heavy_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.1421844
+      },
+      "model": "item/mineminenomi/items/breath_dial"
+    },
+    {
+      "predicate": {
+        "damage": 0.1428251
+      },
+      "model": "item/mineminenomi/abilities/breeze_breath_bomb"
+    },
+    {
+      "predicate": {
+        "damage": 0.1434657
+      },
+      "model": "item/mineminenomi/abilities/brick_bat"
+    },
+    {
+      "predicate": {
+        "damage": 0.1441063
+      },
+      "model": "item/mineminenomi/abilities/brilliant_punk"
+    },
+    {
+      "predicate": {
+        "damage": 0.1447469
+      },
+      "model": "item/mineminenomi/items/broadsword"
+    },
+    {
+      "predicate": {
+        "damage": 0.1453875
+      },
+      "model": "item/mineminenomi/items/broadsword_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.1460281
+      },
+      "model": "item/mineminenomi/items/broadsword_overlay_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.1466688
+      },
+      "model": "item/mineminenomi/items/bubbly_coral"
+    },
+    {
+      "predicate": {
+        "damage": 0.1473094
+      },
+      "model": "item/mineminenomi/items/bullet"
+    },
+    {
+      "predicate": {
+        "damage": 0.14795
+      },
+      "model": "item/mineminenomi/abilities/busoshoku_haki_emission"
+    },
+    {
+      "predicate": {
+        "damage": 0.1485906
+      },
+      "model": "item/mineminenomi/abilities/busoshoku_haki_full_body_hardening"
+    },
+    {
+      "predicate": {
+        "damage": 0.1492312
+      },
+      "model": "item/mineminenomi/abilities/busoshoku_haki_imbuing"
+    },
+    {
+      "predicate": {
+        "damage": 0.1498718
+      },
+      "model": "item/mineminenomi/abilities/busoshoku_haki_internal_destruction"
+    },
+    {
+      "predicate": {
+        "damage": 0.1505124
+      },
+      "model": "item/mineminenomi/items/cabajis_scarf_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.1511531
+      },
+      "model": "item/mineminenomi/items/cabajis_scarf_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.1517937
+      },
+      "model": "item/mineminenomi/abilities/cabochon_knuckle"
+    },
+    {
+      "predicate": {
+        "damage": 0.1524343
+      },
+      "model": "item/mineminenomi/abilities/calm"
+    },
+    {
+      "predicate": {
+        "damage": 0.1530749
+      },
+      "model": "item/mineminenomi/abilities/campo_de_flores"
+    },
+    {
+      "predicate": {
+        "damage": 0.1537155
+      },
+      "model": "item/mineminenomi/abilities/candle_champion"
+    },
+    {
+      "predicate": {
+        "damage": 0.1543561
+      },
+      "model": "item/mineminenomi/abilities/candle_house"
+    },
+    {
+      "predicate": {
+        "damage": 0.1549967
+      },
+      "model": "item/mineminenomi/abilities/candle_lock"
+    },
+    {
+      "predicate": {
+        "damage": 0.1556374
+      },
+      "model": "item/mineminenomi/abilities/candle_wall"
+    },
+    {
+      "predicate": {
+        "damage": 0.156278
+      },
+      "model": "item/mineminenomi/abilities/candy_armor"
+    },
+    {
+      "predicate": {
+        "damage": 0.1569186
+      },
+      "model": "item/mineminenomi/abilities/candy_escalator"
+    },
+    {
+      "predicate": {
+        "damage": 0.1575592
+      },
+      "model": "item/mineminenomi/abilities/candy_maiden"
+    },
+    {
+      "predicate": {
+        "damage": 0.1581998
+      },
+      "model": "item/mineminenomi/abilities/candy_man"
+    },
+    {
+      "predicate": {
+        "damage": 0.1588404
+      },
+      "model": "item/mineminenomi/abilities/candy_wall"
+    },
+    {
+      "predicate": {
+        "damage": 0.1594811
+      },
+      "model": "item/mineminenomi/abilities/candy_wave"
+    },
+    {
+      "predicate": {
+        "damage": 0.1601217
+      },
+      "model": "item/mineminenomi/items/cannon"
+    },
+    {
+      "predicate": {
+        "damage": 0.1607623
+      },
+      "model": "item/mineminenomi/items/cannon_ball"
+    },
+    {
+      "predicate": {
+        "damage": 0.1614029
+      },
+      "model": "item/mineminenomi/items/cat_claws"
+    },
+    {
+      "predicate": {
+        "damage": 0.1620435
+      },
+      "model": "item/mineminenomi/items/celestial_dragon_bubble"
+    },
+    {
+      "predicate": {
+        "damage": 0.1626841
+      },
+      "model": "item/mineminenomi/items/chain"
+    },
+    {
+      "predicate": {
+        "damage": 0.1633247
+      },
+      "model": "item/mineminenomi/items/chakram"
+    },
+    {
+      "predicate": {
+        "damage": 0.1639654
+      },
+      "model": "item/mineminenomi/items/chakram_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.164606
+      },
+      "model": "item/mineminenomi/items/challenge_poster"
+    },
+    {
+      "predicate": {
+        "damage": 0.1652466
+      },
+      "model": "item/mineminenomi/abilities/champ_fight"
+    },
+    {
+      "predicate": {
+        "damage": 0.1658872
+      },
+      "model": "item/mineminenomi/items/character_creator"
+    },
+    {
+      "predicate": {
+        "damage": 0.1665278
+      },
+      "model": "item/mineminenomi/items/chews_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.1671684
+      },
+      "model": "item/mineminenomi/items/chews_shirt"
+    },
+    {
+      "predicate": {
+        "damage": 0.167809
+      },
+      "model": "item/mineminenomi/items/chews_shoes"
+    },
+    {
+      "predicate": {
+        "damage": 0.1684497
+      },
+      "model": "item/mineminenomi/items/chiyu_chiyu_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.1690903
+      },
+      "model": "item/mineminenomi/abilities/chiyu_hormone"
+    },
+    {
+      "predicate": {
+        "damage": 0.1697309
+      },
+      "model": "item/mineminenomi/abilities/chiyupopo"
+    },
+    {
+      "predicate": {
+        "damage": 0.1703715
+      },
+      "model": "item/mineminenomi/abilities/chloro_ball"
+    },
+    {
+      "predicate": {
+        "damage": 0.1710121
+      },
+      "model": "item/mineminenomi/abilities/chloro_ball_venom"
+    },
+    {
+      "predicate": {
+        "damage": 0.1716527
+      },
+      "model": "item/mineminenomi/items/choppers_hat"
+    },
+    {
+      "predicate": {
+        "damage": 0.1722934
+      },
+      "model": "item/mineminenomi/items/choppers_hat_2"
+    },
+    {
+      "predicate": {
+        "damage": 0.172934
+      },
+      "model": "item/trangbilq/chuy-bang-suong"
+    },
+    {
+      "predicate": {
+        "damage": 0.1735746
+      },
+      "model": "item/mineminenomi/abilities/cien_fleur_stomp"
+    },
+    {
+      "predicate": {
+        "damage": 0.1742152
+      },
+      "model": "item/mineminenomi/abilities/cien_fleur_wing"
+    },
+    {
+      "predicate": {
+        "damage": 0.1748558
+      },
+      "model": "item/mineminenomi/abilities/claw_strike"
+    },
+    {
+      "predicate": {
+        "damage": 0.1754964
+      },
+      "model": "item/mineminenomi/items/cleaver"
+    },
+    {
+      "predicate": {
+        "damage": 0.176137
+      },
+      "model": "item/mineminenomi/items/cleaver_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.1767777
+      },
+      "model": "item/mineminenomi/items/cleaver_overlay_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.1774183
+      },
+      "model": "item/mineminenomi/items/clima_tact"
+    },
+    {
+      "predicate": {
+        "damage": 0.1780589
+      },
+      "model": "item/mineminenomi/items/cola"
+    },
+    {
+      "predicate": {
+        "damage": 0.1786995
+      },
+      "model": "item/mineminenomi/items/cola_backpack"
+    },
+    {
+      "predicate": {
+        "damage": 0.1793401
+      },
+      "model": "item/mineminenomi/abilities/cola_overdrive"
+    },
+    {
+      "predicate": {
+        "damage": 0.1799807
+      },
+      "model": "item/mineminenomi/items/color_palette"
+    },
+    {
+      "predicate": {
+        "damage": 0.1806213
+      },
+      "model": "item/mineminenomi/abilities/concasse"
+    },
+    {
+      "predicate": {
+        "damage": 0.181262
+      },
+      "model": "item/mineminenomi/items/cooked_sea_king_meat"
+    },
+    {
+      "predicate": {
+        "damage": 0.1819026
+      },
+      "model": "item/mineminenomi/abilities/cool_ball"
+    },
+    {
+      "predicate": {
+        "damage": 0.1825432
+      },
+      "model": "item/mineminenomi/abilities/counter_shock"
+    },
+    {
+      "predicate": {
+        "damage": 0.1831838
+      },
+      "model": "item/mineminenomi/abilities/coup_de_boo"
+    },
+    {
+      "predicate": {
+        "damage": 0.1838244
+      },
+      "model": "item/mineminenomi/abilities/coup_de_vent"
+    },
+    {
+      "predicate": {
+        "damage": 0.184465
+      },
+      "model": "item/mineminenomi/items/cp9_boots"
+    },
+    {
+      "predicate": {
+        "damage": 0.1851057
+      },
+      "model": "item/mineminenomi/items/cp9_jacket"
+    },
+    {
+      "predicate": {
+        "damage": 0.1857463
+      },
+      "model": "item/mineminenomi/items/cp9_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.1863869
+      },
+      "model": "item/mineminenomi/items/crocodiles_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.1870275
+      },
+      "model": "item/mineminenomi/items/crocodiles_shoes"
+    },
+    {
+      "predicate": {
+        "damage": 0.1876681
+      },
+      "model": "item/mineminenomi/items/crocodiles_suit"
+    },
+    {
+      "predicate": {
+        "damage": 0.1883087
+      },
+      "model": "item/mineminenomi/items/cutlass"
+    },
+    {
+      "predicate": {
+        "damage": 0.1889493
+      },
+      "model": "item/mineminenomi/items/cutlass_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.18959
+      },
+      "model": "item/mineminenomi/items/cutlass_overlay_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.1902306
+      },
+      "model": "item/mineminenomi/items/dagger"
+    },
+    {
+      "predicate": {
+        "damage": 0.1908712
+      },
+      "model": "item/mineminenomi/items/dagger_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.1915118
+      },
+      "model": "item/mineminenomi/items/dagger_overlay_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.1921524
+      },
+      "model": "item/mineminenomi/abilities/dai_enkai_onibi"
+    },
+    {
+      "predicate": {
+        "damage": 0.192793
+      },
+      "model": "item/mineminenomi/abilities/dai_funka"
+    },
+    {
+      "predicate": {
+        "damage": 0.1934336
+      },
+      "model": "item/mineminenomi/abilities/daibutsu_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.1940743
+      },
+      "model": "item/mineminenomi/items/daisenso"
+    },
+    {
+      "predicate": {
+        "damage": 0.1947149
+      },
+      "model": "item/mineminenomi/items/daisenso_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.1953555
+      },
+      "model": "item/mineminenomi/items/daltons_spade"
+    },
+    {
+      "predicate": {
+        "damage": 0.1959961
+      },
+      "model": "item/mineminenomi/items/daltons_spade_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.1966367
+      },
+      "model": "item/mineminenomi/abilities/damage_absorption"
+    },
+    {
+      "predicate": {
+        "damage": 0.1972773
+      },
+      "model": "item/mineminenomi/abilities/damned_punk"
+    },
+    {
+      "predicate": {
+        "damage": 0.197918
+      },
+      "model": "item/mineminenomi/items/dandelion"
+    },
+    {
+      "predicate": {
+        "damage": 0.1985586
+      },
+      "model": "item/trangbilq/dao_truy_hon"
+    },
+    {
+      "predicate": {
+        "damage": 0.1991992
+      },
+      "model": "item/mineminenomi/abilities/dark_matter"
+    },
+    {
+      "predicate": {
+        "damage": 0.1998398
+      },
+      "model": "item/mineminenomi/abilities/death_wink"
+    },
+    {
+      "predicate": {
+        "damage": 0.2004804
+      },
+      "model": "item/mineminenomi/abilities/deka_deka"
+    },
+    {
+      "predicate": {
+        "damage": 0.201121
+      },
+      "model": "item/mineminenomi/items/deka_deka_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.2017616
+      },
+      "model": "item/mineminenomi/abilities/deka_trample"
+    },
+    {
+      "predicate": {
+        "damage": 0.2024023
+      },
+      "model": "item/mineminenomi/abilities/demonic_dance"
+    },
+    {
+      "predicate": {
+        "damage": 0.2030429
+      },
+      "model": "item/mineminenomi/abilities/demonic_dash"
+    },
+    {
+      "predicate": {
+        "damage": 0.2036835
+      },
+      "model": "item/mineminenomi/abilities/demonic_smash"
+    },
+    {
+      "predicate": {
+        "damage": 0.2043241
+      },
+      "model": "item/mineminenomi/items/den_den_mushi"
+    },
+    {
+      "predicate": {
+        "damage": 0.2049647
+      },
+      "model": "item/mineminenomi/items/dense_kairoseki"
+    },
+    {
+      "predicate": {
+        "damage": 0.2056053
+      },
+      "model": "item/mineminenomi/abilities/desert_encierro"
+    },
+    {
+      "predicate": {
+        "damage": 0.2062459
+      },
+      "model": "item/mineminenomi/abilities/desert_girasole"
+    },
+    {
+      "predicate": {
+        "damage": 0.2068866
+      },
+      "model": "item/mineminenomi/abilities/desert_grande_espada"
+    },
+    {
+      "predicate": {
+        "damage": 0.2075272
+      },
+      "model": "item/mineminenomi/abilities/desert_spada"
+    },
+    {
+      "predicate": {
+        "damage": 0.2081678
+      },
+      "model": "item/mineminenomi/items/devil_fruit_encyclopedia"
+    },
+    {
+      "predicate": {
+        "damage": 0.2088084
+      },
+      "model": "item/mineminenomi/abilities/diable_jambe"
+    },
+    {
+      "predicate": {
+        "damage": 0.209449
+      },
+      "model": "item/mineminenomi/abilities/diamond_body"
+    },
+    {
+      "predicate": {
+        "damage": 0.2100896
+      },
+      "model": "item/mineminenomi/abilities/disabled_status"
+    },
+    {
+      "predicate": {
+        "damage": 0.2107303
+      },
+      "model": "item/mineminenomi/items/doa_doa_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.2113709
+      },
+      "model": "item/mineminenomi/items/doflamingos_glasses"
+    },
+    {
+      "predicate": {
+        "damage": 0.2120115
+      },
+      "model": "item/mineminenomi/items/doflamingos_glasses_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.2126521
+      },
+      "model": "item/mineminenomi/items/doku_doku_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.2132927
+      },
+      "model": "item/mineminenomi/abilities/doku_fugu"
+    },
+    {
+      "predicate": {
+        "damage": 0.2139333
+      },
+      "model": "item/mineminenomi/abilities/doku_gumo"
+    },
+    {
+      "predicate": {
+        "damage": 0.2145739
+      },
+      "model": "item/mineminenomi/abilities/doku_gumo_venom"
+    },
+    {
+      "predicate": {
+        "damage": 0.2152146
+      },
+      "model": "item/mineminenomi/abilities/don"
+    },
+    {
+      "predicate": {
+        "damage": 0.2158552
+      },
+      "model": "item/mineminenomi/abilities/door_door"
+    },
+    {
+      "predicate": {
+        "damage": 0.2164958
+      },
+      "model": "item/mineminenomi/abilities/doping"
+    },
+    {
+      "predicate": {
+        "damage": 0.2171364
+      },
+      "model": "item/mineminenomi/abilities/doppelman"
+    },
+    {
+      "predicate": {
+        "damage": 0.217777
+      },
+      "model": "item/mineminenomi/items/doru_doru_arts_ken"
+    },
+    {
+      "predicate": {
+        "damage": 0.2184176
+      },
+      "model": "item/mineminenomi/abilities/doru_doru_arts_ken"
+    },
+    {
+      "predicate": {
+        "damage": 0.2190582
+      },
+      "model": "item/mineminenomi/abilities/doru_doru_arts_mori"
+    },
+    {
+      "predicate": {
+        "damage": 0.2196989
+      },
+      "model": "item/mineminenomi/items/doru_doru_arts_pickaxe"
+    },
+    {
+      "predicate": {
+        "damage": 0.2203395
+      },
+      "model": "item/mineminenomi/abilities/doru_doru_arts_pickaxe"
+    },
+    {
+      "predicate": {
+        "damage": 0.2209801
+      },
+      "model": "item/mineminenomi/abilities/doru_doru_ball"
+    },
+    {
+      "predicate": {
+        "damage": 0.2216207
+      },
+      "model": "item/mineminenomi/items/doru_doru_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.2222613
+      },
+      "model": "item/mineminenomi/abilities/doru_doru_no_yakata"
+    },
+    {
+      "predicate": {
+        "damage": 0.2229019
+      },
+      "model": "item/mineminenomi/abilities/dos_fleur_clutch"
+    },
+    {
+      "predicate": {
+        "damage": 0.2235426
+      },
+      "model": "item/mineminenomi/abilities/dragons_roar"
+    },
+    {
+      "predicate": {
+        "damage": 0.2241832
+      },
+      "model": "item/mineminenomi/items/durandal"
+    },
+    {
+      "predicate": {
+        "damage": 0.2248238
+      },
+      "model": "item/mineminenomi/items/durandal_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.2254644
+      },
+      "model": "item/mineminenomi/items/eisen_dial"
+    },
+    {
+      "predicate": {
+        "damage": 0.226105
+      },
+      "model": "item/mineminenomi/abilities/el_thor"
+    },
+    {
+      "predicate": {
+        "damage": 0.2267456
+      },
+      "model": "item/mineminenomi/abilities/eleclaw"
+    },
+    {
+      "predicate": {
+        "damage": 0.2273862
+      },
+      "model": "item/mineminenomi/abilities/electrical_luna"
+    },
+    {
+      "predicate": {
+        "damage": 0.2280269
+      },
+      "model": "item/mineminenomi/abilities/electrical_missile"
+    },
+    {
+      "predicate": {
+        "damage": 0.2286675
+      },
+      "model": "item/mineminenomi/abilities/electrical_shower"
+    },
+    {
+      "predicate": {
+        "damage": 0.2293081
+      },
+      "model": "item/mineminenomi/abilities/electrical_tempesta"
+    },
+    {
+      "predicate": {
+        "damage": 0.2299487
+      },
+      "model": "item/mineminenomi/abilities/electro"
+    },
+    {
+      "predicate": {
+        "damage": 0.2305893
+      },
+      "model": "item/mineminenomi/abilities/empty"
+    },
+    {
+      "predicate": {
+        "damage": 0.2312299
+      },
+      "model": "item/mineminenomi/items/empty_cola"
+    },
+    {
+      "predicate": {
+        "damage": 0.2318705
+      },
+      "model": "item/mineminenomi/abilities/empty_hands"
+    },
+    {
+      "predicate": {
+        "damage": 0.2325112
+      },
+      "model": "item/mineminenomi/items/empty_ultra_cola"
+    },
+    {
+      "predicate": {
+        "damage": 0.2331518
+      },
+      "model": "item/mineminenomi/abilities/energy_hormone"
+    },
+    {
+      "predicate": {
+        "damage": 0.2337924
+      },
+      "model": "item/mineminenomi/abilities/enjomo"
+    },
+    {
+      "predicate": {
+        "damage": 0.234433
+      },
+      "model": "item/mineminenomi/items/enma"
+    },
+    {
+      "predicate": {
+        "damage": 0.2350736
+      },
+      "model": "item/mineminenomi/items/enma_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.2357142
+      },
+      "model": "item/mineminenomi/items/enma_sheathed"
+    },
+    {
+      "predicate": {
+        "damage": 0.2363549
+      },
+      "model": "item/mineminenomi/abilities/evaporate"
+    },
+    {
+      "predicate": {
+        "damage": 0.2369955
+      },
+      "model": "item/mineminenomi/items/explosive_handcuffs"
+    },
+    {
+      "predicate": {
+        "damage": 0.2376361
+      },
+      "model": "item/mineminenomi/abilities/explosive_punch"
+    },
+    {
+      "predicate": {
+        "damage": 0.2382767
+      },
+      "model": "item/mineminenomi/items/extol_pouch_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.2389173
+      },
+      "model": "item/mineminenomi/items/extol_pouch_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.2395579
+      },
+      "model": "item/mineminenomi/items/extol_pouch_2"
+    },
+    {
+      "predicate": {
+        "damage": 0.2401985
+      },
+      "model": "item/mineminenomi/abilities/extra_hachis"
+    },
+    {
+      "predicate": {
+        "damage": 0.2408392
+      },
+      "model": "item/mineminenomi/abilities/failed_experiment"
+    },
+    {
+      "predicate": {
+        "damage": 0.2414798
+      },
+      "model": "item/mineminenomi/abilities/ferocious_leap"
+    },
+    {
+      "predicate": {
+        "damage": 0.2421204
+      },
+      "model": "item/mineminenomi/abilities/fiddle_banff"
+    },
+    {
+      "predicate": {
+        "damage": 0.242761
+      },
+      "model": "item/mineminenomi/abilities/first_aid"
+    },
+    {
+      "predicate": {
+        "damage": 0.2434016
+      },
+      "model": "item/mineminenomi/items/flag"
+    },
+    {
+      "predicate": {
+        "damage": 0.2440422
+      },
+      "model": "item/mineminenomi/items/flame_dial"
+    },
+    {
+      "predicate": {
+        "damage": 0.2446828
+      },
+      "model": "item/mineminenomi/abilities/flames_of_regeneration"
+    },
+    {
+      "predicate": {
+        "damage": 0.2453235
+      },
+      "model": "item/mineminenomi/abilities/flash"
+    },
+    {
+      "predicate": {
+        "damage": 0.2459641
+      },
+      "model": "item/mineminenomi/items/flash_dial"
+    },
+    {
+      "predicate": {
+        "damage": 0.2466047
+      },
+      "model": "item/mineminenomi/items/fleet_admirals_hat"
+    },
+    {
+      "predicate": {
+        "damage": 0.2472453
+      },
+      "model": "item/mineminenomi/items/flintlock"
+    },
+    {
+      "predicate": {
+        "damage": 0.2478859
+      },
+      "model": "item/mineminenomi/items/fluffy_cape"
+    },
+    {
+      "predicate": {
+        "damage": 0.2485265
+      },
+      "model": "item/mineminenomi/abilities/follow_command"
+    },
+    {
+      "predicate": {
+        "damage": 0.2491672
+      },
+      "model": "item/mineminenomi/items/frankys_glasses"
+    },
+    {
+      "predicate": {
+        "damage": 0.2498078
+      },
+      "model": "item/mineminenomi/items/frankys_shirt"
+    },
+    {
+      "predicate": {
+        "damage": 0.2504484
+      },
+      "model": "item/mineminenomi/abilities/free_swimming"
+    },
+    {
+      "predicate": {
+        "damage": 0.251089
+      },
+      "model": "item/mineminenomi/abilities/fresh_fire"
+    },
+    {
+      "predicate": {
+        "damage": 0.2517296
+      },
+      "model": "item/mineminenomi/abilities/frost_walker"
+    },
+    {
+      "predicate": {
+        "damage": 0.2523702
+      },
+      "model": "item/mineminenomi/abilities/fubuki"
+    },
+    {
+      "predicate": {
+        "damage": 0.2530108
+      },
+      "model": "item/mineminenomi/abilities/fujiazami"
+    },
+    {
+      "predicate": {
+        "damage": 0.2536515
+      },
+      "model": "item/mineminenomi/abilities/fullbright"
+    },
+    {
+      "predicate": {
+        "damage": 0.2542921
+      },
+      "model": "item/mineminenomi/items/gamma_knife"
+    },
+    {
+      "predicate": {
+        "damage": 0.2549327
+      },
+      "model": "item/mineminenomi/abilities/gamma_knife"
+    },
+    {
+      "predicate": {
+        "damage": 0.2555733
+      },
+      "model": "item/mineminenomi/abilities/ganmen_seicho_hormone"
+    },
+    {
+      "predicate": {
+        "damage": 0.2562139
+      },
+      "model": "item/mineminenomi/abilities/gas_robe"
+    },
+    {
+      "predicate": {
+        "damage": 0.2568545
+      },
+      "model": "item/mineminenomi/abilities/gastanet"
+    },
+    {
+      "predicate": {
+        "damage": 0.2574951
+      },
+      "model": "item/mineminenomi/abilities/gastille"
+    },
+    {
+      "predicate": {
+        "damage": 0.2581358
+      },
+      "model": "item/mineminenomi/abilities/gastronomorph"
+    },
+    {
+      "predicate": {
+        "damage": 0.2587764
+      },
+      "model": "item/mineminenomi/items/gasu_gasu_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.259417
+      },
+      "model": "item/mineminenomi/abilities/gear_fourth"
+    },
+    {
+      "predicate": {
+        "damage": 0.2600576
+      },
+      "model": "item/mineminenomi/abilities/gear_second"
+    },
+    {
+      "predicate": {
+        "damage": 0.2606982
+      },
+      "model": "item/mineminenomi/abilities/gear_third"
+    },
+    {
+      "predicate": {
+        "damage": 0.2613388
+      },
+      "model": "item/mineminenomi/abilities/gekishin"
+    },
+    {
+      "predicate": {
+        "damage": 0.2619795
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.2626201
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_10"
+    },
+    {
+      "predicate": {
+        "damage": 0.2632607
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_10_stem"
+    },
+    {
+      "predicate": {
+        "damage": 0.2639013
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_1_stem"
+    },
+    {
+      "predicate": {
+        "damage": 0.2645419
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_2"
+    },
+    {
+      "predicate": {
+        "damage": 0.2651825
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_2_stem"
+    },
+    {
+      "predicate": {
+        "damage": 0.2658231
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_3"
+    },
+    {
+      "predicate": {
+        "damage": 0.2664638
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_3_stem"
+    },
+    {
+      "predicate": {
+        "damage": 0.2671044
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_4"
+    },
+    {
+      "predicate": {
+        "damage": 0.267745
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_4_stem"
+    },
+    {
+      "predicate": {
+        "damage": 0.2683856
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_5"
+    },
+    {
+      "predicate": {
+        "damage": 0.2690262
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_5_stem"
+    },
+    {
+      "predicate": {
+        "damage": 0.2696668
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_6"
+    },
+    {
+      "predicate": {
+        "damage": 0.2703074
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_6_stem"
+    },
+    {
+      "predicate": {
+        "damage": 0.2709481
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_7"
+    },
+    {
+      "predicate": {
+        "damage": 0.2715887
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_7_stem"
+    },
+    {
+      "predicate": {
+        "damage": 0.2722293
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_8"
+    },
+    {
+      "predicate": {
+        "damage": 0.2728699
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_8_stem"
+    },
+    {
+      "predicate": {
+        "damage": 0.2735105
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_9"
+    },
+    {
+      "predicate": {
+        "damage": 0.2741511
+      },
+      "model": "item/mineminenomi/items/fruits/generic/generic_fruit_9_stem"
+    },
+    {
+      "predicate": {
+        "damage": 0.2747918
+      },
+      "model": "item/mineminenomi/items/generic_katana"
+    },
+    {
+      "predicate": {
+        "damage": 0.2754324
+      },
+      "model": "item/mineminenomi/items/generic_spear_overlay_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.276073
+      },
+      "model": "item/mineminenomi/abilities/genkotsu_meteor"
+    },
+    {
+      "predicate": {
+        "damage": 0.2767136
+      },
+      "model": "item/mineminenomi/abilities/genkotsu_meteor_ryuseigun"
+    },
+    {
+      "predicate": {
+        "damage": 0.2773542
+      },
+      "model": "item/mineminenomi/abilities/genocide_raid"
+    },
+    {
+      "predicate": {
+        "damage": 0.2779948
+      },
+      "model": "item/mineminenomi/abilities/geppo"
+    },
+    {
+      "predicate": {
+        "damage": 0.2786354
+      },
+      "model": "item/trangbilq/giap_cuong_no"
+    },
+    {
+      "predicate": {
+        "damage": 0.2792761
+      },
+      "model": "item/mineminenomi/items/ginga_pachinko"
+    },
+    {
+      "predicate": {
+        "damage": 0.2799167
+      },
+      "model": "item/mineminenomi/items/ginga_pachinko_pulling_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.2805573
+      },
+      "model": "item/mineminenomi/items/ginga_pachinko_pulling_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.2811979
+      },
+      "model": "item/mineminenomi/items/ginga_pachinko_pulling_2"
+    },
+    {
+      "predicate": {
+        "damage": 0.2818385
+      },
+      "model": "item/mineminenomi/abilities/giraffe_heavy_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.2824791
+      },
+      "model": "item/mineminenomi/abilities/giraffe_walk_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.2831197
+      },
+      "model": "item/mineminenomi/items/goe_goe_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.2837604
+      },
+      "model": "item/mineminenomi/abilities/golden_hour"
+    },
+    {
+      "predicate": {
+        "damage": 0.284401
+      },
+      "model": "item/mineminenomi/abilities/gomu_gomu_no_bazooka"
+    },
+    {
+      "predicate": {
+        "damage": 0.2850416
+      },
+      "model": "item/mineminenomi/abilities/gomu_gomu_no_dawn_whip"
+    },
+    {
+      "predicate": {
+        "damage": 0.2856822
+      },
+      "model": "item/mineminenomi/abilities/gomu_gomu_no_gatling"
+    },
+    {
+      "predicate": {
+        "damage": 0.2863228
+      },
+      "model": "item/mineminenomi/abilities/gomu_gomu_no_gigant"
+    },
+    {
+      "predicate": {
+        "damage": 0.2869634
+      },
+      "model": "item/mineminenomi/abilities/gomu_gomu_no_king_kong_gun"
+    },
+    {
+      "predicate": {
+        "damage": 0.287604
+      },
+      "model": "item/mineminenomi/abilities/gomu_gomu_no_pistol"
+    },
+    {
+      "predicate": {
+        "damage": 0.2882447
+      },
+      "model": "item/mineminenomi/abilities/gomu_gomu_no_rocket"
+    },
+    {
+      "predicate": {
+        "damage": 0.2888853
+      },
+      "model": "item/mineminenomi/items/goro_goro_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.2895259
+      },
+      "model": "item/mineminenomi/abilities/gourmet_snipe"
+    },
+    {
+      "predicate": {
+        "damage": 0.2901665
+      },
+      "model": "item/mineminenomi/abilities/gourmetamorphosis"
+    },
+    {
+      "predicate": {
+        "damage": 0.2908071
+      },
+      "model": "item/mineminenomi/abilities/grande_sables"
+    },
+    {
+      "predicate": {
+        "damage": 0.2914477
+      },
+      "model": "item/mineminenomi/abilities/gravi_pull"
+    },
+    {
+      "predicate": {
+        "damage": 0.2920884
+      },
+      "model": "item/mineminenomi/abilities/gravi_zone"
+    },
+    {
+      "predicate": {
+        "damage": 0.292729
+      },
+      "model": "item/mineminenomi/abilities/gravi_zone_guard"
+    },
+    {
+      "predicate": {
+        "damage": 0.2933696
+      },
+      "model": "item/mineminenomi/abilities/gravi_zone_reject"
+    },
+    {
+      "predicate": {
+        "damage": 0.2940102
+      },
+      "model": "item/mineminenomi/abilities/great_cage"
+    },
+    {
+      "predicate": {
+        "damage": 0.2946508
+      },
+      "model": "item/mineminenomi/abilities/great_stomp"
+    },
+    {
+      "predicate": {
+        "damage": 0.2952914
+      },
+      "model": "item/mineminenomi/abilities/ground_death"
+    },
+    {
+      "predicate": {
+        "damage": 0.295932
+      },
+      "model": "item/mineminenomi/abilities/ground_secco"
+    },
+    {
+      "predicate": {
+        "damage": 0.2965727
+      },
+      "model": "item/mineminenomi/items/gryphon"
+    },
+    {
+      "predicate": {
+        "damage": 0.2972133
+      },
+      "model": "item/mineminenomi/items/gryphon_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.2978539
+      },
+      "model": "item/mineminenomi/abilities/guard_command"
+    },
+    {
+      "predicate": {
+        "damage": 0.2984945
+      },
+      "model": "item/mineminenomi/abilities/gun_array"
+    },
+    {
+      "predicate": {
+        "damage": 0.2991351
+      },
+      "model": "item/mineminenomi/items/gura_gura_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.2997757
+      },
+      "model": "item/mineminenomi/abilities/gust_sword"
+    },
+    {
+      "predicate": {
+        "damage": 0.3004163
+      },
+      "model": "item/mineminenomi/abilities/hakai_ho"
+    },
+    {
+      "predicate": {
+        "damage": 0.301057
+      },
+      "model": "item/mineminenomi/items/hana_hana_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3016976
+      },
+      "model": "item/mineminenomi/abilities/hanamizu_shinken_shirahadori"
+    },
+    {
+      "predicate": {
+        "damage": 0.3023382
+      },
+      "model": "item/mineminenomi/items/handcuffs"
+    },
+    {
+      "predicate": {
+        "damage": 0.3029788
+      },
+      "model": "item/mineminenomi/abilities/hanpatsu"
+    },
+    {
+      "predicate": {
+        "damage": 0.3036194
+      },
+      "model": "item/mineminenomi/abilities/haoshoku_haki_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.30426
+      },
+      "model": "item/mineminenomi/abilities/haoshoku_haki_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.3049007
+      },
+      "model": "item/mineminenomi/abilities/haoshoku_haki_2"
+    },
+    {
+      "predicate": {
+        "damage": 0.3055413
+      },
+      "model": "item/mineminenomi/items/hassaikai"
+    },
+    {
+      "predicate": {
+        "damage": 0.3061819
+      },
+      "model": "item/mineminenomi/items/hassaikai_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.3068225
+      },
+      "model": "item/mineminenomi/abilities/healing_touch"
+    },
+    {
+      "predicate": {
+        "damage": 0.3074631
+      },
+      "model": "item/mineminenomi/items/heart"
+    },
+    {
+      "predicate": {
+        "damage": 0.3081037
+      },
+      "model": "item/mineminenomi/items/heart_glasses"
+    },
+    {
+      "predicate": {
+        "damage": 0.3087443
+      },
+      "model": "item/mineminenomi/abilities/heat_ball"
+    },
+    {
+      "predicate": {
+        "damage": 0.309385
+      },
+      "model": "item/mineminenomi/abilities/heat_dash"
+    },
+    {
+      "predicate": {
+        "damage": 0.3100256
+      },
+      "model": "item/mineminenomi/abilities/heat_denasshi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3106662
+      },
+      "model": "item/trangbilq/hercule_thinh_no"
+    },
+    {
+      "predicate": {
+        "damage": 0.3113068
+      },
+      "model": "item/mineminenomi/abilities/hi_no_tori_boshi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3119474
+      },
+      "model": "item/mineminenomi/abilities/hibashira"
+    },
+    {
+      "predicate": {
+        "damage": 0.312588
+      },
+      "model": "item/mineminenomi/abilities/hidaruma"
+    },
+    {
+      "predicate": {
+        "damage": 0.3132286
+      },
+      "model": "item/mineminenomi/abilities/hiryu_kaen"
+    },
+    {
+      "predicate": {
+        "damage": 0.3138693
+      },
+      "model": "item/mineminenomi/items/hiso_hiso_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3145099
+      },
+      "model": "item/mineminenomi/abilities/hissatsu"
+    },
+    {
+      "predicate": {
+        "damage": 0.3151505
+      },
+      "model": "item/mineminenomi/items/hito_hito_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3157911
+      },
+      "model": "item/mineminenomi/items/hito_hito_no_mi_model_daibutsu"
+    },
+    {
+      "predicate": {
+        "damage": 0.3164317
+      },
+      "model": "item/mineminenomi/abilities/honk"
+    },
+    {
+      "predicate": {
+        "damage": 0.3170723
+      },
+      "model": "item/mineminenomi/items/hook"
+    },
+    {
+      "predicate": {
+        "damage": 0.317713
+      },
+      "model": "item/mineminenomi/abilities/hook_grab"
+    },
+    {
+      "predicate": {
+        "damage": 0.3183536
+      },
+      "model": "item/mineminenomi/items/hook_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.3189942
+      },
+      "model": "item/mineminenomi/items/hook_sheathed"
+    },
+    {
+      "predicate": {
+        "damage": 0.3196348
+      },
+      "model": "item/mineminenomi/abilities/horn_dash"
+    },
+    {
+      "predicate": {
+        "damage": 0.3202754
+      },
+      "model": "item/mineminenomi/items/horo_horo_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.320916
+      },
+      "model": "item/mineminenomi/items/horu_horu_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3215566
+      },
+      "model": "item/mineminenomi/abilities/hot_boiling_special"
+    },
+    {
+      "predicate": {
+        "damage": 0.3221973
+      },
+      "model": "item/trangbilq/huyet-dao"
+    },
+    {
+      "predicate": {
+        "damage": 0.3228379
+      },
+      "model": "item/mineminenomi/abilities/hydra"
+    },
+    {
+      "predicate": {
+        "damage": 0.3234785
+      },
+      "model": "item/mineminenomi/abilities/hydra_venom"
+    },
+    {
+      "predicate": {
+        "damage": 0.3241191
+      },
+      "model": "item/mineminenomi/abilities/ice_age"
+    },
+    {
+      "predicate": {
+        "damage": 0.3247597
+      },
+      "model": "item/mineminenomi/abilities/ice_ball"
+    },
+    {
+      "predicate": {
+        "damage": 0.3254003
+      },
+      "model": "item/mineminenomi/abilities/ice_block_avalanche"
+    },
+    {
+      "predicate": {
+        "damage": 0.3260409
+      },
+      "model": "item/mineminenomi/abilities/ice_block_partisan"
+    },
+    {
+      "predicate": {
+        "damage": 0.3266816
+      },
+      "model": "item/mineminenomi/abilities/ice_block_pheasant"
+    },
+    {
+      "predicate": {
+        "damage": 0.3273222
+      },
+      "model": "item/mineminenomi/items/ice_saber"
+    },
+    {
+      "predicate": {
+        "damage": 0.3279628
+      },
+      "model": "item/mineminenomi/abilities/ice_saber"
+    },
+    {
+      "predicate": {
+        "damage": 0.3286034
+      },
+      "model": "item/mineminenomi/abilities/ice_time"
+    },
+    {
+      "predicate": {
+        "damage": 0.329244
+      },
+      "model": "item/mineminenomi/abilities/ichirin_zashi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3298846
+      },
+      "model": "item/mineminenomi/abilities/idle_command"
+    },
+    {
+      "predicate": {
+        "damage": 0.3305253
+      },
+      "model": "item/mineminenomi/abilities/impact_blast"
+    },
+    {
+      "predicate": {
+        "damage": 0.3311659
+      },
+      "model": "item/mineminenomi/items/impact_dial"
+    },
+    {
+      "predicate": {
+        "damage": 0.3318065
+      },
+      "model": "item/mineminenomi/abilities/impact_wave"
+    },
+    {
+      "predicate": {
+        "damage": 0.3324471
+      },
+      "model": "item/mineminenomi/abilities/inga_zarashi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3330877
+      },
+      "model": "item/mineminenomi/abilities/injection_shot"
+    },
+    {
+      "predicate": {
+        "damage": 0.3337283
+      },
+      "model": "item/mineminenomi/items/iron_jaw"
+    },
+    {
+      "predicate": {
+        "damage": 0.3343689
+      },
+      "model": "item/mineminenomi/items/ito_ito_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3350096
+      },
+      "model": "item/mineminenomi/abilities/ivory_dart"
+    },
+    {
+      "predicate": {
+        "damage": 0.3356502
+      },
+      "model": "item/mineminenomi/abilities/ivory_stomp"
+    },
+    {
+      "predicate": {
+        "damage": 0.3362908
+      },
+      "model": "item/mineminenomi/abilities/jigoku_tabi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3369314
+      },
+      "model": "item/mineminenomi/items/jiki_jiki_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.337572
+      },
+      "model": "item/mineminenomi/abilities/jishin_ho"
+    },
+    {
+      "predicate": {
+        "damage": 0.3382126
+      },
+      "model": "item/mineminenomi/items/jitte"
+    },
+    {
+      "predicate": {
+        "damage": 0.3388532
+      },
+      "model": "item/mineminenomi/items/jitte_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.3394939
+      },
+      "model": "item/mineminenomi/items/jitte_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.3401345
+      },
+      "model": "item/mineminenomi/abilities/jujika"
+    },
+    {
+      "predicate": {
+        "damage": 0.3407751
+      },
+      "model": "item/mineminenomi/items/kabuto"
+    },
+    {
+      "predicate": {
+        "damage": 0.3414157
+      },
+      "model": "item/mineminenomi/items/kabuto_pulling_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.3420563
+      },
+      "model": "item/mineminenomi/items/kabuto_pulling_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.3426969
+      },
+      "model": "item/mineminenomi/items/kabuto_pulling_2"
+    },
+    {
+      "predicate": {
+        "damage": 0.3433376
+      },
+      "model": "item/mineminenomi/abilities/kabutowari"
+    },
+    {
+      "predicate": {
+        "damage": 0.3439782
+      },
+      "model": "item/mineminenomi/items/kachi_kachi_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3446188
+      },
+      "model": "item/mineminenomi/abilities/kachiage_haisoku"
+    },
+    {
+      "predicate": {
+        "damage": 0.3452594
+      },
+      "model": "item/mineminenomi/abilities/kage_giri"
+    },
+    {
+      "predicate": {
+        "damage": 0.3459
+      },
+      "model": "item/mineminenomi/items/kage_kage_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3465406
+      },
+      "model": "item/mineminenomi/abilities/kage_kakumei"
+    },
+    {
+      "predicate": {
+        "damage": 0.3471812
+      },
+      "model": "item/mineminenomi/abilities/kagemusha"
+    },
+    {
+      "predicate": {
+        "damage": 0.3478219
+      },
+      "model": "item/mineminenomi/items/kairoseki"
+    },
+    {
+      "predicate": {
+        "damage": 0.3484625
+      },
+      "model": "item/mineminenomi/items/kairoseki_bars"
+    },
+    {
+      "predicate": {
+        "damage": 0.3491031
+      },
+      "model": "item/mineminenomi/items/kairoseki_bullet"
+    },
+    {
+      "predicate": {
+        "damage": 0.3497437
+      },
+      "model": "item/mineminenomi/items/kairoseki_handcuffs"
+    },
+    {
+      "predicate": {
+        "damage": 0.3503843
+      },
+      "model": "item/mineminenomi/items/kairoseki_net"
+    },
+    {
+      "predicate": {
+        "damage": 0.3510249
+      },
+      "model": "item/mineminenomi/abilities/kaishin"
+    },
+    {
+      "predicate": {
+        "damage": 0.3516655
+      },
+      "model": "item/mineminenomi/abilities/kaiten_door"
+    },
+    {
+      "predicate": {
+        "damage": 0.3523062
+      },
+      "model": "item/mineminenomi/abilities/kaji_oyaji"
+    },
+    {
+      "predicate": {
+        "damage": 0.3529468
+      },
+      "model": "item/mineminenomi/abilities/kamakura"
+    },
+    {
+      "predicate": {
+        "damage": 0.3535874
+      },
+      "model": "item/mineminenomi/abilities/kamakura_jussoshi"
+    },
+    {
+      "predicate": {
+        "damage": 0.354228
+      },
+      "model": "item/mineminenomi/abilities/kame_guard_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.3548686
+      },
+      "model": "item/mineminenomi/items/kame_kame_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3555092
+      },
+      "model": "item/mineminenomi/abilities/kame_walk_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.3561499
+      },
+      "model": "item/mineminenomi/abilities/kamie"
+    },
+    {
+      "predicate": {
+        "damage": 0.3567905
+      },
+      "model": "item/mineminenomi/abilities/kamikaze_hyakkoma_gekijo"
+    },
+    {
+      "predicate": {
+        "damage": 0.3574311
+      },
+      "model": "item/mineminenomi/abilities/kamisori"
+    },
+    {
+      "predicate": {
+        "damage": 0.3580717
+      },
+      "model": "item/mineminenomi/abilities/karakuni"
+    },
+    {
+      "predicate": {
+        "damage": 0.3587123
+      },
+      "model": "item/mineminenomi/abilities/karakusagawara_seiken"
+    },
+    {
+      "predicate": {
+        "damage": 0.3593529
+      },
+      "model": "item/mineminenomi/abilities/kari"
+    },
+    {
+      "predicate": {
+        "damage": 0.3599935
+      },
+      "model": "item/mineminenomi/items/karu_karu_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3606342
+      },
+      "model": "item/mineminenomi/abilities/kasuriuta_fubuki_giri"
+    },
+    {
+      "predicate": {
+        "damage": 0.3612748
+      },
+      "model": "item/mineminenomi/items/katana"
+    },
+    {
+      "predicate": {
+        "damage": 0.3619154
+      },
+      "model": "item/mineminenomi/items/katana_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.362556
+      },
+      "model": "item/mineminenomi/items/katana_overlay_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.3631966
+      },
+      "model": "item/mineminenomi/abilities/kemuri_boshi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3638372
+      },
+      "model": "item/mineminenomi/abilities/kenbunshoku_haki_future_sight"
+    },
+    {
+      "predicate": {
+        "damage": 0.3644778
+      },
+      "model": "item/mineminenomi/abilities/kenpopo"
+    },
+    {
+      "predicate": {
+        "damage": 0.3651185
+      },
+      "model": "item/mineminenomi/items/key"
+    },
+    {
+      "predicate": {
+        "damage": 0.3657591
+      },
+      "model": "item/trangbilq/khien_huyen_thoai"
+    },
+    {
+      "predicate": {
+        "damage": 0.3663997
+      },
+      "model": "item/mineminenomi/abilities/kick_bomb"
+    },
+    {
+      "predicate": {
+        "damage": 0.3670403
+      },
+      "model": "item/trangbilq/kiem_fafnir"
+    },
+    {
+      "predicate": {
+        "damage": 0.3676809
+      },
+      "model": "item/mineminenomi/items/kikoku"
+    },
+    {
+      "predicate": {
+        "damage": 0.3683215
+      },
+      "model": "item/mineminenomi/items/kikoku_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.3689622
+      },
+      "model": "item/mineminenomi/items/killers_mask"
+    },
+    {
+      "predicate": {
+        "damage": 0.3696028
+      },
+      "model": "item/mineminenomi/items/kilo_kilo_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3702434
+      },
+      "model": "item/mineminenomi/abilities/king_punch"
+    },
+    {
+      "predicate": {
+        "damage": 0.370884
+      },
+      "model": "item/mineminenomi/items/kira_kira_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3715246
+      },
+      "model": "item/mineminenomi/items/kiribachi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3721652
+      },
+      "model": "item/mineminenomi/items/kiribachi_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.3728058
+      },
+      "model": "item/mineminenomi/items/kizaru_glasses"
+    },
+    {
+      "predicate": {
+        "damage": 0.3734465
+      },
+      "model": "item/mineminenomi/abilities/knockdown"
+    },
+    {
+      "predicate": {
+        "damage": 0.3740871
+      },
+      "model": "item/mineminenomi/items/kobu_kobu_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3747277
+      },
+      "model": "item/mineminenomi/abilities/kokutei_cross"
+    },
+    {
+      "predicate": {
+        "damage": 0.3753683
+      },
+      "model": "item/mineminenomi/abilities/koro"
+    },
+    {
+      "predicate": {
+        "damage": 0.3760089
+      },
+      "model": "item/mineminenomi/abilities/kuchu_kirimomi_dai_circus"
+    },
+    {
+      "predicate": {
+        "damage": 0.3766495
+      },
+      "model": "item/mineminenomi/items/kuja_arrow"
+    },
+    {
+      "predicate": {
+        "damage": 0.3772901
+      },
+      "model": "item/mineminenomi/items/kuja_bow"
+    },
+    {
+      "predicate": {
+        "damage": 0.3779308
+      },
+      "model": "item/mineminenomi/items/kuja_bow_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.3785714
+      },
+      "model": "item/mineminenomi/items/kuja_bow_pulling_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.379212
+      },
+      "model": "item/mineminenomi/items/kuja_bow_pulling_0_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.3798526
+      },
+      "model": "item/mineminenomi/items/kuja_bow_pulling_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.3804932
+      },
+      "model": "item/mineminenomi/items/kuja_bow_pulling_1_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.3811338
+      },
+      "model": "item/mineminenomi/items/kuja_bow_pulling_2"
+    },
+    {
+      "predicate": {
+        "damage": 0.3817745
+      },
+      "model": "item/mineminenomi/items/kuja_bow_pulling_2_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.3824151
+      },
+      "model": "item/mineminenomi/items/kuku_kuku_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.3830557
+      },
+      "model": "item/mineminenomi/items/kuma_boots"
+    },
+    {
+      "predicate": {
+        "damage": 0.3836963
+      },
+      "model": "item/mineminenomi/items/kuma_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.3843369
+      },
+      "model": "item/mineminenomi/items/kuma_shirt"
+    },
+    {
+      "predicate": {
+        "damage": 0.3849775
+      },
+      "model": "item/mineminenomi/abilities/kumo_no_sugaki"
+    },
+    {
+      "predicate": {
+        "damage": 0.3856181
+      },
+      "model": "item/mineminenomi/items/kuro_kabuto"
+    },
+    {
+      "predicate": {
+        "damage": 0.3862588
+      },
+      "model": "item/mineminenomi/items/kuro_kabuto_pulling_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.3868994
+      },
+      "model": "item/mineminenomi/items/kuro_kabuto_pulling_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.38754
+      },
+      "model": "item/mineminenomi/items/kuro_kabuto_pulling_2"
+    },
+    {
+      "predicate": {
+        "damage": 0.3881806
+      },
+      "model": "item/mineminenomi/items/kuroobis_ki"
+    },
+    {
+      "predicate": {
+        "damage": 0.3888212
+      },
+      "model": "item/mineminenomi/items/kuroobis_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.3894618
+      },
+      "model": "item/mineminenomi/items/kuroobis_shoes"
+    },
+    {
+      "predicate": {
+        "damage": 0.3901024
+      },
+      "model": "item/mineminenomi/items/kuros_glasses"
+    },
+    {
+      "predicate": {
+        "damage": 0.3907431
+      },
+      "model": "item/mineminenomi/items/kuros_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.3913837
+      },
+      "model": "item/mineminenomi/items/kuros_shoes"
+    },
+    {
+      "predicate": {
+        "damage": 0.3920243
+      },
+      "model": "item/mineminenomi/items/kuros_suit"
+    },
+    {
+      "predicate": {
+        "damage": 0.3926649
+      },
+      "model": "item/mineminenomi/abilities/kurouzu"
+    },
+    {
+      "predicate": {
+        "damage": 0.3933055
+      },
+      "model": "item/mineminenomi/abilities/kyokaen"
+    },
+    {
+      "predicate": {
+        "damage": 0.3939461
+      },
+      "model": "item/mineminenomi/abilities/kyubi_rush"
+    },
+    {
+      "predicate": {
+        "damage": 0.3945868
+      },
+      "model": "item/mineminenomi/abilities/lava_flow"
+    },
+    {
+      "predicate": {
+        "damage": 0.3952274
+      },
+      "model": "item/mineminenomi/items/laws_hat"
+    },
+    {
+      "predicate": {
+        "damage": 0.395868
+      },
+      "model": "item/mineminenomi/abilities/leap"
+    },
+    {
+      "predicate": {
+        "damage": 0.3965086
+      },
+      "model": "item/mineminenomi/abilities/left_mark"
+    },
+    {
+      "predicate": {
+        "damage": 0.3971492
+      },
+      "model": "item/mineminenomi/abilities/left_mark_target"
+    },
+    {
+      "predicate": {
+        "damage": 0.3977898
+      },
+      "model": "item/mineminenomi/abilities/left_mark_travel"
+    },
+    {
+      "predicate": {
+        "damage": 0.3984304
+      },
+      "model": "item/mineminenomi/abilities/leopard_heavy_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.3990711
+      },
+      "model": "item/mineminenomi/abilities/leopard_walk_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.3997117
+      },
+      "model": "item/mineminenomi/abilities/liberation"
+    },
+    {
+      "predicate": {
+        "damage": 0.4003523
+      },
+      "model": "item/mineminenomi/abilities/liberation_release"
+    },
+    {
+      "predicate": {
+        "damage": 0.4009929
+      },
+      "model": "item/trangbilq/liem_doat_menh"
+    },
+    {
+      "predicate": {
+        "damage": 0.4016335
+      },
+      "model": "item/mineminenomi/abilities/life_minus"
+    },
+    {
+      "predicate": {
+        "damage": 0.4022741
+      },
+      "model": "item/mineminenomi/abilities/light_acceleration"
+    },
+    {
+      "predicate": {
+        "damage": 0.4029147
+      },
+      "model": "item/mineminenomi/abilities/logia_invulnerability_gasu"
+    },
+    {
+      "predicate": {
+        "damage": 0.4035554
+      },
+      "model": "item/mineminenomi/abilities/logia_invulnerability_goro"
+    },
+    {
+      "predicate": {
+        "damage": 0.404196
+      },
+      "model": "item/mineminenomi/abilities/logia_invulnerability_hie"
+    },
+    {
+      "predicate": {
+        "damage": 0.4048366
+      },
+      "model": "item/mineminenomi/abilities/logia_invulnerability_magu"
+    },
+    {
+      "predicate": {
+        "damage": 0.4054772
+      },
+      "model": "item/mineminenomi/abilities/logia_invulnerability_mera"
+    },
+    {
+      "predicate": {
+        "damage": 0.4061178
+      },
+      "model": "item/mineminenomi/abilities/logia_invulnerability_moku"
+    },
+    {
+      "predicate": {
+        "damage": 0.4067584
+      },
+      "model": "item/mineminenomi/abilities/logia_invulnerability_pika"
+    },
+    {
+      "predicate": {
+        "damage": 0.4073991
+      },
+      "model": "item/mineminenomi/abilities/logia_invulnerability_suna"
+    },
+    {
+      "predicate": {
+        "damage": 0.4080397
+      },
+      "model": "item/mineminenomi/abilities/logia_invulnerability_yuki"
+    },
+    {
+      "predicate": {
+        "damage": 0.4086803
+      },
+      "model": "item/mineminenomi/items/lollipop"
+    },
+    {
+      "predicate": {
+        "damage": 0.4093209
+      },
+      "model": "item/mineminenomi/items/luffys_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.4099615
+      },
+      "model": "item/mineminenomi/items/luffys_sandals"
+    },
+    {
+      "predicate": {
+        "damage": 0.4106021
+      },
+      "model": "item/mineminenomi/items/luffys_shirt"
+    },
+    {
+      "predicate": {
+        "damage": 0.4112427
+      },
+      "model": "item/mineminenomi/items/mace"
+    },
+    {
+      "predicate": {
+        "damage": 0.4118834
+      },
+      "model": "item/mineminenomi/items/mace_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.412524
+      },
+      "model": "item/mineminenomi/items/mace_overlay_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.4131646
+      },
+      "model": "item/mineminenomi/abilities/magma_coating"
+    },
+    {
+      "predicate": {
+        "damage": 0.4138052
+      },
+      "model": "item/mineminenomi/abilities/magnetic_items"
+    },
+    {
+      "predicate": {
+        "damage": 0.4144458
+      },
+      "model": "item/mineminenomi/abilities/mamaragan"
+    },
+    {
+      "predicate": {
+        "damage": 0.4150864
+      },
+      "model": "item/mineminenomi/abilities/mammoth_guard_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.415727
+      },
+      "model": "item/mineminenomi/abilities/mammoth_heavy_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.4163677
+      },
+      "model": "item/mineminenomi/abilities/mane_mane_memory"
+    },
+    {
+      "predicate": {
+        "damage": 0.4170083
+      },
+      "model": "item/mineminenomi/items/mane_mane_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4176489
+      },
+      "model": "item/mineminenomi/abilities/mannen_yuki"
+    },
+    {
+      "predicate": {
+        "damage": 0.4182895
+      },
+      "model": "item/mineminenomi/items/marine_boots"
+    },
+    {
+      "predicate": {
+        "damage": 0.4189301
+      },
+      "model": "item/mineminenomi/items/marine_captain_cape"
+    },
+    {
+      "predicate": {
+        "damage": 0.4195707
+      },
+      "model": "item/mineminenomi/items/marine_captain_cape_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.4202114
+      },
+      "model": "item/mineminenomi/items/marine_chest"
+    },
+    {
+      "predicate": {
+        "damage": 0.420852
+      },
+      "model": "item/mineminenomi/items/marine_hat"
+    },
+    {
+      "predicate": {
+        "damage": 0.4214926
+      },
+      "model": "item/mineminenomi/items/marine_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.4221332
+      },
+      "model": "item/mineminenomi/items/marine_sword"
+    },
+    {
+      "predicate": {
+        "damage": 0.4227738
+      },
+      "model": "item/mineminenomi/items/marine_sword_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.4234144
+      },
+      "model": "item/mineminenomi/items/medic_bag"
+    },
+    {
+      "predicate": {
+        "damage": 0.424055
+      },
+      "model": "item/mineminenomi/abilities/medic_bag_explosion"
+    },
+    {
+      "predicate": {
+        "damage": 0.4246957
+      },
+      "model": "item/mineminenomi/abilities/meigo"
+    },
+    {
+      "predicate": {
+        "damage": 0.4253363
+      },
+      "model": "item/mineminenomi/abilities/mero_mero_mellow"
+    },
+    {
+      "predicate": {
+        "damage": 0.4259769
+      },
+      "model": "item/mineminenomi/items/mero_mero_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4266175
+      },
+      "model": "item/mineminenomi/abilities/mes"
+    },
+    {
+      "predicate": {
+        "damage": 0.4272581
+      },
+      "model": "item/mineminenomi/abilities/mh5"
+    },
+    {
+      "predicate": {
+        "damage": 0.4278987
+      },
+      "model": "item/mineminenomi/items/mh5_gas_mask"
+    },
+    {
+      "predicate": {
+        "damage": 0.4285393
+      },
+      "model": "item/mineminenomi/items/mihawks_hat_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.42918
+      },
+      "model": "item/mineminenomi/items/mihawks_hat_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.4298206
+      },
+      "model": "item/mineminenomi/items/mihawks_knife"
+    },
+    {
+      "predicate": {
+        "damage": 0.4304612
+      },
+      "model": "item/mineminenomi/items/mihawks_knife_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.4311018
+      },
+      "model": "item/mineminenomi/items/mihawks_knife_sheathed"
+    },
+    {
+      "predicate": {
+        "damage": 0.4317424
+      },
+      "model": "item/mineminenomi/abilities/mil_fleur"
+    },
+    {
+      "predicate": {
+        "damage": 0.432383
+      },
+      "model": "item/mineminenomi/abilities/mil_fleur_clutch"
+    },
+    {
+      "predicate": {
+        "damage": 0.4330237
+      },
+      "model": "item/mineminenomi/abilities/mil_fleur_slap"
+    },
+    {
+      "predicate": {
+        "damage": 0.4336643
+      },
+      "model": "item/mineminenomi/abilities/mil_fleur_twist"
+    },
+    {
+      "predicate": {
+        "damage": 0.4343049
+      },
+      "model": "item/mineminenomi/items/milky_dial"
+    },
+    {
+      "predicate": {
+        "damage": 0.4349455
+      },
+      "model": "item/mineminenomi/abilities/mini_hollow"
+    },
+    {
+      "predicate": {
+        "damage": 0.4355861
+      },
+      "model": "item/mineminenomi/abilities/mini_mini"
+    },
+    {
+      "predicate": {
+        "damage": 0.4362267
+      },
+      "model": "item/mineminenomi/items/mini_mini_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4368673
+      },
+      "model": "item/mineminenomi/abilities/mizu_osu"
+    },
+    {
+      "predicate": {
+        "damage": 0.437508
+      },
+      "model": "item/mineminenomi/abilities/mizu_shuryudan"
+    },
+    {
+      "predicate": {
+        "damage": 0.4381486
+      },
+      "model": "item/mineminenomi/abilities/mizu_taiho"
+    },
+    {
+      "predicate": {
+        "damage": 0.4387892
+      },
+      "model": "item/mineminenomi/items/mochi_mochi_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4394298
+      },
+      "model": "item/mineminenomi/abilities/mogu_heavy_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.4400704
+      },
+      "model": "item/mineminenomi/items/mogu_mogu_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.440711
+      },
+      "model": "item/mineminenomi/items/mogura"
+    },
+    {
+      "predicate": {
+        "damage": 0.4413516
+      },
+      "model": "item/mineminenomi/abilities/mogura_banana"
+    },
+    {
+      "predicate": {
+        "damage": 0.4419923
+      },
+      "model": "item/mineminenomi/items/mogura_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.4426329
+      },
+      "model": "item/mineminenomi/abilities/mogura_tonpo"
+    },
+    {
+      "predicate": {
+        "damage": 0.4432735
+      },
+      "model": "item/mineminenomi/abilities/moko"
+    },
+    {
+      "predicate": {
+        "damage": 0.4439141
+      },
+      "model": "item/mineminenomi/items/moku_moku_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4445547
+      },
+      "model": "item/mineminenomi/items/mr_1s_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.4451953
+      },
+      "model": "item/mineminenomi/items/mr_1s_shirt"
+    },
+    {
+      "predicate": {
+        "damage": 0.445836
+      },
+      "model": "item/mineminenomi/items/mr_1s_shoes"
+    },
+    {
+      "predicate": {
+        "damage": 0.4464766
+      },
+      "model": "item/mineminenomi/items/mr_3s_glasses"
+    },
+    {
+      "predicate": {
+        "damage": 0.4471172
+      },
+      "model": "item/mineminenomi/items/mr_3s_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.4477578
+      },
+      "model": "item/mineminenomi/items/mr_3s_shirt"
+    },
+    {
+      "predicate": {
+        "damage": 0.4483984
+      },
+      "model": "item/mineminenomi/items/mr_3s_shoes"
+    },
+    {
+      "predicate": {
+        "damage": 0.449039
+      },
+      "model": "item/mineminenomi/items/mr_5s_glasses"
+    },
+    {
+      "predicate": {
+        "damage": 0.4496796
+      },
+      "model": "item/mineminenomi/items/mr_5s_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.4503203
+      },
+      "model": "item/mineminenomi/items/mr_5s_shirt"
+    },
+    {
+      "predicate": {
+        "damage": 0.4509609
+      },
+      "model": "item/mineminenomi/items/mr_5s_shoes"
+    },
+    {
+      "predicate": {
+        "damage": 0.4516015
+      },
+      "model": "item/mineminenomi/items/murakumogiri"
+    },
+    {
+      "predicate": {
+        "damage": 0.4522421
+      },
+      "model": "item/mineminenomi/items/murakumogiri_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.4528827
+      },
+      "model": "item/mineminenomi/abilities/muster"
+    },
+    {
+      "predicate": {
+        "damage": 0.4535233
+      },
+      "model": "item/mineminenomi/items/nagi_nagi_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4541639
+      },
+      "model": "item/mineminenomi/abilities/negative_hollow"
+    },
+    {
+      "predicate": {
+        "damage": 0.4548046
+      },
+      "model": "item/mineminenomi/abilities/nekkai_gyorai"
+    },
+    {
+      "predicate": {
+        "damage": 0.4554452
+      },
+      "model": "item/mineminenomi/abilities/nekkai_jigoku"
+    },
+    {
+      "predicate": {
+        "damage": 0.4560858
+      },
+      "model": "item/mineminenomi/items/neko_neko_no_mi_model_leopard"
+    },
+    {
+      "predicate": {
+        "damage": 0.4567264
+      },
+      "model": "item/mineminenomi/abilities/nekomimi_punch"
+    },
+    {
+      "predicate": {
+        "damage": 0.457367
+      },
+      "model": "item/mineminenomi/abilities/nemuri_boshi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4580076
+      },
+      "model": "item/mineminenomi/abilities/netsu_enhancement"
+    },
+    {
+      "predicate": {
+        "damage": 0.4586483
+      },
+      "model": "item/mineminenomi/items/netsu_netsu_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4592889
+      },
+      "model": "item/mineminenomi/items/nidai_kitetsu"
+    },
+    {
+      "predicate": {
+        "damage": 0.4599295
+      },
+      "model": "item/mineminenomi/items/nidai_kitetsu_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.4605701
+      },
+      "model": "item/mineminenomi/items/nidai_kitetsu_sheathed"
+    },
+    {
+      "predicate": {
+        "damage": 0.4612107
+      },
+      "model": "item/mineminenomi/abilities/nightmare_soldiers"
+    },
+    {
+      "predicate": {
+        "damage": 0.4618513
+      },
+      "model": "item/mineminenomi/items/nikyu_nikyu_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4624919
+      },
+      "model": "item/mineminenomi/abilities/nikyu_push"
+    },
+    {
+      "predicate": {
+        "damage": 0.4631326
+      },
+      "model": "item/mineminenomi/items/nonosama_staff"
+    },
+    {
+      "predicate": {
+        "damage": 0.4637732
+      },
+      "model": "item/mineminenomi/items/nonosama_staff_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.4644138
+      },
+      "model": "item/mineminenomi/items/nonosama_trident"
+    },
+    {
+      "predicate": {
+        "damage": 0.4650544
+      },
+      "model": "item/mineminenomi/items/nonosama_trident_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.465695
+      },
+      "model": "item/mineminenomi/abilities/noro_noro_beam"
+    },
+    {
+      "predicate": {
+        "damage": 0.4663356
+      },
+      "model": "item/mineminenomi/items/noro_noro_beam_sword"
+    },
+    {
+      "predicate": {
+        "damage": 0.4669762
+      },
+      "model": "item/mineminenomi/abilities/noro_noro_beam_sword"
+    },
+    {
+      "predicate": {
+        "damage": 0.4676169
+      },
+      "model": "item/mineminenomi/items/noro_noro_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4682575
+      },
+      "model": "item/mineminenomi/abilities/nose_fancy_cannon"
+    },
+    {
+      "predicate": {
+        "damage": 0.4688981
+      },
+      "model": "item/mineminenomi/abilities/nyan_nyan_suplex"
+    },
+    {
+      "predicate": {
+        "damage": 0.4695387
+      },
+      "model": "item/mineminenomi/abilities/nyan_nyan_suplex_baby_buster"
+    },
+    {
+      "predicate": {
+        "damage": 0.4701793
+      },
+      "model": "item/mineminenomi/abilities/one_two_jango"
+    },
+    {
+      "predicate": {
+        "damage": 0.4708199
+      },
+      "model": "item/mineminenomi/abilities/onna_hormone"
+    },
+    {
+      "predicate": {
+        "damage": 0.4714606
+      },
+      "model": "item/mineminenomi/items/ori_bars"
+    },
+    {
+      "predicate": {
+        "damage": 0.4721012
+      },
+      "model": "item/mineminenomi/items/ori_ori_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4727418
+      },
+      "model": "item/mineminenomi/items/oto_oto_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4733824
+      },
+      "model": "item/mineminenomi/abilities/overheat"
+    },
+    {
+      "predicate": {
+        "damage": 0.474023
+      },
+      "model": "item/mineminenomi/abilities/pack_of_sharks"
+    },
+    {
+      "predicate": {
+        "damage": 0.4746636
+      },
+      "model": "item/mineminenomi/abilities/pad_ho"
+    },
+    {
+      "predicate": {
+        "damage": 0.4753042
+      },
+      "model": "item/mineminenomi/items/pain"
+    },
+    {
+      "predicate": {
+        "damage": 0.4759449
+      },
+      "model": "item/mineminenomi/abilities/pain_repel"
+    },
+    {
+      "predicate": {
+        "damage": 0.4765855
+      },
+      "model": "item/mineminenomi/abilities/paper_float"
+    },
+    {
+      "predicate": {
+        "damage": 0.4772261
+      },
+      "model": "item/mineminenomi/abilities/parasite"
+    },
+    {
+      "predicate": {
+        "damage": 0.4778667
+      },
+      "model": "item/mineminenomi/abilities/party_table_kick_course"
+    },
+    {
+      "predicate": {
+        "damage": 0.4785073
+      },
+      "model": "item/mineminenomi/abilities/patrol_command"
+    },
+    {
+      "predicate": {
+        "damage": 0.4791479
+      },
+      "model": "item/mineminenomi/items/pearl_body_armor"
+    },
+    {
+      "predicate": {
+        "damage": 0.4797885
+      },
+      "model": "item/mineminenomi/abilities/pearl_fire"
+    },
+    {
+      "predicate": {
+        "damage": 0.4804292
+      },
+      "model": "item/mineminenomi/items/pearl_head_armor"
+    },
+    {
+      "predicate": {
+        "damage": 0.4810698
+      },
+      "model": "item/mineminenomi/items/pearl_legs_armor"
+    },
+    {
+      "predicate": {
+        "damage": 0.4817104
+      },
+      "model": "item/mineminenomi/items/perfect_clima_tact"
+    },
+    {
+      "predicate": {
+        "damage": 0.482351
+      },
+      "model": "item/mineminenomi/abilities/perfume_femur"
+    },
+    {
+      "predicate": {
+        "damage": 0.4829916
+      },
+      "model": "item/mineminenomi/abilities/perk"
+    },
+    {
+      "predicate": {
+        "damage": 0.4836322
+      },
+      "model": "item/mineminenomi/items/pero_pero_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4842729
+      },
+      "model": "item/mineminenomi/abilities/phoenix_assault_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.4849135
+      },
+      "model": "item/mineminenomi/abilities/phoenix_fly_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.4855541
+      },
+      "model": "item/mineminenomi/abilities/phoenix_goen"
+    },
+    {
+      "predicate": {
+        "damage": 0.4861947
+      },
+      "model": "item/trangbilq/phuc_hop_kiem"
+    },
+    {
+      "predicate": {
+        "damage": 0.4868353
+      },
+      "model": "item/mineminenomi/items/pika_pika_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.4874759
+      },
+      "model": "item/mineminenomi/items/pipe"
+    },
+    {
+      "predicate": {
+        "damage": 0.4881165
+      },
+      "model": "item/mineminenomi/items/pipe_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.4887572
+      },
+      "model": "item/mineminenomi/items/pirate_boots"
+    },
+    {
+      "predicate": {
+        "damage": 0.4893978
+      },
+      "model": "item/mineminenomi/items/pirate_captain_cape"
+    },
+    {
+      "predicate": {
+        "damage": 0.4900384
+      },
+      "model": "item/mineminenomi/items/pirate_chest"
+    },
+    {
+      "predicate": {
+        "damage": 0.490679
+      },
+      "model": "item/mineminenomi/items/pirate_cutlass"
+    },
+    {
+      "predicate": {
+        "damage": 0.4913196
+      },
+      "model": "item/mineminenomi/items/pirate_cutlass_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.4919602
+      },
+      "model": "item/mineminenomi/items/pirate_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.4926008
+      },
+      "model": "item/mineminenomi/abilities/pistol_kiss"
+    },
+    {
+      "predicate": {
+        "damage": 0.4932415
+      },
+      "model": "item/mineminenomi/abilities/play_dead"
+    },
+    {
+      "predicate": {
+        "damage": 0.4938821
+      },
+      "model": "item/mineminenomi/items/plume_hat_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.4945227
+      },
+      "model": "item/mineminenomi/items/plume_hat_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.4951633
+      },
+      "model": "item/mineminenomi/abilities/poele_a_frire"
+    },
+    {
+      "predicate": {
+        "damage": 0.4958039
+      },
+      "model": "item/mineminenomi/abilities/poison_immunity"
+    },
+    {
+      "predicate": {
+        "damage": 0.4964445
+      },
+      "model": "item/mineminenomi/abilities/poison_spit"
+    },
+    {
+      "predicate": {
+        "damage": 0.4970852
+      },
+      "model": "item/mineminenomi/items/pop_green"
+    },
+    {
+      "predicate": {
+        "damage": 0.4977258
+      },
+      "model": "item/mineminenomi/abilities/prison_break"
+    },
+    {
+      "predicate": {
+        "damage": 0.4983664
+      },
+      "model": "item/mineminenomi/abilities/pteranodon_assault_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.499007
+      },
+      "model": "item/mineminenomi/abilities/pteranodon_fly_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.4996476
+      },
+      "model": "item/mineminenomi/abilities/pteranodon_smash"
+    },
+    {
+      "predicate": {
+        "damage": 0.5002882
+      },
+      "model": "item/mineminenomi/abilities/punch_rush"
+    },
+    {
+      "predicate": {
+        "damage": 0.5009288
+      },
+      "model": "item/mineminenomi/abilities/puni"
+    },
+    {
+      "predicate": {
+        "damage": 0.5015695
+      },
+      "model": "item/mineminenomi/abilities/punk_corna_dio"
+    },
+    {
+      "predicate": {
+        "damage": 0.5022101
+      },
+      "model": "item/mineminenomi/abilities/punk_cross"
+    },
+    {
+      "predicate": {
+        "damage": 0.5028507
+      },
+      "model": "item/mineminenomi/abilities/punk_gibson"
+    },
+    {
+      "predicate": {
+        "damage": 0.5034913
+      },
+      "model": "item/mineminenomi/abilities/punk_pistols"
+    },
+    {
+      "predicate": {
+        "damage": 0.5041319
+      },
+      "model": "item/mineminenomi/abilities/radical_beam"
+    },
+    {
+      "predicate": {
+        "damage": 0.5047725
+      },
+      "model": "item/mineminenomi/abilities/raigo"
+    },
+    {
+      "predicate": {
+        "damage": 0.5054131
+      },
+      "model": "item/mineminenomi/abilities/rankyaku"
+    },
+    {
+      "predicate": {
+        "damage": 0.5060538
+      },
+      "model": "item/mineminenomi/items/reject_dial"
+    },
+    {
+      "predicate": {
+        "damage": 0.5066944
+      },
+      "model": "item/mineminenomi/abilities/relax_hour"
+    },
+    {
+      "predicate": {
+        "damage": 0.507335
+      },
+      "model": "item/mineminenomi/abilities/renpatsu_namari_boshi"
+    },
+    {
+      "predicate": {
+        "damage": 0.5079756
+      },
+      "model": "item/mineminenomi/abilities/repel"
+    },
+    {
+      "predicate": {
+        "damage": 0.5086162
+      },
+      "model": "item/mineminenomi/abilities/rhino_smash"
+    },
+    {
+      "predicate": {
+        "damage": 0.5092568
+      },
+      "model": "item/mineminenomi/abilities/right_mark"
+    },
+    {
+      "predicate": {
+        "damage": 0.5098975
+      },
+      "model": "item/mineminenomi/abilities/right_mark_target"
+    },
+    {
+      "predicate": {
+        "damage": 0.5105381
+      },
+      "model": "item/mineminenomi/abilities/right_mark_travel"
+    },
+    {
+      "predicate": {
+        "damage": 0.5111787
+      },
+      "model": "item/mineminenomi/abilities/rokuogan"
+    },
+    {
+      "predicate": {
+        "damage": 0.5118193
+      },
+      "model": "item/mineminenomi/abilities/room"
+    },
+    {
+      "predicate": {
+        "damage": 0.5124599
+      },
+      "model": "item/mineminenomi/items/rope_net"
+    },
+    {
+      "predicate": {
+        "damage": 0.5131005
+      },
+      "model": "item/mineminenomi/items/rumble_ball"
+    },
+    {
+      "predicate": {
+        "damage": 0.5137411
+      },
+      "model": "item/mineminenomi/abilities/rust_break"
+    },
+    {
+      "predicate": {
+        "damage": 0.5143818
+      },
+      "model": "item/mineminenomi/abilities/rust_skin"
+    },
+    {
+      "predicate": {
+        "damage": 0.5150224
+      },
+      "model": "item/mineminenomi/abilities/rust_touch"
+    },
+    {
+      "predicate": {
+        "damage": 0.515663
+      },
+      "model": "item/mineminenomi/abilities/ryu_no_ibuki"
+    },
+    {
+      "predicate": {
+        "damage": 0.5163036
+      },
+      "model": "item/mineminenomi/abilities/ryu_no_kagizume"
+    },
+    {
+      "predicate": {
+        "damage": 0.5169442
+      },
+      "model": "item/mineminenomi/items/ryu_ryu_no_mi_model_allosaurus"
+    },
+    {
+      "predicate": {
+        "damage": 0.5175848
+      },
+      "model": "item/mineminenomi/items/ryu_ryu_no_mi_model_brachiosaurus"
+    },
+    {
+      "predicate": {
+        "damage": 0.5182254
+      },
+      "model": "item/mineminenomi/items/ryu_ryu_no_mi_model_pteranodon"
+    },
+    {
+      "predicate": {
+        "damage": 0.5188661
+      },
+      "model": "item/mineminenomi/abilities/ryusei_kazan"
+    },
+    {
+      "predicate": {
+        "damage": 0.5195067
+      },
+      "model": "item/mineminenomi/items/sabi_sabi_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.5201473
+      },
+      "model": "item/mineminenomi/abilities/sables"
+    },
+    {
+      "predicate": {
+        "damage": 0.5207879
+      },
+      "model": "item/mineminenomi/abilities/sables_guard"
+    },
+    {
+      "predicate": {
+        "damage": 0.5214285
+      },
+      "model": "item/mineminenomi/abilities/sables_pesado"
+    },
+    {
+      "predicate": {
+        "damage": 0.5220691
+      },
+      "model": "item/mineminenomi/items/sabos_hat"
+    },
+    {
+      "predicate": {
+        "damage": 0.5227098
+      },
+      "model": "item/mineminenomi/abilities/sagari_no_ryusei"
+    },
+    {
+      "predicate": {
+        "damage": 0.5233504
+      },
+      "model": "item/mineminenomi/abilities/sai_heavy_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.523991
+      },
+      "model": "item/mineminenomi/items/sai_sai_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.5246316
+      },
+      "model": "item/mineminenomi/abilities/sai_walk_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.5252722
+      },
+      "model": "item/mineminenomi/abilities/saisei_no_hono"
+    },
+    {
+      "predicate": {
+        "damage": 0.5259128
+      },
+      "model": "item/mineminenomi/items/sake_bottle"
+    },
+    {
+      "predicate": {
+        "damage": 0.5265534
+      },
+      "model": "item/mineminenomi/items/sake_cup"
+    },
+    {
+      "predicate": {
+        "damage": 0.5271941
+      },
+      "model": "item/mineminenomi/items/sake_cup_filled"
+    },
+    {
+      "predicate": {
+        "damage": 0.5278347
+      },
+      "model": "item/mineminenomi/abilities/sakuretsu_saboten_boshi"
+    },
+    {
+      "predicate": {
+        "damage": 0.5284753
+      },
+      "model": "item/mineminenomi/abilities/samehada_shotei"
+    },
+    {
+      "predicate": {
+        "damage": 0.5291159
+      },
+      "model": "item/mineminenomi/items/samekiri_bocho"
+    },
+    {
+      "predicate": {
+        "damage": 0.5297565
+      },
+      "model": "item/mineminenomi/items/samekiri_bocho_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.5303971
+      },
+      "model": "item/mineminenomi/abilities/sanbyakurokuju_pound_ho"
+    },
+    {
+      "predicate": {
+        "damage": 0.5310377
+      },
+      "model": "item/mineminenomi/items/sandai_kitetsu"
+    },
+    {
+      "predicate": {
+        "damage": 0.5316784
+      },
+      "model": "item/mineminenomi/items/sandai_kitetsu_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.532319
+      },
+      "model": "item/mineminenomi/items/sandai_kitetsu_sheathed"
+    },
+    {
+      "predicate": {
+        "damage": 0.5329596
+      },
+      "model": "item/mineminenomi/abilities/sango"
+    },
+    {
+      "predicate": {
+        "damage": 0.5336002
+      },
+      "model": "item/mineminenomi/items/sanjis_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.5342408
+      },
+      "model": "item/mineminenomi/items/sanjis_shirt"
+    },
+    {
+      "predicate": {
+        "damage": 0.5348814
+      },
+      "model": "item/mineminenomi/items/sanjis_shoes"
+    },
+    {
+      "predicate": {
+        "damage": 0.5355221
+      },
+      "model": "item/mineminenomi/items/sara_sara_no_mi_model_axolotl"
+    },
+    {
+      "predicate": {
+        "damage": 0.5361627
+      },
+      "model": "item/mineminenomi/items/scissors"
+    },
+    {
+      "predicate": {
+        "damage": 0.5368033
+      },
+      "model": "item/mineminenomi/items/scissors_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.5374439
+      },
+      "model": "item/mineminenomi/items/sea_king_meat"
+    },
+    {
+      "predicate": {
+        "damage": 0.5380845
+      },
+      "model": "item/mineminenomi/items/sea_king_meat_cooked"
+    },
+    {
+      "predicate": {
+        "damage": 0.5387251
+      },
+      "model": "item/mineminenomi/abilities/seis_fleur_slap"
+    },
+    {
+      "predicate": {
+        "damage": 0.5393657
+      },
+      "model": "item/mineminenomi/abilities/seis_fleur_twist"
+    },
+    {
+      "predicate": {
+        "damage": 0.5400064
+      },
+      "model": "item/mineminenomi/items/senor_pinks_bonnet_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.540647
+      },
+      "model": "item/mineminenomi/items/senor_pinks_bonnet_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.5412876
+      },
+      "model": "item/mineminenomi/items/senor_pinks_bonnet_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.5419282
+      },
+      "model": "item/mineminenomi/items/senor_pinks_diaper_0"
+    },
+    {
+      "predicate": {
+        "damage": 0.5425688
+      },
+      "model": "item/mineminenomi/items/senor_pinks_diaper_1"
+    },
+    {
+      "predicate": {
+        "damage": 0.5432094
+      },
+      "model": "item/mineminenomi/items/senor_pinks_shirt"
+    },
+    {
+      "predicate": {
+        "damage": 0.54385
+      },
+      "model": "item/mineminenomi/items/senriku"
+    },
+    {
+      "predicate": {
+        "damage": 0.5444907
+      },
+      "model": "item/mineminenomi/items/shadow"
+    },
+    {
+      "predicate": {
+        "damage": 0.5451313
+      },
+      "model": "item/mineminenomi/abilities/shadows_asgard"
+    },
+    {
+      "predicate": {
+        "damage": 0.5457719
+      },
+      "model": "item/mineminenomi/abilities/shakushi"
+    },
+    {
+      "predicate": {
+        "damage": 0.5464125
+      },
+      "model": "item/mineminenomi/abilities/shambles"
+    },
+    {
+      "predicate": {
+        "damage": 0.5470531
+      },
+      "model": "item/mineminenomi/abilities/shambles_group"
+    },
+    {
+      "predicate": {
+        "damage": 0.5476937
+      },
+      "model": "item/mineminenomi/abilities/shan"
+    },
+    {
+      "predicate": {
+        "damage": 0.5483344
+      },
+      "model": "item/mineminenomi/abilities/shark_on_tooth"
+    },
+    {
+      "predicate": {
+        "damage": 0.548975
+      },
+      "model": "item/mineminenomi/abilities/shi_shishi_sonson"
+    },
+    {
+      "predicate": {
+        "damage": 0.5496156
+      },
+      "model": "item/mineminenomi/abilities/shima_yurashi"
+    },
+    {
+      "predicate": {
+        "damage": 0.5502562
+      },
+      "model": "item/mineminenomi/abilities/shingen_no_ichigeki"
+    },
+    {
+      "predicate": {
+        "damage": 0.5508968
+      },
+      "model": "item/mineminenomi/abilities/shingen_no_ichigeki_crowd"
+    },
+    {
+      "predicate": {
+        "damage": 0.5515374
+      },
+      "model": "item/mineminenomi/abilities/shinokuni"
+    },
+    {
+      "predicate": {
+        "damage": 0.552178
+      },
+      "model": "item/mineminenomi/abilities/shinzo_massage"
+    },
+    {
+      "predicate": {
+        "damage": 0.5528187
+      },
+      "model": "item/mineminenomi/abilities/shisha_no_te"
+    },
+    {
+      "predicate": {
+        "damage": 0.5534593
+      },
+      "model": "item/mineminenomi/abilities/shourei"
+    },
+    {
+      "predicate": {
+        "damage": 0.5540999
+      },
+      "model": "item/mineminenomi/items/shusui"
+    },
+    {
+      "predicate": {
+        "damage": 0.5547405
+      },
+      "model": "item/mineminenomi/items/shusui_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.5553811
+      },
+      "model": "item/mineminenomi/items/shusui_sheathed"
+    },
+    {
+      "predicate": {
+        "damage": 0.5560217
+      },
+      "model": "item/mineminenomi/abilities/silent"
+    },
+    {
+      "predicate": {
+        "damage": 0.5566623
+      },
+      "model": "item/mineminenomi/abilities/skatting"
+    },
+    {
+      "predicate": {
+        "damage": 0.557303
+      },
+      "model": "item/mineminenomi/abilities/skywalk"
+    },
+    {
+      "predicate": {
+        "damage": 0.5579436
+      },
+      "model": "item/mineminenomi/abilities/slam"
+    },
+    {
+      "predicate": {
+        "damage": 0.5585842
+      },
+      "model": "item/mineminenomi/abilities/slash_damage_immunity"
+    },
+    {
+      "predicate": {
+        "damage": 0.5592248
+      },
+      "model": "item/mineminenomi/abilities/slave_arrow"
+    },
+    {
+      "predicate": {
+        "damage": 0.5598654
+      },
+      "model": "item/mineminenomi/abilities/small_muster"
+    },
+    {
+      "predicate": {
+        "damage": 0.560506
+      },
+      "model": "item/mineminenomi/abilities/smoke_launch"
+    },
+    {
+      "predicate": {
+        "damage": 0.5611467
+      },
+      "model": "item/mineminenomi/items/smoker_boots"
+    },
+    {
+      "predicate": {
+        "damage": 0.5617873
+      },
+      "model": "item/mineminenomi/items/smoker_jacket"
+    },
+    {
+      "predicate": {
+        "damage": 0.5624279
+      },
+      "model": "item/mineminenomi/items/smoker_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.5630685
+      },
+      "model": "item/mineminenomi/items/sniper_goggles"
+    },
+    {
+      "predicate": {
+        "damage": 0.5637091
+      },
+      "model": "item/mineminenomi/abilities/so_shark"
+    },
+    {
+      "predicate": {
+        "damage": 0.5643497
+      },
+      "model": "item/mineminenomi/abilities/soap_defense"
+    },
+    {
+      "predicate": {
+        "damage": 0.5649903
+      },
+      "model": "item/mineminenomi/items/sogeking_mask"
+    },
+    {
+      "predicate": {
+        "damage": 0.565631
+      },
+      "model": "item/mineminenomi/abilities/sora_no_michi"
+    },
+    {
+      "predicate": {
+        "damage": 0.5662716
+      },
+      "model": "item/mineminenomi/items/sorcery_clima_tact"
+    },
+    {
+      "predicate": {
+        "damage": 0.5669122
+      },
+      "model": "item/mineminenomi/items/sorcery_clima_tact_2"
+    },
+    {
+      "predicate": {
+        "damage": 0.5675528
+      },
+      "model": "item/mineminenomi/items/sorcery_clima_tact_open"
+    },
+    {
+      "predicate": {
+        "damage": 0.5681934
+      },
+      "model": "item/mineminenomi/abilities/soru"
+    },
+    {
+      "predicate": {
+        "damage": 0.568834
+      },
+      "model": "item/mineminenomi/items/soul_king_crown"
+    },
+    {
+      "predicate": {
+        "damage": 0.5694746
+      },
+      "model": "item/mineminenomi/abilities/soul_parade"
+    },
+    {
+      "predicate": {
+        "damage": 0.5701153
+      },
+      "model": "item/mineminenomi/items/soul_solid"
+    },
+    {
+      "predicate": {
+        "damage": 0.5707559
+      },
+      "model": "item/mineminenomi/items/soul_solid_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.5713965
+      },
+      "model": "item/mineminenomi/items/soul_solid_sheathed"
+    },
+    {
+      "predicate": {
+        "damage": 0.5720371
+      },
+      "model": "item/mineminenomi/abilities/southland_suplex"
+    },
+    {
+      "predicate": {
+        "damage": 0.5726777
+      },
+      "model": "item/mineminenomi/abilities/spar_claw"
+    },
+    {
+      "predicate": {
+        "damage": 0.5733183
+      },
+      "model": "item/mineminenomi/abilities/spark_step"
+    },
+    {
+      "predicate": {
+        "damage": 0.573959
+      },
+      "model": "item/mineminenomi/abilities/sparkling_daisy"
+    },
+    {
+      "predicate": {
+        "damage": 0.5745996
+      },
+      "model": "item/mineminenomi/items/spear"
+    },
+    {
+      "predicate": {
+        "damage": 0.5752402
+      },
+      "model": "item/mineminenomi/items/spear_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.5758808
+      },
+      "model": "item/mineminenomi/items/spear_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.5765214
+      },
+      "model": "item/mineminenomi/items/spear_overlay_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.577162
+      },
+      "model": "item/mineminenomi/abilities/special_fly"
+    },
+    {
+      "predicate": {
+        "damage": 0.5778026
+      },
+      "model": "item/mineminenomi/abilities/spider"
+    },
+    {
+      "predicate": {
+        "damage": 0.5784433
+      },
+      "model": "item/mineminenomi/abilities/spinning_brawl"
+    },
+    {
+      "predicate": {
+        "damage": 0.5790839
+      },
+      "model": "item/mineminenomi/abilities/spiral_hollow"
+    },
+    {
+      "predicate": {
+        "damage": 0.5797245
+      },
+      "model": "item/mineminenomi/abilities/spring_death_knock"
+    },
+    {
+      "predicate": {
+        "damage": 0.5803651
+      },
+      "model": "item/mineminenomi/abilities/spring_hopper"
+    },
+    {
+      "predicate": {
+        "damage": 0.5810057
+      },
+      "model": "item/mineminenomi/abilities/spring_snipe"
+    },
+    {
+      "predicate": {
+        "damage": 0.5816463
+      },
+      "model": "item/mineminenomi/abilities/stay_command"
+    },
+    {
+      "predicate": {
+        "damage": 0.5822869
+      },
+      "model": "item/mineminenomi/abilities/steal_punch"
+    },
+    {
+      "predicate": {
+        "damage": 0.5829276
+      },
+      "model": "item/mineminenomi/abilities/stealth_foot"
+    },
+    {
+      "predicate": {
+        "damage": 0.5835682
+      },
+      "model": "item/mineminenomi/items/straw_doll"
+    },
+    {
+      "predicate": {
+        "damage": 0.5842088
+      },
+      "model": "item/mineminenomi/items/straw_doll_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.5848494
+      },
+      "model": "item/mineminenomi/items/straw_hat"
+    },
+    {
+      "predicate": {
+        "damage": 0.58549
+      },
+      "model": "item/mineminenomi/items/straw_hat_overlay"
+    },
+    {
+      "predicate": {
+        "damage": 0.5861306
+      },
+      "model": "item/mineminenomi/abilities/straw_man"
+    },
+    {
+      "predicate": {
+        "damage": 0.5867713
+      },
+      "model": "item/mineminenomi/items/striker"
+    },
+    {
+      "predicate": {
+        "damage": 0.5874119
+      },
+      "model": "item/mineminenomi/abilities/strong_right"
+    },
+    {
+      "predicate": {
+        "damage": 0.5880525
+      },
+      "model": "item/mineminenomi/abilities/sube_sube_deflect"
+    },
+    {
+      "predicate": {
+        "damage": 0.5886931
+      },
+      "model": "item/mineminenomi/items/sube_sube_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.5893337
+      },
+      "model": "item/mineminenomi/abilities/sube_sube_spur"
+    },
+    {
+      "predicate": {
+        "damage": 0.5899743
+      },
+      "model": "item/mineminenomi/items/sui_sui_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.5906149
+      },
+      "model": "item/mineminenomi/abilities/suke_punch"
+    },
+    {
+      "predicate": {
+        "damage": 0.5912556
+      },
+      "model": "item/mineminenomi/items/suke_suke_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.5918962
+      },
+      "model": "item/mineminenomi/abilities/sulong"
+    },
+    {
+      "predicate": {
+        "damage": 0.5925368
+      },
+      "model": "item/mineminenomi/items/suna_suna_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.5931774
+      },
+      "model": "item/mineminenomi/items/supa_supa_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.593818
+      },
+      "model": "item/mineminenomi/abilities/suplex"
+    },
+    {
+      "predicate": {
+        "damage": 0.5944586
+      },
+      "model": "item/mineminenomi/items/tabira_yuki"
+    },
+    {
+      "predicate": {
+        "damage": 0.5950992
+      },
+      "model": "item/mineminenomi/abilities/tabira_yuki"
+    },
+    {
+      "predicate": {
+        "damage": 0.5957399
+      },
+      "model": "item/mineminenomi/abilities/tackle"
+    },
+    {
+      "predicate": {
+        "damage": 0.5963805
+      },
+      "model": "item/mineminenomi/abilities/takedown_kick"
+    },
+    {
+      "predicate": {
+        "damage": 0.5970211
+      },
+      "model": "item/mineminenomi/abilities/takt"
+    },
+    {
+      "predicate": {
+        "damage": 0.5976617
+      },
+      "model": "item/mineminenomi/abilities/tamaito"
+    },
+    {
+      "predicate": {
+        "damage": 0.5983023
+      },
+      "model": "item/mineminenomi/items/tangerine"
+    },
+    {
+      "predicate": {
+        "damage": 0.5989429
+      },
+      "model": "item/mineminenomi/abilities/tankyudon"
+    },
+    {
+      "predicate": {
+        "damage": 0.5995836
+      },
+      "model": "item/mineminenomi/abilities/tatsu_maki"
+    },
+    {
+      "predicate": {
+        "damage": 0.6002242
+      },
+      "model": "item/mineminenomi/abilities/tears"
+    },
+    {
+      "predicate": {
+        "damage": 0.6008648
+      },
+      "model": "item/mineminenomi/abilities/tekkai"
+    },
+    {
+      "predicate": {
+        "damage": 0.6015054
+      },
+      "model": "item/mineminenomi/abilities/tekkai_walk"
+    },
+    {
+      "predicate": {
+        "damage": 0.602146
+      },
+      "model": "item/mineminenomi/abilities/tempo"
+    },
+    {
+      "predicate": {
+        "damage": 0.6027866
+      },
+      "model": "item/mineminenomi/abilities/tempuraudon"
+    },
+    {
+      "predicate": {
+        "damage": 0.6034272
+      },
+      "model": "item/mineminenomi/abilities/tenchi_meido"
+    },
+    {
+      "predicate": {
+        "damage": 0.6040679
+      },
+      "model": "item/mineminenomi/abilities/tensei_no_soen"
+    },
+    {
+      "predicate": {
+        "damage": 0.6047085
+      },
+      "model": "item/mineminenomi/abilities/tension_hormone"
+    },
+    {
+      "predicate": {
+        "damage": 0.6053491
+      },
+      "model": "item/mineminenomi/abilities/tetsu_boshi"
+    },
+    {
+      "predicate": {
+        "damage": 0.6059897
+      },
+      "model": "item/mineminenomi/abilities/thunder_ball"
+    },
+    {
+      "predicate": {
+        "damage": 0.6066303
+      },
+      "model": "item/trangbilq/thuong_longinus"
+    },
+    {
+      "predicate": {
+        "damage": 0.6072709
+      },
+      "model": "item/mineminenomi/abilities/todoroki"
+    },
+    {
+      "predicate": {
+        "damage": 0.6079115
+      },
+      "model": "item/mineminenomi/abilities/toku_hollow"
+    },
+    {
+      "predicate": {
+        "damage": 0.6085522
+      },
+      "model": "item/mineminenomi/abilities/tokudai_candle"
+    },
+    {
+      "predicate": {
+        "damage": 0.6091928
+      },
+      "model": "item/mineminenomi/abilities/tokuyo_abura_boshi"
+    },
+    {
+      "predicate": {
+        "damage": 0.6098334
+      },
+      "model": "item/mineminenomi/items/tomoe_drums"
+    },
+    {
+      "predicate": {
+        "damage": 0.610474
+      },
+      "model": "item/mineminenomi/items/tonfa"
+    },
+    {
+      "predicate": {
+        "damage": 0.6111146
+      },
+      "model": "item/mineminenomi/items/tonfa_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.6117552
+      },
+      "model": "item/mineminenomi/items/tori_tori_no_mi_model_falcon"
+    },
+    {
+      "predicate": {
+        "damage": 0.6123959
+      },
+      "model": "item/mineminenomi/items/tori_tori_no_mi_model_phoenix"
+    },
+    {
+      "predicate": {
+        "damage": 0.6130365
+      },
+      "model": "item/mineminenomi/abilities/torikago"
+    },
+    {
+      "predicate": {
+        "damage": 0.6136771
+      },
+      "model": "item/mineminenomi/abilities/trample"
+    },
+    {
+      "predicate": {
+        "damage": 0.6143177
+      },
+      "model": "item/mineminenomi/items/tricorne"
+    },
+    {
+      "predicate": {
+        "damage": 0.6149583
+      },
+      "model": "item/mineminenomi/abilities/trunk_shot"
+    },
+    {
+      "predicate": {
+        "damage": 0.6155989
+      },
+      "model": "item/mineminenomi/abilities/tsuno_tokage"
+    },
+    {
+      "predicate": {
+        "damage": 0.6162395
+      },
+      "model": "item/mineminenomi/abilities/tsuppari_pad_ho"
+    },
+    {
+      "predicate": {
+        "damage": 0.6168802
+      },
+      "model": "item/mineminenomi/abilities/two_fish_engine"
+    },
+    {
+      "predicate": {
+        "damage": 0.6175208
+      },
+      "model": "item/mineminenomi/abilities/uchimizu"
+    },
+    {
+      "predicate": {
+        "damage": 0.6181614
+      },
+      "model": "item/mineminenomi/items/ultra_cola"
+    },
+    {
+      "predicate": {
+        "damage": 0.618802
+      },
+      "model": "item/mineminenomi/items/umbrella"
+    },
+    {
+      "predicate": {
+        "damage": 0.6194426
+      },
+      "model": "item/mineminenomi/items/umbrella_open"
+    },
+    {
+      "predicate": {
+        "damage": 0.6200832
+      },
+      "model": "item/mineminenomi/items/unicycle"
+    },
+    {
+      "predicate": {
+        "damage": 0.6207238
+      },
+      "model": "item/mineminenomi/abilities/ursus_shock"
+    },
+    {
+      "predicate": {
+        "damage": 0.6213645
+      },
+      "model": "item/mineminenomi/items/ushi_ushi_no_mi_model_bison"
+    },
+    {
+      "predicate": {
+        "damage": 0.6220051
+      },
+      "model": "item/mineminenomi/items/ushi_ushi_no_mi_model_giraffe"
+    },
+    {
+      "predicate": {
+        "damage": 0.6226457
+      },
+      "model": "item/mineminenomi/items/usopps_boots"
+    },
+    {
+      "predicate": {
+        "damage": 0.6232863
+      },
+      "model": "item/mineminenomi/items/usopps_overall"
+    },
+    {
+      "predicate": {
+        "damage": 0.6239269
+      },
+      "model": "item/mineminenomi/items/usopps_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.6245675
+      },
+      "model": "item/mineminenomi/abilities/vari"
+    },
+    {
+      "predicate": {
+        "damage": 0.6252081
+      },
+      "model": "item/mineminenomi/abilities/veinte_fleur_calendula"
+    },
+    {
+      "predicate": {
+        "damage": 0.6258488
+      },
+      "model": "item/mineminenomi/abilities/venom_demon"
+    },
+    {
+      "predicate": {
+        "damage": 0.6264894
+      },
+      "model": "item/mineminenomi/abilities/venom_road"
+    },
+    {
+      "predicate": {
+        "damage": 0.62713
+      },
+      "model": "item/mineminenomi/abilities/venom_road_venom"
+    },
+    {
+      "predicate": {
+        "damage": 0.6277706
+      },
+      "model": "item/mineminenomi/items/vice_admiral_boots"
+    },
+    {
+      "predicate": {
+        "damage": 0.6284112
+      },
+      "model": "item/mineminenomi/items/vice_admiral_jacket"
+    },
+    {
+      "predicate": {
+        "damage": 0.6290518
+      },
+      "model": "item/mineminenomi/items/vice_admiral_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.6296925
+      },
+      "model": "item/mineminenomi/abilities/virus_zone_ice_oni"
+    },
+    {
+      "predicate": {
+        "damage": 0.6303331
+      },
+      "model": "item/mineminenomi/abilities/virus_zone_mummy"
+    },
+    {
+      "predicate": {
+        "damage": 0.6309737
+      },
+      "model": "item/mineminenomi/items/vivre_card"
+    },
+    {
+      "predicate": {
+        "damage": 0.6316143
+      },
+      "model": "item/mineminenomi/abilities/volt_amaru"
+    },
+    {
+      "predicate": {
+        "damage": 0.6322549
+      },
+      "model": "item/mineminenomi/abilities/vulcanization"
+    },
+    {
+      "predicate": {
+        "damage": 0.6328955
+      },
+      "model": "item/mineminenomi/items/wado_ichimonji"
+    },
+    {
+      "predicate": {
+        "damage": 0.6335361
+      },
+      "model": "item/mineminenomi/items/wado_ichimonji_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.6341768
+      },
+      "model": "item/mineminenomi/items/wado_ichimonji_sheathed"
+    },
+    {
+      "predicate": {
+        "damage": 0.6348174
+      },
+      "model": "item/mineminenomi/items/walker"
+    },
+    {
+      "predicate": {
+        "damage": 0.635458
+      },
+      "model": "item/mineminenomi/items/wanted_poster_package"
+    },
+    {
+      "predicate": {
+        "damage": 0.6360986
+      },
+      "model": "item/mineminenomi/items/wara_wara_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.6367392
+      },
+      "model": "item/mineminenomi/items/warabide_sword"
+    },
+    {
+      "predicate": {
+        "damage": 0.6373798
+      },
+      "model": "item/mineminenomi/abilities/warabide_sword"
+    },
+    {
+      "predicate": {
+        "damage": 0.6380204
+      },
+      "model": "item/mineminenomi/items/warabide_sword_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.6386611
+      },
+      "model": "item/mineminenomi/items/watering_can"
+    },
+    {
+      "predicate": {
+        "damage": 0.6393017
+      },
+      "model": "item/mineminenomi/abilities/weapon_spin"
+    },
+    {
+      "predicate": {
+        "damage": 0.6399423
+      },
+      "model": "item/mineminenomi/abilities/weapon_throw"
+    },
+    {
+      "predicate": {
+        "damage": 0.6405829
+      },
+      "model": "item/mineminenomi/abilities/weather_egg"
+    },
+    {
+      "predicate": {
+        "damage": 0.6412235
+      },
+      "model": "item/mineminenomi/abilities/white_blow"
+    },
+    {
+      "predicate": {
+        "damage": 0.6418641
+      },
+      "model": "item/mineminenomi/abilities/white_blow_rush"
+    },
+    {
+      "predicate": {
+        "damage": 0.6425048
+      },
+      "model": "item/mineminenomi/abilities/white_launcher"
+    },
+    {
+      "predicate": {
+        "damage": 0.6431454
+      },
+      "model": "item/mineminenomi/abilities/white_out"
+    },
+    {
+      "predicate": {
+        "damage": 0.643786
+      },
+      "model": "item/mineminenomi/abilities/white_pull"
+    },
+    {
+      "predicate": {
+        "damage": 0.6444266
+      },
+      "model": "item/mineminenomi/abilities/white_snake"
+    },
+    {
+      "predicate": {
+        "damage": 0.6450672
+      },
+      "model": "item/mineminenomi/abilities/white_strike"
+    },
+    {
+      "predicate": {
+        "damage": 0.6457078
+      },
+      "model": "item/mineminenomi/items/white_walkie_coat"
+    },
+    {
+      "predicate": {
+        "damage": 0.6463484
+      },
+      "model": "item/mineminenomi/items/whos_who_mask"
+    },
+    {
+      "predicate": {
+        "damage": 0.6469891
+      },
+      "model": "item/mineminenomi/items/wide_brim_hat"
+    },
+    {
+      "predicate": {
+        "damage": 0.6476297
+      },
+      "model": "item/mineminenomi/items/wizard_hat"
+    },
+    {
+      "predicate": {
+        "damage": 0.6482703
+      },
+      "model": "item/mineminenomi/items/wooden_box"
+    },
+    {
+      "predicate": {
+        "damage": 0.6489109
+      },
+      "model": "item/mineminenomi/items/wootz_steel_armor"
+    },
+    {
+      "predicate": {
+        "damage": 0.6495515
+      },
+      "model": "item/mineminenomi/abilities/yakkodori"
+    },
+    {
+      "predicate": {
+        "damage": 0.6501921
+      },
+      "model": "item/mineminenomi/items/yami_yami_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.6508327
+      },
+      "model": "item/mineminenomi/abilities/yarinami"
+    },
+    {
+      "predicate": {
+        "damage": 0.6514734
+      },
+      "model": "item/mineminenomi/abilities/yasakani_no_magatama"
+    },
+    {
+      "predicate": {
+        "damage": 0.652114
+      },
+      "model": "item/mineminenomi/abilities/yata_no_kagami"
+    },
+    {
+      "predicate": {
+        "damage": 0.6527546
+      },
+      "model": "item/mineminenomi/abilities/yomi_no_reiki"
+    },
+    {
+      "predicate": {
+        "damage": 0.6533952
+      },
+      "model": "item/mineminenomi/items/yomi_yomi_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.6540358
+      },
+      "model": "item/mineminenomi/items/yoru_haki"
+    },
+    {
+      "predicate": {
+        "damage": 0.6546764
+      },
+      "model": "item/mineminenomi/abilities/yuki_gaki"
+    },
+    {
+      "predicate": {
+        "damage": 0.6553171
+      },
+      "model": "item/mineminenomi/abilities/yuki_rabi"
+    },
+    {
+      "predicate": {
+        "damage": 0.6559577
+      },
+      "model": "item/mineminenomi/items/yuki_yuki_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.6565983
+      },
+      "model": "item/mineminenomi/abilities/yutai_ridatsu"
+    },
+    {
+      "predicate": {
+        "damage": 0.6572389
+      },
+      "model": "item/mineminenomi/abilities/zenshin_kibaku"
+    },
+    {
+      "predicate": {
+        "damage": 0.6578795
+      },
+      "model": "item/mineminenomi/abilities/zoom"
+    },
+    {
+      "predicate": {
+        "damage": 0.6585201
+      },
+      "model": "item/mineminenomi/items/zoros_boots"
+    },
+    {
+      "predicate": {
+        "damage": 0.6591607
+      },
+      "model": "item/mineminenomi/items/zoros_pants"
+    },
+    {
+      "predicate": {
+        "damage": 0.6598014
+      },
+      "model": "item/mineminenomi/items/zoros_shirt"
+    },
+    {
+      "predicate": {
+        "damage": 0.660442
+      },
+      "model": "item/mineminenomi/abilities/zou_guard_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.6610826
+      },
+      "model": "item/mineminenomi/abilities/zou_heavy_point"
+    },
+    {
+      "predicate": {
+        "damage": 0.6617232
+      },
+      "model": "item/mineminenomi/items/zou_zou_no_mi"
+    },
+    {
+      "predicate": {
+        "damage": 0.6623638
+      },
+      "model": "item/mineminenomi/items/zou_zou_no_mi_model_mammoth"
+    },
+    {
+      "predicate": {
+        "damage": 0.6630044
+      },
+      "model": "item/mineminenomi/items/zushi_zushi_no_mi"
+    }
+  ]
+}

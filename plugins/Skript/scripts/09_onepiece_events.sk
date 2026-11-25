@@ -1,0 +1,1001 @@
+# =====================================================================
+# SỰ KIỆN ONE PIECE: TRÁI ÁC QUỶ HOANG DÃ & ĐỘT KÍCH BOSS ĐÔ ĐỐC (PAPER 1.12.2)
+# STUDIO MASTER SPECIFICATION — CHẶNG 4 (09_onepiece_events.sk - OPTIMIZED)
+# 1. Sự kiện Trái Ác Quỷ Hoang Dã mọc mỗi 2 tiếng (Cột sáng END_ROD + FLAME)
+#    Người chơi đầu tiên tiếp cận nhận Trái Ác Quỷ 3D hoặc Rương AoV
+# 2. Triệu hồi Boss Đột Kích mỗi 3 tiếng: Đô Đốc Akainu, Aokiji, Vua Biển
+#    Giáp RGB, Đầu 3D, Máu 1000-1500 HP, Kỹ năng độc quyền mỗi 6s
+#    Thưởng Money, Điểm Thiên Phú, Đá Thức Tỉnh, Rương AoV và +5M Beri
+# =====================================================================
+
+import:
+    java.lang.System
+    org.bukkit.event.inventory.InventoryDragEvent
+    java.util.UUID
+    org.bukkit.Bukkit
+    org.bukkit.Material
+    org.bukkit.Particle
+    org.bukkit.Location
+    org.bukkit.Sound
+    org.bukkit.util.Vector
+    org.bukkit.entity.Player
+    org.bukkit.entity.LivingEntity
+    org.bukkit.entity.Zombie
+    org.bukkit.entity.ArmorStand
+    org.bukkit.entity.Entity
+    org.bukkit.inventory.ItemStack
+    org.bukkit.potion.PotionEffect
+    org.bukkit.potion.PotionEffectType
+
+# ---------------------------------------------------------------------
+# 1. TIỆN ÍCH THANH MÁU, VECTOR AN TOÀN & HỖ TRỢ BOSS
+# ---------------------------------------------------------------------
+
+function getBossProgressBar(cur: number, max: number, len: number = 20) :: text:
+    if {_max} <= 0:
+        return "&7[--------------------]"
+    set {_pct} to {_cur} / {_max}
+    if {_pct} > 1.0:
+        set {_pct} to 1.0
+    if {_pct} < 0.0:
+        set {_pct} to 0.0
+    set {_fill} to round({_pct} * {_len})
+    set {_empty} to {_len} - {_fill}
+    set {_color} to "&a"
+    if {_pct} < 0.6:
+        set {_color} to "&e"
+    if {_pct} < 0.3:
+        set {_color} to "&c"
+    set {_bar} to "%{_color}%"
+    loop {_fill} times:
+        set {_bar} to "%{_bar}%|"
+    set {_bar} to "%{_bar}%&7"
+    loop {_empty} times:
+        set {_bar} to "%{_bar}%|"
+    return {_bar}
+
+function getEventDefaultLocation() :: location:
+    set {_w} to Bukkit.getWorld("SuperiorWorld")
+    if {_w} is set:
+        return {_w}.getSpawnLocation()
+    set {_w2} to Bukkit.getWorld("world")
+    if {_w2} is set:
+        return {_w2}.getSpawnLocation()
+    return location(0, 70, 0, world "world")
+
+# Hàm đẩy/kéo Velocity an toàn tuyệt đối (Chống lỗi NaN / x not finite khi 2 thực thể trùng tọa độ)
+function applySafeVelocity(ent: entity, from: location, to: location, speed: number, yBoost: number):
+    if {_ent} is not set:
+        stop
+    if {_from} is not set:
+        stop
+    if {_to} is not set:
+        stop
+    if world of {_from} is not world of {_to}:
+        stop
+
+    set {_v} to {_to}.toVector().subtract({_from}.toVector())
+    {_v}.setY(0)
+
+    if {_v}.lengthSquared() > 0.0001:
+        {_v}.normalize().multiply({_speed})
+    else:
+        # Dự phòng nếu 2 thực thể đứng trùng khít tọa độ (distance = 0)
+        set {_v} to new Vector(0.15, 0, 0.15)
+
+    {_v}.setY({_yBoost})
+    {_ent}.setVelocity({_v})
+
+# Dọn dẹp trạng thái cũ khi tải lại script / khởi động lại server
+on script load:
+    cleanWildDevilFruit()
+    cleanAdmiralBoss()
+
+# ---------------------------------------------------------------------
+# 2. SỰ KIỆN 1: TRÁI ÁC QUỶ HOANG DÃ (MỖI 2 TIẾNG HOẶC /opadmin spawndf)
+# ---------------------------------------------------------------------
+
+function cleanWildDevilFruit():
+    if {df_event::stand} is set:
+        {df_event::stand}.remove()
+        delete {df_event::stand}
+    delete {df_event::active}
+    delete {df_event::item}
+    delete {df_event::name}
+    delete {df_event::spawn_time}
+
+function spawnWildDevilFruit(loc: location = {_not_set}):
+    cleanWildDevilFruit()
+
+    set {_spawnLoc} to {_loc}
+    if {_spawnLoc} is not set:
+        if {df_event::loc} is set:
+            set {_spawnLoc} to {df_event::loc}
+        else:
+            set {_spawnLoc} to getEventDefaultLocation()
+
+    # Chọn ngẫu nhiên phần thưởng quý hiếm
+    set {_roll} to random integer between 1 and 7
+    set {_rewardItem} to air
+    set {_rewardName} to ""
+
+    if {_roll} is 1:
+        set {_rewardItem} to getDevilFruitItem("mera")
+        set {_rewardName} to "&6&lTrái Mera Mera (Hỏa Long)"
+    else if {_roll} is 2:
+        set {_rewardItem} to getDevilFruitItem("gomu")
+        set {_rewardName} to "&d&lTrái Gomu Gomu (Cao Su)"
+    else if {_roll} is 3:
+        set {_rewardItem} to getDevilFruitItem("ope")
+        set {_rewardName} to "&c&lTrái Ope Ope (Phẫu Thuật)"
+    else if {_roll} is 4:
+        set {_rewardItem} to getDevilFruitItem("seiryu")
+        set {_rewardName} to "&b&lTrái Uouo: Seiryu (Thanh Long)"
+    else if {_roll} is 5:
+        set {_rewardItem} to createAoVChest()
+        set {_rewardName} to "&6&lRương Trang Bị Liên Quân 3D"
+    else if {_roll} is 6:
+        set {_rewardItem} to getAwakeningStoneItem()
+        set {_rewardName} to "&e&lĐá Thức Tỉnh Ánh Sao"
+    else:
+        set {_rewardItem} to getUnidentifiedFruitItem()
+        set {_rewardName} to "&d&lTrái Ác Quỷ Chưa Giám Định"
+
+    # Triệu hồi ArmorStand lơ lửng đội Trái Ác Quỷ 3D
+    set {_standLoc} to {_spawnLoc}.clone()
+    set {_w} to {_standLoc}.getWorld()
+    if {_w} is not set:
+        stop
+    set {_stand} to {_w}.spawn({_standLoc}, ArmorStand.class)
+    {_stand}.setInvisible(true)
+    {_stand}.setGravity(false)
+    {_stand}.setInvulnerable(true)
+    {_stand}.setCustomName(colored "&6&l✦ %{_rewardName}% &e(HOANG DÃ) ✦")
+    {_stand}.setCustomNameVisible(true)
+    {_stand}.setHelmet({_rewardItem})
+    set {_standNbt} to nbt compound of {_stand}
+    set int tag "DisabledSlots" of {_standNbt} to 2039583
+    set byte tag "Visible" of {_standNbt} to 0
+    set byte tag "NoBasePlate" of {_standNbt} to 1
+
+    set {df_event::active} to true
+    set {df_event::stand} to {_stand}
+    set {df_event::item} to {_rewardItem}
+    set {df_event::name} to {_rewardName}
+    set {df_event::loc} to {_standLoc}
+    set {df_event::spawn_time} to now
+
+    # Thông báo & Âm thanh toàn máy chủ
+    broadcastWorldEvent("fruit", "TRÁI ÁC QUỶ HOANG DÃ XUẤT HIỆN!", "Bảo vật %{_rewardName}% giáng lâm tại (%round(x-coordinate of {_standLoc})%, %round(y-coordinate of {_standLoc})%, %round(z-coordinate of {_standLoc})%)", "Người chơi đầu tiên tiếp cận sẽ phong ấn sở hữu!")
+
+    loop all players:
+        play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to loop-player
+        play sound "ENTITY_ENDERDRAGON_GROWL" with volume 0.8 and pitch 1.2 to loop-player
+
+# ---------------------------------------------------------------------
+# 3. SỰ KIỆN 2: BOSS ĐÔ ĐỐC & VUA BIỂN (MỖI 3 TIẾNG HOẶC /opadmin spawnboss)
+# ---------------------------------------------------------------------
+
+function cleanAdmiralBoss():
+    if {boss_event::uuid} is set:
+        delete {boss_dmg::%{boss_event::uuid}%::*}
+    if {boss_event::entity} is set:
+        {boss_event::entity}.remove()
+        delete {boss_event::entity}
+    delete {boss_event::active}
+    delete {boss_event::uuid}
+    delete {boss_event::type}
+    delete {boss_event::name}
+    delete {boss_event::max_hp}
+    delete {boss_event::spawn_time}
+    set {-boss_skill_timer} to 0
+
+function spawnAdmiralBoss(type: text, loc: location = {_not_set}):
+    cleanAdmiralBoss()
+
+    set {_spawnLoc} to {_loc}
+    if {_spawnLoc} is not set:
+        if {boss_event::loc} is set:
+            set {_spawnLoc} to {boss_event::loc}
+        else:
+            set {_spawnLoc} to getEventDefaultLocation()
+
+    set {_w} to {_spawnLoc}.getWorld()
+    if {_w} is not set:
+        stop
+    set {_boss} to {_w}.spawn({_spawnLoc}, Zombie.class)
+    {_boss}.setBaby(false)
+    {_boss}.setRemoveWhenFarAway(false)
+
+    set {_bossUuid} to uuid of {_boss}
+    set {_bossType} to lowercase {_type}
+
+    # 1. ĐÔ ĐỐC AKAINU (Chó Đỏ Sakazuki - 5,800 HP, 140 DEF)
+    if {_bossType} is "akainu":
+        set {_name} to "&c&l☠ ĐÔ ĐỐC HẢI QUÂN AKAINU ☠ &e[BOSS]"
+        set {_maxHp} to 2900 # 2900 Tim = 5800 HP
+        set {boss_event::def} to 140.0
+
+        set max health of {_boss} to {_maxHp}
+        set health of {_boss} to {_maxHp}
+        set name of {_boss} to colored {_name}
+
+        set {_helm} to makeCustomRPItem("boss_akainu_icon", "&c&lMũ Đô Đốc Sakazuki", ("&7Đô Đốc Chó Đỏ Hải Quân" and "&cNham Thạch Tuyệt Kỹ"))
+        set {_chest} to makeRgbLeatherArmor(leather chestplate, 200, 20, 20, "&cÁo Choàng Hải Quân Akainu", ("&7Áo choàng đỏ rực lửa nham thạch"))
+        set {_legs} to makeRgbLeatherArmor(leather leggings, 160, 15, 15, "&cQuần Quân Phục Đô Đốc", ("&7Vải chống nhiệt magma"))
+        set {_boots} to makeRgbLeatherArmor(leather boots, 60, 10, 10, "&8Ủng Nham Thạch Akainu", ("&7Bước chân làm tan chảy nham thạch"))
+        set {_weapon} to makeGlowingItem(diamond sword, "&c&lHỏa Diệm Kiếm Akainu", ("&7Vũ khí phong tỏa nhiệt độ magma"))
+
+        set helmet of {_boss} to {_helm}
+        set chestplate of {_boss} to {_chest}
+        set leggings of {_boss} to {_legs}
+        set boots of {_boss} to {_boots}
+        set tool of {_boss} to {_weapon}
+
+    # 2. ĐÔ ĐỐC AOKIJI (Chim Trĩ Xanh Kuzan - 4,800 HP, 120 DEF)
+    else if {_bossType} is "aokiji":
+        set {_name} to "&b&l☠ ĐÔ ĐỐC HẢI QUÂN AOKIJI ☠ &e[BOSS]"
+        set {_maxHp} to 2400 # 2400 Tim = 4800 HP
+        set {boss_event::def} to 120.0
+
+        set max health of {_boss} to {_maxHp}
+        set health of {_boss} to {_maxHp}
+        set name of {_boss} to colored {_name}
+
+        set {_helm} to makeCustomRPItem("boss_aokiji_icon", "&b&lMũ Đô Đốc Kuzan", ("&7Đô Đốc Chim Trĩ Xanh Hải Quân" and "&bBăng Giá Tuyệt Kỹ"))
+        set {_chest} to makeRgbLeatherArmor(leather chestplate, 30, 180, 255, "&bÁo Choàng Băng Giá Aokiji", ("&7Áo choàng đóng băng 100%% nhiệt độ"))
+        set {_legs} to makeRgbLeatherArmor(leather leggings, 20, 130, 200, "&bQuần Quân Phục Kuzan", ("&7Vải tuyết lạnh buốt"))
+        set {_boots} to makeRgbLeatherArmor(leather boots, 15, 80, 160, "&9Ủng Băng Cực Aokiji", ("&7Bước chân đóng băng mặt nước"))
+        set {_weapon} to makeGlowingItem(diamond sword, "&b&lBăng Kiếm Tuyệt Đối", ("&7Thanh kiếm ngưng tụ từ khí lạnh tuyệt đối"))
+
+        set helmet of {_boss} to {_helm}
+        set chestplate of {_boss} to {_chest}
+        set leggings of {_boss} to {_legs}
+        set boots of {_boss} to {_boots}
+        set tool of {_boss} to {_weapon}
+
+    # 3. VUA BIỂN (Sea King of Calm Belt - 7,800 HP, 160 DEF)
+    else:
+        set {_bossType} to "seaking"
+        set {_name} to "&3&l☠ VUA BIỂN CALM BELT ☠ &e[SIÊU BOSS]"
+        set {_maxHp} to 3900 # 3900 Tim = 7800 HP
+        set {boss_event::def} to 160.0
+
+        set max health of {_boss} to {_maxHp}
+        set health of {_boss} to {_maxHp}
+        set name of {_boss} to colored {_name}
+
+        set {_invis} to new PotionEffect(PotionEffectType.INVISIBILITY, 999999, 1, false, false)
+        {_boss}.addPotionEffect({_invis})
+        apply3DModelToEntity({_boss}, "seaking_idle")
+
+    # Lưu dữ liệu Boss
+    set {boss_event::active} to true
+    set {boss_event::uuid} to {_bossUuid}
+    set {boss_event::type} to {_bossType}
+    set {boss_event::name} to {_name}
+    set {boss_event::max_hp} to {_maxHp}
+    set {boss_event::entity} to {_boss}
+    set {boss_event::spawn_time} to now
+    set {-boss_skill_timer} to 0
+    delete {boss_dmg::%{_bossUuid}%::*}
+
+    # Thông báo Server
+    broadcastWorldEvent("boss", "SIÊU BOSS ĐỘT KÍCH XUẤT HIỆN!", "Mục tiêu: %{_name}% &7(HP: &c%round({_maxHp} * 2)%&7)", "Tọa độ: (%round(x-coordinate of {_spawnLoc})%, %round(y-coordinate of {_spawnLoc})%, %round(z-coordinate of {_spawnLoc})%) - Hãy tập hợp tiêu diệt!")
+
+    loop all players:
+        play sound "ENTITY_WITHER_SPAWN" with volume 1 and pitch 0.8 to loop-player
+
+function spawnRandomAdmiralBoss():
+    set {_r} to random integer between 1 and 3
+    if {_r} is 1:
+        spawnAdmiralBoss("akainu")
+    else if {_r} is 2:
+        spawnAdmiralBoss("aokiji")
+    else:
+        spawnAdmiralBoss("seaking")
+
+# ---------------------------------------------------------------------
+# 4. KỸ NĂNG RIÊNG BIỆT CỦA TỪNG BOSS (THI TRIỂN MỖI 6 GIÂY)
+# ---------------------------------------------------------------------
+
+function castBossSkill(boss: entity, type: text):
+    if {_boss} is not set:
+        stop
+    if {_boss}.isDead() is true:
+        stop
+
+    set {_bLoc} to location of {_boss}
+    # Không thi triển nếu không có người chơi nào trong 25 block
+    if size of players in radius 25 around {_bLoc} <= 0:
+        stop
+
+    set {_skillR} to random integer between 1 and 3
+
+    # ==========================
+    # 1. KỸ NĂNG CỦA AKAINU (65-95 ST + Hỏa Độc -30% Hồi Máu)
+    # ==========================
+    if {_type} is "akainu":
+        if {_skillR} is 1:
+            # Chiêu 1: Mưa Nham Thạch (Dai Funka - 75 ST)
+            broadcastDualCard("&4&l☠ AKAINU", "&6&lĐẠI HỎA PHÁO DAI FUNKA!", "&cMưa nham thạch thiêu rụi toàn bộ chiến trường!")
+            play sound "ENTITY_GHAST_SHOOT" with volume 1.5 and pitch 0.8 at {_bLoc}
+            loop players in radius 20 around {_boss}:
+                set {_pLoc} to location of loop-player
+                strike lightning effect at {_pLoc}
+                spawnVisualParticle("EXPLOSION_LARGE", {_pLoc}, 5, 0.5, 0.5, 0.5, 0.05)
+                spawnVisualParticle("FLAME", {_pLoc}, 30, 0.8, 0.8, 0.8, 0.1)
+                set {_effDmg} to calculateEffectiveDamage(75, 0, getPlayerTotalDEF(loop-player))
+                set {_cHp} to health of loop-player
+                set {_effHearts} to ({_effDmg} / 2)
+                if {_cHp} <= {_effHearts}:
+                    set {_lpU} to uuid of loop-player
+                    setDamageVisualTag(loop-player, "normal")
+                    set {skill_exact_dmg::%{_lpU}%} to {_effDmg}
+                    damage loop-player by {_effHearts}
+                    delete {skill_exact_dmg::%{_lpU}%}
+                else:
+                    set health of loop-player to ({_cHp} - {_effHearts})
+                    play sound "ENTITY_PLAYER_HURT" with volume 1 and pitch 0.8 at {_pLoc}
+                set {hoa_doc::%uuid of loop-player%} to System.currentTimeMillis() + 6000
+                ignite loop-player for 6 seconds
+                send title "&c&lHỎA PHÁO GIÁNG LÂM!" with subtitle "&cBạn bị trúng mưa nham thạch của Akainu!" to loop-player for 1.5 seconds
+
+        else if {_skillR} is 2:
+            # Chiêu 2: Minh Cẩu (Meigo - 95 ST)
+            set {_target} to {_boss}.getTarget()
+            if {_target} is not set:
+                loop players in radius 16 around {_boss}:
+                    set {_target} to loop-player
+                    exit loop
+            if {_target} is set:
+                if world of {_target} is world of {_boss}:
+                    broadcastDualCard("&4&l☠ AKAINU", "&4&lMINH CẨU NHAM THẠCH!", "&cChó săn nham thạch thiêu cháy linh hồn mục tiêu!")
+                    applySafeVelocity({_boss}, {_bLoc}, location of {_target}, 1.2, 0.4)
+                    play sound "ENTITY_BLAZE_SHOOT" with volume 1.5 and pitch 0.6 at {_bLoc}
+                    wait 8 ticks
+                    if {_boss} is set:
+                        if {_boss}.isDead() is not true:
+                            if {_target} is online:
+                                if {_target}.isDead() is not true:
+                                    if world of {_target} is world of {_boss}:
+                                        set {_tLoc} to location of {_target}
+                                        spawnVisualParticle("LAVA", {_tLoc}, 30, 0.6, 0.8, 0.6, 0.1)
+                                        spawnVisualParticle("FLAME", {_tLoc}, 40, 0.8, 0.8, 0.8, 0.1)
+                                        set {_effDmg} to calculateEffectiveDamage(95, 0, getPlayerTotalDEF({_target}))
+                                        set {_cHp} to health of {_target}
+                                        set {_effHearts} to ({_effDmg} / 2)
+                                        if {_cHp} <= {_effHearts}:
+                                            set {_tU} to uuid of {_target}
+                                            setDamageVisualTag({_target}, "normal")
+                                            set {skill_exact_dmg::%{_tU}%} to {_effDmg}
+                                            damage {_target} by {_effHearts}
+                                            delete {skill_exact_dmg::%{_tU}%}
+                                        else:
+                                            set health of {_target} to ({_cHp} - {_effHearts})
+                                            play sound "ENTITY_PLAYER_HURT" with volume 1 and pitch 0.8 at {_tLoc}
+                                        set {hoa_doc::%uuid of {_target}%} to System.currentTimeMillis() + 8000
+                                        ignite {_target} for 8 seconds
+
+        else:
+            # Chiêu 3: Hỏa Ngục Bất Diệt (65 ST)
+            broadcastDualCard("&4&l☠ AKAINU", "&c&lHỎA NGỤC BẤT DIỆT!", "&4Hỏa ngục giam cầm kéo toàn bộ kẻ địch vào tâm bão!")
+            play sound "ENTITY_WITHER_SPAWN" with volume 1.2 and pitch 1.6 at {_bLoc}
+            spawnVisualParticle("FLAME", {_bLoc}, 60, 2.0, 0.5, 2.0, 0.1)
+            loop players in radius 14 around {_boss}:
+                applySafeVelocity(loop-player, location of loop-player, {_bLoc}, 0.9, 0.2)
+                apply wither 2 to loop-player for 4 seconds
+                apply slowness 2 to loop-player for 4 seconds
+                set {_effDmg} to calculateEffectiveDamage(65, 0, getPlayerTotalDEF(loop-player))
+                set {_cHp} to health of loop-player
+                set {_effHearts} to ({_effDmg} / 2)
+                if {_cHp} <= {_effHearts}:
+                    set {_lpU} to uuid of loop-player
+                    setDamageVisualTag(loop-player, "normal")
+                    set {skill_exact_dmg::%{_lpU}%} to {_effDmg}
+                    damage loop-player by {_effHearts}
+                    delete {skill_exact_dmg::%{_lpU}%}
+                else:
+                    set health of loop-player to ({_cHp} - {_effHearts})
+                    play sound "ENTITY_PLAYER_HURT" with volume 1 and pitch 0.8 at location of loop-player
+                set {hoa_doc::%uuid of loop-player%} to System.currentTimeMillis() + 4000
+                send action bar "&c&l✖ HỎA NGỤC KÉO VÀO: Bị thiêu đốt và trúng độc Wither!" to loop-player
+
+    # ==========================
+    # 2. KỸ NĂNG CỦA AOKIJI (55-85 ST)
+    # ==========================
+    else if {_type} is "aokiji":
+        if {_skillR} is 1:
+            # Chiêu 1: Kỷ Băng Hà (Ice Age - 65 ST)
+            broadcastDualCard("&b&l✦ AOKIJI", "&3&lKỶ BĂNG HÀ ICE AGE!", "&bHàn khí đóng băng tuyệt đối mọi kẻ địch trong 15 block!")
+            play sound "BLOCK_GLASS_BREAK" with volume 2.0 and pitch 0.5 at {_bLoc}
+            spawnVisualParticle("SNOWBALL", {_bLoc}, 80, 2.0, 1.0, 2.0, 0.1)
+            loop players in radius 15 around {_boss}:
+                apply slowness 10 to loop-player for 4 seconds
+                apply blindness 1 to loop-player for 3 seconds
+                set {_effDmg} to calculateEffectiveDamage(65, 0, getPlayerTotalDEF(loop-player))
+                set {_cHp} to health of loop-player
+                set {_effHearts} to ({_effDmg} / 2)
+                if {_cHp} <= {_effHearts}:
+                    set {_lpU} to uuid of loop-player
+                    setDamageVisualTag(loop-player, "normal")
+                    set {skill_exact_dmg::%{_lpU}%} to {_effDmg}
+                    damage loop-player by {_effHearts}
+                    delete {skill_exact_dmg::%{_lpU}%}
+                else:
+                    set health of loop-player to ({_cHp} - {_effHearts})
+                    play sound "ENTITY_PLAYER_HURT" with volume 1 and pitch 0.8 at location of loop-player
+                set {_plLoc} to location of loop-player
+                spawnVisualParticle("SNOWBALL", {_plLoc}, 30, 0.5, 0.8, 0.5, 0.05)
+                send title "&b&lBĂNG GIÁ TUYỆT ĐỐI!" with subtitle "&7Kỷ Băng Hà của Aokiji khiến bạn bất động 4s!" to loop-player for 2 seconds
+
+        else if {_skillR} is 2:
+            # Chiêu 2: Băng Trĩ (Ice Pheasant - 85 ST)
+            broadcastDualCard("&b&l✦ AOKIJI", "&b&lBĂNG TRĨ ICE PHEASANT!", "&fĐạn băng xuyên thủng mọi hàng phòng ngự!")
+            play sound "ENTITY_SNOWMAN_SHOOT" with volume 1.5 and pitch 0.7 at {_bLoc}
+            loop players in radius 16 around {_boss}:
+                set {_pLoc} to location of loop-player
+                applySafeVelocity(loop-player, {_bLoc}, {_pLoc}, 1.0, 0.3)
+                set {_effDmg} to calculateEffectiveDamage(85, 0, getPlayerTotalDEF(loop-player))
+                set {_cHp} to health of loop-player
+                set {_effHearts} to ({_effDmg} / 2)
+                if {_cHp} <= {_effHearts}:
+                    set {_lpU} to uuid of loop-player
+                    setDamageVisualTag(loop-player, "normal")
+                    set {skill_exact_dmg::%{_lpU}%} to {_effDmg}
+                    damage loop-player by {_effHearts}
+                    delete {skill_exact_dmg::%{_lpU}%}
+                else:
+                    set health of loop-player to ({_cHp} - {_effHearts})
+                    play sound "ENTITY_PLAYER_HURT" with volume 1 and pitch 0.8 at {_pLoc}
+                spawnVisualParticle("CRIT_MAGIC", {_pLoc}, 25, 0.4, 0.6, 0.4, 0.1)
+
+        else:
+            # Chiêu 3: Bão Tuyết Cực Địa & Hồi Máu (55 ST)
+            broadcastDualCard("&b&l✦ AOKIJI", "&9&lBÃO TUYẾT CỰC ĐỊA!", "&bBão tuyết hồi phục sinh lực cho Đại Tướng Aokiji!")
+            play sound "ITEM_ARMOR_EQUIP_DIAMOND" with volume 1.5 and pitch 1.4 at {_bLoc}
+            spawnVisualParticle("SNOW_SHOVEL", {_bLoc}, 60, 2.0, 1.0, 2.0, 0.1)
+            heal {_boss} by 200
+            loop players in radius 10 around {_boss}:
+                applySafeVelocity(loop-player, {_bLoc}, location of loop-player, 1.2, 0.4)
+                set {_effDmg} to calculateEffectiveDamage(55, 0, getPlayerTotalDEF(loop-player))
+                set {_cHp} to health of loop-player
+                set {_effHearts} to ({_effDmg} / 2)
+                if {_cHp} <= {_effHearts}:
+                    set {_lpU} to uuid of loop-player
+                    setDamageVisualTag(loop-player, "normal")
+                    set {skill_exact_dmg::%{_lpU}%} to {_effDmg}
+                    damage loop-player by {_effHearts}
+                    delete {skill_exact_dmg::%{_lpU}%}
+                else:
+                    set health of loop-player to ({_cHp} - {_effHearts})
+                    play sound "ENTITY_PLAYER_HURT" with volume 1 and pitch 0.8 at location of loop-player
+
+    # ==========================
+    # 3. KỸ NĂNG CỦA VUA BIỂN (110 ST Diện Rộng)
+    # ==========================
+    else:
+        play3DEntityPose({_boss}, "seaking_roar", "seaking_idle", 30)
+        if {_skillR} is 1:
+            # Chiêu 1: Thủy Triều Cuồng Nộ (Tsunami Roar - 110 ST)
+            broadcastDualCard("&3&l❖ VUA BIỂN", "&b&lTIẾNG GẦM THỦY TRIỀU!", "&3Sóng thần dâng cao hất tung kẻ địch lên bầu trời!")
+            play sound "ENTITY_ELDER_GUARDIAN_CURSE" with volume 1.5 and pitch 0.8 at {_bLoc}
+            spawnVisualParticle("WATER_SPLASH", {_bLoc}, 80, 2.5, 1.0, 2.5, 0.1)
+            loop players in radius 16 around {_boss}:
+                applySafeVelocity(loop-player, {_bLoc}, location of loop-player, 0.25, 1.1)
+                set {_effDmg} to calculateEffectiveDamage(110, 0, getPlayerTotalDEF(loop-player))
+                set {_cHp} to health of loop-player
+                set {_effHearts} to ({_effDmg} / 2)
+                if {_cHp} <= {_effHearts}:
+                    set {_lpU} to uuid of loop-player
+                    setDamageVisualTag(loop-player, "normal")
+                    set {skill_exact_dmg::%{_lpU}%} to {_effDmg}
+                    damage loop-player by {_effHearts}
+                    delete {skill_exact_dmg::%{_lpU}%}
+                else:
+                    set health of loop-player to ({_cHp} - {_effHearts})
+                    play sound "ENTITY_PLAYER_HURT" with volume 1 and pitch 0.8 at location of loop-player
+                send action bar "&3&l✖ SÓNG THẦN VUA BIỂN: Bị hất tung lên bầu trời!" to loop-player
+
+        else if {_skillR} is 2:
+            # Chiêu 2: Xoáy Nước Vực Sâu (Maelstrom - 110 ST)
+            broadcastDualCard("&3&l❖ VUA BIỂN", "&1&lXOÁY NƯỚC VỰC SÂU!", "&bCuốn trôi và nghiền nát sinh mệnh kẻ xâm nhập!")
+            play sound "ENTITY_GENERIC_SWIM" with volume 1.5 and pitch 0.5 at {_bLoc}
+            spawnVisualParticle("WATER_DROP", {_bLoc}, 70, 2.0, 0.5, 2.0, 0.1)
+            loop players in radius 15 around {_boss}:
+                applySafeVelocity(loop-player, location of loop-player, {_bLoc}, 0.85, 0.15)
+                set {_effDmg} to calculateEffectiveDamage(110, 0, getPlayerTotalDEF(loop-player))
+                set {_cHp} to health of loop-player
+                set {_effHearts} to ({_effDmg} / 2)
+                if {_cHp} <= {_effHearts}:
+                    set {_lpU} to uuid of loop-player
+                    setDamageVisualTag(loop-player, "normal")
+                    set {skill_exact_dmg::%{_lpU}%} to {_effDmg}
+                    damage loop-player by {_effHearts}
+                    delete {skill_exact_dmg::%{_lpU}%}
+                else:
+                    set health of loop-player to ({_cHp} - {_effHearts})
+                    play sound "ENTITY_PLAYER_HURT" with volume 1 and pitch 0.8 at location of loop-player
+                apply slowness 4 to loop-player for 3 seconds
+
+        else:
+            # Chiêu 3: Hắc Ám Biển Sâu (Sét Thủy Thần - 110 ST)
+            broadcastDualCard("&3&l❖ VUA BIỂN", "&9&lSẤM SÉT THỦY QUÁI!", "&fThiên phạt đại dương giáng sấm sét kinh hoàng!")
+            loop players in radius 20 around {_boss}:
+                set {_pLoc} to location of loop-player
+                strike lightning effect at {_pLoc}
+                spawnVisualParticle("WATER_SPLASH", {_pLoc}, 40, 0.5, 0.8, 0.5, 0.1)
+                set {_effDmg} to calculateEffectiveDamage(110, 0, getPlayerTotalDEF(loop-player))
+                set {_cHp} to health of loop-player
+                set {_effHearts} to ({_effDmg} / 2)
+                if {_cHp} <= {_effHearts}:
+                    set {_lpU} to uuid of loop-player
+                    setDamageVisualTag(loop-player, "normal")
+                    set {skill_exact_dmg::%{_lpU}%} to {_effDmg}
+                    damage loop-player by {_effHearts}
+                    delete {skill_exact_dmg::%{_lpU}%}
+                else:
+                    set health of loop-player to ({_cHp} - {_effHearts})
+                    play sound "ENTITY_PLAYER_HURT" with volume 1 and pitch 0.8 at {_pLoc}
+                apply blindness 1 to loop-player for 3 seconds
+
+# ---------------------------------------------------------------------
+# 5. VÒNG LẶP SỰ KIỆN TỰ ĐỘNG (PERIODIC LOOPS)
+# ---------------------------------------------------------------------
+
+every 2 hours:
+    spawnWildDevilFruit()
+
+every 3 hours:
+    spawnRandomAdmiralBoss()
+
+every 1 second:
+    # 1. Xử lý Trái Ác Quỷ Hoang Dã
+    if {df_event::active} is true:
+        set {_stand} to {df_event::stand}
+        if {_stand} is set:
+            if {_stand}.isDead() is not true:
+                set {_loc} to location of {_stand}
+                # Chỉ render cột sáng nếu có người chơi trong 48 block để tối ưu hiệu năng
+                if size of players in radius 48 around {_loc} > 0:
+                    loop integers from 0 to 14:
+                        set {_beamLoc} to {_loc}.clone()
+                        add loop-integer to y-coordinate of {_beamLoc}
+                        spawnVisualParticle("END_ROD", {_beamLoc}, 2, 0.15, 0.15, 0.15, 0.01)
+                        spawnVisualParticle("FLAME", {_beamLoc}, 1, 0.1, 0.1, 0.1, 0.01)
+
+                # Kiểm tra người chơi đầu tiên tiếp cận trong phạm vi 2.0 block
+                loop players in radius 2.0 around {_stand}:
+                    set {_p} to loop-player
+                    set {_item} to {df_event::item}
+                    set {_name} to {df_event::name}
+
+                    if {_p} can hold {_item}:
+                        give {_item} to {_p}
+                    else:
+                        drop {_item} at location of {_p}
+
+                    play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to {_p}
+                    set {_ploc} to location of {_p}
+                    add 1 to y-coordinate of {_ploc}
+                    spawnVisualParticle("FIREWORKS_SPARK", {_ploc}, 40, 0.6, 0.8, 0.6, 0.15)
+                    spawnVisualParticle("EXPLOSION_LARGE", {_ploc}, 3, 0.4, 0.4, 0.4, 0.05)
+
+                    broadcastDualCard("&6&l✦ BẢO VẬT", "&e%name of {_p}% &fđã phong ấn thành công &e%{_name}%&f!", "Trái Ác Quỷ Hoang Dã đã tìm thấy chủ nhân xứng đáng!")
+
+                    cleanWildDevilFruit()
+                    exit loop
+            else:
+                cleanWildDevilFruit()
+        else:
+            cleanWildDevilFruit()
+
+        # Quá 20 phút không ai nhặt tự động biến mất
+        if {df_event::spawn_time} is set:
+            if difference between {df_event::spawn_time} and now > 20 minutes:
+                broadcastDualCard("&5&l❖ THẦN BÍ", "Trái Ác Quỷ Hoang Dã đã bị đại dương vùi lấp!", "Không có hải tặc nào tiếp cận kịp thời.")
+                cleanWildDevilFruit()
+
+    # 2. Xử lý Boss Đột Kích (Hiển thị Máu & Đếm nhịp tung chiêu)
+    if {boss_event::active} is true:
+        set {_b} to {boss_event::entity}
+        if {_b} is set:
+            if {_b}.isDead() is not true:
+                set {_curHp} to health of {_b}
+                set {_maxHp} to max health of {_b}
+                set {_bar} to getBossProgressBar({_curHp}, {_maxHp}, 20)
+                set {_bName} to {boss_event::name}
+
+                # Cập nhật thanh máu Action Bar cho toàn bộ người chơi quanh 25 block
+                loop players in radius 25 around {_b}:
+                    send action bar "&c&l[BOSS] %{_bName}% &f- &c%round({_curHp} * 2)%&7/&c%round({_maxHp} * 2)% HP &8[%{_bar}%&8]" to loop-player
+
+                # Nhịp thi triển kỹ năng mỗi 6 giây
+                add 1 to {-boss_skill_timer}
+                if {-boss_skill_timer} >= 6:
+                    set {-boss_skill_timer} to 0
+                    castBossSkill({_b}, {boss_event::type})
+
+                # Quá 30 phút không bị hạ gục thì rút lui để tránh kẹt sự kiện
+                if {boss_event::spawn_time} is set:
+                    if difference between {boss_event::spawn_time} and now > 30 minutes:
+                        broadcastDualCard("&4&l☠ RÚT QUÂN", "Siêu Boss %{boss_event::name}% đã rút quân về Tổng Bộ!", "Thời gian đột kích đã kết thúc mà không bị hạ gục.")
+                        cleanAdmiralBoss()
+            else:
+                cleanAdmiralBoss()
+        else:
+            cleanAdmiralBoss()
+
+# ---------------------------------------------------------------------
+# 6. XỬ LÝ SÁT THƯƠNG & PHẦN THƯỞNG KHI DIỆT BOSS
+# ---------------------------------------------------------------------
+
+on damage of player:
+    if attacker is a zombie:
+        set {_u} to uuid of attacker
+        if {boss_event::active} is true:
+            if {_u} is {boss_event::uuid}:
+                if {boss_event::type} is "seaking":
+                    play3DEntityPose(attacker, "seaking_attack", "seaking_idle", 12)
+
+on damage of zombie:
+    set {_u} to uuid of victim
+    if {boss_event::active} is true:
+        if {_u} is {boss_event::uuid}:
+            if attacker is a player:
+                set {_attU} to uuid of attacker
+                add damage to {boss_dmg::%{_u}%::%{_attU}%}
+                play sound "ENTITY_PLAYER_ATTACK_CRIT" with volume 0.8 and pitch 1.2 to attacker
+
+on death of zombie:
+    set {_u} to uuid of victim
+    if {boss_event::active} is true:
+        if {_u} is {boss_event::uuid}:
+            remove all diamond hoe from drops
+            clear drops
+            set {_killer} to attacker
+            set {_bName} to {boss_event::name}
+            set {_bLoc} to location of victim
+
+            spawnVisualParticle("EXPLOSION_LARGE", {_bLoc}, 10, 1.5, 1.0, 1.5, 0.1)
+            spawnVisualParticle("FIREWORKS_SPARK", {_bLoc}, 60, 2.0, 1.5, 2.0, 0.2)
+
+            # 1. Thưởng cho Người Kết Liễu (Killer)
+            if {_killer} is a player:
+                set {_kU} to uuid of {_killer}
+
+                addBounty({_killer}, 5000000)
+                execute console command "eco give %name of {_killer}% 150000"
+                add 20 to {talent::%{_kU}%::points}
+                execute console command "is admin addbonus %name of {_killer}% level 50"
+
+                set {_stone} to getAwakeningStoneItem()
+                if {_killer} can hold {_stone}:
+                    give {_stone} to {_killer}
+                else:
+                    drop {_stone} at {_bLoc}
+
+                set {_aov} to createAoVChest()
+                if {_killer} can hold {_aov}:
+                    give {_aov} to {_killer}
+                else:
+                    drop {_aov} at {_bLoc}
+
+                # Phase 14: 100% rớt 1 Trái Chưa Giám Định cho người kết liễu
+                giveUnidentifiedFruit({_killer})
+
+                # Phase 13: Thưởng HakiExp +100 cho Meito nếu đang kích hoạt Busoshoku
+                if {haki_active::%{_kU}%::buso} is true:
+                    addMeitoHakiExp({_killer}, 100)
+
+                set {_randDf} to random integer between 1 and 100
+                if {_randDf} <= 30:
+                    set {_fruits::1} to "mera"
+                    set {_fruits::2} to "gomu"
+                    set {_fruits::3} to "ope"
+                    set {_fruits::4} to "seiryu"
+                    set {_chosenFruit} to random element out of {_fruits::*}
+                    set {_dfItem} to getDevilFruitItem({_chosenFruit})
+                    if {_killer} can hold {_dfItem}:
+                        give {_dfItem} to {_killer}
+                    else:
+                        drop {_dfItem} at {_bLoc}
+                    sendSystemMsg({_killer}, "training", "May mắn cực đại! Bạn đã nhận thêm &e1 Trái Ác Quỷ Thần Thoại 3D&f từ Boss!")
+
+                play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to {_killer}
+
+                broadcastDualCard("&6&l✦ DIỆT SIÊU BOSS", "&e%name of {_killer}% &fđã kết liễu &c%{_bName}%&f!", "Thưởng: &e+$150,000 &8┃ &6+20 TP &8┃ &bĐá Thức Tỉnh &8┃ &e+5M Beri &8┃ &b+50 Uy Danh")
+
+            # 2. Thưởng cho Toàn Bộ Người Tham Gia Chiến Đấu Xung Quanh (30 block)
+            loop players in radius 30 around {_bLoc}:
+                if loop-player is not {_killer}:
+                    set {_pU} to uuid of loop-player
+                    if {boss_dmg::%{_u}%::%{_pU}%} is set:
+                        addBounty(loop-player, 1000000)
+                        execute console command "eco give %name of loop-player% 30000"
+                        add 5 to {talent::%{_pU}%::points}
+                        sendSystemMsg(loop-player, "economy", "Hỗ trợ diệt Boss: &e+$30,000 &8┃ &6+5 Điểm TP &8┃ &e+1M Beri")
+                        play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to loop-player
+
+            cleanAdmiralBoss()
+
+# ---------------------------------------------------------------------
+# 7. HỆ THỐNG LỆNH QUẢN TRỊ SỰ KIỆN (/opadmin) VÀ XEM THÔNG TIN (/events)
+# ---------------------------------------------------------------------
+
+command /opadmin [<text>] [<text>] [<player>]:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh quản trị sự kiện!
+    trigger:
+        if arg-1 is not set:
+            send "&6&l✦ LỆNH QUẢN TRỊ SỰ KIỆN ONE PIECE (/opadmin) ✦" to player
+            send "&e• /opadmin spawndf &7- Kích hoạt Trái Ác Quỷ Hoang Dã ngay lập tức" to player
+            send "&e• /opadmin setdfspawn &7- Đặt tọa độ mọc Trái Ác Quỷ tại vị trí đang đứng" to player
+            send "&e• /opadmin spawnboss <akainu|aokiji|seaking> &7- Triệu hồi Boss cụ thể" to player
+            send "&e• /opadmin setbossspawn &7- Đặt tọa độ xuất hiện Boss tại vị trí đang đứng" to player
+            send "&e• /opadmin clearboss &7- Xóa sạch Boss đang hoạt động" to player
+            send "&e• /opadmin cleardf &7- Xóa Trái Ác Quỷ Hoang Dã đang tồn tại" to player
+            send "&e• /opadmin setkoth &7- Đặt tâm vòng tròn KOTH Laugh Tale" to player
+            send "&e• /opadmin startkoth [<phút>] &7- Kích hoạt KOTH Laugh Tale" to player
+            send "&e• /opadmin stopkoth &7- Dừng sự kiện KOTH tức thì" to player
+            stop
+
+        if arg-1 is "spawndf":
+            spawnWildDevilFruit()
+            send "&a[EventAdmin] &7Đã kích hoạt sự kiện Trái Ác Quỷ Hoang Dã thành công!" to player
+
+        else if arg-1 is "setdfspawn":
+            set {df_event::loc} to location of player
+            send "&a[EventAdmin] &7Đã lưu tọa độ mọc Trái Ác Quỷ Hoang Dã tại: &e%world of player% &7- &aX: %round(x-coordinate of player)%&7, &aY: %round(y-coordinate of player)%&7, &aZ: %round(z-coordinate of player)%" to player
+
+        else if arg-1 is "spawnboss":
+            if arg-2 is not set:
+                send "&cCú pháp: /opadmin spawnboss <akainu|aokiji|seaking>" to player
+                stop
+            spawnAdmiralBoss(arg-2)
+            send "&a[EventAdmin] &7Đã triệu hồi Siêu Boss &e%arg-2% &7thành công!" to player
+
+        else if arg-1 is "setbossspawn":
+            set {boss_event::loc} to location of player
+            send "&a[EventAdmin] &7Đã lưu tọa độ triệu hồi Boss tại: &e%world of player% &7- &aX: %round(x-coordinate of player)%&7, &aY: %round(y-coordinate of player)%&7, &aZ: %round(z-coordinate of player)%" to player
+
+        else if arg-1 is "clearboss":
+            cleanAdmiralBoss()
+            send "&a[EventAdmin] &7Đã dọn dẹp toàn bộ Boss Đột Kích thành công!" to player
+
+        else if arg-1 is "cleardf":
+            cleanWildDevilFruit()
+            send "&a[EventAdmin] &7Đã dọn dẹp Trái Ác Quỷ Hoang Dã thành công!" to player
+
+        else if arg-1 is "setkoth":
+            make player execute command "kothadmin set"
+
+        else if arg-1 is "startkoth":
+            if arg-2 is set:
+                make player execute command "kothadmin start %arg-2%"
+            else:
+                make player execute command "kothadmin start 15"
+
+        else if arg-1 is "stopkoth":
+            make player execute command "kothadmin stop"
+
+        else:
+            send "&cCú pháp không hợp lệ! Gõ /opadmin để xem hướng dẫn." to player
+
+# ---------------------------------------------------------------------
+# 8. GIAO DIỆN SỰ KIỆN BOSS, KOTH & CẨM NANG MOBA (UI_G2_C - 36 Ô)
+# ---------------------------------------------------------------------
+
+function openEventsGUI(p: player):
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G2_C", "&e&l✦ SỰ KIỆN BOSS & KOTH ✦", 4, red stained glass pane named " ", "UI_G2", "Bá Khí & Chiến Trường")
+
+    # Slot 10: Trạng thái & đếm ngược Trái Ác Quỷ Hoang Dã (chu kỳ 2 giờ)
+    delete {_lore10::*}
+    set {_lore10::1} to "&8&m----------------------------------------"
+    set {_lore10::2} to "&7Sự kiện: &6Rơi Rớt Trái Ác Quỷ Thế Giới"
+    set {_lore10::3} to "&7Chu kỳ: &e2 Giờ / 1 Lần &8(Ngẫu nhiên toàn cõi Skyblock)"
+    set {_lore10::4} to ""
+    if {df_event::active} is true:
+        set {_loc} to {df_event::loc}
+        set {_lore10::5} to "&7Trạng thái: &a&l✦ ĐANG XUẤT HIỆN TRÊN ĐẢO! ✦"
+        set {_lore10::6} to "&7Vị trí: &f%world of {_loc}% &7(&eX: %round(x-coordinate of {_loc})%&7, &aY: %round(y-coordinate of {_loc})%&7, &eZ: %round(z-coordinate of {_loc})%&7)"
+        set {_lore10::7} to "&7Dấu hiệu: &eCột sáng END_ROD & Ngọn Lửa Ma Trận"
+        set {_lore10::8} to ""
+        set {_lore10::9} to "&e▶ Nhấp chuột để đặt La Bàn định vị Trái Ác Quỷ!"
+    else:
+        set {_lore10::5} to "&7Trạng thái: &eĐang chờ đợt xuất hiện tiếp theo"
+        set {_lore10::6} to "&7Vị trí: &fXuất hiện ngẫu nhiên trên các hoang đảo"
+        set {_lore10::7} to "&7Dấu hiệu: &eCột sáng rực trời khi xuất hiện"
+        set {_lore10::8} to ""
+        set {_lore10::9} to "&6&l✦ PHẦN THƯỞNG NGƯỜI ĐẦU TIÊN TIẾP CẬN:"
+        set {_lore10::10} to "&f• 1x Trái Ác Quỷ 3D Siêu Cấp hoặc Rương AoV Cực Phẩm"
+        set {_lore10::11} to "&f• Cơ hội nhận Trái Logia/Hệ Zoan Thần Thoại quý hiếm"
+    set {_lore10::12} to "&8&m----------------------------------------"
+    set slot 10 of {_inv} to makeCustomRPItem("wild_fruit", "&6&l✦ TRÁI ÁC QUỶ HOANG DÃ ✦", {_lore10::*})
+
+    # Slot 12: Trạng thái 3 Siêu Boss Thế Giới (chu kỳ 3 giờ)
+    delete {_lore12::*}
+    set {_lore12::1} to "&8&m----------------------------------------"
+    set {_lore12::2} to "&7Sự kiện: &cĐột Kích 3 Siêu Boss Thế Giới"
+    set {_lore12::3} to "&7Chu kỳ: &e3 Giờ / 1 Lần &8(Tuần hoàn Đô Đốc & Vua Biển)"
+    set {_lore12::4} to ""
+    if {boss_event::active} is true:
+        set {_b} to {boss_event::entity}
+        set {_bName} to {boss_event::name} ? "&cSiêu Boss"
+        set {_locB} to {boss_event::loc}
+        set {_hp} to 0
+        set {_maxHp} to 1000
+        if {_b} is set:
+            if {_b}.isDead() is not true:
+                set {_locB} to location of {_b}
+                set {_hp} to health of {_b} * 2
+                set {_maxHp} to max health of {_b} * 2
+        set {_lore12::5} to "&7Trạng thái: &c&l⚔ ĐANG CHIẾN ĐẤU ÁC LIỆT! ⚔"
+        set {_lore12::6} to "&7Mục tiêu: %{_bName}%"
+        set {_lore12::7} to "&7Sinh lực: &c%round({_hp})% &7/ &c%round({_maxHp})% HP"
+        set {_lore12::8} to "  %getBossProgressBar({_hp}, {_maxHp}, 20)%"
+        if {_locB} is set:
+            set {_lore12::9} to "&7Vị trí: &f%world of {_locB}% &7(&eX: %round(x-coordinate of {_locB})%&7, &eZ: %round(z-coordinate of {_locB})%&7)"
+        else:
+            set {_lore12::9} to "&7Vị trí: &eĐang định vị..."
+        set {_lore12::10} to ""
+        set {_lore12::11} to "&e▶ Nhấp chuột để đặt La Bàn định vị Siêu Boss!"
+    else:
+        set {_lore12::5} to "&7Trạng thái: &eĐang chờ đột kích đợt tiếp theo"
+        set {_lore12::6} to ""
+        set {_lore12::7} to "&c&l✦ DANH SÁCH 3 SIÊU BOSS THẾ GIỚI:"
+        set {_lore12::8} to "&f• &cĐại Tướng Akainu: &e1,200 HP &7(Dung Nham Magu - ID 54)"
+        set {_lore12::9} to "&f• &bĐại Tướng Aokiji: &e1,000 HP &7(Băng Giá Hie - ID 55)"
+        set {_lore12::10} to "&f• &3Thủy Quái Vua Biển: &e1,500 HP &7(Sóng Thần Thủy Quái - ID 60)"
+        set {_lore12::11} to ""
+        set {_lore12::12} to "&6&l✦ PHẦN THƯỞNG KẾT LIỄU SIÊU BOSS:"
+        set {_lore12::13} to "&f• &a+$150,000 Tiền mặt &8| &6+20 Điểm Thiên Phú"
+        set {_lore12::14} to "&f• &e+5,000,000 Beri &8| &b+50 Uy Danh Đảo"
+        set {_lore12::15} to "&f• &dĐá Thức Tỉnh &8| &6Rương AoV &8| &e100%% Trái Bí Ẩn"
+        set {_lore12::16} to "&7(Thưởng hỗ trợ chiến đấu: &a+$30,000&7, &6+5 TP&7, &e+1M Beri&7)"
+    set {_lore12::17} to "&8&m----------------------------------------"
+    set slot 12 of {_inv} to makeCustomRPItem("boss_akainu_icon", "&c&l✦ SIÊU BOSS ĐỘT KÍCH THẾ GIỚI ✦", {_lore12::*})
+
+    # Slot 14: Chiến Trường KOTH Laugh Tale
+    delete {_lore14::*}
+    set {_kothStatus} to "&7Chờ sự kiện tiếp theo (20:30 mỗi tối)"
+    if {koth_active} is true:
+        set {_kothStatus} to "&a&l✦ ĐANG TRANH CHẤP NẢY LỬA! ✦"
+    set {_kothWinner} to "&7Chưa có"
+    if {koth_winner_island} is set:
+        if {koth_winner_time} is set:
+            if difference between {koth_winner_time} and now < 24 hours:
+                set {_kothWinner} to "&6%{koth_winner_name}%"
+    set {_kothLocText} to "&7Chưa thiết lập tọa độ"
+    if {koth_loc} is set:
+        set {_kothLocText} to "&f%world of {koth_loc}% &7(&eX: %round(x-coordinate of {koth_loc})%&7, &eZ: %round(z-coordinate of {koth_loc})%&7)"
+    set {_kTimeLeft} to {koth_time_left} ? 0
+    set {_timeText} to "&715 Phút khi bắt đầu"
+    if {koth_active} is true:
+        set {_timeText} to "&e%{_kTimeLeft}%s"
+
+    set {_lore14::1} to "&8&m----------------------------------------"
+    set {_lore14::2} to "&7Chiến trường: &6Đảo Kho Báu Laugh Tale &8(KOTH)"
+    set {_lore14::3} to "&7Trạng thái: %{_kothStatus}%"
+    set {_lore14::4} to "&7Vị trí KOTH: %{_kothLocText}%"
+    set {_lore14::5} to ""
+    set {_lore14::6} to "&6&l✦ THÔNG TIN CHIẾN SỰ:"
+    set {_lore14::7} to "&f• Thời gian còn lại: %{_timeText}%"
+    set {_lore14::8} to "&f• Điều kiện thắng: &aGiữ vòng 180 giây (3 phút)"
+    set {_lore14::9} to "&f• Bá Chủ hiện tại: %{_kothWinner}%"
+    set {_lore14::10} to ""
+    set {_lore14::11} to "&e&l✦ ĐẶC QUYỀN BÁ CHỦ LAUGH TALE (24H):"
+    set {_lore14::12} to "&f• Kích hoạt đồng thời &eCẢ 3 CỜ HẢI TẶC &fcho toàn Băng!"
+    set {_lore14::13} to "&f• Rương Kho Báu Laugh Tale & 100,000,000 Beri Băng"
+    set {_lore14::14} to ""
+    set {_lore14::15} to "&e▶ Nhấp chuột để dịch chuyển tới Đảo Kho Báu (/koth)!"
+    set {_lore14::16} to "&8&m----------------------------------------"
+    set slot 14 of {_inv} to makeGlowingItem(beacon, "&6&l✦ CHIẾN TRƯỜNG KOTH LAUGH TALE ✦", {_lore14::*})
+
+    # Slot 16: Cẩm Nang Chiến Đấu MOBA Quick-Cast
+    delete {_lore16::*}
+    set {_lore16::1} to "&8&m----------------------------------------"
+    set {_lore16::2} to "&7Phân loại: &aCẩm Nang Chiến Đấu & Thao Tác Phím"
+    set {_lore16::3} to ""
+    set {_lore16::4} to "&6&l✦ BỘ PHÍM TẮC CHIẾN ĐẤU MOBA (QUICK-CAST):"
+    set {_lore16::5} to "&f• &e[F]: &fBật/Tắt chế độ Chiến Đấu &7(tự chuyển vũ khí sang Ô Neo số 9)"
+    set {_lore16::6} to "&f• &e[1-3]: &fTung Chiêu 1, Chiêu 2 &7(Lv.25)&f, Tuyệt Kỹ Chiêu 3 &7(Lv.60)"
+    set {_lore16::7} to "&f• &e[4]: &bBật / Tắt Haki Quan Sát &7(Né đòn +25-35%%)"
+    set {_lore16::8} to "&f• &e[5]: &8Bật / Tắt Haki Vũ Trang &7(Xuyên Logia, Crit +35%%)"
+    set {_lore16::9} to "&f• &e[6]: &4Phóng Sóng Xung Kích Haki Bá Vương"
+    set {_lore16::10} to ""
+    set {_lore16::11} to "&e▶ Nhấp chuột để Bật/Tắt nhanh Chế Độ Chiến Đấu (/chiendau)!"
+    set {_lore16::12} to "&8&m----------------------------------------"
+    set slot 16 of {_inv} to makeCustomRPItem("skill_slot_1", "&a&l✦ CẨM NANG CHIẾN ĐẤU MOBA ✦", {_lore16::*})
+
+    openStandardUI({_p}, {_inv}, "UI_G2_C", "UI_G2")
+
+# ---------------------------------------------------------------------
+# 9. BẢO VỆ CHỐNG KÉO THẢ & XỬ LÝ NHẤP CHUỘT TRONG UI_G2_C
+# ---------------------------------------------------------------------
+
+on InventoryDragEvent:
+    set {_who} to event.getWhoClicked()
+    if {_who} is a player:
+        set {_isEventUI} to false
+        if {ui_active::%uuid of {_who}%} is "UI_G2_C":
+            set {_isEventUI} to true
+        else if uncolored event.getView().getTitle() contains "SỰ KIỆN BOSS & KOTH":
+            set {_isEventUI} to true
+        if {_isEventUI} is true:
+            cancel event
+
+on inventory click:
+    set {_isEventUI} to false
+    if {ui_active::%uuid of player%} is "UI_G2_C":
+        set {_isEventUI} to true
+    else if uncolored event.getView().getTitle() contains "SỰ KIỆN BOSS & KOTH":
+        set {_isEventUI} to true
+    if {_isEventUI} is false:
+        stop
+
+    cancel event
+    if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+        player.updateInventory()
+
+    if clicked inventory is not player's current inventory:
+        stop
+
+    set {_slot} to index of event-slot
+    if {_slot} is 27 or 28 or 35:
+        stop
+    set {_p} to player
+
+    # Slot 10: Trái Ác Quỷ Hoang Dã
+    if {_slot} is 10:
+        if {df_event::active} is true:
+            set {_loc} to {df_event::loc}
+            set {_p}'s compass target to {_loc}
+            play sound "ITEM_ARMOR_EQUIP_IRON" with volume 1 and pitch 1.2 to {_p}
+            sendSystemMsg({_p}, "crew", "La bàn đã định vị &6Trái Ác Quỷ Hoang Dã &ftại &e%world of {_loc}% &7(X: %round(x-coordinate of {_loc})%, Y: %round(y-coordinate of {_loc})%, Z: %round(z-coordinate of {_loc})%)")
+        else:
+            sendSystemMsg({_p}, "info", "Trái Ác Quỷ Hoang Dã hiện chưa xuất hiện! Chu kỳ mọc mỗi 2 tiếng.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+
+    # Slot 12: Siêu Boss Đột Kích
+    else if {_slot} is 12:
+        if {boss_event::active} is true:
+            set {_locB} to {boss_event::loc}
+            set {_b} to {boss_event::entity}
+            if {_b} is set:
+                if {_b}.isDead() is not true:
+                    set {_locB} to location of {_b}
+            if {_locB} is set:
+                set {_p}'s compass target to {_locB}
+                play sound "ITEM_ARMOR_EQUIP_IRON" with volume 1 and pitch 1.2 to {_p}
+                sendSystemMsg({_p}, "crew", "La bàn đã định vị &c%{boss_event::name}% &ftại &e%world of {_locB}% &7(X: %round(x-coordinate of {_locB})%, Y: %round(y-coordinate of {_locB})%, Z: %round(z-coordinate of {_locB})%)")
+            else:
+                sendSystemMsg({_p}, "error", "Không thể xác định vị trí của Siêu Boss!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        else:
+            sendSystemMsg({_p}, "info", "Hiện chưa có Siêu Boss nào xuất hiện! Chu kỳ đột kích mỗi 3 tiếng.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+
+    # Slot 14: KOTH Laugh Tale
+    else if {_slot} is 14:
+        wait 1 tick
+        close {_p}'s inventory
+        wait 1 tick
+        make {_p} execute command "koth"
+
+    # Slot 16: Bật/Tắt Chế Độ Chiến Đấu MOBA
+    else if {_slot} is 16:
+        wait 1 tick
+        close {_p}'s inventory
+        wait 1 tick
+        make {_p} execute command "chiendau"
+
+# ---------------------------------------------------------------------
+# 10. LỆNH ĐIỀU HƯỚNG MỞ GIAO DIỆN /events
+# ---------------------------------------------------------------------
+
+command /events:
+    aliases: /sukien
+    trigger:
+        openEventsGUI(player)

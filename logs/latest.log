@@ -1,0 +1,651 @@
+[20:03:18] [Server thread/INFO]: Starting minecraft server version 1.12.2
+[20:03:18] [Server thread/INFO]: Loading properties
+[20:03:18] [Server thread/INFO]: Default game type: SURVIVAL
+[20:03:18] [Server thread/INFO]: This server is running Paper version git-Paper-1620 (MC: 1.12.2) (Implementing API version 1.12.2-R0.1-SNAPSHOT)
+[20:03:18] [Server thread/INFO]: Debug logging is disabled
+[20:03:18] [Server thread/INFO]: Server Ping Player Sample Count: 12
+[20:03:18] [Server thread/INFO]: Using 4 threads for Netty based IO
+[20:03:18] [Server thread/INFO]: Generating keypair
+[20:03:18] [Server thread/INFO]: Starting Minecraft server on *:25565
+[20:03:18] [Server thread/INFO]: Using default channel type
+[20:03:19] [Server thread/INFO]: Set PluginClassLoader as parallel capable
+[20:03:22] [Server thread/INFO]: [LuckPerms] Loading LuckPerms v5.5.91
+[20:03:22] [Server thread/INFO]: [LuckPerms] Loading configuration...
+[20:03:22] [Server thread/INFO]: [WildStacker] Loading WildStacker v2026.3
+[20:03:22] [Server thread/INFO]: [Ore] Loading Ore v1.0
+[20:03:22] [Server thread/INFO]: [WorldEdit] Loading WorldEdit v6.1.9;caf0ad9
+[20:03:22] [Server thread/INFO]: [SuperiorSkyblock2] Loading SuperiorSkyblock2 v2026.3
+[20:03:22] [Server thread/WARN]: [SuperiorSkyblock2] Ignoring attempt to change parent of plugin logger
+[20:03:23] [Server thread/INFO]: [CrazyAuctionsPlus] Loading CrazyAuctionsPlus v1.3.3.0
+[20:03:23] [Server thread/INFO]: [PlaceholderAPI] Loading PlaceholderAPI v2.12.3
+[20:03:23] [Server thread/INFO]: [NBTAPI] Loading NBTAPI v2.16.1
+[20:03:23] [Server thread/INFO]: [NBTAPI] Update check disabled
+[20:03:23] [Server thread/INFO]: [NBTAPI] [NBTAPI] Found Minecraft: v1_12_R1! Trying to find NMS support
+[20:03:23] [Server thread/INFO]: [NBTAPI] [NBTAPI] NMS support 'MC1_12_R1' loaded!
+[20:03:23] [Server thread/INFO]: [NBTAPI] [NBTAPI] Using the plugin 'NBTAPI' to create a bStats instance!
+[20:03:23] [Server thread/INFO]: [Vault] Loading Vault v1.7.3-b131
+[20:03:23] [Server thread/INFO]: [PlayerPoints] Loading PlayerPoints v3.3.5
+[20:03:23] [Server thread/INFO]: [PlayerPoints] Initializing using RoseGarden v1.5.7
+[20:03:23] [Server thread/INFO]: [ProtocolLib] Loading ProtocolLib v5.4.0
+[20:03:23] [Server thread/INFO]: [WorldGuard] Loading WorldGuard v6.2.2-SNAPSHOT;8eeab68
+[20:03:23] [Server thread/INFO]: [SkinsRestorer] Loading SkinsRestorer v15.12.6
+[20:03:23] [Server thread/INFO]: [CrazyEnchantments] Loading CrazyEnchantments v1.8.1.0
+[20:03:23] [Server thread/INFO]: [Skript] Loading Skript v2.6.4
+[20:03:23] [Server thread/INFO]: [ChestCommands] Loading ChestCommands v4.0.5
+[20:03:23] [Server thread/INFO]: [SkBee] Loading SkBee v1.10.3
+[20:03:23] [Server thread/INFO]: [Essentials] Loading Essentials v2.22.0
+[20:03:23] [Server thread/INFO]: [EssentialsProtect] Loading EssentialsProtect v2.22.0
+[20:03:23] [Server thread/INFO]: [EssentialsChat] Loading EssentialsChat v2.22.0
+[20:03:23] [Server thread/INFO]: [EssentialsAntiBuild] Loading EssentialsAntiBuild v2.22.0
+[20:03:23] [Server thread/INFO]: [EconomyShopGUI] Loading EconomyShopGUI v6.16.4
+[20:03:23] [Server thread/INFO]: [skript-reflect] Loading skript-reflect v2.3
+[20:03:23] [Server thread/INFO]: [EssentialsSpawn] Loading EssentialsSpawn v2.22.0
+[20:03:23] [Server thread/INFO]: Server permissions file permissions.yml is empty, ignoring it
+[20:03:23] [Server thread/INFO]: [LuckPerms] Enabling LuckPerms v5.5.91
+[20:03:23] [Server thread/INFO]:         __    
+[20:03:23] [Server thread/INFO]:   |    |__)   LuckPerms v5.5.91
+[20:03:23] [Server thread/INFO]:   |___ |      Running on Bukkit - Paper
+[20:03:23] [Server thread/INFO]: 
+[20:03:23] [Server thread/INFO]: [LuckPerms] Loading storage provider... [H2]
+[20:03:24] [Server thread/INFO]: [LuckPerms] Loading internal permission managers...
+[20:03:24] [Server thread/INFO]: [LuckPerms] Performing initial data load...
+[20:03:24] [Server thread/INFO]: [LuckPerms] Successfully enabled. (took 790ms)
+[20:03:24] [Server thread/INFO]: [Vault] Enabling Vault v1.7.3-b131
+[20:03:24] [Server thread/INFO]: [Vault] [Economy] Essentials Economy found: Waiting
+[20:03:24] [Server thread/INFO]: [Vault] [Permission] SuperPermissions loaded as backup permission system.
+[20:03:24] [Server thread/INFO]: [Vault] Enabled Version 1.7.3-b131
+[20:03:24] [Server thread/INFO]: [LuckPerms] Registered Vault permission & chat hook.
+[20:03:24] [Server thread/INFO]: [PlayerPoints] Enabling PlayerPoints v3.3.5
+[20:03:24] [Server thread/INFO]: [PlayerPoints] Data handler connected using SQLite.
+[20:03:24] [Server thread/INFO]: [ProtocolLib] Enabling ProtocolLib v5.4.0
+[20:03:24] [Server thread/INFO]: [SkinsRestorer] Enabling SkinsRestorer v15.12.6
+[20:03:25] [Server thread/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[32;1mRunning on Minecraft [33;1m1.12.2[32;1m.[0;39m
+[20:03:26] [Server thread/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39mUsing paper join listener![0;39m
+[20:03:26] [Server thread/INFO]: [PlaceholderAPI] Successfully registered internal expansion: skinsrestorer [15.12.6]
+[20:03:26] [Server thread/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39mPlaceholderAPI expansion registered![0;39m
+[20:03:26] [Server thread/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39mAuto updater was manually disabled. This is not recommended, as it will prevent the plugin from updating automatically. See why at: https://skinsrestorer.net/docs/configuration/auto-update[0;39m
+[20:03:26] [Server thread/WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[20:03:26] [Server thread/WARN]: The server will make no attempt to authenticate usernames. Beware.
+[20:03:26] [Server thread/WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[20:03:26] [Server thread/WARN]: To change this, set "online-mode" to "true" in the server.properties file.
+[20:03:26] [Server thread/INFO]: **** Beginning UUID conversion, this may take A LONG time ****
+[20:03:26] [Server thread/INFO]: Preparing level "world"
+[20:03:26] [Server thread/INFO]: -------- World Settings For [world] --------
+[20:03:26] [Server thread/INFO]: Cactus Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Cane Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Melon Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Mushroom Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Pumpkin Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Sapling Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Wheat Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: NetherWart Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Vine Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Cocoa Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Mob Spawn Range: 4
+[20:03:26] [Server thread/INFO]: Custom Map Seeds:  Village: 10387312 Feature: 14357617 Monument: 10387313 Slime: 987234911
+[20:03:26] [Server thread/INFO]: Random Lighting Updates: false
+[20:03:26] [Server thread/INFO]: Structure Info Saving: true
+[20:03:26] [Server thread/INFO]: Entity Activation Range: An 32 / Mo 32 / Mi 16 / Tiv true
+[20:03:26] [Server thread/INFO]: Entity Tracking Range: Pl 48 / An 48 / Mo 48 / Mi 32 / Other 64
+[20:03:26] [Server thread/INFO]: Max TNT Explosions: 100
+[20:03:26] [Server thread/INFO]: Tile Max Tick Time: 50ms Entity max Tick Time: 50ms
+[20:03:26] [Server thread/INFO]: Nerfing mobs spawned from spawners: false
+[20:03:26] [Server thread/INFO]: Hopper Transfer: 8 Hopper Check: 1 Hopper Amount: 1
+[20:03:26] [Server thread/INFO]: Item Despawn Rate: 6000
+[20:03:26] [Server thread/INFO]: View Distance: 10
+[20:03:26] [Server thread/INFO]: Item Merge Radius: 2.5
+[20:03:26] [Server thread/INFO]: Zombie Aggressive Towards Villager: true
+[20:03:26] [Server thread/INFO]: Allow Zombie Pigmen to spawn from portal blocks: true
+[20:03:26] [Server thread/INFO]: Arrow Despawn Rate: 1200
+[20:03:26] [Server thread/INFO]: Experience Merge Radius: 3.0
+[20:03:26] [Server thread/INFO]: -------- World Settings For [world_nether] --------
+[20:03:26] [Server thread/INFO]: Cactus Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Cane Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Melon Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Mushroom Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Pumpkin Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Sapling Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Wheat Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: NetherWart Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Vine Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Cocoa Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Mob Spawn Range: 4
+[20:03:26] [Server thread/INFO]: Custom Map Seeds:  Village: 10387312 Feature: 14357617 Monument: 10387313 Slime: 987234911
+[20:03:26] [Server thread/INFO]: Random Lighting Updates: false
+[20:03:26] [Server thread/INFO]: Structure Info Saving: true
+[20:03:26] [Server thread/INFO]: Entity Activation Range: An 32 / Mo 32 / Mi 16 / Tiv true
+[20:03:26] [Server thread/INFO]: Entity Tracking Range: Pl 48 / An 48 / Mo 48 / Mi 32 / Other 64
+[20:03:26] [Server thread/INFO]: Max TNT Explosions: 100
+[20:03:26] [Server thread/INFO]: Tile Max Tick Time: 50ms Entity max Tick Time: 50ms
+[20:03:26] [Server thread/INFO]: Nerfing mobs spawned from spawners: false
+[20:03:26] [Server thread/INFO]: Hopper Transfer: 8 Hopper Check: 1 Hopper Amount: 1
+[20:03:26] [Server thread/INFO]: Item Despawn Rate: 6000
+[20:03:26] [Server thread/INFO]: View Distance: 10
+[20:03:26] [Server thread/INFO]: Item Merge Radius: 2.5
+[20:03:26] [Server thread/INFO]: Zombie Aggressive Towards Villager: true
+[20:03:26] [Server thread/INFO]: Allow Zombie Pigmen to spawn from portal blocks: true
+[20:03:26] [Server thread/INFO]: Arrow Despawn Rate: 1200
+[20:03:26] [Server thread/INFO]: Experience Merge Radius: 3.0
+[20:03:26] [Server thread/INFO]: -------- World Settings For [world_the_end] --------
+[20:03:26] [Server thread/INFO]: Cactus Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Cane Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Melon Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Mushroom Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Pumpkin Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Sapling Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Wheat Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: NetherWart Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Vine Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Cocoa Growth Modifier: 100%
+[20:03:26] [Server thread/INFO]: Mob Spawn Range: 4
+[20:03:26] [Server thread/INFO]: Custom Map Seeds:  Village: 10387312 Feature: 14357617 Monument: 10387313 Slime: 987234911
+[20:03:26] [Server thread/INFO]: Random Lighting Updates: false
+[20:03:26] [Server thread/INFO]: Structure Info Saving: true
+[20:03:26] [Server thread/INFO]: Entity Activation Range: An 32 / Mo 32 / Mi 16 / Tiv true
+[20:03:26] [Server thread/INFO]: Entity Tracking Range: Pl 48 / An 48 / Mo 48 / Mi 32 / Other 64
+[20:03:26] [Server thread/INFO]: Max TNT Explosions: 100
+[20:03:26] [Server thread/INFO]: Tile Max Tick Time: 50ms Entity max Tick Time: 50ms
+[20:03:26] [Server thread/INFO]: Nerfing mobs spawned from spawners: false
+[20:03:26] [Server thread/INFO]: Hopper Transfer: 8 Hopper Check: 1 Hopper Amount: 1
+[20:03:26] [Server thread/INFO]: Item Despawn Rate: 6000
+[20:03:26] [Server thread/INFO]: View Distance: 10
+[20:03:26] [Server thread/INFO]: Item Merge Radius: 2.5
+[20:03:26] [Server thread/INFO]: Zombie Aggressive Towards Villager: true
+[20:03:26] [Server thread/INFO]: Allow Zombie Pigmen to spawn from portal blocks: true
+[20:03:26] [Server thread/INFO]: Arrow Despawn Rate: 1200
+[20:03:26] [Server thread/INFO]: Experience Merge Radius: 3.0
+[20:03:26] [Server thread/INFO]: Preparing start region for level 0 (Seed: 27594263)
+[20:03:26] [Server thread/INFO]: Preparing start region for level 1 (Seed: -394417088908025195)
+[20:03:27] [Server thread/INFO]: Preparing start region for level 2 (Seed: -394417088908025195)
+[20:03:27] [Server thread/INFO]: [WildStacker] Enabling WildStacker v2026.3
+[20:03:27] [Server thread/INFO]: [WildStacker] ******** ENABLE START ********
+[20:03:27] [Server thread/INFO]: [WildStacker] Loading configuration started...
+[20:03:27] [Server thread/INFO]: [WildStacker]  - Stacking drops is enabled
+[20:03:27] [Server thread/INFO]: [WildStacker]  - Stacking entities is enabled
+[20:03:27] [Server thread/INFO]: [WildStacker]  - Stacking spawners is enabled
+[20:03:27] [Server thread/INFO]: [WildStacker]  - Stacking barrels is disabled
+[20:03:27] [Server thread/INFO]: [WildStacker] Loading configuration done (Took 163ms)
+[20:03:27] [Server thread/INFO]: [WildStacker] Loading loot-tables started...
+[20:03:27] [Server thread/INFO]: [WildStacker] [illusioner.json] Couldn't load item with an invalid material WITHER_ROSE.
+[20:03:27] [Server thread/INFO]: [WildStacker] [llama.json] Couldn't load item with an invalid material WITHER_ROSE.
+[20:03:27] [Server thread/INFO]: [WildStacker] [parrot.json] Couldn't load item with an invalid material WITHER_ROSE.
+[20:03:27] [Server thread/INFO]: [WildStacker] [polar_bear_baby.json] Couldn't load item with an invalid material WITHER_ROSE.
+[20:03:27] [Server thread/INFO]: [WildStacker] [shulker.json] Couldn't load item with an invalid material WITHER_ROSE.
+[20:03:27] [Server thread/INFO]: [WildStacker] [vex.json] Couldn't load item with an invalid material WITHER_ROSE.
+[20:03:27] [Server thread/INFO]: [WildStacker] [vindicator.json] Couldn't load item with an invalid material WITHER_ROSE.
+[20:03:27] [Server thread/INFO]: [WildStacker] [zombie_baby.json] Couldn't load item with an invalid material ZOMBIE_HEAD.
+[20:03:27] [Server thread/INFO]: [WildStacker] Loading loot-tables done (Took 470ms)
+[20:03:27] [Server thread/INFO]: [WildStacker] Loading messages started...
+[20:03:27] [Server thread/INFO]: [WildStacker]  - Found 70 messages in lang.yml.
+[20:03:27] [Server thread/INFO]: [WildStacker] Loading messages done (Took 22ms)
+[20:03:27] [Server thread/INFO]: [WildStacker] ******** ENABLE DONE ********
+[20:03:27] [Server thread/INFO]: [Ore] Enabling Ore v1.0
+[20:03:27] [Server thread/INFO]: [Ore] WonderOreGen đã bật
+[20:03:27] [Server thread/INFO]: [WorldEdit] Enabling WorldEdit v6.1.9;caf0ad9
+[20:03:28] [Server thread/INFO]: WEPIF: Using the Bukkit Permissions API.
+[20:03:28] [Server thread/INFO]: [WorldEdit] Using com.sk89q.worldedit.bukkit.adapter.impl.Spigot_v1_12_R2 as the Bukkit adapter
+[20:03:28] [Server thread/INFO]: [SuperiorSkyblock2] Enabling SuperiorSkyblock2 v2026.3
+[20:03:28] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission miner_1
+[20:03:28] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission miner_2
+[20:03:28] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission miner_3
+[20:03:28] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission miner_4
+[20:03:28] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission miner_5
+[20:03:28] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission slayer_1
+[20:03:28] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission slayer_2
+[20:03:28] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission slayer_3
+[20:03:28] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission slayer_4
+[20:03:29] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission farmer_1
+[20:03:29] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission farmer_2
+[20:03:29] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission farmer_3
+[20:03:29] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission farmer_4
+[20:03:29] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission farmer_5
+[20:03:29] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission fisherman_1
+[20:03:29] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission fisherman_2
+[20:03:29] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission fisherman_3
+[20:03:29] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission explorer_1
+[20:03:29] [Server thread/INFO]: [SuperiorSkyblock2] Registered mission explorer_2
+[20:03:29] [Server thread/INFO]: [SuperiorSkyblock2] Enabling the module nashorn-engine...
+[20:03:30] [Server thread/INFO]: [SuperiorSkyblock2] Finished enabling the module nashorn-engine (Took 339ms)
+[20:03:30] [Server thread/INFO]: -------- World Settings For [SuperiorWorld] --------
+[20:03:30] [Server thread/INFO]: Cactus Growth Modifier: 100%
+[20:03:30] [Server thread/INFO]: Cane Growth Modifier: 100%
+[20:03:30] [Server thread/INFO]: Melon Growth Modifier: 100%
+[20:03:30] [Server thread/INFO]: Mushroom Growth Modifier: 100%
+[20:03:30] [Server thread/INFO]: Pumpkin Growth Modifier: 100%
+[20:03:30] [Server thread/INFO]: Sapling Growth Modifier: 100%
+[20:03:30] [Server thread/INFO]: Wheat Growth Modifier: 100%
+[20:03:30] [Server thread/INFO]: NetherWart Growth Modifier: 100%
+[20:03:30] [Server thread/INFO]: Vine Growth Modifier: 100%
+[20:03:30] [Server thread/INFO]: Cocoa Growth Modifier: 100%
+[20:03:30] [Server thread/INFO]: Mob Spawn Range: 4
+[20:03:30] [Server thread/INFO]: Custom Map Seeds:  Village: 10387312 Feature: 14357617 Monument: 10387313 Slime: 987234911
+[20:03:30] [Server thread/INFO]: Random Lighting Updates: false
+[20:03:30] [Server thread/INFO]: Structure Info Saving: true
+[20:03:30] [Server thread/INFO]: Entity Activation Range: An 32 / Mo 32 / Mi 16 / Tiv true
+[20:03:30] [Server thread/INFO]: Entity Tracking Range: Pl 48 / An 48 / Mo 48 / Mi 32 / Other 64
+[20:03:30] [Server thread/INFO]: Max TNT Explosions: 100
+[20:03:30] [Server thread/INFO]: Tile Max Tick Time: 50ms Entity max Tick Time: 50ms
+[20:03:30] [Server thread/INFO]: Nerfing mobs spawned from spawners: false
+[20:03:30] [Server thread/INFO]: Hopper Transfer: 8 Hopper Check: 1 Hopper Amount: 1
+[20:03:30] [Server thread/INFO]: Item Despawn Rate: 6000
+[20:03:30] [Server thread/INFO]: View Distance: 10
+[20:03:30] [Server thread/INFO]: Item Merge Radius: 2.5
+[20:03:30] [Server thread/INFO]: Zombie Aggressive Towards Villager: true
+[20:03:30] [Server thread/INFO]: Allow Zombie Pigmen to spawn from portal blocks: true
+[20:03:30] [Server thread/INFO]: Arrow Despawn Rate: 1200
+[20:03:30] [Server thread/INFO]: Experience Merge Radius: 3.0
+[20:03:30] [Server thread/INFO]: Preparing start region for level 3 (Seed: 814153907510961879)
+[20:03:30] [Server thread/WARN]: [SuperiorSkyblock2] This version is old and you may experience issues with block changes detection
+[20:03:30] [Server thread/INFO]: [SuperiorSkyblock2] Enabling the module bank...
+[20:03:30] [Server thread/INFO]: [SuperiorSkyblock2] Finished enabling the module bank (Took 4ms)
+[20:03:30] [Server thread/INFO]: [SuperiorSkyblock2] Enabling the module missions...
+[20:03:30] [Server thread/INFO]: [SuperiorSkyblock2] Finished enabling the module missions (Took 3ms)
+[20:03:30] [Server thread/INFO]: [SuperiorSkyblock2] Enabling the module generators...
+[20:03:30] [Server thread/INFO]: [SuperiorSkyblock2] Finished enabling the module generators (Took 0ms)
+[20:03:30] [Server thread/INFO]: [SuperiorSkyblock2] Enabling the module upgrades...
+[20:03:30] [Server thread/INFO]: [SuperiorSkyblock2] Finished enabling the module upgrades (Took 15ms)
+[20:03:30] [Server thread/INFO]: [SuperiorSkyblock2] Loading messages started...
+[20:03:31] [Server thread/INFO]: [SuperiorSkyblock2]  - Found 760 messages in the language files.
+[20:03:31] [Server thread/INFO]: [SuperiorSkyblock2] Loading messages done (Took 743ms)
+[20:03:31] [Server thread/INFO]: [SuperiorSkyblock2] Loading 13 schematics using 13 threads...
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #4/WARN]: [SuperiorSkyblock2] Schematic island1 was created in a different version, may cause issues.
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #3/WARN]: [SuperiorSkyblock2] Schematic island was created in a different version, may cause issues.
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #3/INFO]: [SuperiorSkyblock2] Successfully loaded schematic island.schematic (DefaultSchematicParser)
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #4/INFO]: [SuperiorSkyblock2] Successfully loaded schematic island1.schematic (DefaultSchematicParser)
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #7/WARN]: [SuperiorSkyblock2] Schematic mycel was created in a different version, may cause issues.
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #1/WARN]: [SuperiorSkyblock2] Schematic desert_nether was created in a different version, may cause issues.
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #0/WARN]: [SuperiorSkyblock2] Schematic desert was created in a different version, may cause issues.
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #7/INFO]: [SuperiorSkyblock2] Successfully loaded schematic mycel.schematic (DefaultSchematicParser)
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #8/WARN]: [SuperiorSkyblock2] Schematic mycel_nether was created in a different version, may cause issues.
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #5/WARN]: [SuperiorSkyblock2] Schematic island_nether was created in a different version, may cause issues.
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #10/WARN]: [SuperiorSkyblock2] Schematic normal was created in a different version, may cause issues.
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #6/WARN]: [SuperiorSkyblock2] Schematic island_the_end was created in a different version, may cause issues.
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #9/WARN]: [SuperiorSkyblock2] Schematic mycel_the_end was created in a different version, may cause issues.
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #2/WARN]: [SuperiorSkyblock2] Schematic desert_the_end was created in a different version, may cause issues.
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #0/INFO]: [SuperiorSkyblock2] Successfully loaded schematic desert.schematic (DefaultSchematicParser)
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #10/INFO]: [SuperiorSkyblock2] Successfully loaded schematic normal.schematic (DefaultSchematicParser)
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #12/WARN]: [SuperiorSkyblock2] Schematic normal_the_end was created in a different version, may cause issues.
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #8/INFO]: [SuperiorSkyblock2] Successfully loaded schematic mycel_nether.schematic (DefaultSchematicParser)
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #1/INFO]: [SuperiorSkyblock2] Successfully loaded schematic desert_nether.schematic (DefaultSchematicParser)
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #5/INFO]: [SuperiorSkyblock2] Successfully loaded schematic island_nether.schematic (DefaultSchematicParser)
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #11/INFO]: [SuperiorSkyblock2] Successfully loaded schematic normal_nether.schematic (DefaultSchematicParser)
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #9/INFO]: [SuperiorSkyblock2] Successfully loaded schematic mycel_the_end.schematic (DefaultSchematicParser)
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #6/INFO]: [SuperiorSkyblock2] Successfully loaded schematic island_the_end.schematic (DefaultSchematicParser)
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #2/INFO]: [SuperiorSkyblock2] Successfully loaded schematic desert_the_end.schematic (DefaultSchematicParser)
+[20:03:31] [SuperiorSkyblock Load Schematic Worker #12/INFO]: [SuperiorSkyblock2] Successfully loaded schematic normal_the_end.schematic (DefaultSchematicParser)
+[20:03:31] [Server thread/INFO]: [SuperiorSkyblock2] Successfully loaded 13 schematics.
+[20:03:32] [Server thread/WARN]: [SuperiorSkyblock2] [member-role.yml] Invalid role name: Member
+[20:03:32] [Server thread/WARN]: [SuperiorSkyblock2] [member-role.yml] Invalid role name: Moderator
+[20:03:32] [Server thread/WARN]: [SuperiorSkyblock2] [member-role.yml] Invalid role name: Admin
+[20:03:32] [Server thread/WARN]: [SuperiorSkyblock2] [member-role.yml] Invalid role name: Leader
+[20:03:32] [Server thread/INFO]: [SuperiorSkyblock2] Trying to connect to local database (SQLite)...
+[20:03:32] [Server thread/INFO]: [SuperiorSkyblock2] Successfully established connection with local database!
+[20:03:32] [Server thread/INFO]: [SuperiorSkyblock2] Creating a backup file...
+[20:03:32] [Server thread/INFO]: [SuperiorSkyblock2] Backup done!
+[20:03:32] [Server thread/INFO]: [SuperiorSkyblock2] Starting to load players...
+[20:03:32] [Server thread/INFO]: [SuperiorSkyblock2] Finished loading 2 players (Took 12ms)
+[20:03:32] [Server thread/INFO]: [SuperiorSkyblock2] Starting to load islands...
+[20:03:32] [Server thread/INFO]: [SuperiorSkyblock2] Finished loading 2 islands (Took 58ms)
+[20:03:32] [Server thread/INFO]: [SuperiorSkyblock2] Starting to load grid...
+[20:03:32] [Server thread/INFO]: [SuperiorSkyblock2] Finished grid!
+[20:03:32] [Server thread/INFO]: [SuperiorSkyblock2] Starting to load stacked blocks...
+[20:03:32] [Server thread/INFO]: [SuperiorSkyblock2] Finished stacked blocks!
+[20:03:32] [Server thread/INFO]: [CrazyAuctionsPlus] Enabling CrazyAuctionsPlus v1.3.3.0
+[20:03:32] [Server thread/INFO]: [CrazyAuctionsPlus] System default language parameter information is loaded.
+[20:03:32] [Server thread/INFO]: [CrazyAuctionsPlus] Configuration file Config.yml successfully loaded!
+[20:03:32] [Server thread/INFO]: [CrazyAuctionsPlus] Configuration file Database.yml successfully loaded!
+[20:03:32] [Server thread/INFO]: [CrazyAuctionsPlus] Configuration file Category.yml successfully loaded!
+[20:03:32] [Server thread/INFO]: [CrazyAuctionsPlus] Configuration file ItemCollection.yml successfully loaded!
+[20:03:32] [Server thread/INFO]: [CrazyAuctionsPlus] Configuration file Messages.yml successfully loaded!
+[20:03:32] [Server thread/INFO]: Chợ Đen » Vault found, Economic system has been initialized.
+[20:03:32] [Server thread/INFO]: Chợ Đen » Plugin are enabled! 108MS.
+[20:03:32] [Server thread/INFO]: [PlaceholderAPI] Enabling PlaceholderAPI v2.12.3
+[20:03:32] [Server thread/INFO]: [PlaceholderAPI] Fetching available expansion information...
+[20:03:32] [Server thread/INFO]: [NBTAPI] Enabling NBTAPI v2.16.1
+[20:03:32] [Server thread/INFO]: [NBTAPI] Checking bindings...
+[20:03:32] [Server thread/INFO]: [NBTAPI] All Classes were able to link!
+[20:03:32] [Server thread/INFO]: [NBTAPI] All Methods were able to link!
+[20:03:32] [Server thread/INFO]: [NBTAPI] Running NBT reflection test...
+[20:03:33] [Server thread/INFO]: [NBTAPI] Success! This version of NBT-API is compatible with your server.
+[20:03:33] [Server thread/INFO]: [WorldGuard] Enabling WorldGuard v6.2.2-SNAPSHOT;8eeab68
+[20:03:33] [Server thread/INFO]: [WorldGuard] (world) TNT ignition is PERMITTED.
+[20:03:33] [Server thread/INFO]: [WorldGuard] (world) Lighters are PERMITTED.
+[20:03:33] [Server thread/INFO]: [WorldGuard] (world) Lava fire is blocked.
+[20:03:33] [Server thread/INFO]: [WorldGuard] (world) Fire spread is UNRESTRICTED.
+[20:03:33] [Server thread/INFO]: [WorldGuard] Loaded configuration for world 'world'
+[20:03:33] [Server thread/INFO]: [WorldGuard] (world_nether) TNT ignition is PERMITTED.
+[20:03:33] [Server thread/INFO]: [WorldGuard] (world_nether) Lighters are PERMITTED.
+[20:03:33] [Server thread/INFO]: [WorldGuard] (world_nether) Lava fire is blocked.
+[20:03:33] [Server thread/INFO]: [WorldGuard] (world_nether) Fire spread is UNRESTRICTED.
+[20:03:33] [Server thread/INFO]: [WorldGuard] Loaded configuration for world 'world_nether'
+[20:03:33] [Server thread/INFO]: [WorldGuard] (world_the_end) TNT ignition is PERMITTED.
+[20:03:33] [Server thread/INFO]: [WorldGuard] (world_the_end) Lighters are PERMITTED.
+[20:03:33] [Server thread/INFO]: [WorldGuard] (world_the_end) Lava fire is blocked.
+[20:03:33] [Server thread/INFO]: [WorldGuard] (world_the_end) Fire spread is UNRESTRICTED.
+[20:03:33] [Server thread/INFO]: [WorldGuard] Loaded configuration for world 'world_the_end'
+[20:03:33] [Server thread/INFO]: [WorldGuard] (SuperiorWorld) TNT ignition is PERMITTED.
+[20:03:33] [Server thread/INFO]: [WorldGuard] (SuperiorWorld) Lighters are PERMITTED.
+[20:03:33] [Server thread/INFO]: [WorldGuard] (SuperiorWorld) Lava fire is blocked.
+[20:03:33] [Server thread/INFO]: [WorldGuard] (SuperiorWorld) Fire spread is UNRESTRICTED.
+[20:03:33] [Server thread/INFO]: [WorldGuard] Loaded configuration for world 'SuperiorWorld'
+[20:03:33] [Server thread/INFO]: [WorldGuard] Loading region data...
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Enabling CrazyEnchantments v1.8.1.0
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Loading the config.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Successfully loaded config.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Loading the BlockList.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Successfully loaded BlockList.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Loading the Data.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Successfully loaded Data.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Loading the Enchantments.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Successfully loaded Enchantments.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Loading the GKitz.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Successfully loaded GKitz.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Loading the Messages.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Successfully loaded Messages.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Loading the Enchantment-Types.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Successfully loaded Enchantment-Types.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Loading the Signs.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Successfully loaded Signs.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Loading the Tinker.yml
+[20:03:33] [Server thread/INFO]: [CrazyEnchantments] Successfully loaded Tinker.yml
+[20:03:33] [Server thread/INFO]: [NBTAPI] [NBTAPI] Found Spigot: v1_12_R1! Trying to find NMS support
+[20:03:33] [Server thread/INFO]: [NBTAPI] [NBTAPI] NMS support 'MC1_12_R1' loaded!
+[20:03:33] [Server thread/INFO]: [NBTAPI] [NBTAPI] Found Gson: class com.google.gson.Gson
+[20:03:33] [Server thread/INFO]: Crazy Enchantment Hooks
+[20:03:33] [Server thread/INFO]: VAULT: Enabled
+[20:03:33] [Server thread/INFO]: SUPERIOR_SKYBLOCK: Enabled
+[20:03:33] [Server thread/INFO]: WORLD_GUARD: Enabled
+[20:03:33] [Server thread/INFO]: WORLD_EDIT: Enabled
+[20:03:33] [Server thread/INFO]: [Skript] Enabling Skript v2.6.4
+[20:03:33] [Server thread/INFO]: [Skript] The updater is disabled, so a check for the latest version of Skript was not performed.
+[20:03:33] [Thread-11/WARN]: [NBTAPI] [NBTAPI] The NBT-API located at 'package me.badbones69.crazyenchantments.plugin.lib.de.tr7zw.changeme.nbtapi' seems to be outdated!
+[20:03:33] [Thread-11/WARN]: [NBTAPI] [NBTAPI] Current Version: '2.11.1' Newest Version: 2.16.1'
+[20:03:33] [Thread-11/WARN]: [NBTAPI] [NBTAPI] Please update the NBTAPI or the plugin that contains the api(nag the mod author when the newest release has an old version, not the NBTAPI dev)!
+[20:03:35] [Server thread/INFO]: [Skript] Loaded 18405 aliases in 1274ms
+[20:03:35] [Server thread/INFO]: [Skript]  ~ created by & © Peter Güttinger aka Njol ~
+[20:03:35] [Server thread/INFO]: [ChestCommands] Enabling ChestCommands v4.0.5
+[20:03:35] [Server thread/INFO]: [ChestCommands] Hooked Vault
+[20:03:35] [Server thread/INFO]: [ChestCommands] Hooked PlaceholderAPI
+[20:03:35] [Server thread/INFO]: [SkBee] Enabling SkBee v1.10.3
+[20:03:35] [Server thread/INFO]: [SkBee] Loading NBTApi...
+[20:03:35] [Server thread/INFO]: [SkBee] [NBTAPI] Found Spigot: v1_12_R1! Trying to find NMS support
+[20:03:35] [Server thread/INFO]: [SkBee] [NBTAPI] NMS support 'MC1_12_R1' loaded!
+[20:03:35] [Server thread/INFO]: [SkBee] [NBTAPI] Found Gson: class com.google.gson.Gson
+[20:03:35] [Server thread/INFO]: [SkBee] Successfully loaded NBTApi!
+[20:03:35] [Server thread/INFO]: [SkBee] NBT Elements successfully loaded
+[20:03:35] [Server thread/INFO]: [SkBee] Scoreboard Elements successfully loaded
+[20:03:35] [Server thread/INFO]: [SkBee] Bound Elements successfully loaded
+[20:03:35] [Server thread/INFO]: [SkBee] Text Component Elements successfully loaded
+[20:03:35] [Server thread/INFO]: [SkBee] Other Elements successfully loaded
+[20:03:35] [Server thread/INFO]: [SkBee] World Creator Elements successfully loaded
+[20:03:35] [Server thread/INFO]: [SkBee] Successfully enabled v1.10.3 in 0.13 seconds
+[20:03:35] [Server thread/INFO]: [Essentials] Enabling Essentials v2.22.0
+[20:03:36] [Server thread/INFO]: [Essentials] Attempting to convert old kits in config.yml to new kits.yml
+[20:03:36] [Server thread/INFO]: [Essentials] No kits found to migrate.
+[20:03:36] [Server thread/INFO]: [Essentials] Selected Paper Known Commands Provider as the provider for KnownCommandsProvider
+[20:03:36] [Server thread/INFO]: [Essentials] Selected Reflection Persistent Data Container Provider as the provider for PersistentDataProvider
+[20:03:36] [Server thread/INFO]: [Essentials] Selected 1.11+ Item Unbreakable Provider as the provider for ItemUnbreakableProvider
+[20:03:36] [Server thread/INFO]: [Essentials] No provider found for SignDataProvider, but it is nullable
+[20:03:36] [Server thread/INFO]: [Essentials] Selected Legacy InventoryView Abstract Class ABI Provider as the provider for InventoryViewProvider
+[20:03:36] [Server thread/INFO]: [Essentials] Selected Legacy Biome Name Provider as the provider for BiomeNameProvider
+[20:03:36] [Server thread/INFO]: [Essentials] Selected Bukkit Tile Entity Provider as the provider for TileEntityProvider
+[20:03:36] [Server thread/INFO]: [Essentials] Selected Legacy Banner Meta Provider as the provider for BannerDataProvider
+[20:03:36] [Server thread/INFO]: [Essentials] Selected Reflection Sync Commands Provider as the provider for SyncCommandsProvider
+[20:03:36] [Server thread/INFO]: [Essentials] Selected 1.8.3+ Spawner Item Provider as the provider for SpawnerItemProvider
+[20:03:36] [Server thread/INFO]: [Essentials] No provider found for TickCountProvider, but it is nullable
+[20:03:36] [Server thread/INFO]: [Essentials] Selected Fixed Height World Info Provider as the provider for WorldInfoProvider
+[20:03:36] [Server thread/INFO]: [Essentials] Selected Reflection Online Mode Provider as the provider for OnlineModeProvider
+[20:03:36] [Server thread/INFO]: [Essentials] Selected Reflection Server State Provider as the provider for ServerStateProvider
+[20:03:36] [Server thread/INFO]: [Essentials] Selected 1.9-1.12.2 Spawn Egg Provider as the provider for SpawnEggProvider
+[20:03:36] [Server thread/INFO]: [Essentials] Selected Legacy Damage Event Provider as the provider for DamageEventProvider
+[20:03:36] [Server thread/INFO]: [Essentials] Selected 1.12.2+ Player Locale Provider as the provider for PlayerLocaleProvider
+[20:03:36] [Server thread/INFO]: [Essentials] No provider found for BiomeKeyProvider, but it is nullable
+[20:03:36] [Server thread/INFO]: [Essentials] Selected Reflection Formatted Command Alias Provider as the provider for FormattedCommandAliasProvider
+[20:03:36] [Server thread/INFO]: [Essentials] No provider found for SerializationProvider, but it is nullable
+[20:03:36] [Server thread/INFO]: [Essentials] No provider found for ContainerProvider, but it is nullable
+[20:03:36] [Server thread/INFO]: [Essentials] Selected 1.12+ Spawner Block Provider as the provider for SpawnerBlockProvider
+[20:03:36] [Server thread/INFO]: [Essentials] No provider found for MaterialTagProvider, but it is nullable
+[20:03:36] [Server thread/INFO]: [Essentials] Selected 1.9-1.20.4 Potion Meta Provider as the provider for PotionMetaProvider
+[20:03:36] [Server thread/INFO]: [Essentials] Loaded 853 items from items.csv.
+[20:03:36] [Server thread/INFO]: [Essentials] Using locale vi
+[20:03:36] [Server thread/INFO]: [Essentials] ServerListPingEvent: Spigot iterator API
+[20:03:36] [Server thread/INFO]: [Essentials] Starting Metrics. Opt-out using the global bStats config.
+[20:03:36] [Server thread/INFO]: [Vault] [Economy] Essentials Economy hooked.
+[20:03:36] [Server thread/INFO]: [Essentials] Using Vault based permissions (LuckPerms)
+[20:03:36] [Server thread/INFO]: [EssentialsProtect] Enabling EssentialsProtect v2.22.0
+[20:03:36] [Server thread/INFO]: [EssentialsProtect] Continuing to enable Protect.
+[20:03:36] [Server thread/INFO]: [EssentialsProtect] Starting Metrics. Opt-out using the global bStats config.
+[20:03:36] [Server thread/INFO]: [EssentialsChat] Enabling EssentialsChat v2.22.0
+[20:03:36] [Server thread/INFO]: [EssentialsChat] Starting Metrics. Opt-out using the global bStats config.
+[20:03:36] [Server thread/INFO]: [EssentialsAntiBuild] Enabling EssentialsAntiBuild v2.22.0
+[20:03:36] [Server thread/INFO]: [EssentialsAntiBuild] Starting Metrics. Opt-out using the global bStats config.
+[20:03:36] [Server thread/INFO]: [EconomyShopGUI] Enabling EconomyShopGUI v6.16.4
+[20:03:36] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Initializing bukkit meta...
+[20:03:36] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Using lang-vi.yml as language file
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Đã hoàn tất tải cấu hình mục 17 từ /sections/
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Đã hoàn tất tải 17 cấu hình cửa hàng từ /shops/
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Đang cập nhật cài đặt Cửa hàng...
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Successfully hooked into Vault and using EssentialsX Economy as economy provider
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Đã hoàn tất tải các plugin cung cấp tiền tệ 1 cho tất cả các mục cửa hàng 4.
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Đang cập nhật cấu hình vì đã tìm thấy phiên bản mới hơn...
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Successfully updated configs to v2.0.1.9
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Sử dụng phiên bản minecraft 1.12.2...
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Nhà cung cấp Spawner được đặt thành AUTO trong cấu hình
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Automatically searching for compatible spawner provider....
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: WildStacker được tìm thấy, tích hợp...
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Sử dụng WildStacker làm nhà cung cấp spawner.
+[20:03:37] [Server thread/INFO]: [PlaceholderAPI] Successfully registered internal expansion: esgui [1.1.0]
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Chế độ gỡ lỗi được bật.
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Đang tải tất cả các mục...
+[20:03:37] [Server thread/INFO]: [EconomyShopGUI] [INFO]: Đã khởi tạo - mất 936ms để hoàn thành
+[20:03:37] [Server thread/INFO]: [skript-reflect] Enabling skript-reflect v2.3
+[20:03:37] [Server thread/INFO]: [EssentialsSpawn] Enabling EssentialsSpawn v2.22.0
+[20:03:37] [Server thread/INFO]: [EssentialsSpawn] Starting Metrics. Opt-out using the global bStats config.
+[20:03:37] [Server thread/INFO]: Done (11.749s)! For help, type "help" or "?"
+[20:03:37] [Server thread/INFO]: Starting remote control listener
+[20:03:37] [RCON Listener #1/INFO]: RCON running on 0.0.0.0:25575
+[20:03:37] [Server thread/INFO]: Timings Reset
+[20:03:37] [Craft Scheduler Thread - 4/INFO]: [Essentials] Fetching version information...
+[20:03:37] [Craft Scheduler Thread - 4/INFO]: [Essentials] Update checking disabled in config.
+[20:03:37] [Server thread/INFO]: [PlaceholderAPI] Successfully registered internal expansion: playerpoints [3.3.5]
+[20:03:37] [Server thread/INFO]: [WildStacker] Loading providers started...
+[20:03:37] [Server thread/INFO]: [WildStacker]  - Couldn't find any spawners providers, using default one.
+[20:03:37] [Server thread/INFO]: [WildStacker] Using Vault as an economy provider.
+[20:03:37] [Server thread/INFO]: [WildStacker] Loading providers done (Took 27ms)
+[20:03:37] [Server thread/ERROR]: [SuperiorSkyblock2] Plugin SuperiorSkyblock2 v2026.3 has failed to register events for class net.skinsrestorer.bukkit.listener.ForceAliveListener because org/bukkit/event/server/ServerLoadEvent does not exist.
+[20:03:37] [Server thread/INFO]: [SuperiorSkyblock2] Using WildStacker as a spawners provider.
+[20:03:37] [Server thread/INFO]: [SuperiorSkyblock2] Using WildStacker as a stacked-blocks provider.
+[20:03:37] [Server thread/INFO]: [SuperiorSkyblock2] Using LuckPerms as a permissions provider.
+[20:03:37] [Server thread/INFO]: [SuperiorSkyblock2] Using EconomyShopGUI as a prices provider.
+[20:03:37] [Server thread/INFO]: [SuperiorSkyblock2] Hooked into Essentials for support of vanish status of players.
+[20:03:37] [Server thread/INFO]: [SuperiorSkyblock2] Hooked into Essentials for support of afk status of players.
+[20:03:37] [Server thread/INFO]: [SuperiorSkyblock2] Using Vault as an economy provider.
+[20:03:37] [Server thread/INFO]: [PlaceholderAPI] Successfully registered internal expansion: superior [2026.3]
+[20:03:37] [Server thread/INFO]: [SuperiorSkyblock2] Using PlaceholderAPI for placeholders support.
+[20:03:37] [Server thread/INFO]: [Skript] An error occurred while trying to enable support for WorldGuard 6. WorldGuard region support has been disabled!
+[20:03:37] [Server thread/INFO]: [Skript] Could not hook into WorldGuard. This can happen if Skript doesn't support the installed version of WorldGuard
+[20:03:37] [Server thread/INFO]: [Skript] Loading variables...
+[20:03:37] [Server thread/INFO]: [Skript] Loaded 1559 variables in 0.0 seconds
+[20:03:38] [Craft Scheduler Thread - 0/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[32;1m----------------------------------------------[0;39m
+[20:03:38] [Craft Scheduler Thread - 0/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[32;1m    +===================+[0;39m
+[20:03:38] [Craft Scheduler Thread - 0/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[32;1m    |   SkinsRestorer   |[0;39m
+[20:03:38] [Craft Scheduler Thread - 0/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[32;1m    |-------------------|[0;39m
+[20:03:38] [Craft Scheduler Thread - 0/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[32;1m    |  [34;1m[4m[21mStandalone Mode[0;39m[32;1m  |[0;39m
+[20:03:38] [Craft Scheduler Thread - 0/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[32;1m    +===================+[0;39m
+[20:03:38] [Craft Scheduler Thread - 0/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[32;1m----------------------------------------------[0;39m
+[20:03:38] [Craft Scheduler Thread - 0/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[36;1m    Version: [32;1m15.12.6[0;39m
+[20:03:38] [Craft Scheduler Thread - 0/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[36;1m    Commit: [32;1mc8c321f[0;39m
+[20:03:38] [Craft Scheduler Thread - 0/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[33;1m    The updater is disabled using noautoupdate.txt[0;39m
+[20:03:38] [Craft Scheduler Thread - 0/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[32;1m----------------------------------------------[0;39m
+[20:03:38] [Craft Scheduler Thread - 0/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[34;1mDo you have issues? Read our troubleshooting guide: [33;1mhttps://skinsrestorer.net/docs/troubleshooting[0;39m
+[20:03:38] [Craft Scheduler Thread - 0/INFO]: [33;1m[[32;22mSkinsRestorer[33;1m] [0;39m[34;1mWant to support SkinsRestorer or receive priority support? Become a supporter: [33;1mhttps://skinsrestorer.net/pricing[0;39m
+[20:03:39] [Skript variable save thread/INFO]: [Skript] Cannot write variables to the database 'default' at sufficient speed; server performance may suffer and many variables will be lost if the server crashes. (this warning will be repeated at most once every 10 seconds)
+[20:03:39] [Server thread/INFO]: [VisualArtLib] Đã nạp 1028 Model ID từ rp_models.txt
+[20:03:46] [Server thread/INFO]: [Skript] Line 270: (11_pirate_crew_koth.sk)
+[20:03:46] [Server thread/INFO]:     Functions cannot be used here (or there is a problem with your arguments).
+[20:03:46] [Server thread/INFO]:     Line: set slot 16 of {_inv} to makeGlowingItem(book and quill, "&6&l✦ NHIỆM VỤ BĂNG HẢI TẶC ✦", {_lore16::*})
+[20:03:46] [Server thread/INFO]:  
+[20:03:46] [Server thread/INFO]: [Skript] Line 320: (11_pirate_crew_koth.sk)
+[20:03:46] [Server thread/INFO]:     Functions cannot be used here (or there is a problem with your arguments).
+[20:03:46] [Server thread/INFO]:     Line: set slot 39 of {_inv} to makeGlowingItem(book and quill, "&6&l✦ NHIỆM VỤ HẢI TRÌNH", ("&7Mở bảng nhiệm vụ đồng lòng Băng Hải Tặc." and "" and "&a▶ Nhấp để thực thi: &f/is missions"))
+[20:03:46] [Server thread/INFO]:  
+[20:03:51] [Server thread/INFO]: [Skript] Loaded 19 scripts with a total of 151 triggers and 51 commands in 13.83 seconds
+[20:03:51] [Server thread/INFO]: [Skript] Finished loading.
+[20:03:51] [Server thread/INFO]: [Essentials] Essentials found a compatible payment resolution method: Vault Compatibility Layer (v1.7.3-b131)!
+[20:03:51] [Server thread/INFO]: [WildStacker] Trying to connect to local database (SQLite)...
+[20:03:51] [Server thread/INFO]: [WildStacker] Successfully established connection with local database!
+[20:03:51] [Server thread/INFO]: [WildStacker] Starting to load entities...
+[20:03:51] [Server thread/INFO]: [WildStacker] Loading entities done! Took 0 ms.
+[20:03:51] [Server thread/INFO]: [WildStacker] Starting to load spawners...
+[20:03:51] [Server thread/INFO]: [WildStacker] Loading spawners done! Took 1 ms.
+[20:03:51] [Server thread/INFO]: [WildStacker] Starting to load barrels...
+[20:03:51] [Server thread/INFO]: [WildStacker] Loading barrels done! Took 0 ms.
+[20:03:51] [Server thread/INFO]: [PlaceholderAPI] Placeholder expansion registration initializing...
+[20:03:51] [Server thread/INFO]: 0 placeholder hook(s) registered!
+[20:03:52] [Server thread/INFO]: [PlaceholderAPI] Successfully registered internal expansion: talent [1.0.0]
+[20:03:52] [Server thread/INFO]: [TalentPAPI] Đã đăng ký PlaceholderAPI expansion '%talent_*%' thành công!
+[20:03:52] [Server thread/INFO]: [ChestCommands] Plugin reloaded.
+[20:03:52] [Server thread/ERROR]: #!#! 
+[20:03:52] [Server thread/ERROR]: #!#! [Skript] Severe Error:
+[20:03:52] [Server thread/ERROR]: #!#! 
+[20:03:52] [Server thread/ERROR]: #!#! Something went horribly wrong with Skript.
+[20:03:52] [Server thread/ERROR]: #!#! This issue is NOT your fault! You probably can't fix it yourself, either.
+[20:03:52] [Server thread/ERROR]: #!#! It looks like you are using some plugin(s) that alter how Skript works (addons).
+[20:03:52] [Server thread/ERROR]: #!#! Here is full list of them:
+[20:03:52] [Server thread/ERROR]: #!#! skript-reflect v2.3 (https://github.com/TPGamesNL/skript-reflect) SkBee v1.10.3 (https://github.com/ShaneBeee/SkBee) 
+[20:03:52] [Server thread/ERROR]: #!#! We could not identify which of those are specially related, so this might also be Skript issue.
+[20:03:52] [Server thread/ERROR]: #!#! You should try disabling those plugins one by one, trying to find which one causes it.
+[20:03:52] [Server thread/ERROR]: #!#! If the error doesn't disappear even after disabling all listed plugins, it is probably Skript issue.
+[20:03:52] [Server thread/ERROR]: #!#! In that case, you will be given instruction on how should you report it.
+[20:03:52] [Server thread/ERROR]: #!#! On the other hand, if the error disappears when disabling some plugin, report it to author of that plugin.
+[20:03:52] [Server thread/ERROR]: #!#! Only if the author tells you to do so, report it to Skript's issue tracker.
+[20:03:52] [Server thread/ERROR]: #!#! 
+[20:03:52] [Server thread/ERROR]: #!#! Stack trace:
+[20:03:52] [Server thread/ERROR]: #!#! java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0
+[20:03:52] [Server thread/ERROR]: #!#!     at com.btk5h.skriptmirror.skript.reflect.ExprJavaCall.convertTypes(ExprJavaCall.java:641)
+[20:03:52] [Server thread/ERROR]: #!#!     at com.btk5h.skriptmirror.skript.reflect.ExprJavaCall.invoke(ExprJavaCall.java:483)
+[20:03:52] [Server thread/ERROR]: #!#!     at com.btk5h.skriptmirror.skript.reflect.ExprJavaCall.getSingle(ExprJavaCall.java:228)
+[20:03:52] [Server thread/ERROR]: #!#!     at com.btk5h.skriptmirror.skript.reflect.ExprJavaCall.getArray(ExprJavaCall.java:233)
+[20:03:52] [Server thread/ERROR]: #!#!     at ch.njol.skript.effects.EffChange.execute(EffChange.java:274)
+[20:03:52] [Server thread/ERROR]: #!#!     at ch.njol.skript.lang.Effect.run(Effect.java:50)
+[20:03:52] [Server thread/ERROR]: #!#!     at ch.njol.skript.lang.TriggerItem.walk(TriggerItem.java:61)
+[20:03:52] [Server thread/ERROR]: #!#!     at ch.njol.skript.lang.TriggerItem.walk(TriggerItem.java:89)
+[20:03:52] [Server thread/ERROR]: #!#!     at ch.njol.skript.effects.Delay$1.run(Delay.java:109)
+[20:03:52] [Server thread/ERROR]: #!#!     at org.bukkit.craftbukkit.v1_12_R1.scheduler.CraftTask.run(CraftTask.java:64)
+[20:03:52] [Server thread/ERROR]: #!#!     at org.bukkit.craftbukkit.v1_12_R1.scheduler.CraftScheduler.mainThreadHeartbeat(CraftScheduler.java:423)
+[20:03:52] [Server thread/ERROR]: #!#!     at net.minecraft.server.v1_12_R1.MinecraftServer.D(MinecraftServer.java:840)
+[20:03:52] [Server thread/ERROR]: #!#!     at net.minecraft.server.v1_12_R1.DedicatedServer.D(DedicatedServer.java:423)
+[20:03:52] [Server thread/ERROR]: #!#!     at net.minecraft.server.v1_12_R1.MinecraftServer.C(MinecraftServer.java:774)
+[20:03:52] [Server thread/ERROR]: #!#!     at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:666)
+[20:03:52] [Server thread/ERROR]: #!#!     at java.base/java.lang.Thread.run(Thread.java:1583)
+[20:03:52] [Server thread/ERROR]: #!#! 
+[20:03:52] [Server thread/ERROR]: #!#! Version Information:
+[20:03:52] [Server thread/ERROR]: #!#!   Skript: 2.6.4
+[20:03:52] [Server thread/ERROR]: #!#!     Flavor: skriptlang-github
+[20:03:52] [Server thread/ERROR]: #!#!     Date: 17:14:25.041218900
+[20:03:52] [Server thread/ERROR]: #!#!   Bukkit: 1.12.2-R0.1-SNAPSHOT
+[20:03:52] [Server thread/ERROR]: #!#!   Minecraft: 1.12.2
+[20:03:52] [Server thread/ERROR]: #!#!   Java: 21.0.12.1 (Java HotSpot(TM) 64-Bit Server VM 21.0.12.1+1-LTS-4)
+[20:03:52] [Server thread/ERROR]: #!#!   OS: Windows 11 amd64 10.0
+[20:03:52] [Server thread/ERROR]: #!#! 
+[20:03:52] [Server thread/ERROR]: #!#! Server platform: Paper
+[20:03:52] [Server thread/ERROR]: #!#! 
+[20:03:52] [Server thread/ERROR]: #!#! Current node: null
+[20:03:52] [Server thread/ERROR]: #!#! Current item: set {_list} (as java.lang.Object) to java.util.Arrays.asList({_arr} (as java.lang.Object))
+[20:03:52] [Server thread/ERROR]: #!#! Current trigger: load (script load) (99_mob_stack_fix.sk, line 7)
+[20:03:52] [Server thread/ERROR]: #!#! 
+[20:03:52] [Server thread/ERROR]: #!#! Thread: Server thread
+[20:03:52] [Server thread/ERROR]: #!#! 
+[20:03:52] [Server thread/ERROR]: #!#! Language: english
+[20:03:52] [Server thread/ERROR]: #!#! Link parse mode: DISABLED
+[20:03:52] [Server thread/ERROR]: #!#! 
+[20:03:52] [Server thread/ERROR]: #!#! End of Error.
+[20:03:52] [Server thread/ERROR]: #!#! 
+[20:04:40] [User Authenticator #1/INFO]: UUID of player Played_Pvp is 802fee9f-ad06-3aa0-8aaf-a2022270a671
+[20:04:40] [Server thread/INFO]: Played_Pvp[/127.0.0.1:54599] logged in with entity id 12 at ([world]21083.128027046914, 72.78599340959931, 4142.487408692256)
+[20:05:11] [Server thread/INFO]: Played_Pvp issued server command: /opadmin spawnboss seaking
+[20:05:11] [Server thread/INFO]: Played_Pvp [802fee9f-ad06-3aa0-8aaf-a2022270a671]: /opadmin spawnboss seaking
+[20:05:11] [Server thread/INFO]:    ⎯⎯⎯⎯⎯⎯⎯✦ ☠ ✦⎯⎯⎯⎯⎯⎯⎯
+[20:05:11] [Server thread/INFO]:   ☠ SIÊU BOSS ĐỘT KÍCH XUẤT HIỆN!
+[20:05:11] [Server thread/INFO]:   ▸ Mục tiêu: ☠ VUA BIỂN CALM BELT ☠ [SIÊU BOSS] (HP: 7800)
+[20:05:11] [Server thread/INFO]:   ▸ Tọa độ: (21103, 72, 4156) - Hãy tập hợp tiêu diệt!
+[20:05:11] [Server thread/INFO]:    ⎯⎯⎯⎯⎯⎯⎯✦ ☠ ✦⎯⎯⎯⎯⎯⎯⎯
+[20:05:23] [Server thread/INFO]:   ❖ VUA BIỂN ┃ TIẾNG GẦM THỦY TRIỀU!
+[20:05:23] [Server thread/INFO]:   ┗ ▸ Sóng thần dâng cao hất tung kẻ địch lên bầu trời!
+[20:05:30] [Server thread/INFO]:   ❖ VUA BIỂN ┃ SẤM SÉT THỦY QUÁI!
+[20:05:30] [Server thread/INFO]:   ┗ ▸ Thiên phạt đại dương giáng sấm sét kinh hoàng!
+[20:05:36] [Server thread/INFO]:   ❖ VUA BIỂN ┃ TIẾNG GẦM THỦY TRIỀU!
+[20:05:36] [Server thread/INFO]:   ┗ ▸ Sóng thần dâng cao hất tung kẻ địch lên bầu trời!
+[20:05:36] [Server thread/INFO]: ✦ Played_Pvp died
+[20:05:44] [Server thread/INFO]: Played_Pvp issued server command: /aov
+[20:05:44] [Server thread/INFO]: Played_Pvp [802fee9f-ad06-3aa0-8aaf-a2022270a671]: /aov
+[20:05:58] [Server thread/INFO]: Played_Pvp issued server command: /warp tongbo
+[20:06:00] [Server thread/INFO]:   ❖ VUA BIỂN ┃ TIẾNG GẦM THỦY TRIỀU!
+[20:06:00] [Server thread/INFO]:   ┗ ▸ Sóng thần dâng cao hất tung kẻ địch lên bầu trời!
+[20:06:01] [Server thread/INFO]: Played_Pvp issued server command: /detu
+[20:06:01] [Server thread/INFO]: Played_Pvp [802fee9f-ad06-3aa0-8aaf-a2022270a671]: /detu
+[20:06:06] [Server thread/INFO]:   ❖ VUA BIỂN ┃ XOÁY NƯỚC VỰC SÂU!
+[20:06:06] [Server thread/INFO]:   ┗ ▸ Cuốn trôi và nghiền nát sinh mệnh kẻ xâm nhập!
+[20:06:12] [Server thread/INFO]:   ❖ VUA BIỂN ┃ XOÁY NƯỚC VỰC SÂU!
+[20:06:12] [Server thread/INFO]:   ┗ ▸ Cuốn trôi và nghiền nát sinh mệnh kẻ xâm nhập!
+[20:06:18] [Server thread/INFO]:   ☠ GURA GURA ┃ Played_Pvp tung tuyệt kỹ Nghiêng Trời Lệch Đất!
+[20:06:18] [Server thread/INFO]:   ┗ ▸ Sóng xung kích đại địa chấn làm nghiêng ngả toàn bộ hòn đảo!
+[20:06:18] [Server thread/INFO]:   ❖ VUA BIỂN ┃ SẤM SÉT THỦY QUÁI!
+[20:06:18] [Server thread/INFO]:   ┗ ▸ Thiên phạt đại dương giáng sấm sét kinh hoàng!
+[20:06:24] [Server thread/INFO]:   ❖ VUA BIỂN ┃ SẤM SÉT THỦY QUÁI!
+[20:06:24] [Server thread/INFO]:   ┗ ▸ Thiên phạt đại dương giáng sấm sét kinh hoàng!
+[20:06:27] [Server thread/INFO]: [Essentials] CONSOLE issued server command: /eco give Played_Pvp 150000
+[20:06:27] [Server thread/INFO]: $150,000 đã được thêm vào tài khoản [Thành Viên] Played_Pvp. Số dư mới: $9,999,912,986,500
+[20:06:27] [Server thread/INFO]: Đảo | Đã cập nhật điểm cấp độ thưởng cho đảo của Played_Pvp.
+[20:06:27] [Server thread/INFO]:   ✦ DIỆT SIÊU BOSS ┃ Played_Pvp đã kết liễu ☠ VUA BIỂN CALM BELT ☠ [SIÊU BOSS]!
+[20:06:27] [Server thread/INFO]:   ┗ ▸ Thưởng: +$150,000 ┃ +20 TP ┃ Đá Thức Tỉnh ┃ +5M Beri ┃ +50 Uy Danh
+[20:06:36] [Server thread/INFO]:   ☠ GURA GURA ┃ Played_Pvp tung tuyệt kỹ Nghiêng Trời Lệch Đất!
+[20:06:36] [Server thread/INFO]:   ┗ ▸ Sóng xung kích đại địa chấn làm nghiêng ngả toàn bộ hòn đảo!
+[20:06:58] [Server thread/INFO]: Played_Pvp issued server command: /menu
+[20:06:58] [Server thread/INFO]: Played_Pvp [802fee9f-ad06-3aa0-8aaf-a2022270a671]: /menu
+[20:07:40] [Server thread/INFO]:   ☠ GURA GURA ┃ Played_Pvp tung tuyệt kỹ Nghiêng Trời Lệch Đất!
+[20:07:40] [Server thread/INFO]:   ┗ ▸ Sóng xung kích đại địa chấn làm nghiêng ngả toàn bộ hòn đảo!
+[20:08:30] [Server thread/INFO]: Played_Pvp issued server command: /opadmin spawnboss seaking
+[20:08:30] [Server thread/INFO]: Played_Pvp [802fee9f-ad06-3aa0-8aaf-a2022270a671]: /opadmin spawnboss seaking
+[20:08:30] [Server thread/INFO]:    ⎯⎯⎯⎯⎯⎯⎯✦ ☠ ✦⎯⎯⎯⎯⎯⎯⎯
+[20:08:30] [Server thread/INFO]:   ☠ SIÊU BOSS ĐỘT KÍCH XUẤT HIỆN!
+[20:08:30] [Server thread/INFO]:   ▸ Mục tiêu: ☠ VUA BIỂN CALM BELT ☠ [SIÊU BOSS] (HP: 7800)
+[20:08:30] [Server thread/INFO]:   ▸ Tọa độ: (21103, 72, 4156) - Hãy tập hợp tiêu diệt!
+[20:08:30] [Server thread/INFO]:    ⎯⎯⎯⎯⎯⎯⎯✦ ☠ ✦⎯⎯⎯⎯⎯⎯⎯
+[20:08:35] [Server thread/INFO]:   ☠ GURA GURA ┃ Played_Pvp tung tuyệt kỹ Nghiêng Trời Lệch Đất!
+[20:08:35] [Server thread/INFO]:   ┗ ▸ Sóng xung kích đại địa chấn làm nghiêng ngả toàn bộ hòn đảo!
+[20:08:36] [Server thread/INFO]:   ❖ VUA BIỂN ┃ XOÁY NƯỚC VỰC SÂU!
+[20:08:36] [Server thread/INFO]:   ┗ ▸ Cuốn trôi và nghiền nát sinh mệnh kẻ xâm nhập!
+[20:08:42] [Server thread/INFO]:   ❖ VUA BIỂN ┃ SẤM SÉT THỦY QUÁI!
+[20:08:42] [Server thread/INFO]:   ┗ ▸ Thiên phạt đại dương giáng sấm sét kinh hoàng!
+[20:08:46] [Server thread/INFO]:   ☠ GURA GURA ┃ Played_Pvp tung tuyệt kỹ Nghiêng Trời Lệch Đất!
+[20:08:46] [Server thread/INFO]:   ┗ ▸ Sóng xung kích đại địa chấn làm nghiêng ngả toàn bộ hòn đảo!
+[20:08:48] [Server thread/INFO]:   ❖ VUA BIỂN ┃ SẤM SÉT THỦY QUÁI!
+[20:08:48] [Server thread/INFO]:   ┗ ▸ Thiên phạt đại dương giáng sấm sét kinh hoàng!
+[20:08:54] [Server thread/INFO]:   ❖ VUA BIỂN ┃ XOÁY NƯỚC VỰC SÂU!
+[20:08:54] [Server thread/INFO]:   ┗ ▸ Cuốn trôi và nghiền nát sinh mệnh kẻ xâm nhập!
+[20:09:00] [Server thread/INFO]:   ❖ VUA BIỂN ┃ SẤM SÉT THỦY QUÁI!
+[20:09:00] [Server thread/INFO]:   ┗ ▸ Thiên phạt đại dương giáng sấm sét kinh hoàng!
+[20:09:06] [Server thread/INFO]:   ❖ VUA BIỂN ┃ XOÁY NƯỚC VỰC SÂU!
+[20:09:06] [Server thread/INFO]:   ┗ ▸ Cuốn trôi và nghiền nát sinh mệnh kẻ xâm nhập!
+[20:09:10] [Server thread/INFO]: [Essentials] CONSOLE issued server command: /eco give Played_Pvp 150000
+[20:09:10] [Server thread/INFO]: $150,000 đã được thêm vào tài khoản [Thành Viên] Played_Pvp. Số dư mới: $9,999,913,136,500
+[20:09:10] [Server thread/INFO]: Đảo | Đã cập nhật điểm cấp độ thưởng cho đảo của Played_Pvp.
+[20:09:10] [Server thread/INFO]:   ✦ DIỆT SIÊU BOSS ┃ Played_Pvp đã kết liễu ☠ VUA BIỂN CALM BELT ☠ [SIÊU BOSS]!
+[20:09:10] [Server thread/INFO]:   ┗ ▸ Thưởng: +$150,000 ┃ +20 TP ┃ Đá Thức Tỉnh ┃ +5M Beri ┃ +50 Uy Danh
+[20:09:10] [Server thread/INFO]:   ☠ GURA GURA ┃ Played_Pvp tung tuyệt kỹ Nghiêng Trời Lệch Đất!
+[20:09:10] [Server thread/INFO]:   ┗ ▸ Sóng xung kích đại địa chấn làm nghiêng ngả toàn bộ hòn đảo!
+[20:09:28] [Server thread/INFO]:   ✦ GIÁM ĐỊNH HUYỀN THOẠI ┃ Played_Pvp đã giám định thành công Trái Tier S Tori Tori: Phoenix (Phượng Hoàng)!
+[20:09:28] [Server thread/INFO]:   ┗ ▸ Sức mạnh tối thượng của Đại Hải Trình chính thức thức tỉnh!
+[20:09:32] [Server thread/INFO]:   ✦ GIÁM ĐỊNH HUYỀN THOẠI ┃ Played_Pvp đã giám định thành công Trái Tier S Gura Gura no Mi (Chấn Động)!
+[20:09:32] [Server thread/INFO]:   ┗ ▸ Sức mạnh tối thượng của Đại Hải Trình chính thức thức tỉnh!
+[20:09:49] [Server thread/INFO]:   ☠ LỜI NGUYỀN ┃ Played_Pvp tham lam ăn Trái Ác Quỷ thứ 2 và đã NỔ TUNG TAN XÁC!
+[20:09:49] [Server thread/INFO]:   ┗ ▸ Đại dương trừng phạt kẻ phá vỡ quy luật tự nhiên! Hãy dùng Thuốc Xóa Ác Quỷ để đổi trái an toàn.
+[20:09:49] [Server thread/INFO]: ✦ Played_Pvp died
+[20:10:14] [Server thread/INFO]: Played_Pvp issued server command: /is
+[20:11:07] [Server thread/INFO]: Played_Pvp issued server command: /danhkiem
+[20:11:07] [Server thread/INFO]: Played_Pvp [802fee9f-ad06-3aa0-8aaf-a2022270a671]: /danhkiem
+[20:12:21] [Server thread/INFO]:   ⚔ DANH KIẾM XUẤT THẾ ┃ Played_Pvp đã rèn thành công ✦ Hắc Kiếm Yoru ✦!
+[20:12:21] [Server thread/INFO]:   ┗ ▸ Một tuyệt tác vũ khí nữa đã gia nhập chiến trường Hải Tặc! (-1200 Coin)
+[20:13:56] [Server thread/INFO]: Played_Pvp lost connection: Internal Exception: java.net.SocketException: Connection reset
+[20:13:56] [Server thread/INFO]: Played_Pvp left the game

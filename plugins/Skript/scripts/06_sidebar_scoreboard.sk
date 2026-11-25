@@ -1,0 +1,833 @@
+# =====================================================================
+# SIDEBAR SCOREBOARD & TABLIST RPG — MASTERPIECE BOLD EDITION (1.12.2)
+# - Sidebar Mặc Định & Sidebar Chiến Đấu đồng bộ cấu trúc 14 dòng In Đậm,
+#   không trùng dòng, hiển thị đầy đủ Chiêu 1, Chiêu 2, Chiêu 3 & Haki 4-5-6.
+# - Công tắc Phím [F] hoặc /chiendau: Bật/Tắt Chiến Đấu & Khóa Ô Neo (Ô 9)
+# - Phím tắt MOBA [1 - 3]: Tung tức thì Chiêu 1, Chiêu 2, Chiêu 3
+# - Phím tắt MOBA [4 - 6]: Kích hoạt tức thì Haki Quan Sát, Vũ Trang, Bá Vương
+# =====================================================================
+
+import:
+    java.lang.String
+    java.lang.System
+    java.lang.Math
+    java.lang.Integer
+    me.clip.placeholderapi.PlaceholderAPI
+    com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI
+    net.md_5.bungee.api.chat.TextComponent
+    net.md_5.bungee.api.chat.HoverEvent
+    net.md_5.bungee.api.chat.HoverEvent$Action as HoverAction
+    net.md_5.bungee.api.chat.ClickEvent
+    net.md_5.bungee.api.chat.ClickEvent$Action as ClickAction
+    net.md_5.bungee.api.chat.ComponentBuilder
+    org.bukkit.Bukkit
+    org.bukkit.scoreboard.Scoreboard
+    org.bukkit.scoreboard.Objective
+    org.bukkit.scoreboard.DisplaySlot
+    org.bukkit.scoreboard.Team
+
+function sbFormatMoney(n: number) :: text:
+    if {_n} is not set:
+        return "0"
+    if {_n} >= 1000000000:
+        set {_v} to round(({_n} / 1000000000) * 10) / 10
+        return "%{_v}%B"
+    if {_n} >= 1000000:
+        set {_v} to round(({_n} / 1000000) * 10) / 10
+        return "%{_v}%M"
+    if {_n} >= 1000:
+        set {_v} to round(({_n} / 1000) * 10) / 10
+        return "%{_v}%K"
+    set {_v} to round({_n})
+    return "%{_v}%"
+
+function sbSafeLine(raw: text) :: text:
+    if {_raw} is not set:
+        return ""
+    set {_c} to colored {_raw}
+    if length of {_c} > 32:
+        set {_c} to first 32 characters of {_c}
+        if {_c} ends with "§":
+            set {_c} to first 31 characters of {_c}
+    return {_c}
+
+# Nhãn Rank In Đậm Nổi Bật trên Sidebar
+function getSidebarBoldRank(p: player) :: text:
+    if {_p} has permission "rank.master":
+        return "&6&l[MASTER]"
+    if {_p} has permission "rank.king":
+        return "&d&l[KING]"
+    if {_p} has permission "rank.vip":
+        return "&b&l[VIP]"
+    return "&7&l[T.VIÊN]"
+
+# Huy hiệu + Màu Tên In Đậm trên Tablist (Không tràn khi chia 2-4 cột)
+function getTabBoldPlayerName(p: player) :: text:
+    if {_p} has permission "rank.master":
+        return "&6&l✦ &e&l%name of {_p}%"
+    if {_p} has permission "rank.king":
+        return "&d&l❖ &f&l%name of {_p}%"
+    if {_p} has permission "rank.vip":
+        return "&b&l★ &f&l%name of {_p}%"
+    return "&7&l• &f%name of {_p}%"
+
+# Hiển thị Hệ Phái In Đậm (Chuẩn Suffix <= 16)
+function getPlayerPowerBold(u: text) :: text:
+    set {_fruit} to {df_data::%{_u}%::fruit}
+    if {_fruit} is "mera":
+        set {_name} to "&6&lMera Mera"
+    else if {_fruit} is "gomu":
+        set {_name} to "&d&lGomu Gomu"
+    else if {_fruit} is "ope":
+        set {_name} to "&c&lOpe Ope "
+    else if {_fruit} is "seiryu":
+        set {_name} to "&b&lThanhLong"
+    else if {_fruit} is "gura":
+        set {_name} to "&f&lGura Gura"
+    else if {_fruit} is "pika":
+        set {_name} to "&e&lPika Pika"
+    else if {_fruit} is "goro":
+        set {_name} to "&9&lGoro Goro"
+    else if {_fruit} is "phoenix":
+        set {_name} to "&3&lPhoenix  "
+
+    if {_name} is set:
+        if {df_data::%{_u}%::awakened} is true:
+            return "%{_name}%✦"
+        return {_name}
+
+    if {martial_style::%{_u}%} is "kiem_dao":
+        set {_mname} to "&a&lKiếm Đạo"
+    else if {martial_style::%{_u}%} is "luc_thuc":
+        set {_mname} to "&e&lLục Thức"
+
+    if {_mname} is set:
+        if {martial_awakened::%{_u}%} is true:
+            return "%{_mname}%✦"
+        return {_mname}
+
+    return "&7&lChưa Có"
+
+# Trạng thái Nội tại AoV In Đậm
+function getAoVPassiveBold(u: text) :: text:
+    if {disciple::%{_u}%::mode} is "fusion":
+        return "&b&lPORATA"
+    set {_nowMs} to System.currentTimeMillis()
+    if {aov_bonus::%{_u}%::has_homenh} is true:
+        if {aov_cd_ms::%{_u}%::homenh} is set:
+            set {_passed} to ({_nowMs} - {aov_cd_ms::%{_u}%::homenh}) / 1000
+            if {_passed} < 150:
+                set {_rem} to round(150 - {_passed})
+                if {_rem} < 1:
+                    set {_rem} to 1
+                return "&c&l%{_rem}%s"
+        return "&e&lH.MỆNH"
+    if {aov_bonus::%{_u}%::has_gaia} is true:
+        if {aov_cd_ms::%{_u}%::gaia} is set:
+            set {_passed} to ({_nowMs} - {aov_cd_ms::%{_u}%::gaia}) / 1000
+            if {_passed} < 10:
+                set {_rem} to round(10 - {_passed})
+                if {_rem} < 1:
+                    set {_rem} to 1
+                return "&c&l%{_rem}%s"
+        return "&a&lGAIA ✔"
+    return "&7&lTRỐNG"
+
+function getFruitSkillBaseCooldown(fruit: text, slot: number, isAwakened: boolean) :: number:
+    if {_fruit} is "mera":
+        if {_slot} is 1:
+            return 3.5
+        if {_slot} is 2:
+            return 6.5
+        return 15.0
+    else if {_fruit} is "gomu":
+        if {_slot} is 1:
+            return 3.0
+        if {_slot} is 2:
+            return 6.0
+        return 16.0
+    else if {_fruit} is "ope":
+        if {_slot} is 1:
+            return 4.5
+        if {_slot} is 2:
+            return 9.0
+        return 18.0
+    else if {_fruit} is "seiryu":
+        if {_slot} is 1:
+            return 4.5
+        if {_slot} is 2:
+            return 9.5
+        return 18.0
+    else if {_fruit} is "gura":
+        if {_slot} is 1:
+            return 4.0
+        if {_slot} is 2:
+            return 7.0
+        return 16.0
+    else if {_fruit} is "pika":
+        if {_slot} is 1:
+            return 3.5
+        if {_slot} is 2:
+            return 6.0
+        return 15.0
+    else if {_fruit} is "goro":
+        if {_slot} is 1:
+            return 4.0
+        if {_slot} is 2:
+            return 7.5
+        return 16.0
+    else if {_fruit} is "phoenix":
+        if {_slot} is 1:
+            return 4.5
+        if {_slot} is 2:
+            return 8.0
+        return 18.0
+    else if {_fruit} is "kiem_dao":
+        if {_slot} is 1:
+            return 3.0
+        if {_slot} is 2:
+            return 5.5
+        return 13.0
+    else if {_fruit} is "luc_thuc":
+        if {_slot} is 1:
+            return 3.0
+        if {_slot} is 2:
+            return 5.5
+        return 13.0
+    else:
+        if {_slot} is 1:
+            return 3.5
+        if {_slot} is 2:
+            return 7.0
+        return 15.0
+
+function getSkillCooldown(p: player, baseCd: number, slot: number = 0) :: number:
+    set {_u} to uuid of {_p}
+    set {_cdr} to ({aov_bonus::%{_u}%::cdr} ? 0.0)
+    set {_fruit} to {df_data::%{_u}%::fruit}
+    if {_fruit} is set:
+        if {_fruit} is not "" or "none":
+            if {df_data::%{_u}%::awakened} is true:
+                add 20.0 to {_cdr}
+            # Nội tại Gear 4/5 Trái Gomu: +40% Giảm hồi chiêu cho Chiêu 1 và Chiêu 2
+            if {_fruit} is "gomu":
+                if {_slot} is 1 or 2:
+                    if {df_boundman::%{_u}%} is true:
+                        add 40.0 to {_cdr}
+    else if {martial_style::%{_u}%} is set:
+        if {martial_style::%{_u}%} is not "" or "none":
+            if {martial_awakened::%{_u}%} is true:
+                add 20.0 to {_cdr}
+    # Giới hạn trần giảm hồi chiêu (Chuẩn 40%, mở trần 60% khi kích hoạt Gear 4 Gomu)
+    set {_maxCdr} to 40.0
+    if {_fruit} is "gomu":
+        if {_slot} is 1 or 2:
+            if {df_boundman::%{_u}%} is true:
+                set {_maxCdr} to 60.0
+    if {_cdr} > {_maxCdr}:
+        set {_cdr} to {_maxCdr}
+    set {_actual} to {_baseCd} * (1.0 - ({_cdr} / 100.0))
+    if {_actual} < 1.0:
+        set {_actual} to 1.0
+    return roundOneDecimal({_actual})
+
+# Trạng thái Chiêu 1, Chiêu 2, Chiêu 3 In Đậm (Hiển thị thời gian hồi chuẩn sau Thức Tỉnh & CDR)
+function getDFSkillStatusBold(p: player, slot: number) :: text:
+    set {_u} to uuid of {_p}
+    set {_fruit} to {df_data::%{_u}%::fruit}
+    if {_fruit} is set:
+        set {_mastery} to ({df_data::%{_u}%::mastery} ? 1)
+        if {_slot} is 2:
+            if {_mastery} < 25:
+                return "&c&lLv25"
+        else if {_slot} is 3:
+            if {_mastery} < 60:
+                return "&c&lLv60"
+
+        set {_isAwakened} to ({df_data::%{_u}%::awakened} ? false)
+        set {_baseCd} to getFruitSkillBaseCooldown({_fruit}, {_slot}, {_isAwakened})
+        set {_readySec} to getSkillCooldown({_p}, {_baseCd}, {_slot})
+        set {_cdSec} to ({df_cd_duration::%{_u}%::skill%{_slot}%} ? {_readySec})
+
+        set {_nowMs} to System.currentTimeMillis()
+        if {df_cd_ms::%{_u}%::skill%{_slot}%} is set:
+            set {_passed} to ({_nowMs} - {df_cd_ms::%{_u}%::skill%{_slot}%}) / 1000
+            if {_passed} < {_cdSec}:
+                set {_rem} to round({_cdSec} - {_passed})
+                if {_rem} < 1:
+                    set {_rem} to 1
+                set {df_cd_remaining::%{_u}%::%{_slot}%} to {_rem}
+                return "&c&l%{_rem}%s"
+
+        delete {df_cd_remaining::%{_u}%::%{_slot}%}
+        delete {df_cd_duration::%{_u}%::skill%{_slot}%}
+        return "&a&l%{_readySec}%s"
+
+    else if {martial_style::%{_u}%} is set:
+        set {_mastery} to ({martial_mastery::%{_u}%} ? 1)
+        if {_slot} is 2:
+            if {_mastery} < 25:
+                return "&c&lLv25"
+        else if {_slot} is 3:
+            if {_mastery} < 60:
+                return "&c&lLv60"
+
+        set {_style} to {martial_style::%{_u}%}
+        set {_isAwakened} to ({martial_awakened::%{_u}%} ? false)
+        set {_baseCd} to getFruitSkillBaseCooldown({_style}, {_slot}, {_isAwakened})
+        set {_readySec} to getMartialSkillCooldown({_p}, {_baseCd})
+        set {_cdSec} to ({martial_cd_duration::%{_u}%::skill%{_slot}%} ? {_readySec})
+
+        set {_nowMs} to System.currentTimeMillis()
+        if {martial_cd_ms::%{_u}%::skill%{_slot}%} is set:
+            set {_passed} to ({_nowMs} - {martial_cd_ms::%{_u}%::skill%{_slot}%}) / 1000
+            if {_passed} < {_cdSec}:
+                set {_rem} to round({_cdSec} - {_passed})
+                if {_rem} < 1:
+                    set {_rem} to 1
+                return "&c&l%{_rem}%s"
+
+        delete {martial_cd_duration::%{_u}%::skill%{_slot}%}
+        return "&a&l%{_readySec}%s"
+
+    return "&8&lKHÓA"
+
+# Trạng thái Haki [4-6] In Đậm
+function getHakiBoldStatus(p: player, type: text) :: text:
+    set {_u} to uuid of {_p}
+    if {haki_exhausted::%{_u}%} is true:
+        return "&c&lKIỆT"
+    if {_type} is "ken":
+        if {haki_active::%{_u}%::ken} is true:
+            return "&a&lBẬT"
+        return "&7&lTẮT"
+    else if {_type} is "buso":
+        if {haki_active::%{_u}%::buso} is true:
+            return "&a&lBẬT"
+        return "&7&lTẮT"
+    else if {_type} is "hao":
+        set {_nowMs} to System.currentTimeMillis()
+        if {haki_cd_ms::%{_u}%::hao} is set:
+            set {_passed} to ({_nowMs} - {haki_cd_ms::%{_u}%::hao}) / 1000
+            if {_passed} < 2:
+                set {_rem} to round(2 - {_passed})
+                if {_rem} < 1:
+                    set {_rem} to 1
+                return "&c&l%{_rem}%s"
+        set {_costMult} to getHakiCostMult({_p})
+        set {_cost} to 80.0 * {_costMult}
+        if ({haki_energy::%{_u}%} ? 0) < {_cost}:
+            return "&7&lTHIẾU"
+        return "&a&lOK"
+    return "&7&l-"
+
+# =====================================================================
+# 1. GIAO DIỆN SIDEBAR 14 DÒNG IN ĐẬM (ĐỒNG BỘ CẤU TRÚC 100%)
+# =====================================================================
+
+function renderCombatSidebar(p: player):
+    set {_u} to uuid of {_p}
+    initHakiData({_p})
+
+    set {_hp} to round({_p}'s health)
+    set {_maxhp} to round({_p}'s max health)
+    set {_cdr} to ({aov_bonus::%{_u}%::cdr} ? 0.0)
+    set {_fruit} to {df_data::%{_u}%::fruit}
+    if {_fruit} is set:
+        if {_fruit} is not "" or "none":
+            if {df_data::%{_u}%::awakened} is true:
+                add 20.0 to {_cdr}
+    else if {martial_style::%{_u}%} is set:
+        if {martial_style::%{_u}%} is not "" or "none":
+            if {martial_awakened::%{_u}%} is true:
+                add 20.0 to {_cdr}
+    if {_cdr} > 40.0:
+        set {_cdr} to 40.0
+    set {_cdr} to round({_cdr})
+
+    set {_style_bold} to getPlayerPowerBold({_u})
+    set {_cd1} to getDFSkillStatusBold({_p}, 1)
+    set {_cd2} to getDFSkillStatusBold({_p}, 2)
+    set {_cd3} to getDFSkillStatusBold({_p}, 3)
+
+    set {_cur_e} to round({haki_energy::%{_u}%} ? 0)
+    set {_max_e} to round({haki_max_energy::%{_u}%} ? 102)
+    set {_hlv} to {haki_mastery::%{_u}%} ? 1
+
+    set {_st_ken} to getHakiBoldStatus({_p}, "ken")
+    set {_st_buso} to getHakiBoldStatus({_p}, "buso")
+    set {_st_hao} to getHakiBoldStatus({_p}, "hao")
+    set {_aov_passive} to getAoVPassiveBold({_u})
+
+    toggle {_p}'s scoreboard to on
+    set title of {_p}'s scoreboard to sbSafeLine("&4&l⚔ &c&lCHIẾN ĐẤU &4&l⚔")
+    set line 14 of {_p}'s scoreboard to sbSafeLine("&8&m⎯⎯⎯⎯&4&l✦⚔✦&8&m⎯⎯⎯⎯")
+    set line 13 of {_p}'s scoreboard to sbSafeLine("&c&l❖ &4&lTRẠNG THÁI PK")
+    set line 12 of {_p}'s scoreboard to sbSafeLine("&c&l┃ &f&lMáu: &c&l%{_hp}%/%{_maxhp}%❤")
+    set line 11 of {_p}'s scoreboard to sbSafeLine("&c&l┃ &f&lHệ: %{_style_bold}%")
+    set line 10 of {_p}'s scoreboard to sbSafeLine("&e&l[1] &f&lChiêu 1: %{_cd1}%")
+    set line 9 of {_p}'s scoreboard to sbSafeLine("&e&l[2] &f&lChiêu 2: %{_cd2}%")
+    set line 8 of {_p}'s scoreboard to sbSafeLine("&e&l[3] &f&lChiêu 3: %{_cd3}%")
+    set line 7 of {_p}'s scoreboard to sbSafeLine("&b&l❖ &3&lBÁ KHÍ &7&l(Lv%{_hlv}%)")
+    set line 6 of {_p}'s scoreboard to sbSafeLine("&b&l┃ &f&lKhí: &e&l%{_cur_e}%/%{_max_e}%")
+    set line 5 of {_p}'s scoreboard to sbSafeLine("&b&l[4] &f&lQ.Sát: %{_st_ken}%")
+    set line 4 of {_p}'s scoreboard to sbSafeLine("&b&l[5] &f&lV.Trang: %{_st_buso}%")
+    set line 3 of {_p}'s scoreboard to sbSafeLine("&b&l[6] &f&lB.Vương: %{_st_hao}%")
+    set line 2 of {_p}'s scoreboard to sbSafeLine("&6&l┃ &f&lNộiTại: %{_aov_passive}%")
+    set line 1 of {_p}'s scoreboard to sbSafeLine("&c&l⚔ &e&l[F] TẮT &b&l⚡%{_cdr}%%%")
+
+function renderDefaultSidebar(p: player):
+    set {_u} to uuid of {_p}
+
+    set {_rank} to getSidebarBoldRank({_p})
+    set {_rawCoin} to PlaceholderAPI.setPlaceholders({_p}, "%%playerpoints_points%%")
+    set {_coinVal} to ({_rawCoin} parsed as number) ? 0
+    set {_coin} to sbFormatMoney({_coinVal})
+    set {_money} to sbFormatMoney({_p}'s balance)
+
+    set {_isLvl} to "0"
+    set {_memStr} to "0/0"
+    set {_sp} to SuperiorSkyblockAPI.getPlayer({_p})
+    if {_sp} is set:
+        set {_island} to {_sp}.getIsland()
+        if {_island} is set:
+            set {_lvlVal} to {_island}.getIslandLevel().longValue()
+            set {_isLvl} to sbFormatMoney({_lvlVal})
+            set {_memCur} to {_island}.getIslandMembers(true).size()
+            set {_memMax} to {_island}.getTeamLimit()
+            set {_memStr} to "%{_memCur}%/%{_memMax}%"
+
+    set {_bounty_str} to getBountyPapiFormatted({_u})
+    set {_power_bold} to getPlayerPowerBold({_u})
+    set {_aov_cnt} to countEquippedAoV({_p})
+    set {_aov_max} to getMaxAoVSlots({_p})
+
+    set {_pNameLine} to "&6&l┃ &e&l★ %name of {_p}%"
+    if length of (name of {_p}) > 14:
+        set {_pNameLine} to "&6&l┃ &e&l%name of {_p}%"
+
+    toggle {_p}'s scoreboard to on
+    set title of {_p}'s scoreboard to sbSafeLine("&6&l⚔ &e&lĐẠI HẢI TRÌNH &6&l⚔")
+    set line 14 of {_p}'s scoreboard to sbSafeLine("&8&m⎯⎯⎯⎯&6&l✦❖✦&8&m⎯⎯⎯⎯")
+    set line 13 of {_p}'s scoreboard to sbSafeLine("&6&l❖ &e&lHỒ SƠ HẢI TẶC")
+    set line 12 of {_p}'s scoreboard to sbSafeLine({_pNameLine})
+    set line 11 of {_p}'s scoreboard to sbSafeLine("&6&l┃ &f&lBậc: %{_rank}%")
+    set line 10 of {_p}'s scoreboard to sbSafeLine("&6&l┃ &f&lTiền: &a&l$%{_money}%")
+    set line 9 of {_p}'s scoreboard to sbSafeLine("&6&l┃ &f&lXu: &e&l%{_coin}% &6✪")
+    set line 8 of {_p}'s scoreboard to sbSafeLine("&b&l❖ &3&lCĂN CỨ HẠM ĐỘI")
+    set line 7 of {_p}'s scoreboard to sbSafeLine("&b&l┃ &f&lUyDanh: &b&l%{_isLvl}%")
+    set line 6 of {_p}'s scoreboard to sbSafeLine("&b&l┃ &f&lHạmĐội: &e&l%{_memStr}%⚓")
+    set line 5 of {_p}'s scoreboard to sbSafeLine("&c&l❖ &4&lCHIẾN LỰC PK")
+    set line 4 of {_p}'s scoreboard to sbSafeLine("&c&l┃ &f&lHệ: %{_power_bold}%")
+    set line 3 of {_p}'s scoreboard to sbSafeLine("&c&l┃ &f&lTruyNã: &6&l%{_bounty_str}%")
+    set line 2 of {_p}'s scoreboard to sbSafeLine("&c&l┃ &f&lĐồ LQ: &e&l%{_aov_cnt}%/%{_aov_max}% &6⚔")
+    set line 1 of {_p}'s scoreboard to sbSafeLine("&6&l⚔ &e&lẤN [F] &c&lBẬT PK")
+
+# =====================================================================
+# 2. GIAO DIỆN TABLIST IN ĐẬM & VIỀN HUY HIỆU (KHÔNG CHẠM SIDEBAR)
+# =====================================================================
+
+function getPlayerPingBold(p: player) :: text:
+    set {_ping} to {_p}.spigot().getPing()
+    if {_ping} is not set:
+        return "&a&l0ms"
+    if {_ping} < 80:
+        return "&a&l%{_ping}%ms"
+    if {_ping} < 180:
+        return "&e&l%{_ping}%ms"
+    return "&c&l%{_ping}%ms"
+
+function renderPlayerTablist(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+
+    set {_online} to size of all players
+    set {_pingStr} to getPlayerPingBold({_p})
+    set {_boldName} to getTabBoldPlayerName({_p})
+
+    set {_pkStatus} to "&7&lTẮT"
+    set {_pkTag} to ""
+    if {combat_mode::%{_u}%} is true:
+        set {_pkStatus} to "&a&lBẬT"
+        set {_pkTag} to " &4&l⚔"
+
+    set {_tabRow} to colored "%{_boldName}%%{_pkTag}%"
+    {_p}.setPlayerListName({_tabRow})
+
+    set {_h1} to "&6&l⚔  &e&lĐẠI HẢI TRÌNH : RPG  &6&l⚔"
+    set {_h2} to "&8&m⎯⎯⎯⎯⎯⎯⎯&6&l✦ &e&l❖ &6&l✦&8&m⎯⎯⎯⎯⎯⎯⎯"
+    set {_h3} to "&a&l● &f&lONLINE: &a&l%{_online}% &8┃ &b&l⚡ %{_pingStr}% &8┃ &c&l⚔ %{_pkStatus}%"
+    set {_headerText} to colored "%{_h1}%%nl%%{_h2}%%nl%%{_h3}%"
+
+    set {_f1} to "&8&m⎯⎯⎯⎯⎯⎯⎯&c&l✦ &e&l⚔ &c&l✦&8&m⎯⎯⎯⎯⎯⎯⎯"
+    set {_f2} to "&c&l☠ &f&lSỰ KIỆN: &e&l/sukien &8┃ &6&l⚓ &e&l/koth"
+    set {_f3} to "&b&l❖ &f&lMENU: &e&l/menu &8▪ &d&l/df &8▪ &a&l/vohoc"
+    set {_f4} to "&6&l✦ &e&lẤN &c&l[F] &e&lBẬT/TẮT CHIẾN ĐẤU &6&l✦"
+    set {_footerText} to colored "%{_f1}%%nl%%{_f2}%%nl%%{_f3}%%nl%%{_f4}%"
+
+    set {_hComp} to TextComponent.fromLegacyText({_headerText})
+    set {_fComp} to TextComponent.fromLegacyText({_footerText})
+    {_p}.setPlayerListHeaderFooter({_hComp}, {_fComp})
+
+function updatePlayerSidebar(p: player):
+    if {_p} is not online:
+        stop
+    renderPlayerTablist({_p})
+
+    set {_u} to uuid of {_p}
+    if {sb::off::%{_u}%} is true:
+        stop
+    if {sb_off::%{_u}%} is true:
+        stop
+
+    if {combat_mode::%{_u}%} is true:
+        renderCombatSidebar({_p})
+    else:
+        renderDefaultSidebar({_p})
+
+    set {_vSb} to {_p}.getScoreboard()
+    if {_vSb} is set:
+        if {_vSb}.getObjective("op_hp_tag") is not set:
+            syncAllNametagsToViewer({_p})
+
+# =====================================================================
+# 3. QUẢN LÝ CHẾ ĐỘ CHIẾN ĐẤU MOBA & CƠ CHẾ KHÓA Ô NEO (SLOT 8 / Ô SỐ 9)
+# =====================================================================
+
+function enableCombatModeMOBA(p: player):
+    set {_u} to uuid of {_p}
+    set {combat_mode::%{_u}%} to true
+
+    set {_curSlot} to {_p}.getInventory().getHeldItemSlot()
+    set {combat_saved_slot::%{_u}%} to {_curSlot}
+
+    if {_curSlot} is not 8:
+        set {_handItem} to slot {_curSlot} of {_p}'s inventory
+        set {_slot8Item} to slot 8 of {_p}'s inventory
+        set slot 8 of {_p}'s inventory to {_handItem}
+        set slot {_curSlot} of {_p}'s inventory to {_slot8Item}
+        {_p}.getInventory().setHeldItemSlot(8)
+
+    syncMeitoVisual({_p})
+    play sound "ITEM_ARMOR_EQUIP_DIAMOND" with volume 1 and pitch 1.2 to {_p}
+    send action bar "&4&l⚔ &c&lCHIẾN ĐẤU: &a&lBẬT &8┃ &e&l[1-3] &f&lChiêu &8▪ &b&l[4-6] &f&lHaki &8▪ &c&l[F] &7&lThoát" to {_p}
+    updatePlayerSidebar({_p})
+
+function disableCombatModeMOBA(p: player, silent: boolean):
+    set {_u} to uuid of {_p}
+    if {combat_mode::%{_u}%} is true:
+        delete {combat_mode::%{_u}%}
+
+        set {_savedSlot} to {combat_saved_slot::%{_u}%}
+        if {_savedSlot} is set:
+            if {_savedSlot} is not 8:
+                set {_weaponItem} to slot 8 of {_p}'s inventory
+                set {_origItem} to slot {_savedSlot} of {_p}'s inventory
+                set slot {_savedSlot} of {_p}'s inventory to {_weaponItem}
+                set slot 8 of {_p}'s inventory to {_origItem}
+            {_p}.getInventory().setHeldItemSlot({_savedSlot})
+            delete {combat_saved_slot::%{_u}%}
+
+        syncMeitoVisual({_p})
+
+        if {haki_active::%{_u}%::ken} is true:
+            toggleKenbunshoku({_p})
+        if {haki_active::%{_u}%::buso} is true:
+            toggleBusoshoku({_p})
+
+        if {_silent} is false:
+            play sound "BLOCK_FIRE_EXTINGUISH" with volume 1 and pitch 1 to {_p}
+            send action bar "&6&l❖ &e&lCHẾ ĐỘ CHIẾN ĐẤU: &c&lĐÃ TẮT &8┃ &a&l✔ Mở khóa thanh Hotbar" to {_p}
+            updatePlayerSidebar({_p})
+
+function toggleCombatModeCommand(p: player):
+    set {_u} to uuid of {_p}
+    if {combat_mode::%{_u}%} is true:
+        disableCombatModeMOBA({_p}, false)
+    else:
+        enableCombatModeMOBA({_p})
+
+on swap hand items:
+    cancel event
+    set {_u} to uuid of player
+    if {f_toggle_lock::%{_u}%} is set:
+        stop
+    set {f_toggle_lock::%{_u}%} to true
+    toggleCombatModeCommand(player)
+    wait 5 ticks
+    delete {f_toggle_lock::%{_u}%}
+
+# =====================================================================
+# 2.5 HỆ THỐNG NAMETAG NATIVE 2 DÒNG (ĐỒNG BỘ MỌI SCOREBOARD + SKBEE)
+# =====================================================================
+
+function ensureNametagOnScoreboard(sb: object):
+    if {_sb} is not set:
+        stop
+    set {_obj} to {_sb}.getObjective("op_hp_tag")
+    if {_obj} is not set:
+        set {_obj} to {_sb}.registerNewObjective("op_hp_tag", "dummy")
+        {_obj}.setDisplaySlot(DisplaySlot.BELOW_NAME)
+        {_obj}.setDisplayName(colored "&c❤")
+    else:
+        set {_curSlot} to {_obj}.getDisplaySlot()
+        if {_curSlot} is not set:
+            {_obj}.setDisplaySlot(DisplaySlot.BELOW_NAME)
+        else if {_curSlot} is not DisplaySlot.BELOW_NAME:
+            {_obj}.setDisplaySlot(DisplaySlot.BELOW_NAME)
+        if {_obj}.getDisplayName() is not colored "&c❤":
+            {_obj}.setDisplayName(colored "&c❤")
+
+    # Team Master: Prefix &6&l✦ &f
+    set {_p0} to colored "&6&l✦ &f"
+    set {_t0} to {_sb}.getTeam("nt_0_master")
+    if {_t0} is not set:
+        set {_t0} to {_sb}.registerNewTeam("nt_0_master")
+        {_t0}.setPrefix({_p0})
+    else if {_t0}.getPrefix() is not {_p0}:
+        {_t0}.setPrefix({_p0})
+
+    # Team King: Prefix &d&l❖ &f
+    set {_p1} to colored "&d&l❖ &f"
+    set {_t1} to {_sb}.getTeam("nt_1_king")
+    if {_t1} is not set:
+        set {_t1} to {_sb}.registerNewTeam("nt_1_king")
+        {_t1}.setPrefix({_p1})
+    else if {_t1}.getPrefix() is not {_p1}:
+        {_t1}.setPrefix({_p1})
+
+    # Team VIP: Prefix &b&l★ &f
+    set {_p2} to colored "&b&l★ &f"
+    set {_t2} to {_sb}.getTeam("nt_2_vip")
+    if {_t2} is not set:
+        set {_t2} to {_sb}.registerNewTeam("nt_2_vip")
+        {_t2}.setPrefix({_p2})
+    else if {_t2}.getPrefix() is not {_p2}:
+        {_t2}.setPrefix({_p2})
+
+    # Team Member: Prefix &7&l• &f
+    set {_p3} to colored "&7&l• &f"
+    set {_t3} to {_sb}.getTeam("nt_3_member")
+    if {_t3} is not set:
+        set {_t3} to {_sb}.registerNewTeam("nt_3_member")
+        {_t3}.setPrefix({_p3})
+    else if {_t3}.getPrefix() is not {_p3}:
+        {_t3}.setPrefix({_p3})
+
+function getNametagTeamName(p: player) :: text:
+    if {_p} has permission "rank.master":
+        return "nt_0_master"
+    if {_p} has permission "rank.king":
+        return "nt_1_king"
+    if {_p} has permission "rank.vip":
+        return "nt_2_vip"
+    return "nt_3_member"
+
+function applyPlayerTeamOnBoard(sb: object, pName: text, targetTeamName: text):
+    if {_sb} is not set:
+        stop
+    if {_sb}.getTeam({_targetTeamName}) is not set:
+        ensureNametagOnScoreboard({_sb})
+    set {_currentTeam} to {_sb}.getEntryTeam({_pName})
+    if {_currentTeam} is set:
+        if {_currentTeam}.getName() is {_targetTeamName}:
+            stop
+        {_currentTeam}.removeEntry({_pName})
+    set {_newTeam} to {_sb}.getTeam({_targetTeamName})
+    if {_newTeam} is set:
+        {_newTeam}.addEntry({_pName})
+
+function applyPlayerHPOnBoard(sb: object, pName: text, rawHp: number):
+    if {_sb} is not set:
+        stop
+    set {_obj} to {_sb}.getObjective("op_hp_tag")
+    if {_obj} is not set:
+        ensureNametagOnScoreboard({_sb})
+        set {_obj} to {_sb}.getObjective("op_hp_tag")
+    if {_obj} is set:
+        set {_v} to {_rawHp}
+        if {_v} < 0:
+            set {_v} to 0
+        set {_ceilHp} to Math.ceil({_v}.doubleValue())
+        {_obj}.getScore({_pName}).setScore({_ceilHp}.intValue())
+
+function initNametagSystem():
+    set {_mainSb} to Bukkit.getScoreboardManager().getMainScoreboard()
+    ensureNametagOnScoreboard({_mainSb})
+
+function syncPlayerNametagTeam(p: player):
+    if {_p} is not online:
+        stop
+    set {_pName} to name of {_p}
+    set {_targetTeamName} to getNametagTeamName({_p})
+    set {_mainSb} to Bukkit.getScoreboardManager().getMainScoreboard()
+    applyPlayerTeamOnBoard({_mainSb}, {_pName}, {_targetTeamName})
+    loop all players:
+        set {_vSb} to loop-player.getScoreboard()
+        if {_vSb} is set:
+            if {_vSb} is not {_mainSb}:
+                applyPlayerTeamOnBoard({_vSb}, {_pName}, {_targetTeamName})
+
+function updatePlayerNametagHP(p: player):
+    if {_p} is not online:
+        stop
+    set {_pName} to name of {_p}
+    set {_rawHp} to {_p}.getHealth()
+    set {_mainSb} to Bukkit.getScoreboardManager().getMainScoreboard()
+    applyPlayerHPOnBoard({_mainSb}, {_pName}, {_rawHp})
+    loop all players:
+        set {_vSb} to loop-player.getScoreboard()
+        if {_vSb} is set:
+            if {_vSb} is not {_mainSb}:
+                applyPlayerHPOnBoard({_vSb}, {_pName}, {_rawHp})
+
+function syncAllNametagsToViewer(viewer: player):
+    if {_viewer} is not online:
+        stop
+    set {_vSb} to {_viewer}.getScoreboard()
+    if {_vSb} is not set:
+        stop
+    ensureNametagOnScoreboard({_vSb})
+    loop all players:
+        set {_tName} to name of loop-player
+        set {_tTeam} to getNametagTeamName(loop-player)
+        applyPlayerTeamOnBoard({_vSb}, {_tName}, {_tTeam})
+        applyPlayerHPOnBoard({_vSb}, {_tName}, loop-player.getHealth())
+
+on load:
+    initNametagSystem()
+    loop all players:
+        syncPlayerNametagTeam(loop-player)
+        updatePlayerNametagHP(loop-player)
+        syncAllNametagsToViewer(loop-player)
+
+on join:
+    set {_u} to uuid of player
+    if {combat_mode::%{_u}%} is true:
+        disableCombatModeMOBA(player, true)
+    syncPlayerNametagTeam(player)
+    updatePlayerNametagHP(player)
+    syncAllNametagsToViewer(player)
+    wait 15 ticks
+    if player is online:
+        updatePlayerSidebar(player)
+        syncAllNametagsToViewer(player)
+        syncPlayerNametagTeam(player)
+        updatePlayerNametagHP(player)
+
+on respawn:
+    wait 1 tick
+    if player is online:
+        syncPlayerNametagTeam(player)
+        updatePlayerNametagHP(player)
+        syncAllNametagsToViewer(player)
+
+on quit:
+    disableCombatModeMOBA(player, true)
+    toggle player's scoreboard to off
+
+on death of player:
+    disableCombatModeMOBA(victim, true)
+
+every 1 second:
+    loop all players:
+        updatePlayerSidebar(loop-player)
+
+every 2 seconds:
+    loop all players:
+        syncPlayerNametagTeam(loop-player)
+        updatePlayerNametagHP(loop-player)
+
+command /chiendau:
+    aliases: /combat, /pk, /pvp
+    trigger:
+        toggleCombatModeCommand(player)
+
+command /bangdiem:
+    aliases: /sb, /scoreboard
+    trigger:
+        set {_u} to uuid of player
+        if {sb::off::%{_u}%} is true:
+            delete {sb::off::%{_u}%}
+            delete {sb_off::%{_u}%}
+            updatePlayerSidebar(player)
+            wait 1 tick
+            syncAllNametagsToViewer(player)
+            send "&a&l[Bảng Điểm] &f&lĐã &a&lbật &f&lbảng thông tin bên phải màn hình!" to player
+        else:
+            set {sb::off::%{_u}%} to true
+            set {sb_off::%{_u}%} to true
+            toggle player's scoreboard to off
+            wait 1 tick
+            syncAllNametagsToViewer(player)
+            send "&e&l[Bảng Điểm] &f&lĐã &c&ltắt &f&lbảng thông tin bên phải màn hình!" to player
+
+# =====================================================================
+# 4. HỆ THỐNG KHUNG CHAT PHÂN TẦNG RANK & THẺ HỒ SƠ HOVER CARD
+# =====================================================================
+
+on chat:
+    if event is cancelled:
+        stop
+    cancel event
+    set {_u} to uuid of player
+
+    set {_crewIcon} to ""
+    set {_crewInfo} to "&7&lChưa có ✦"
+    set {_sp} to SuperiorSkyblockAPI.getPlayer(player)
+    if {_sp} is set:
+        set {_island} to {_sp}.getIsland()
+        if {_island} is set:
+            set {_crewIcon} to "&b&l⚓ "
+            set {_lvlVal} to {_island}.getIslandLevel().longValue()
+            set {_isLvl} to sbFormatMoney({_lvlVal})
+            set {_crewInfo} to "&b&lUy danh %{_isLvl}% ✦"
+
+    if player has permission "rank.master":
+        set {_rankTag} to "&6&l✦ [MASTER] "
+        set {_nameDisplay} to "&e&l%name of player%"
+        set {_sep} to " &6&l» &e"
+        set {_rankBold} to "&6&l[MASTER]"
+    else if player has permission "rank.king":
+        set {_rankTag} to "&d&l❖ [KING] "
+        set {_nameDisplay} to "&f&l%name of player%"
+        set {_sep} to " &d&l▸ &f"
+        set {_rankBold} to "&d&l[KING]"
+    else if player has permission "rank.vip":
+        set {_rankTag} to "&b&l★ [VIP] "
+        set {_nameDisplay} to "&f&l%name of player%"
+        set {_sep} to " &b&l▸ &f"
+        set {_rankBold} to "&b&l[VIP]"
+    else:
+        set {_rankTag} to "&7&l• [T.VIÊN] "
+        set {_nameDisplay} to "&f%name of player%"
+        set {_sep} to " &8&l▪ &7"
+        set {_rankBold} to "&7&l[T.VIÊN]"
+
+    set {_powerBold} to getPlayerPowerBold({_u})
+    set {_bVal} to ({bounty::%{_u}%} ? 1000000)
+    set {_bountyStr} to formatBeriComma({_bVal})
+    set {_titleStr} to getPirateTitle({_bVal})
+
+    set {_hoverText} to colored "&6&l⚔ &e&lHỒ SƠ HẢI TẶC : &f&l%name of player%%nl%&8&m⎯⎯⎯⎯⎯⎯⎯&6&l✦ &e&l❖ &6&l✦&8&m⎯⎯⎯⎯⎯⎯⎯%nl%&6&l❖ &f&lBậc: %{_rankBold}%%nl%&c&l┃ &f&lHệ phái: %{_powerBold}%%nl%&c&l┃ &f&lTruy nã: &6&l%{_bountyStr}% Beri &7(%{_titleStr}%&7)%nl%&b&l┃ &f&lCăn cứ: %{_crewInfo}%%nl%&8&m⎯⎯⎯⎯⎯⎯⎯&6&l✦ &e&l❖ &6&l✦&8&m⎯⎯⎯⎯⎯⎯⎯%nl%&e&l▸ &7Nhấp chuột để nhắn tin riêng (/m %name of player%)"
+    set {_hoverArr} to TextComponent.fromLegacyText({_hoverText})
+    set {_hover} to new HoverEvent(HoverAction.SHOW_TEXT, {_hoverArr})
+    set {_click} to new ClickEvent(ClickAction.SUGGEST_COMMAND, "/m %name of player% ")
+
+    set {_nameComp} to new TextComponent(colored {_nameDisplay})
+    {_nameComp}.setHoverEvent({_hover})
+    {_nameComp}.setClickEvent({_click})
+
+    set {_chatMsg} to message
+    if player has permission "essentials.chat.color":
+        set {_chatMsg} to colored {_chatMsg}
+
+    set {_fullComp} to new TextComponent("")
+    {_fullComp}.addExtra(new TextComponent(colored "%{_crewIcon}%%{_rankTag}%"))
+    {_fullComp}.addExtra({_nameComp})
+    {_fullComp}.addExtra(new TextComponent(colored "%{_sep}%%{_chatMsg}%"))
+
+    loop all players:
+        loop-player.spigot().sendMessage({_fullComp})
+    Bukkit.getConsoleSender().sendMessage(colored "%{_crewIcon}%%{_rankTag}%%{_nameDisplay}%%{_sep}%%{_chatMsg}%")

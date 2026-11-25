@@ -1,0 +1,1564 @@
+# =====================================================================
+# HỆ THỐNG THIÊN PHÚ CORE (MINECRAFT 1.12.2 - SKRIPT 2.5.3 + SKBEE)
+# Thuộc tính: Crit Chance, Crit Damage, Accuracy, Dodge
+# Bao gồm: Khởi tạo dữ liệu, Lệnh Admin/Tẩy điểm, Bùa Tẩy Điểm, Công thức Combat
+# =====================================================================
+
+import:
+    java.lang.System
+    java.nio.charset.StandardCharsets
+    java.nio.file.Files
+    java.nio.file.Paths
+    org.black_ixx.playerpoints.PlayerPoints
+    org.bukkit.event.entity.EntityDamageEvent
+    org.bukkit.event.entity.EntityDamageEvent$DamageModifier
+    org.bukkit.event.entity.EntityRegainHealthEvent
+    org.bukkit.entity.LivingEntity
+    org.bukkit.entity.ArmorStand
+
+function roundOneDecimal(n: number) :: number:
+    return (round({_n} * 10)) / 10
+
+function applySkillDamage(p: player, vic: entity, finalHpDmg: number, tag: text = "normal") :: boolean:
+    if {_finalHpDmg} <= 0:
+        return false
+    if {_vic} is not living entity:
+        return false
+    if {_vic} is {_p}:
+        return false
+    if {_vic} is dead:
+        return false
+    set {_vicU} to uuid of {_vic}
+    set {_oldVel} to velocity of {_vic}
+    set {_hpBefore} to {_vic}.getHealth()
+    {_vic}.setNoDamageTicks(0)
+    {_vic}.setLastDamage(0.0)
+    setDamageVisualTag({_vic}, {_tag})
+    set {skill_dmg_landed::%{_vicU}%} to false
+    set {skill_exact_dmg::%{_vicU}%} to {_finalHpDmg}
+    {_vic}.damage({_finalHpDmg}, {_p})
+    delete {skill_exact_dmg::%{_vicU}%}
+    set {_landed} to {skill_dmg_landed::%{_vicU}%} ? false
+    delete {skill_dmg_landed::%{_vicU}%}
+    if {_landed} is true:
+        if {_vic} is alive:
+            set {_expectedHp} to {_hpBefore} - {_finalHpDmg}
+            if {_vic}.getHealth() > {_expectedHp}:
+                if {_expectedHp} <= 0:
+                    {_vic}.setHealth(0.01)
+                    {_vic}.setNoDamageTicks(0)
+                    {_vic}.setLastDamage(0.0)
+                    set {skill_silent_kill::%{_vicU}%} to true
+                    set {skill_exact_dmg::%{_vicU}%} to 1000.0
+                    {_vic}.damage(1000.0, {_p})
+                    delete {skill_exact_dmg::%{_vicU}%}
+                    delete {skill_silent_kill::%{_vicU}%}
+                else:
+                    {_vic}.setHealth({_expectedHp})
+            if {_vic} is alive:
+                set velocity of {_vic} to {_oldVel}
+    return {_landed}
+
+function initHakiData(p: offline player):
+    set {_u} to uuid of {_p}
+    if {bounty::%{_u}%} is not set:
+        set {bounty::%{_u}%} to 1000000
+    if {pvp_kills::%{_u}%} is not set:
+        set {pvp_kills::%{_u}%} to 0
+    if {haki_mastery::%{_u}%} is not set:
+        set {haki_mastery::%{_u}%} to 1
+    if {haki_exp::%{_u}%} is not set:
+        set {haki_exp::%{_u}%} to 0
+    set {_lv} to {haki_mastery::%{_u}%} ? 1
+    set {_baseMax} to 100 + ({_lv} * 2)
+    if {martial_style::%{_u}%} is "kiem_dao" or "luc_thuc":
+        add 50 to {_baseMax}
+    set {haki_max_energy::%{_u}%} to {_baseMax}
+    if {haki_energy::%{_u}%} is not set:
+        set {haki_energy::%{_u}%} to {haki_max_energy::%{_u}%}
+
+function getHakiCostMult(p: offline player) :: number:
+    set {_lv} to {haki_mastery::%uuid of {_p}%} ? 1
+    set {_mult} to 1 - ({_lv} * 0.003)
+    if {_mult} < 0.7:
+        set {_mult} to 0.7
+    return {_mult}
+
+function triggerHakiExhaustion(p: player):
+    set {_u} to uuid of {_p}
+    set {haki_energy::%{_u}%} to 0
+    delete {haki_active::%{_u}%::ken}
+    delete {haki_bonus::%{_u}%::dodge}
+    delete {haki_bonus::%{_u}%::accuracy}
+    delete {haki_active::%{_u}%::buso}
+    delete {haki_bonus::%{_u}%::crit_damage}
+    delete {haki_bonus::%{_u}%::flat_damage}
+    delete {haki_bonus::%{_u}%::def}
+    delete {haki_bonus::%{_u}%::armor_pen}
+    set {haki_exhausted::%{_u}%} to true
+    syncMeitoVisual({_p})
+    set {haki_exhausted_time::%{_u}%} to System.currentTimeMillis()
+    set {_dur} to 5.0
+    if ({haki_mastery::%{_u}%} ? 1) >= 30:
+        set {_dur} to 2.5
+    set {haki_exhausted_duration::%{_u}%} to {_dur}
+    apply slowness 1 to {_p} for 5 seconds
+    play sound "BLOCK_ANVIL_LAND" with volume 1 and pitch 0.6 to {_p}
+    send action bar "&4&l⚠ CẠN KIỆT BÁ KHÍ! &cHãy tắt Haki trước khi về 0!" to {_p}
+    send title "&4&lCẠN KIỆT BÁ KHÍ!" with subtitle "&cBạn bị suy kiệt, không thể kích hoạt Haki!" to {_p} for 2 seconds
+
+function addHakiExp(p: player, amt: number):
+    set {_u} to uuid of {_p}
+    initHakiData({_p})
+    set {_curLv} to {haki_mastery::%{_u}%} ? 1
+    if {_curLv} >= 100:
+        stop
+    set {_isUuid} to getCrewIslandUUID({_p})
+    if hasCrewFlag({_isUuid}, "hoa_long") is true:
+        set {_amt} to round({_amt} * 1.2)
+    add {_amt} to {haki_exp::%{_u}%}
+    while {_curLv} < 100:
+        set {_reqExp} to 100 + ({_curLv} * 45)
+        if {haki_exp::%{_u}%} >= {_reqExp}:
+            subtract {_reqExp} from {haki_exp::%{_u}%}
+            add 1 to {_curLv}
+            set {haki_mastery::%{_u}%} to {_curLv}
+            set {haki_max_energy::%{_u}%} to 100 + ({_curLv} * 2)
+            play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to {_p}
+            send action bar "&b&l✦ THÔNG THẠO HAKI TĂNG CẤP! &fCấp &e%{_curLv}%/100 &8| &bMax Khí: &e%{haki_max_energy::%{_u}%}%" to {_p}
+            sendSystemMsg({_p}, "talent", "Chúc mừng bạn đạt Độ Thông Thạo Haki &e&lLv.%{_curLv}%&a! (Max Khí: &e%{haki_max_energy::%{_u}%}%&a)")
+            if {_curLv} is 60:
+                broadcastDualCard("&6&l✦ ĐỘT PHÁ HAKI", "&e%name of {_p}% &7đạt &e&lMastery Lv.60&7!", "&7Khai mở &c&lLưu Anh (Ryuo) &f+15%% Xuyên Giáp&7.")
+                play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to {_p}
+                if {haki_active::%{_u}%::buso} is true:
+                    set {haki_bonus::%{_u}%::armor_pen} to 15.0
+            else if {_curLv} is 100:
+                broadcastDualCard("&b&l✦ TÔNG SƯ HAKI", "&e%name of {_p}% &7đạt &b&lMastery Lv.100 Max&7!", "&7Khai mở &b&lThấu Thị Tương Lai &f+10%% Né Tránh&7.")
+                play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to {_p}
+                if {haki_active::%{_u}%::ken} is true:
+                    set {haki_bonus::%{_u}%::dodge} to 35.0
+        else:
+            exit loop
+
+function handleCombatDummyDirectDamage(p: player, vic: entity, rawDmg: number, isCrit: boolean = false, hasPen: boolean = false):
+    set {_vic_u} to uuid of {_vic}
+    set {_d_type} to {dummy_type::%{_vic_u}%}
+    if {_d_type} is not set:
+        stop
+
+    set {_u} to uuid of {_p}
+    set {_dmg} to {_rawDmg}
+
+    # 1. Bù Nhìn Logia: Miễn nhiễm nếu không bật Haki Vũ Trang, né 45% (trừ Chính xác)
+    if {_d_type} is "logia":
+        if {haki_active::%{_u}%::buso} is not true:
+            send action bar "&b&l✦ BÙ NHÌN LOGIA: Vô hiệu hóa chiêu thức! &7(Cần bật Haki Vũ Trang)" to {_p}
+            play sound "ENTITY_ITEM_BREAK" with volume 1 and pitch 1.2 to {_p}
+            spawnPacketDamageHolo(location of {_vic}, "&e&l✦ LOGIA", {_vic_u})
+            stop
+
+        set {_att_acc} to getTalentTotal({_p}, "accuracy")
+        set {_eff_dodge} to 45 - {_att_acc}
+        if {_eff_dodge} > 75:
+            set {_eff_dodge} to 75
+        if {_eff_dodge} > 0:
+            set {_r_dodge} to random number between 0 and 100
+            if {_r_dodge} <= {_eff_dodge}:
+                send action bar "&f&l✦ BÙ NHÌN ĐÃ NÉ ĐƯỢC CHIÊU THỨC!" to {_p}
+                play sound "ENTITY_ENDERDRAGON_FLAP" with volume 1 and pitch 1.8 to {_p}
+                spawnPacketDamageHolo(location of {_vic}, "&7&l» NÉ", {_vic_u})
+                stop
+
+    # 2. Bù Nhìn Boss: Giảm 60% sát thương (Đã tính tự động qua 150 DEF trong calculateEffectiveDamage)
+    else if {_d_type} is "boss":
+        if {_hasPen} is true:
+            set {_hasPen} to true
+
+    # 3. Tính lượng sát thương HP hiển thị
+    set {_hp_dmg} to roundOneDecimal({_dmg})
+    if {_hp_dmg} < 0.5:
+        set {_hp_dmg} to 1.0
+
+    # 4. Hologram Sát Thương Bay Lên (0.8s tự xóa)
+    set {_holoTag} to "normal"
+    if {_isCrit} is true:
+        set {_holoTag} to "crit"
+    else if {_hasPen} is true:
+        set {_holoTag} to "true"
+    else if {haki_active::%{_u}%::buso} is true:
+        set {_holoTag} to "haki"
+    set {_holo_txt} to formatDamageHoloText({_hp_dmg}, {_holoTag})
+    spawnPacketDamageHolo(location of {_vic}, {_holo_txt}, {_vic_u})
+
+    # 5. Ghi nhận phiên DPS cho người chơi
+    if {dummy_session::%{_u}%::active} is not true:
+        set {dummy_session::%{_u}%::active} to true
+        set {dummy_session::%{_u}%::start_ms} to System.currentTimeMillis()
+        set {dummy_session::%{_u}%::total_damage} to 0
+        set {dummy_session::%{_u}%::total_hits} to 0
+        set {dummy_session::%{_u}%::crit_hits} to 0
+        set {dummy_session::%{_u}%::max_hit} to 0
+        set {dummy_session::%{_u}%::target_type} to {_d_type}
+
+    set {dummy_session::%{_u}%::last_hit} to now
+    set {dummy_session::%{_u}%::last_hit_ms} to System.currentTimeMillis()
+    add {_hp_dmg} to {dummy_session::%{_u}%::total_damage}
+    add 1 to {dummy_session::%{_u}%::total_hits}
+    if {_isCrit} is true:
+        add 1 to {dummy_session::%{_u}%::crit_hits}
+    if {_hp_dmg} > ({dummy_session::%{_u}%::max_hit} ? 0):
+        set {dummy_session::%{_u}%::max_hit} to {_hp_dmg}
+
+    # 6. Hiệu ứng trúng đòn & khóa máu Bù Nhìn (không chết, nhận đòn liên hoàn)
+    play sound "ENTITY_PLAYER_HURT" with volume 0.8 and pitch 1 at location of {_vic}
+    set {_vic}'s no damage ticks to 0
+    set {_v_loc} to {dummy_loc::%{_vic_u}%}
+    wait 1 tick
+    if {_vic} is alive:
+        if {_d_type} is "boss":
+            set health of {_vic} to 200
+        else:
+            set health of {_vic} to 500
+        set {_vic}'s no damage ticks to 0
+        if {_v_loc} is set:
+            {_vic}.teleport({_v_loc})
+
+function initTalentData(p: offline player):
+    set {_u} to uuid of {_p}
+    initHakiData({_p})
+    if {talent::%{_u}%::initialized} is not set:
+        set {talent::%{_u}%::points} to 5
+        set {talent::%{_u}%::spent} to 0
+        set {talent::%{_u}%::crit_chance} to 5.0
+        set {talent::%{_u}%::crit_damage} to 150.0
+        set {talent::%{_u}%::accuracy} to 0.0
+        set {talent::%{_u}%::dodge} to 0.0
+        set {talent::%{_u}%::initialized} to true
+    if {talent::%{_u}%::points} is not set:
+        set {talent::%{_u}%::points} to 0
+    if {talent::%{_u}%::spent} is not set:
+        # Khôi phục số điểm đã cộng nếu nâng cấp từ dữ liệu cũ
+        set {_s_cc} to round(({talent::%{_u}%::crit_chance} - 5.0) / 0.5)
+        set {_s_cd} to round(({talent::%{_u}%::crit_damage} - 150.0) / 2.0)
+        set {_s_acc} to round({talent::%{_u}%::accuracy} / 1.0)
+        set {_s_dod} to round({talent::%{_u}%::dodge} / 0.4)
+        set {_calc_spent} to {_s_cc} + {_s_cd} + {_s_acc} + {_s_dod}
+        if {_calc_spent} < 0:
+            set {_calc_spent} to 0
+        set {talent::%{_u}%::spent} to {_calc_spent}
+    if {card_bonus::%{_u}%::crit_chance} is not set:
+        set {card_bonus::%{_u}%::crit_chance} to 0.0
+    if {card_bonus::%{_u}%::crit_damage} is not set:
+        set {card_bonus::%{_u}%::crit_damage} to 0.0
+    if {card_bonus::%{_u}%::accuracy} is not set:
+        set {card_bonus::%{_u}%::accuracy} to 0.0
+    if {card_bonus::%{_u}%::dodge} is not set:
+        set {card_bonus::%{_u}%::dodge} to 0.0
+
+function getTalentBase(p: offline player, stat: text) :: number:
+    set {_u} to uuid of {_p}
+    if {talent::%{_u}%::%{_stat}%} is set:
+        return roundOneDecimal({talent::%{_u}%::%{_stat}%})
+    if {_stat} is "crit_chance":
+        return 5.0
+    if {_stat} is "crit_damage":
+        return 150.0
+    return 0.0
+
+function getTalentCardBonus(p: offline player, stat: text) :: number:
+    set {_u} to uuid of {_p}
+    if {card_bonus::%{_u}%::%{_stat}%} is set:
+        return roundOneDecimal({card_bonus::%{_u}%::%{_stat}%})
+    if {aov_bonus::%{_u}%::%{_stat}%} is set:
+        return roundOneDecimal({aov_bonus::%{_u}%::%{_stat}%})
+    return 0.0
+
+function getTalentAoVBonus(p: offline player, stat: text) :: number:
+    set {_u} to uuid of {_p}
+    if {aov_bonus::%{_u}%::%{_stat}%} is set:
+        return roundOneDecimal({aov_bonus::%{_u}%::%{_stat}%})
+    return 0.0
+
+function getTalentTotal(p: offline player, stat: text) :: number:
+    set {_u} to uuid of {_p}
+    set {_haki} to ({haki_bonus::%{_u}%::%{_stat}%} ? 0.0)
+    set {_martial} to 0.0
+    if {df_data::%{_u}%::fruit} is not set:
+        set {_martial} to ({martial_bonus::%{_u}%::%{_stat}%} ? 0.0)
+    else if {df_data::%{_u}%::fruit} is "none" or "":
+        set {_martial} to ({martial_bonus::%{_u}%::%{_stat}%} ? 0.0)
+    set {_crew_bonus} to 0.0
+    set {_meito_bonus} to 0.0
+    if {_p}.isOnline() is true:
+        set {_onP} to {_p}.getPlayer()
+        if {_stat} is "crit_chance":
+            set {_meito_bonus} to getMeitoCritChance({_onP})
+        else if {_stat} is "crit_damage":
+            set {_meito_bonus} to getMeitoCritDmgBonus({_onP})
+        if {_stat} is "crit_damage":
+            set {_isUuid} to getCrewIslandUUID({_onP})
+            if hasCrewFlag({_isUuid}, "hoa_long") is true:
+                set {_crew_bonus} to 10.0
+    set {_df_dodge} to 0.0
+    if {_stat} is "dodge":
+        if {df_goro_dodge_until::%{_u}%} is set:
+            if System.currentTimeMillis() < {df_goro_dodge_until::%{_u}%}:
+                set {_df_dodge} to ({df_goro_dodge::%{_u}%} ? 0.0)
+            else:
+                delete {df_goro_dodge::%{_u}%}
+                delete {df_goro_dodge_until::%{_u}%}
+                delete {df_goro_dodge_seq::%{_u}%}
+    set {_df_acc} to 0.0
+    if {_stat} is "accuracy":
+        if {ope_room_buff_until::%{_u}%} is set:
+            if System.currentTimeMillis() < {ope_room_buff_until::%{_u}%}:
+                set {_df_acc} to 100.0
+            else:
+                delete {ope_room_buff_until::%{_u}%}
+                delete {ope_room_seq::%{_u}%}
+    return roundOneDecimal(getTalentBase({_p}, {_stat}) + getTalentCardBonus({_p}, {_stat}) + {_haki} + {_martial} + {_crew_bonus} + {_meito_bonus} + {_df_dodge} + {_df_acc})
+
+function upgradeTalentStat(p: player, stat: text, times: number = 1) :: boolean:
+    initTalentData({_p})
+    set {_u} to uuid of {_p}
+    if {_times} < 1:
+        return false
+    if {talent::%{_u}%::points} <= 0:
+        send "&c[Thiên Phú] &7Bạn không đủ Điểm Thiên Phú để nâng cấp!" to {_p}
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        return false
+
+    set {_apply} to {_times}
+    if {_apply} > {talent::%{_u}%::points}:
+        set {_apply} to {talent::%{_u}%::points}
+
+    if {_stat} is "dodge":
+        set {_cur} to getTalentBase({_p}, "dodge")
+        if {_cur} >= 20.0:
+            send "&c[Thiên Phú] &7Chỉ số Né Tránh cơ bản đã đạt giới hạn tối đa (&e20.0%%&7)!" to {_p}
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            return false
+        set {_max_steps} to floor((20.0 - {_cur} + 0.0001) / 0.4)
+        if {_max_steps} < 1:
+            set {_max_steps} to 1
+        if {_apply} > {_max_steps}:
+            set {_apply} to {_max_steps}
+        remove {_apply} from {talent::%{_u}%::points}
+        add {_apply} to {talent::%{_u}%::spent}
+        set {talent::%{_u}%::dodge} to roundOneDecimal({_cur} + ({_apply} * 0.4))
+        if {talent::%{_u}%::dodge} > 20.0:
+            set {talent::%{_u}%::dodge} to 20.0
+        send "&a[Thiên Phú] &7Đã cộng &6+%{_apply}% điểm &7vào &aNé Tránh &7(&f%{talent::%{_u}%::dodge}%%%&7)." to {_p}
+
+    else if {_stat} is "crit_chance":
+        set {_cur} to getTalentBase({_p}, "crit_chance")
+        if {_cur} >= 30.0:
+            send "&c[Thiên Phú] &7Tỷ Lệ Chí Mạng cơ bản đã đạt giới hạn tối đa (&e30.0%%&7)!" to {_p}
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            return false
+        set {_max_steps} to floor((30.0 - {_cur} + 0.0001) / 0.5)
+        if {_max_steps} < 1:
+            set {_max_steps} to 1
+        if {_apply} > {_max_steps}:
+            set {_apply} to {_max_steps}
+        remove {_apply} from {talent::%{_u}%::points}
+        add {_apply} to {talent::%{_u}%::spent}
+        set {talent::%{_u}%::crit_chance} to roundOneDecimal({_cur} + ({_apply} * 0.5))
+        if {talent::%{_u}%::crit_chance} > 30.0:
+            set {talent::%{_u}%::crit_chance} to 30.0
+        send "&a[Thiên Phú] &7Đã cộng &6+%{_apply}% điểm &7vào &eTỷ Lệ Chí Mạng &7(&f%{talent::%{_u}%::crit_chance}%%%&7)." to {_p}
+
+    else if {_stat} is "crit_damage":
+        set {_cur} to getTalentBase({_p}, "crit_damage")
+        if {_cur} >= 190.0:
+            send "&c[Thiên Phú] &7Sát Thương Chí Mạng cơ bản đã đạt giới hạn tối đa (&e190.0%%&7)!" to {_p}
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            return false
+        set {_max_steps} to floor((190.0 - {_cur} + 0.0001) / 2.0)
+        if {_max_steps} < 1:
+            set {_max_steps} to 1
+        if {_apply} > {_max_steps}:
+            set {_apply} to {_max_steps}
+        remove {_apply} from {talent::%{_u}%::points}
+        add {_apply} to {talent::%{_u}%::spent}
+        set {talent::%{_u}%::crit_damage} to roundOneDecimal({_cur} + ({_apply} * 2.0))
+        if {talent::%{_u}%::crit_damage} > 190.0:
+            set {talent::%{_u}%::crit_damage} to 190.0
+        send "&a[Thiên Phú] &7Đã cộng &6+%{_apply}% điểm &7vào &cSát Thương Chí Mạng &7(&f%{talent::%{_u}%::crit_damage}%%%&7)." to {_p}
+
+    else if {_stat} is "accuracy":
+        set {_cur} to getTalentBase({_p}, "accuracy")
+        if {_cur} >= 30.0:
+            send "&c[Thiên Phú] &7Chính Xác cơ bản đã đạt giới hạn tối đa (&e+30.0%%&7)!" to {_p}
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            return false
+        set {_max_steps} to floor((30.0 - {_cur} + 0.0001) / 1.0)
+        if {_max_steps} < 1:
+            set {_max_steps} to 1
+        if {_apply} > {_max_steps}:
+            set {_apply} to {_max_steps}
+        remove {_apply} from {talent::%{_u}%::points}
+        add {_apply} to {talent::%{_u}%::spent}
+        set {talent::%{_u}%::accuracy} to roundOneDecimal({_cur} + ({_apply} * 1.0))
+        if {talent::%{_u}%::accuracy} > 30.0:
+            set {talent::%{_u}%::accuracy} to 30.0
+        send "&a[Thiên Phú] &7Đã cộng &6+%{_apply}% điểm &7vào &bChính Xác &7(&f+%{talent::%{_u}%::accuracy}%%%&7)." to {_p}
+
+    else:
+        return false
+
+    play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to {_p}
+    return true
+
+function resetTalentPoints(p: offline player) :: number:
+    initTalentData({_p})
+    set {_u} to uuid of {_p}
+    set {_refund} to {talent::%{_u}%::spent}
+    if {_refund} <= 0:
+        return 0
+    add {_refund} to {talent::%{_u}%::points}
+    set {talent::%{_u}%::spent} to 0
+    set {talent::%{_u}%::crit_chance} to 5.0
+    set {talent::%{_u}%::crit_damage} to 150.0
+    set {talent::%{_u}%::accuracy} to 0.0
+    set {talent::%{_u}%::dodge} to 0.0
+    if {_p} is online:
+        set {_online} to (name of {_p} parsed as player)
+        send "&a[Thiên Phú] &7Đã tẩy điểm thành công! Hoàn lại &6&l+%{_refund}% Điểm Thiên Phú&7." to {_online}
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to {_online}
+    return {_refund}
+
+function recalcPlayerMaxHealth(p: player):
+    if {_p} is not online:
+        stop
+    if {_p} is not alive:
+        stop
+    if health of {_p} <= 0:
+        stop
+    set {_u} to uuid of {_p}
+    # HP_Tổng = min(340, 20 + HP_Giáp + HP_AoV + HP_Trái/Võ + HP_Cờ + HP_Porata)
+    set {_set_hp} to ({set_bonus_hp::%{_u}%} ? (({set_bonus_hearts::%{_u}%} ? 0) * 2))
+    set {_aov_hp} to ({aov_bonus::%{_u}%::hp} ? 0.0)
+    set {_df_hp} to ({df_bonus::%{_u}%::hp} ? 0.0)
+    if {_df_hp} <= 0:
+        set {_df_hp} to ({martial_bonus::%{_u}%::hp} ? 0.0)
+    if {_df_hp} <= 0:
+        set {_f} to {df_data::%{_u}%::fruit}
+        set {_awk} to {df_data::%{_u}%::awakened} ? false
+        if {_f} is "mera" or "ope" or "pika" or "goro":
+            if {_awk} is true:
+                set {_df_hp} to 42.0
+            else:
+                set {_df_hp} to 32.0
+        else if {_f} is "gomu" or "gura":
+            if {_awk} is true:
+                set {_df_hp} to 56.0
+            else:
+                set {_df_hp} to 44.0
+        else if {_f} is "seiryu" or "phoenix":
+            if {_awk} is true:
+                set {_df_hp} to 60.0
+            else:
+                set {_df_hp} to 48.0
+        else:
+            # Fallback HP cho Vô Quả Giả (Lỗi 6)
+            set {_mStyleHp} to {martial_style::%{_u}%}
+            set {_mAwkHp} to {martial_awakened::%{_u}%} ? false
+            if {_mStyleHp} is "kiem_dao":
+                if {_mAwkHp} is true:
+                    set {_df_hp} to 54.0
+                else:
+                    set {_df_hp} to 42.0
+            else if {_mStyleHp} is "luc_thuc":
+                if {_mAwkHp} is true:
+                    set {_df_hp} to 56.0
+                else:
+                    set {_df_hp} to 44.0
+    set {_crew_hp} to 0.0
+    set {_isUuid} to getCrewIslandUUID({_p})
+    if hasCrewFlag({_isUuid}, "bat_tu_dieu") is true:
+        set {_crew_hp} to 20.0 # +20 HP từ Cờ Bất Tử Điểu
+    set {_porata_hp} to getPorataBonusHP({_p})
+    if {_porata_hp} <= 0:
+        set {_porata_hp} to (getPorataBonusHearts({_p}) * 2)
+
+    set {_total_hp} to 20.0 + {_set_hp} + {_aov_hp} + {_df_hp} + {_crew_hp} + {_porata_hp}
+    if {seiryu_hp_boost::%{_u}%} is true:
+        set {_total_hp} to {_total_hp} * 2.0
+        if {_total_hp} > 680.0:
+            set {_total_hp} to 680.0
+    else:
+        if {_total_hp} > 340.0:
+            set {_total_hp} to 340.0
+    if {_total_hp} < 20.0:
+        set {_total_hp} to 20.0
+
+    # Skript tính theo đơn vị Tim = HP / 2
+    set {_total_hearts} to {_total_hp} / 2
+    if max health of {_p} is not {_total_hearts}:
+        set max health of {_p} to {_total_hearts}
+
+    # Khóa giao diện tim Client 1.12.2: Luôn hiển thị gọn đúng 2 hàng tim (20 tim)
+    {_p}.setHealthScaled(true)
+    {_p}.setHealthScale(40.0)
+    updatePlayerNametagHP({_p})
+
+function getPlayerTotalDEF(p: player) :: number:
+    set {_u} to uuid of {_p}
+    set {_def} to 0.0
+    add ({set_bonus_def::%{_u}%} ? 0.0) to {_def}
+    add ({aov_bonus::%{_u}%::def} ? 0.0) to {_def}
+    add ({df_bonus::%{_u}%::def} ? 0.0) to {_def}
+    add ({martial_bonus::%{_u}%::def} ? 0.0) to {_def}
+    add ({haki_bonus::%{_u}%::def} ? 0.0) to {_def}
+
+    # Meito Shusui (+20 DEF khi cầm trên tay)
+    if {_p}.isOnline() is true:
+        set {_activeMeito} to getPlayerActiveMeito({_p})
+        if isValidItem({_activeMeito}) is true:
+            set {_mKey} to string tag "SigWeaponId" of nbt compound of {_activeMeito}
+            if {_mKey} is "shusui":
+                add 20.0 to {_def}
+
+    # Bổ sung DEF Nội Tại Trái Ác Quỷ / Võ Học (Lỗi 6)
+    set {_dfFruit} to {df_data::%{_u}%::fruit}
+    set {_dfAwk} to {df_data::%{_u}%::awakened} ? false
+    if {_dfFruit} is "mera" or "pika" or "goro":
+        if {_dfAwk} is true:
+            add 50.0 to {_def}
+        else:
+            add 35.0 to {_def}
+    else if {_dfFruit} is "ope":
+        if {_dfAwk} is true:
+            add 55.0 to {_def}
+        else:
+            add 40.0 to {_def}
+    else if {_dfFruit} is "gomu" or "gura":
+        if {_dfAwk} is true:
+            add 85.0 to {_def}
+        else:
+            add 65.0 to {_def}
+        if {df_boundman::%{_u}%} is true:
+            add 40.0 to {_def}
+    else if {_dfFruit} is "seiryu" or "phoenix":
+        if {_dfAwk} is true:
+            add 115.0 to {_def}
+        else:
+            add 90.0 to {_def}
+    else:
+        # Vô Quả Giả
+        set {_mStyle} to {martial_style::%{_u}%}
+        set {_mAwk} to {martial_awakened::%{_u}%} ? false
+        if {_mStyle} is "kiem_dao":
+            if {_mAwk} is true:
+                add 80.0 to {_def}
+            else:
+                add 60.0 to {_def}
+        else if {_mStyle} is "luc_thuc":
+            if {_mAwk} is true:
+                add 90.0 to {_def}
+            else:
+                add 70.0 to {_def}
+
+    # Lục Thức Hải Quân: Tekkai (+80 DEF khi đang kích hoạt)
+    if {tekkai_active::%{_u}%} is true:
+        add 80.0 to {_def}
+
+    # Cờ Bất Tử Điểu (+20 DEF)
+    set {_isUuid} to getCrewIslandUUID({_p})
+    if hasCrewFlag({_isUuid}, "bat_tu_dieu") is true:
+        add 20.0 to {_def}
+
+    # Rumble Ball Zoan (+40 DEF)
+    if {rumble_ball_def::%{_u}%} is set:
+        if System.currentTimeMillis() < {rumble_ball_def::%{_u}%}:
+            add 40.0 to {_def}
+
+    # Đệ tử Porata Hợp Thể DEF
+    if {disciple::%{_u}%::mode} is "fusion":
+        add ({porata_bonus_def::%{_u}%} ? getPorataBonusDEF({_p})) to {_def}
+
+    # Hiệu ứng Shred DEF
+    if {murakumogiri_shred::%{_u}%} is set:
+        if System.currentTimeMillis() < {murakumogiri_shred::%{_u}%}:
+            set {_def} to {_def} * 0.85
+    if {gura_channut::%{_u}%} is set:
+        if System.currentTimeMillis() < {gura_channut::%{_u}%}:
+            set {_def} to {_def} * 0.85
+    if {gomu_def_shred::%{_u}%} is set:
+        if System.currentTimeMillis() < {gomu_def_shred::%{_u}%}:
+            set {_def} to {_def} * 0.85
+    if {hao_def_shred::%{_u}%} is set:
+        if System.currentTimeMillis() < {hao_def_shred::%{_u}%}:
+            set {_def} to {_def} * 0.80
+
+    if {_def} < 0.0:
+        set {_def} to 0.0
+    return roundOneDecimal({_def})
+
+function calculateEffectiveDamage(rawDmg: number, penPct: number, victimDef: number) :: number:
+    set {_effPen} to {_penPct}
+    if {_effPen} > 100.0:
+        set {_effPen} to 100.0
+    if {_effPen} < 0.0:
+        set {_effPen} to 0.0
+    set {_effDef} to {_victimDef} * (1 - ({_effPen} / 100))
+    if {_effDef} < 0.0:
+        set {_effDef} to 0.0
+    set {_dr} to {_effDef} / ({_effDef} + 100.0)
+    set {_finalDmg} to {_rawDmg} * (1 - {_dr})
+    if {_finalDmg} < 0.0:
+        set {_finalDmg} to 0.0
+    return {_finalDmg}
+
+function createResetScroll() :: item:
+    set {_item} to makeCustomRPItem("talent_reset", "&6&l✦ &e&lQuả Cầu Tẩy Điểm Thiên Phú &6&l✦", ("&8&m------------------------------" and "&7Loại: &eBảo Vật Thần Bí &8(Tiêu Hao)" and "&7Công dụng: &fTẩy toàn bộ &d4 chỉ số Thiên Phú" and "&fvề mặc định và hoàn trả &6100%% Điểm&f." and "" and "&e▶ Chuột Phải để hấp thu sức mạnh!" and "&8&m------------------------------"))
+    set string tag "SkyblockItem" of nbt compound of {_item} to "talent_reset"
+    return {_item}
+
+on join:
+    initTalentData(player)
+    wait 5 ticks
+    if player is online:
+        if player is alive:
+            recalcPlayerMaxHealth(player)
+
+on death of player:
+    set {_u} to uuid of victim
+    delete {aov_revive_pending::%{_u}%}
+    delete {last_combat::%{_u}%}
+    delete {df_goro_dodge::%{_u}%}
+    delete {df_goro_dodge_until::%{_u}%}
+    delete {df_goro_dodge_seq::%{_u}%}
+    delete {ope_room_buff_until::%{_u}%}
+    delete {ope_room_seq::%{_u}%}
+    delete {seiryu_hp_boost::%{_u}%}
+    delete {mera_curse_until::%{_u}%}
+    delete {mera_dmg_reduction_until::%{_u}%}
+    # Xóa hiệu ứng hồi phục và hấp thụ để chống lag tick hồi HP trên màn hình chết
+    remove regeneration from victim
+    remove absorption from victim
+
+on respawn:
+    set {_u} to uuid of player
+    delete {aov_revive_pending::%{_u}%}
+    wait 2 ticks
+    if player is online:
+        if player is alive:
+            recalcPlayerMaxHealth(player)
+
+# Lệnh quản trị Thiên Phú (dùng cho GUI, Nhiệm Vụ Đảo & CoinShop)
+command /talentadmin <text> <offline player> [<text>] [<number>]:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        initTalentData(arg-2)
+        set {_u} to uuid of arg-2
+
+        if arg-1 is "upgrade":
+            if arg-2 is not online:
+                send "&cNgười chơi phải online để nâng cấp trực tiếp!" to sender
+                stop
+            set {_target} to (name of arg-2 parsed as player)
+            if arg-3 is not set:
+                send "&cThiếu tên thuộc tính (crit_chance/crit_damage/accuracy/dodge)." to sender
+                stop
+            set {_amt} to 1
+            if arg-4 is set:
+                set {_amt} to floor(arg-4)
+            upgradeTalentStat({_target}, arg-3, {_amt})
+
+        else if arg-1 is "addpoints":
+            set {_pts} to 1
+            if arg-4 is set:
+                set {_pts} to round(arg-4)
+            else if arg-3 is set:
+                set {_parsed} to arg-3 parsed as number
+                if {_parsed} is set:
+                    set {_pts} to round({_parsed})
+            add {_pts} to {talent::%{_u}%::points}
+            if arg-2 is online:
+                set {_target} to (name of arg-2 parsed as player)
+                send "&e[Thiên Phú] &7Bạn vừa nhận được &6+%{_pts}% Điểm Thiên Phú&7!" to {_target}
+                play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.3 to {_target}
+
+        else if arg-1 is "setpoints":
+            set {_pts} to 0
+            if arg-4 is set:
+                set {_pts} to round(arg-4)
+            else if arg-3 is set:
+                set {_parsed} to arg-3 parsed as number
+                if {_parsed} is set:
+                    set {_pts} to round({_parsed})
+            if {_pts} < 0:
+                set {_pts} to 0
+            set {talent::%{_u}%::points} to {_pts}
+            send "&a[TalentAdmin] &7Đã đặt điểm Thiên Phú của &e%name of arg-2% &7thành &6%{_pts}%&7." to sender
+
+        else if arg-1 is "reset":
+            set {_refunded} to resetTalentPoints(arg-2)
+            if {_refunded} <= 0:
+                send "&e[TalentAdmin] &7Người chơi &f%name of arg-2% &7chưa cộng điểm Thiên Phú nào." to sender
+            else:
+                send "&a[TalentAdmin] &7Đã tẩy điểm cho &e%name of arg-2% &7(hoàn &6%{_refunded}% điểm&7)." to sender
+
+        else if arg-1 is "givereset":
+            if arg-2 is not online:
+                send "&cNgười chơi phải online để nhận Bùa Tẩy Điểm!" to sender
+                stop
+            set {_target} to (name of arg-2 parsed as player)
+            set {_amt} to 1
+            if arg-4 is set:
+                set {_amt} to floor(arg-4)
+            else if arg-3 is set:
+                set {_parsed} to arg-3 parsed as number
+                if {_parsed} is set:
+                    set {_amt} to floor({_parsed})
+            if {_amt} < 1:
+                set {_amt} to 1
+            set {_scroll} to createResetScroll()
+            loop {_amt} times:
+                if {_target} can hold {_scroll}:
+                    give {_scroll} to {_target}
+                else:
+                    drop {_scroll} at location of {_target}
+            send "&a[Thiên Phú] &7Bạn đã nhận được &6%{_amt}%x Bùa Tẩy Điểm Thiên Phú&7!" to {_target}
+            play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to {_target}
+
+        else if arg-1 is "info":
+            set {_cc} to getTalentTotal(arg-2, "crit_chance")
+            set {_cd} to getTalentTotal(arg-2, "crit_damage")
+            set {_acc} to getTalentTotal(arg-2, "accuracy")
+            set {_dod} to getTalentTotal(arg-2, "dodge")
+            send "&8&m------------------------" to sender
+            send "&e&lTHÔNG TIN THIÊN PHÚ: &f%name of arg-2%" to sender
+            send "&7Điểm chưa cộng: &6%{talent::%{_u}%::points}% &8| &7Đã cộng: &e%{talent::%{_u}%::spent}%" to sender
+            send "&c⚔ Chí Mạng: &f%{_cc}%%% &8(Gốc: %getTalentBase(arg-2, "crit_chance")%%%)" to sender
+            send "&4⚔ Sát Thương CM: &f%{_cd}%%% &8(Gốc: %getTalentBase(arg-2, "crit_damage")%%%)" to sender
+            send "&b❖ Chính Xác (ACC): &f+%{_acc}%%% &8(Gốc: +%getTalentBase(arg-2, "accuracy")%%% | Trừ Né mục tiêu)" to sender
+            send "&a✦ Né Tránh (DODGE): &f%{_dod}%%% &8(Gốc: %getTalentBase(arg-2, "dodge")%%%)" to sender
+            send "&7▸ Cơ chế: &fNé thực chiến = max(0, Né bản thân - CX địch) [Không giới hạn trần]" to sender
+            send "&8&m------------------------" to sender
+
+        else:
+            send "&cCú pháp: /talentadmin <upgrade|addpoints|setpoints|reset|givereset|info> <player> [stat] [amount]" to sender
+
+# Sử dụng Quả Cầu / Bùa Tẩy Điểm Thiên Phú bằng chuột phải
+on rightclick:
+    set {_tool} to player's tool
+    if {_tool} is not set:
+        stop
+    if {_tool} is air:
+        stop
+    if type of {_tool} is air:
+        stop
+    set {_nbt} to nbt compound of {_tool}
+    set {_tag} to string tag "SkyblockItem" of {_nbt}
+    if {_tag} is "talent_reset":
+        cancel event
+        initTalentData(player)
+        set {_u} to uuid of player
+        if {talent::%{_u}%::spent} <= 0:
+            sendSystemMsg(player, "error", "Bạn chưa cộng điểm Thiên Phú nào nên không cần dùng bùa tẩy điểm!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+        remove 1 of player's tool from player's tool
+        resetTalentPoints(player)
+        set {_loc} to location of player
+        add 1 to y-coordinate of {_loc}
+        spawnVisualParticle("END_ROD", {_loc}, 20, 0.4, 0.6, 0.4, 0.08)
+        spawnVisualParticle("FIREWORKS_SPARK", {_loc}, 15, 0.3, 0.4, 0.3, 0.05)
+
+# Công thức Chiến đấu: Chính Xác vs Né Tránh & Chí Mạng & Trang Bị Liên Quân
+on damage:
+    if {skill_exact_dmg::%uuid of victim%} is set:
+        stop
+    victim is a living entity
+    damage > 0
+    attacker is set
+
+    # Triệt tiêu giáp ẩn của Minecraft Vanilla & Protection (Section 3.2)
+    if victim is a player:
+        event.setDamage(DamageModifier.ARMOR, 0)
+        event.setDamage(DamageModifier.MAGIC, 0)
+
+    # 1. Kiểm tra Né Tránh (Áp dụng cho Player khi bị người chơi khác hoặc quái vật tấn công)
+    if victim is a player:
+        set {_vic_dodge} to getTalentTotal(victim, "dodge")
+        set {_att_acc} to 0
+        if attacker is a player:
+            set {_att_acc} to getTalentTotal(attacker, "accuracy")
+        set {_total_dodge} to {_vic_dodge} - {_att_acc}
+        # Bỏ trần giới hạn né 70% (tối đa theo xác suất 100%)
+        if {_total_dodge} > 100:
+            set {_total_dodge} to 100
+        if {_total_dodge} > 0:
+            set {_roll_dodge} to random number between 0 and 100
+            if {_roll_dodge} <= {_total_dodge}:
+                cancel event
+                setDamageVisualTag(victim, "dodge")
+                send action bar "&b&l✦ NÉ TRÁNH!" to victim
+                play sound "ENTITY_ENDERDRAGON_FLAP" with volume 1 and pitch 1.8 to victim
+                set {_vloc} to location of victim
+                add 1 to y-coordinate of {_vloc}
+                spawnVisualParticle("CLOUD", {_vloc}, 15, 0.4, 0.5, 0.4, 0.05)
+                spawnVisualParticle("SMOKE_NORMAL", {_vloc}, 10, 0.3, 0.4, 0.3, 0.02)
+                if attacker is a player:
+                    send action bar "&7&o* Đối phương đã né được đòn đánh! *" to attacker
+                    play sound "ENTITY_ENDERDRAGON_FLAP" with volume 1 and pitch 1.8 to attacker
+
+                # Haki Quan Sát né đòn: Phản công quan sát (né thành công hồi ngay 5 Bá Khí và +15% ST trong 3s)
+                set {_vic_u} to uuid of victim
+                if {haki_active::%{_vic_u}%::ken} is true:
+                    add 5 to {haki_energy::%{_vic_u}%}
+                    if {haki_energy::%{_vic_u}%} > {haki_max_energy::%{_vic_u}%}:
+                        set {haki_energy::%{_vic_u}%} to {haki_max_energy::%{_vic_u}%}
+                    set {ken_counter_buff::%{_vic_u}%} to (System.currentTimeMillis() + 3000)
+                    addHakiExp(victim, 10)
+                stop
+
+    # 2. Xử lý sát thương từ Attacker (Nếu là Player có Trang Bị Liên Quân & Sát Thương RPG)
+    if attacker is a player:
+        set {_att_u} to uuid of attacker
+        set {last_combat::%{_att_u}%} to now
+
+        # Haki Vũ Trang đánh trúng: Tiêu hao 1.5 * cost_mult Bá Khí & +4 EXP
+        if {haki_active::%{_att_u}%::buso} is true:
+            setDamageVisualTag(victim, "haki")
+            set {_costMult} to getHakiCostMult(attacker)
+            set {_drain} to 1.5 * {_costMult}
+            subtract {_drain} from {haki_energy::%{_att_u}%}
+            addHakiExp(attacker, 4)
+            if {haki_energy::%{_att_u}%} <= 0:
+                triggerHakiExhaustion(attacker)
+
+        # Tính ATK cơ bản: ATK_VũKhí + ATK_AoV + ATK_Buso + ATK_Porata + ATK_Cờ + Goro Flat ATK
+        set {_weaponAtk} to getMeitoBaseAtk(attacker)
+        if {_weaponAtk} <= 0:
+            set {_weaponAtk} to damage * 2
+            if {_weaponAtk} < 1.0:
+                set {_weaponAtk} to 1.0
+        set {_aovAtk} to ({aov_bonus::%{_att_u}%::damage} ? 0.0)
+        set {_busoAtk} to ({haki_bonus::%{_att_u}%::flat_damage} ? 0.0)
+        set {_porataAtk} to getPorataBonusATK(attacker)
+        set {_flagAtk} to 0.0
+        set {_attCrew} to getCrewIslandUUID(attacker)
+        if hasCrewFlag({_attCrew}, "hoa_long") is true:
+            set {_flagAtk} to 4.0
+
+        set {_df_mast} to ({df_data::%{_att_u}%::mastery} ? 0)
+        set {_mar_mast} to ({martial_mastery::%{_att_u}%} ? 0)
+        set {_masteryAtk} to 0.0
+        set {_canMastery} to false
+        if isValidItem(attacker's tool) is true:
+            set {_canMastery} to true
+        else if isValidItem(getPlayerActiveMeito(attacker)) is true:
+            set {_canMastery} to true
+        else if {df_data::%{_att_u}%::fruit} is "gomu":
+            set {_canMastery} to true
+        else if {martial_style::%{_att_u}%} is "luc_thuc":
+            set {_canMastery} to true
+
+        if {_canMastery} is true:
+            set {_masteryAtk} to round(({_df_mast} + {_mar_mast}) * 0.1)
+            if {_masteryAtk} > 15.0:
+                set {_masteryAtk} to 15.0
+
+        # Goro On-Hit Flat ATK (+3.0 ATK bình thường, +6.0 ATK khi đang bật Amaru)
+        set {_goroFlatAtk} to 0.0
+        if {df_data::%{_att_u}%::fruit} is "goro":
+            set {_goroAmaru} to {goro_amaru_until::%{_att_u}%} ? 0
+            if System.currentTimeMillis() < {_goroAmaru}:
+                set {_goroFlatAtk} to 6.0
+            else:
+                set {_goroFlatAtk} to 3.0
+
+        set {_baseAtk} to {_weaponAtk} + {_aovAtk} + {_busoAtk} + {_porataAtk} + {_flagAtk} + {_masteryAtk} + {_goroFlatAtk}
+
+        # Quy tắc Cộng Gộp (% Bonus đại số)
+        set {_sumBonusPct} to 0.0
+        # Thức tỉnh Trái/Võ (+25%)
+        if {df_data::%{_att_u}%::awakened} is true:
+            add 25.0 to {_sumBonusPct}
+        else if {martial_awakened::%{_att_u}%} is true:
+            add 25.0 to {_sumBonusPct}
+        # Bách Khoa Toàn Thư Trái Ác Quỷ (Pokedex, tối đa +12%)
+        add ({pokedex_bonus::%{_att_u}%} ? 0.0) to {_sumBonusPct}
+        # Rumble Ball (+15%)
+        if {rumble_ball_active::%{_att_u}%} is true:
+            add 15.0 to {_sumBonusPct}
+        # Nanh Fenrir: Địch < 50% HP (+22%)
+        if {aov_bonus::%{_att_u}%::has_fenrir} is true:
+            if health of victim < ((max health of victim) / 2):
+                add 22.0 to {_sumBonusPct}
+                send action bar "&c&l✦ NANH FENRIR: CHINH PHẠT! (+22%% Sát Thương) ✦" to attacker
+                spawnVisualParticle("CRIT_MAGIC", location of victim, 8, 0.3, 0.4, 0.3, 0.08)
+        # Vô Quả Giả dưới nước/mưa (+20%)
+        set {_att_is_no_df} to false
+        if {df_data::%{_att_u}%::fruit} is not set:
+            set {_att_is_no_df} to true
+        else if {df_data::%{_att_u}%::fruit} is "none" or "":
+            set {_att_is_no_df} to true
+        if {_att_is_no_df} is true:
+            if {df_water_buff::%{_att_u}%} is true:
+                add 20.0 to {_sumBonusPct}
+            else if block at attacker is water or stationary water:
+                add 20.0 to {_sumBonusPct}
+        # Phản công Kenbunshoku (+15% trong 3s)
+        if {ken_counter_buff::%{_att_u}%} is set:
+            if System.currentTimeMillis() < {ken_counter_buff::%{_att_u}%}:
+                add 15.0 to {_sumBonusPct}
+                delete {ken_counter_buff::%{_att_u}%}
+        # Lôi Thần Amaru (+18%)
+        if {goro_amaru_until::%{_att_u}%} is set:
+            if System.currentTimeMillis() < {goro_amaru_until::%{_att_u}%}:
+                add 18.0 to {_sumBonusPct}
+        # Gear 4/5 (+30% VL)
+        if {df_boundman::%{_att_u}%} is true:
+            add 30.0 to {_sumBonusPct}
+        # Gryphon + Haki Bá Vương (+25%)
+        if {haki_active::%{_att_u}%::hao} is true:
+            set {_activeMeitoAtt} to getPlayerActiveMeito(attacker)
+            if isValidItem({_activeMeitoAtt}) is true:
+                if string tag "SigWeaponId" of nbt compound of {_activeMeitoAtt} is "gryphon":
+                    add 25.0 to {_sumBonusPct}
+        # Bisento + Gura (+15%)
+        if {df_data::%{_att_u}%::fruit} is "gura":
+            set {_activeMeitoAtt} to getPlayerActiveMeito(attacker)
+            if isValidItem({_activeMeitoAtt}) is true:
+                if string tag "SigWeaponId" of nbt compound of {_activeMeitoAtt} is "bisento":
+                    add 15.0 to {_sumBonusPct}
+        # Ame no Habakiri (+20% vs Boss & Zoan)
+        set {_activeMeitoAtt} to getPlayerActiveMeito(attacker)
+        if isValidItem({_activeMeitoAtt}) is true:
+            if string tag "SigWeaponId" of nbt compound of {_activeMeitoAtt} is "ame_no_habakiri":
+                if victim is not a player:
+                    add 20.0 to {_sumBonusPct}
+                else:
+                    set {_vicF} to {df_data::%uuid of victim%::fruit}
+                    if {_vicF} is "seiryu" or "phoenix":
+                        add 20.0 to {_sumBonusPct}
+        # CDR vượt trần 40% chuyển hóa sang sát thương
+        add ({aov_bonus::%{_att_u}%::cdr_overflow} ? 0.0) to {_sumBonusPct}
+
+        # Xuyên giáp (Trần giới hạn 55%, chỉ duy nhất Nội tại ROOM Chiêu 1 Trái Ope được phép vượt trần)
+        set {_pen} to ({aov_bonus::%{_att_u}%::armor_pen} ? 0.0) + ({haki_bonus::%{_att_u}%::armor_pen} ? 0.0) + getMeitoArmorPen(attacker)
+        if {_pen} > 55.0:
+            set {_pen} to 55.0
+        # Nội tại Chiêu 1 Ope (ROOM): Duy nhất được phép phá vỡ giới hạn trần 55% (+35% Xuyên Giáp)
+        if {ope_room_buff_until::%{_att_u}%} is set:
+            if System.currentTimeMillis() < {ope_room_buff_until::%{_att_u}%}:
+                add 35.0 to {_pen}
+            else:
+                delete {ope_room_buff_until::%{_att_u}%}
+                delete {ope_room_seq::%{_att_u}%}
+        if {_pen} > 100.0:
+            set {_pen} to 100.0
+
+        # Kiểm tra Chí Mạng Vật Lý (Trần x1.95, mở trần x2.10 nếu Enma hoặc Kiếm Đạo)
+        set {_crit_chance} to getTalentTotal(attacker, "crit_chance")
+        set {_is_crit} to false
+        set {_crit_mult} to 1.0
+        if {_crit_chance} > 0:
+            set {_roll_crit} to random number between 0 and 100
+            if {_roll_crit} <= {_crit_chance}:
+                set {_is_crit} to true
+                setDamageVisualTag(victim, "crit")
+                set {_crit_mult} to 1.40 + ((getTalentTotal(attacker, "crit_damage") - 150.0) / 100)
+                # Enma hoặc Kiếm Đạo mở trần x2.10
+                set {_maxCrit} to 1.95
+                if {martial_style::%{_att_u}%} is "kiem_dao":
+                    set {_maxCrit} to 2.10
+                else:
+                    set {_activeMeitoAtt} to getPlayerActiveMeito(attacker)
+                    if isValidItem({_activeMeitoAtt}) is true:
+                        if string tag "SigWeaponId" of nbt compound of {_activeMeitoAtt} is "enma":
+                            set {_maxCrit} to 2.10
+                if {_crit_mult} > {_maxCrit}:
+                    set {_crit_mult} to {_maxCrit}
+
+                play sound "ENTITY_PLAYER_ATTACK_CRIT" with volume 1 and pitch 0.8 to attacker
+                set {_vloc} to location of victim
+                add 1 to y-coordinate of {_vloc}
+                spawnVisualParticle("CRIT_MAGIC", {_vloc}, 20, 0.5, 0.5, 0.5, 0.1)
+                spawnVisualParticle("FLAME", {_vloc}, 12, 0.3, 0.4, 0.3, 0.05)
+
+                # Song Đao Bão Táp: Crit nhận Speed II + Haste II trong 2s
+                if {aov_bonus::%{_att_u}%::has_songdao} is true:
+                    apply haste 2 to attacker for 2 seconds
+                    apply speed 2 to attacker for 2 seconds
+
+                # Murakumogiri: Đòn Crit trừ 15% DEF địch trong 4s
+                set {_activeMeitoAtt} to getPlayerActiveMeito(attacker)
+                if isValidItem({_activeMeitoAtt}) is true:
+                    if string tag "SigWeaponId" of nbt compound of {_activeMeitoAtt} is "murakumogiri":
+                        set {murakumogiri_shred::%uuid of victim%} to (System.currentTimeMillis() + 4000)
+
+        # Tính DR_Thực & Sát Thương Sau Giáp
+        set {_vicDef} to 0.0
+        if victim is a player:
+            set {_vicDef} to getPlayerTotalDEF(victim)
+        else if {dummy_type::%uuid of victim%} is set:
+            set {_dType} to {dummy_type::%uuid of victim%}
+            if {_dType} is "boss":
+                set {_vicDef} to 150.0
+        else:
+            set {_wName} to uncolored name of victim
+            if {_wName} contains "Akainu":
+                set {_vicDef} to 140.0
+            else if {_wName} contains "Aokiji":
+                set {_vicDef} to 120.0
+            else if {_wName} contains "Vua Biển":
+                set {_vicDef} to 160.0
+
+        set {_rawPhys} to {_baseAtk} * (1 + ({_sumBonusPct} / 100)) * {_crit_mult}
+        set {_finalPhysDmg} to calculateEffectiveDamage({_rawPhys}, {_pen}, {_vicDef})
+        # Miễn thương từ Trái Mera (Hỏa Thần: 40% Miễn Thương trong 10s)
+        if victim is a player:
+            set {_vic_u_mera} to uuid of victim
+            if {mera_dmg_reduction_until::%{_vic_u_mera}%} is set:
+                if System.currentTimeMillis() < {mera_dmg_reduction_until::%{_vic_u_mera}%}:
+                    set {_finalPhysDmg} to {_finalPhysDmg} * 0.60
+                else:
+                    delete {mera_dmg_reduction_until::%{_vic_u_mera}%}
+        # Skript tính damage theo đơn vị Hearts (1 Tim = 2 HP)
+        set damage to ({_finalPhysDmg} / 2)
+
+        # Hút máu vật lý (Quỷ Kiếm: 18% trên ST thực gây ra)
+        set {_ls} to ({aov_bonus::%{_att_u}%::lifesteal} ? 0.0)
+        if {_ls} > 0:
+            if attacker is alive:
+                if health of attacker > 0:
+                    set {_can_ls} to true
+                    if {mera_curse_until::%{_att_u}%} is set:
+                        if System.currentTimeMillis() < {mera_curse_until::%{_att_u}%}:
+                            set {_can_ls} to false
+                        else:
+                            delete {mera_curse_until::%{_att_u}%}
+                    if {_can_ls} is true:
+                        set {_heal_amt} to damage * ({_ls} / 100)
+                        if {aov_bonus::%{_att_u}%::has_truongsinh} is true:
+                            set {_heal_amt} to {_heal_amt} * 1.12
+                        heal attacker by {_heal_amt}
+                        spawnVisualParticle("HEART", location of attacker, 4, 0.3, 0.4, 0.3, 0.05)
+
+    # 3. Xử lý phòng thủ từ Victim (Nếu là Player có Trang Bị Liên Quân)
+    if victim is a player:
+        set {_vic_u} to uuid of victim
+        set {last_combat::%{_vic_u}%} to now
+
+        # Lục Thức Hải Quân - Tekkai Kempo: Phản đòn 35% sát thương khi đang gồng Thiết Khối
+        if {tekkai_active::%{_vic_u}%} is true:
+            if attacker is a living entity:
+                set {_tek_refl} to damage * 0.35
+                damage attacker by {_tek_refl}
+                set {_taloc} to location of attacker
+                add 1 to y-coordinate of {_taloc}
+                spawnVisualParticle("CRIT_MAGIC", {_taloc}, 10, 0.3, 0.4, 0.3, 0.08)
+                play sound "BLOCK_ANVIL_PLACE" with volume 0.8 and pitch 1.5 to attacker
+                send action bar "&8&l✦ THIẾT KHỐI: PHẢN ĐÒN 35%% SÁT THƯƠNG! ✦" to victim
+
+        # Giáp Thống Khổ: Phản lại 12% sát thương thô trước giáp cho kẻ tấn công cận chiến
+        if {aov_bonus::%{_vic_u}%::has_thongkho} is true:
+            if attacker is a living entity:
+                set {_refl} to ({_rawPhys} ? (damage * 2)) * 0.12 / 2
+                if {_refl} > 0:
+                    damage attacker by {_refl}
+                set {_aloc2} to location of attacker
+                add 1 to y-coordinate of {_aloc2}
+                spawnVisualParticle("CRIT_MAGIC", {_aloc2}, 8, 0.3, 0.4, 0.3, 0.05)
+                play sound "BLOCK_ANVIL_LAND" with volume 0.7 and pitch 1.8 to attacker
+
+        # Khiên Thất Truyền: Kẻ tấn công bị dính Mining Fatigue II & Slowness I trong 3s
+        if {aov_bonus::%{_vic_u}%::has_thatruyen} is true:
+            if attacker is a living entity:
+                apply mining fatigue 2 to attacker for 3 seconds
+                apply slowness 1 to attacker for 3 seconds
+                if attacker is a player:
+                    send action bar "&8&l✦ KHIÊN THẤT TRUYỀN: TRÓI BUỘC! ✦" to attacker
+
+        # Giáp Gaia: Hồi phục 8% Máu tối đa khi chịu đòn (trần 25 HP, Cooldown 12s - Chỉ hồi khi không nhận đòn chí tử)
+        if {aov_bonus::%{_vic_u}%::has_gaia} is true:
+            if damage < (health of victim):
+                set {_can_gaia} to true
+                if {mera_curse_until::%{_vic_u}%} is set:
+                    if System.currentTimeMillis() < {mera_curse_until::%{_vic_u}%}:
+                        set {_can_gaia} to false
+                    else:
+                        delete {mera_curse_until::%{_vic_u}%}
+                if {aov_cd::%{_vic_u}%::gaia} is set:
+                    if difference between {aov_cd::%{_vic_u}%::gaia} and now < 12 seconds:
+                        set {_can_gaia} to false
+                if {_can_gaia} is true:
+                    set {aov_cd::%{_vic_u}%::gaia} to now
+                    set {aov_cd_ms::%{_vic_u}%::gaia} to System.currentTimeMillis()
+                    set {_g_heal} to (max health of victim) * 0.08
+                    if {_g_heal} > 12.5: # 12.5 hearts = 25 HP
+                        set {_g_heal} to 12.5
+                    if {aov_bonus::%{_vic_u}%::has_truongsinh} is true:
+                        set {_g_heal} to {_g_heal} * 1.12
+                    heal victim by {_g_heal}
+                    set {_vloc3} to location of victim
+                    add 1 to y-coordinate of {_vloc3}
+                    spawnVisualParticle("VILLAGER_HAPPY", {_vloc3}, 12, 0.4, 0.5, 0.4, 0.05)
+                    send action bar "&a&l✦ GIÁP GAIA: HỒI PHỤC (+8%% Máu)! ✦" to victim
+                    play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.4 to victim
+
+        # Giáp Hộ Mệnh: Phục Sinh khi nhận sát thương chí tử (Cooldown 150s, có Cờ Bất Tử Điểu còn 130s)
+        if {aov_bonus::%{_vic_u}%::has_homenh} is true:
+            if damage >= (health of victim):
+                set {_can_homenh} to true
+                set {_hm_cd_s} to 150
+                set {_vicCrew} to getCrewIslandUUID(victim)
+                if hasCrewFlag({_vicCrew}, "bat_tu_dieu") is true:
+                    set {_hm_cd_s} to 130
+                if {aov_cd::%{_vic_u}%::homenh} is set:
+                    if difference between {aov_cd::%{_vic_u}%::homenh} and now < ("%{_hm_cd_s}% seconds" parsed as timespan):
+                        set {_can_homenh} to false
+                if {_can_homenh} is true:
+                    set {aov_cd::%{_vic_u}%::homenh} to now
+                    set {aov_cd_ms::%{_vic_u}%::homenh} to System.currentTimeMillis()
+                    cancel event
+                    # Phục sinh an toàn: Hồi ngay 40% Máu tối đa, xóa hiệu ứng xấu, bất tử 2s
+                    set {_heal_res} to (max health of victim) * 0.40
+                    if {aov_bonus::%{_vic_u}%::has_truongsinh} is true:
+                        set {_heal_res} to {_heal_res} * 1.2
+                    set health of victim to {_heal_res}
+                    extinguish victim
+                    remove poison from victim
+                    remove wither from victim
+                    apply resistance 5 to victim for 2 seconds
+                    apply glowing to victim for 2 seconds
+                    set {_vloc4} to location of victim
+                    add 1 to y-coordinate of {_vloc4}
+                    spawnVisualParticle("TOTEM", {_vloc4}, 40, 0.5, 0.8, 0.5, 0.1)
+                    play sound "ITEM_TOTEM_USE" with volume 1 and pitch 1 to victim
+                    send action bar "&6&l✦ GIÁP HỘ MỆNH: PHỤC SINH! (Hồi 40%% Máu & Bất tử 2s) ✦" to victim
+                    delete {aov_revive_pending::%{_vic_u}%}
+                    stop
+
+    # 4. Xử lý Bù Nhìn Thử Sát Thương (Combat Dummy)
+    if victim is not a player:
+        set {_vic_u} to uuid of victim
+        if {dummy_type::%{_vic_u}%} is set:
+            if attacker is a player:
+                set {_d_type} to {dummy_type::%{_vic_u}%}
+                set {_has_pen} to false
+
+                # Logia Dummy: Miễn nhiễm nếu không bật Haki Vũ Trang, né 38% (trừ Chính xác)
+                if {_d_type} is "logia":
+                    if {haki_active::%{_att_u}%::buso} is not true:
+                        cancel event
+                        setDamageVisualTag(victim, "logia")
+                        send action bar "&b&l✦ BÙ NHÌN LOGIA: Vô hiệu hóa đòn đánh! &7(Cần bật Haki Vũ Trang)" to attacker
+                        play sound "ENTITY_ITEM_BREAK" with volume 1 and pitch 1.2 to attacker
+                        stop
+                    set {_att_acc} to getTalentTotal(attacker, "accuracy")
+                    set {_eff_dodge} to 38 - {_att_acc}
+                    if {_eff_dodge} > 70:
+                        set {_eff_dodge} to 70
+                    if {_eff_dodge} > 0:
+                        set {_r_dodge} to random number between 0 and 100
+                        if {_r_dodge} <= {_eff_dodge}:
+                            cancel event
+                            setDamageVisualTag(victim, "dodge")
+                            send action bar "&f&l✦ BÙ NHÌN ĐÃ NÉ ĐƯỢC ĐÒN ĐÁNH!" to attacker
+                            play sound "ENTITY_ENDERDRAGON_FLAP" with volume 1 and pitch 1.8 to attacker
+                            stop
+
+                # Boss Dummy: Giảm 60% sát thương (Đã tính tự động qua 150 DEF trong calculateEffectiveDamage)
+                else if {_d_type} is "boss":
+                    if {_pen} > 0:
+                        set {_has_pen} to true
+
+                # Tính lượng sát thương HP hiển thị
+                set {_hp_dmg} to roundOneDecimal(damage * 2)
+                if {_hp_dmg} < 0.5:
+                    set {_hp_dmg} to 1.0
+
+                if {_is_crit} is true:
+                    setDamageVisualTag(victim, "crit")
+                else if {_has_pen} is true:
+                    setDamageVisualTag(victim, "true")
+                else if {haki_active::%{_att_u}%::buso} is true:
+                    setDamageVisualTag(victim, "haki")
+                else:
+                    setDamageVisualTag(victim, "normal")
+
+                # Ghi nhận phiên DPS cho người chơi
+                if {dummy_session::%{_att_u}%::active} is not true:
+                    set {dummy_session::%{_att_u}%::active} to true
+                    set {dummy_session::%{_att_u}%::start_ms} to System.currentTimeMillis()
+                    set {dummy_session::%{_att_u}%::total_damage} to 0
+                    set {dummy_session::%{_att_u}%::total_hits} to 0
+                    set {dummy_session::%{_att_u}%::crit_hits} to 0
+                    set {dummy_session::%{_att_u}%::max_hit} to 0
+                    set {dummy_session::%{_att_u}%::target_type} to {_d_type}
+
+                set {dummy_session::%{_att_u}%::last_hit} to now
+                set {dummy_session::%{_att_u}%::last_hit_ms} to System.currentTimeMillis()
+                add {_hp_dmg} to {dummy_session::%{_att_u}%::total_damage}
+                add 1 to {dummy_session::%{_att_u}%::total_hits}
+                if {_is_crit} is true:
+                    add 1 to {dummy_session::%{_att_u}%::crit_hits}
+                if {_hp_dmg} > ({dummy_session::%{_att_u}%::max_hit} ? 0):
+                    set {dummy_session::%{_att_u}%::max_hit} to {_hp_dmg}
+
+                # Lưu sát thương thực tế để hiển thị Packet Hologram trong EntityDamageEvent
+                set {dummy_last_dmg::%{_vic_u}%} to {_hp_dmg}
+
+                # Xóa no damage ticks và khóa máu Bù Nhìn (không bao giờ chết, nhận đòn liên hoàn)
+                set victim's no damage ticks to 0
+                set damage to 0.05
+                set {_v_ent} to victim
+                set {_v_loc} to {dummy_loc::%{_vic_u}%}
+                wait 1 tick
+                if {_v_ent} is alive:
+                    if {_d_type} is "boss":
+                        set health of {_v_ent} to 200
+                    else:
+                        set health of {_v_ent} to 500
+                    set {_v_ent}'s no damage ticks to 0
+                    if {_v_loc} is set:
+                        {_v_ent}.teleport({_v_loc})
+
+on EntityRegainHealthEvent at priority monitor:
+    if event.isCancelled() is true:
+        stop
+    set {_e} to event.getEntity()
+    if {_e} is a player:
+        wait 1 tick
+        if {_e}.isOnline() is true:
+            updatePlayerNametagHP({_e})
+
+on EntityDamageEvent at priority highest:
+    if event.isCancelled() is true:
+        stop
+    set {_ent} to event.getEntity()
+    if LivingEntity.class.isInstance({_ent}) is not true:
+        stop
+    set {_vU} to uuid of {_ent}
+    if {skill_exact_dmg::%{_vU}%} is set:
+        set {_exactHp} to {skill_exact_dmg::%{_vU}%}
+        if event.isApplicable(DamageModifier.ARMOR) is true:
+            event.setDamage(DamageModifier.ARMOR, 0.0)
+        if event.isApplicable(DamageModifier.MAGIC) is true:
+            event.setDamage(DamageModifier.MAGIC, 0.0)
+        if event.isApplicable(DamageModifier.RESISTANCE) is true:
+            event.setDamage(DamageModifier.RESISTANCE, 0.0)
+        if event.isApplicable(DamageModifier.BLOCKING) is true:
+            event.setDamage(DamageModifier.BLOCKING, 0.0)
+        if event.isApplicable(DamageModifier.ABSORPTION) is true:
+            event.setDamage(DamageModifier.ABSORPTION, 0.0)
+        if event.isApplicable(DamageModifier.HARD_HAT) is true:
+            event.setDamage(DamageModifier.HARD_HAT, 0.0)
+        if event.isApplicable(DamageModifier.BASE) is true:
+            event.setDamage(DamageModifier.BASE, {_exactHp})
+
+on EntityDamageEvent at priority monitor:
+    set {_ent} to event.getEntity()
+    if LivingEntity.class.isInstance({_ent}) is not true:
+        stop
+    set {_vU} to uuid of {_ent}
+    if {skill_silent_kill::%{_vU}%} is true:
+        stop
+    if {_ent} is an armor stand:
+        if {dummy_type::%{_vU}%} is not set:
+            set {_is3DRig} to byte tag "Is3DRig" of nbt compound of {_ent}
+            if {_is3DRig} is 1:
+                stop
+
+    set {_tag} to {dmg_tag::%{_vU}%} ? "normal"
+    delete {dmg_tag::%{_vU}%}
+
+    if event.isCancelled() is true:
+        if {_tag} is "dodge":
+            spawnPacketDamageHolo(location of {_ent}, "&7&l» NÉ", {_vU})
+        else if {_tag} is "logia":
+            spawnPacketDamageHolo(location of {_ent}, "&e&l✦ LOGIA", {_vU})
+        stop
+
+    set {_final} to event.getFinalDamage()
+    if {skill_exact_dmg::%{_vU}%} is set:
+        set {skill_dmg_landed::%{_vU}%} to true
+        set {_final} to {skill_exact_dmg::%{_vU}%}
+    else if {dummy_type::%{_vU}%} is set:
+        if {dummy_last_dmg::%{_vU}%} is set:
+            set {_final} to {dummy_last_dmg::%{_vU}%}
+            delete {dummy_last_dmg::%{_vU}%}
+
+    if {_final} > 0:
+        set {_finalRounded} to roundOneDecimal({_final})
+        set {_txt} to formatDamageHoloText({_finalRounded}, {_tag})
+        spawnPacketDamageHolo(location of {_ent}, {_txt}, {_vU})
+
+    if {_ent} is a player:
+        wait 1 tick
+        if {_ent}.isOnline() is true:
+            updatePlayerNametagHP({_ent})
+
+# =====================================================================
+# CẦU NỐI GIAO DỊCH AN TOÀN CHO CHESTCOMMANDS COINSHOP (/coinshopbuy)
+# =====================================================================
+command /coinshopbuy <player> <text>:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        set {_pp} to PlayerPoints.getInstance()
+        if {_pp} is not set:
+            sendSystemMsg(arg-1, "error", "Hệ thống PlayerPoints chưa sẵn sàng!")
+            stop
+        set {_api} to {_pp}.getAPI()
+        set {_uuid} to arg-1.getUniqueId()
+        set {_bal} to {_api}.look({_uuid})
+
+        if arg-2 is "protection_scroll":
+            set {_cost} to 50
+            if {_bal} < {_cost}:
+                sendSystemMsg(arg-1, "error", "Bạn cần &6%{_cost}% Coin &7để mua &bĐá Bảo Hiểm Phù Phép &7(Hiện có: &e%{_bal}% Coin&7)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to arg-1
+                stop
+            if {_api}.take({_uuid}, {_cost}) is true:
+                execute console command "ce scroll White 1 %name of arg-1%"
+                sendSystemMsg(arg-1, "success", "Đã trừ &6%{_cost}% Coin &7và trao &bĐá Bảo Hiểm Phù Phép&7!")
+                play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to arg-1
+
+        else if arg-2 is "success_dust":
+            set {_cost} to 35
+            if {_bal} < {_cost}:
+                sendSystemMsg(arg-1, "error", "Bạn cần &6%{_cost}% Coin &7để mua &aBụi Tăng Tỷ Lệ +15%% &7(Hiện có: &e%{_bal}% Coin&7)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to arg-1
+                stop
+            if {_api}.take({_uuid}, {_cost}) is true:
+                execute console command "ce dust Success 1 %name of arg-1% 15"
+                sendSystemMsg(arg-1, "success", "Đã trừ &6%{_cost}% Coin &7và trao &aBụi Tăng Tỷ Lệ +15%%&7!")
+                play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to arg-1
+
+        else if arg-2 is "epic_card_pack" or "aov_chest" or "aovchest":
+            set {_cost} to 160
+            if {_bal} < {_cost}:
+                sendSystemMsg(arg-1, "error", "Bạn cần &6%{_cost}% Coin &7để mua &6Rương Trang Bị Liên Quân 3D &7(Hiện có: &e%{_bal}% Coin&7)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to arg-1
+                stop
+            if {_api}.take({_uuid}, {_cost}) is true:
+                execute console command "aovchest give %name of arg-1%"
+                sendSystemMsg(arg-1, "success", "Đã trừ &6%{_cost}% Coin &7và trao &6Rương Trang Bị Liên Quân 3D&7!")
+                play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to arg-1
+
+        else if arg-2 is "reset_talent" or "talent_reset" or "reset":
+            set {_cost} to 30
+            if {_bal} < {_cost}:
+                sendSystemMsg(arg-1, "error", "Bạn cần &6%{_cost}% Coin &7để mua &6Bùa Tẩy Điểm Thiên Phú &7(Hiện có: &e%{_bal}% Coin&7)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to arg-1
+                stop
+            if {_api}.take({_uuid}, {_cost}) is true:
+                execute console command "talentadmin givereset %name of arg-1% 1"
+                sendSystemMsg(arg-1, "success", "Đã trừ &6%{_cost}% Coin &7và trao &6Bùa Tẩy Điểm Thiên Phú&7!")
+                play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to arg-1
+
+        else if arg-2 is "df_chest" or "fruit_chest" or "dfchest":
+            set {_cost} to 250
+            if {_bal} < {_cost}:
+                sendSystemMsg(arg-1, "error", "Bạn cần &6%{_cost}% Coin &7để mua &6Rương Trái Ác Quỷ 3D &7(Hiện có: &e%{_bal}% Coin&7)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to arg-1
+                stop
+            if {_api}.take({_uuid}, {_cost}) is true:
+                execute console command "dfadmin givechest %name of arg-1%"
+                sendSystemMsg(arg-1, "success", "Đã trừ &6%{_cost}% Coin &7và trao &6Rương Trái Ác Quỷ 3D&7!")
+                play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to arg-1
+
+        else if arg-2 is "df_remover" or "remover" or "fruit_remover":
+            set {_cost} to 100
+            if {_bal} < {_cost}:
+                sendSystemMsg(arg-1, "error", "Bạn cần &6%{_cost}% Coin &7để mua &dThuốc Xóa Ác Quỷ &7(Hiện có: &e%{_bal}% Coin&7)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to arg-1
+                stop
+            if {_api}.take({_uuid}, {_cost}) is true:
+                execute console command "dfadmin giveremover %name of arg-1%"
+                sendSystemMsg(arg-1, "success", "Đã trừ &6%{_cost}% Coin &7và trao &dThuốc Xóa Ác Quỷ&7!")
+                play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to arg-1
+
+        else if arg-2 is "awakening_stone" or "stone" or "da_thuc_tinh" or "awakening":
+            set {_cost} to 150
+            if {_bal} < {_cost}:
+                sendSystemMsg(arg-1, "error", "Bạn cần &6%{_cost}% Coin &7để mua &eĐá Thức Tỉnh Ánh Sao &7(Hiện có: &e%{_bal}% Coin&7)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to arg-1
+                stop
+            if {_api}.take({_uuid}, {_cost}) is true:
+                execute console command "dfadmin givestone %name of arg-1%"
+                sendSystemMsg(arg-1, "success", "Đã trừ &6%{_cost}% Coin &7và trao &eĐá Thức Tỉnh Ánh Sao&7!")
+                play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to arg-1
+
+        else if arg-2 is "rank_vip":
+            if arg-1 has permission "rank.vip":
+                sendSystemMsg(arg-1, "warning", "Bạn đã sở hữu Rank &b&l[VIP] &7hoặc cao hơn rồi!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to arg-1
+                stop
+            set {_cost} to 300
+            if {_bal} < {_cost}:
+                sendSystemMsg(arg-1, "error", "Bạn cần &6%{_cost}% Coin &7để nâng cấp &b&l[VIP] &7(Hiện có: &e%{_bal}% Coin&7)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to arg-1
+                stop
+            if {_api}.take({_uuid}, {_cost}) is true:
+                execute console command "lp user %name of arg-1% parent set vip"
+                syncPlayerNametagTeam(arg-1)
+                broadcastDualCard("&b&l✦ THĂNG HẠNG", "&e%name of arg-1% &7nâng cấp thành &b&l[VIP]&7!", "&7Gia nhập tầng lớp hải tặc danh giá.")
+                play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to arg-1
+
+        else if arg-2 is "rank_king":
+            if arg-1 has permission "rank.king":
+                sendSystemMsg(arg-1, "warning", "Bạn đã sở hữu Rank &d&l[KING] &7hoặc cao hơn rồi!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to arg-1
+                stop
+            set {_cost} to 700
+            if {_bal} < {_cost}:
+                sendSystemMsg(arg-1, "error", "Bạn cần &6%{_cost}% Coin &7để nâng cấp &d&l[KING] &7(Hiện có: &e%{_bal}% Coin&7)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to arg-1
+                stop
+            if {_api}.take({_uuid}, {_cost}) is true:
+                execute console command "lp user %name of arg-1% parent set king"
+                syncPlayerNametagTeam(arg-1)
+                broadcastDualCard("&d&l✦ THĂNG HẠNG", "&e%name of arg-1% &7nâng cấp thành &d&l[KING]&7!", "&7Uy danh vương giả bao trùm Tân Thế Giới.")
+                play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to arg-1
+
+        else if arg-2 is "rank_master":
+            if arg-1 has permission "rank.master":
+                sendSystemMsg(arg-1, "warning", "Bạn đã sở hữu Rank &6&l[MASTER]&7 rồi!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to arg-1
+                stop
+            set {_cost} to 1500
+            if {_bal} < {_cost}:
+                sendSystemMsg(arg-1, "error", "Bạn cần &6%{_cost}% Coin &7để nâng cấp &6&l[MASTER] &7(Hiện có: &e%{_bal}% Coin&7)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to arg-1
+                stop
+            if {_api}.take({_uuid}, {_cost}) is true:
+                execute console command "lp user %name of arg-1% parent set master"
+                syncPlayerNametagTeam(arg-1)
+                broadcastDualCard("&6&l✦ ĐỈNH CAO", "&e%name of arg-1% &7đã trở thành &6&l[MASTER]&7!", "&7Bậc thầy tối thượng của toàn cõi Skyblock.")
+                play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to arg-1
+
+# =====================================================================
+# LỆNH ÁP DỤNG NHANH TOÀN BỘ PHÂN QUYỀN TỪ setup_luckperms.txt (/applyranks)
+# =====================================================================
+command /applyranks:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        set {_p} to Paths.get("setup_luckperms.txt")
+        if Files.exists({_p}) is false:
+            send "&c[RankSetup] &7Không tìm thấy file setup_luckperms.txt trong thư mục gốc server!" to sender
+            stop
+        set {_lines} to Files.readAllLines({_p}, StandardCharsets.UTF_8)
+        set {_size} to {_lines}.size()
+        set {_count} to 0
+        loop {_size} times:
+            set {_idx} to (loop-number) - 1
+            set {_raw} to "%{_lines}.get({_idx})%"
+            set {_cmd} to "%{_raw}.trim()%"
+            if length of {_cmd} > 0:
+                if {_cmd} starts with "lp ":
+                    execute console command {_cmd}
+                    add 1 to {_count}
+        send "&a[RankSetup] &7Đã thực thi xong &e%{_count}% lệnh LuckPerms &7cho 4 Rank (default, vip, king, master)!" to sender
+
+
+# ---------------------------------------------------------------------
+# UI_G6_C: CHỢ KINH TẾ, COINSHOP & RANK (36 Ô)
+# ---------------------------------------------------------------------
+
+function openEconomyHubGUI(p: player):
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G6_C", "&8✦ &6&lTRUNG TÂM GIAO THƯƠNG & KINH TẾ &8✦", 4, yellow stained glass pane named " ", "UI_G6", "Hạm Đội, Đảo & Kinh Tế")
+
+    # Slot 10: Cửa Hàng Tài Nguyên (/shop - 100% Money)
+    set {_shopLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_shopLore::2} to "&8▪ &7Loại tiền: &a100%% Money ($)"
+    set {_shopLore::3} to "&f❖ Mua khối xây dựng, nông sản, khoáng sản & spawner."
+    set {_shopLore::4} to ""
+    set {_shopLore::5} to "&e▸ Click Trái: Mở Siêu Thị Mua Sắm (/shop)"
+    set {_shopLore::6} to "&6▸ Click Phải: Mở Khay Bán Nhanh (/sellgui)"
+    set {_shopLore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 10 of {_inv} to makeGlowingItem(gold ingot, "&a&l✦ CỬA HÀNG VẬT PHẨM (/shop) ✦", {_shopLore::*})
+
+    # Slot 11: Cửa Hàng Coin (/cshop - 100% Coin)
+    set {_cshopLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_cshopLore::2} to "&8▪ &7Loại tiền: &6100%% Coin ⛁"
+    set {_cshopLore::3} to "&f❖ Thăng hạng Rank VIP/KING/MASTER, Rương AoV,"
+    set {_cshopLore::4} to "&f❖ Trái Ác Quỷ, Bùa CE & bảo vật tối thượng."
+    set {_cshopLore::5} to ""
+    set {_cshopLore::6} to "&e▸ Nhấn để mở Cửa Hàng Coin (/cshop)!"
+    set {_cshopLore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 11 of {_inv} to makeGlowingItem(nether star, "&6&l✦ CỬA HÀNG COIN (/cshop) ✦", {_cshopLore::*})
+
+    # Slot 13: Ngân Hàng Quy Đổi Money ⇄ Coin (/nganhang)
+    set {_bankLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_bankLore::2} to "&8▪ &7Tỷ giá niêm yết: &e$10,000 = 1 Coin"
+    set {_bankLore::3} to "&f❖ Chuyển đổi linh hoạt hai chiều không mất phí."
+    set {_bankLore::4} to "&f❖ Đổi Money cày từ đảo thành Coin rèn vũ khí."
+    set {_bankLore::5} to ""
+    set {_bankLore::6} to "&e▸ Nhấn để mở Ngân Hàng (/nganhang)!"
+    set {_bankLore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 13 of {_inv} to makeGlowingItem(sunflower, "&e&l✦ NGÂN HÀNG QUY ĐỔI (/nganhang) ✦", {_bankLore::*})
+
+    # Slot 15: Chợ Đấu Giá (/ah)
+    set {_ahLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_ahLore::2} to "&8▪ &7Hệ thống: &bCrazyAuctionsPlus"
+    set {_ahLore::3} to "&f❖ Chợ giao thương tự do giữa các người chơi."
+    set {_ahLore::4} to "&f❖ Rao bán vật phẩm, trang bị AoV, vũ khí & báu vật."
+    set {_ahLore::5} to ""
+    set {_ahLore::6} to "&e▸ Nhấn để mở Chợ Đấu Giá (/ah)!"
+    set {_ahLore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 15 of {_inv} to makeGlowingItem(emerald, "&b&l✦ CHỢ ĐẤU GIÁ (/ah) ✦", {_ahLore::*})
+
+    # Slot 16: Sách Phù Phép Đặc Biệt (/ce)
+    set {_ceLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_ceLore::2} to "&8▪ &7Hệ thống: &dCrazyEnchantments"
+    set {_ceLore::3} to "&f❖ Hơn 80 loại phù phép độc quyền cực mạnh."
+    set {_ceLore::4} to "&f❖ Ép lên Trang Bị, Kiếm, Cung & Công Cụ Farm."
+    set {_ceLore::5} to ""
+    set {_ceLore::6} to "&e▸ Nhấn để mở Bảng Phù Phép (/ce)!"
+    set {_ceLore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 16 of {_inv} to makeGlowingItem(enchanted book, "&d&l✦ PHÙ PHÉP ĐẶC BIỆT (/ce) ✦", {_ceLore::*})
+
+    openStandardUI({_p}, {_inv}, "UI_G6_C", "UI_G6")
+
+on inventory click:
+    set {_u} to uuid of player
+    if {ui_active::%{_u}%} is not "UI_G6_C":
+        stop
+    cancel event
+    if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+        player.updateInventory()
+    if clicked inventory is not player's current inventory:
+        stop
+
+    set {_slot} to index of event-slot
+    if {_slot} is 27 or 28 or 35:
+        stop
+
+    if {_slot} is 10:
+        if event.isRightClick() is true:
+            wait 1 tick
+            close player's inventory
+            make player execute command "sellgui"
+        else:
+            set {ui_shop_return::%{_u}%} to "UI_G6_C"
+            wait 1 tick
+            make player execute command "shop"
+    else if {_slot} is 11:
+        set {ui_cshop_return::%{_u}%} to "UI_G6_C"
+        wait 1 tick
+        make player execute command "cshop"
+    else if {_slot} is 13:
+        set {ui_bank_return::%{_u}%} to "UI_G6_C"
+        wait 1 tick
+        make player execute command "nganhang"
+    else if {_slot} is 15:
+        wait 1 tick
+        close player's inventory
+        make player execute command "ah"
+    else if {_slot} is 16:
+        wait 1 tick
+        close player's inventory
+        make player execute command "ce"
+

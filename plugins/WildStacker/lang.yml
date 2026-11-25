@@ -1,0 +1,122 @@
+###############################################
+##                                           ##
+##           WildStacker Messages            ##
+##            Developed by Ome_R             ##
+##                                           ##
+###############################################
+
+# Called when a player places / breaks a stacked-block
+BARREL_BREAK: '&6&lWildStacker &7Bạn đã phá vạc chứa x{0} {1}.'
+BARREL_PLACE: '&6&lWildStacker &7Bạn đã tạo vạc chứa mới cho {0}.'
+BARREL_UPDATE: '&6&lWildStacker &7Bạn đã thêm {0} vào vạc chứa (x{1}).'
+
+# Called when a player runs the toggle command
+BARREL_TOGGLE_ON: '&6&lWildStacker &7Đã bật chế độ đặt vạc chứa.'
+BARREL_TOGGLE_OFF: '&6&lWildStacker &7Đã tắt chế độ đặt vạc chứa.'
+
+# Called when player places a barrel but has no permission.
+BARREL_NO_PERMISSION: '&6&lWildStacker &7Bạn không có quyền sử dụng vạc chứa.'
+
+# Called when the chunk limit is exceeded.
+CHUNK_LIMIT_EXCEEDED: '&6&lWildStacker &7Bạn đã vượt quá giới hạn {0} trong chunk này.'
+
+# Called when a player runs a command not in the required usage
+COMMAND_USAGE: '&6&lWildStacker &7Cách dùng: /{0}'
+
+# Called when a player runs the entity names toggle command.
+ENTITY_NAMES_TOGGLE_ON: '&6&lWildStacker &7Đã bật hiển thị tên thực thể.'
+ENTITY_NAMES_TOGGLE_OFF: '&6&lWildStacker &7Đã tắt hiển thị tên thực thể.'
+
+# Called when a player runs an invalid stacker sub-command.
+HELP_COMMAND_HEADER: '&8&m---------------&6&l WildStacker &8&m---------------'
+HELP_COMMAND_LINE: '&7- &6/{0} &8- &f{1}'
+HELP_COMMAND_FOOTER: '&8&m---------------&6&l WildStacker &8&m---------------'
+
+# Called when a player runs give command with an invalid argument.
+INVALID_BARREL: '&6&lWildStacker &7Không tìm thấy vạc chứa tên {0}.'
+INVALID_ENTITY: '&6&lWildStacker &7Không tìm thấy thực thể tên {0}.'
+INVALID_NUMBER: '&6&lWildStacker &7Vui lòng nhập một con số hợp lệ.'
+INVALID_PLAYER: '&6&lWildStacker &7Không tìm thấy người chơi {0}.'
+INVALID_SPAWN_CAUSE: '&6&lWildStacker &7Không tìm thấy nguyên nhân spawn {0}.'
+INVALID_TYPE: '&6&lWildStacker &7Vui lòng chỉ rõ loại egg hoặc spawner muốn trao.'
+INVALID_UPGRADE: '&6&lWildStacker &7Không tìm thấy gói nâng cấp {0}.'
+
+# Called when a player toggles inventory tweaks on and off.
+INVENTORY_TWEAKS_TOGGLE_ON: '&6&lWildStacker &7Đã bật hỗ trợ túi đồ.'
+INVENTORY_TWEAKS_TOGGLE_OFF: '&6&lWildStacker &7Đã tắt hỗ trợ túi đồ.'
+
+# Called when a player successfully runs a inspect command.
+INSPECT_GIVE_PLAYER: '&6&lWildStacker &7Đã trao cho {0} x{1} công cụ kiểm tra.'
+INSPECT_RECEIVE: '&6&lWildStacker &7Bạn nhận được x{0} công cụ kiểm tra từ {1}.'
+
+# Called when a player successfully runs a simulate command.
+SIMULATE_GIVE_PLAYER: '&6&lWildStacker &7Đã trao cho {0} x{1} công cụ mô phỏng.'
+SIMULATE_RECEIVE: '&6&lWildStacker &7Bạn nhận được x{0} công cụ mô phỏng từ {1}.'
+
+# Called when a player runs the item names toggle command.
+ITEM_NAMES_TOGGLE_ON: '&6&lWildStacker &7Đã bật hiển thị tên vật phẩm.'
+ITEM_NAMES_TOGGLE_OFF: '&6&lWildStacker &7Đã tắt hiển thị tên vật phẩm.'
+
+# Called when a kill-all task is running
+KILL_ALL_ANNOUNCEMENT: '&6&lWildStacker &7Đã dọn dẹp toàn bộ quái vật và vật phẩm gộp!'
+KILL_ALL_REMAINING_TIME: '&6&lWildStacker &7Toàn bộ quái vật và vật phẩm gộp sẽ bị dọn sau {0} giây!'
+KILL_ALL_OPS: '&7&o[WildStacker: Đã dọn thực thể gộp]'
+
+# Called when placing a spawner next to another one when the it's disabled.
+NEXT_SPAWNER_PLACEMENT: '&6&lWildStacker &7Không thể đặt lồng spawner ngay cạnh lồng khác.'
+
+# Called when running a stacker command without permission.
+NO_PERMISSION: '&fLệnh không tồn tại. Gõ "/help" để xem hướng dẫn.'
+
+# Called when placing spawners but there's already a spawner in the merge-radius.
+ONLY_ONE_SPAWNER: '&6&lWildStacker &7Chỉ có thể đặt một lồng spawner trong bán kính 1 block.'
+
+# Called when a player successfully reloaded all configuration files.
+RELOAD_SUCCESS: '&6&lWildStacker &7Đã tải lại cấu hình thành công.'
+
+# Called when a player places / breaks a spawner
+SPAWNER_BREAK: '&6&lWildStacker &7Bạn đã đào lồng {0} (x{1}) và trả phí ${2}.'
+SPAWNER_BREAK_NOT_ENOUGH_MONEY: '&6&lWildStacker &fBạn cần ${0} để đào số lồng spawner này.'
+SPAWNER_BREAK_WITHOUT_SILK: '&6&lWildStacker &7Bạn cần cúp có phù phép Mềm Mại (Silk Touch) để đào spawner.'
+SPAWNER_PLACE: '&6&lWildStacker &7Bạn đã đặt lồng {0} (x{1}) và trả phí ${2}.'
+SPAWNER_PLACE_NOT_ENOUGH_MONEY: '&6&lWildStacker &fBạn cần ${0} để đặt số lồng spawner này.'
+SPAWNER_PLACE_BLOCKED: '&6&lWildStacker &7Bạn không có quyền đặt loại spawner này! ({0})'
+SPAWNER_UPDATE: '&6&lWildStacker &7Đã cập nhật lồng spawner (x{0}).'
+SPAWNER_CHANGE_NOT_ENOUGH_ITEMS: '&6&lWildStacker &7Không đủ trứng quái để đổi spawner ({0} / {1}).'
+
+# Called when a player attempts to upgrade a spawner.
+SPAWNER_UPGRADE_NOT_ENOUGH_MONEY: '&6&lWildStacker &7Bạn cần ${0} để nâng cấp lồng spawner này.'
+SPAWNER_UPGRADE_SUCCESS: '&6&lWildStacker &7Đã nâng cấp lồng spawner thành công!'
+
+# Called when a player successfully runs a give command.
+STACK_GIVE_PLAYER: '&6&lWildStacker &7Đã trao cho {0} x{1} {2} {3}.'
+STACK_RECEIVE: '&6&lWildStacker &7Bạn nhận được x{0} {1} từ {2}.'
+
+# Called when running info command
+STACK_INFO_INVALID: '&6&lWildStacker &7Không tìm thấy cụm gộp hợp lệ.'
+BARREL_INFO_HEADER: '&8&m---------------&6&l WildStacker &8&m---------------'
+BARREL_INFO_TYPE: '&6 Loại vạc&7: &f{0}'
+BARREL_INFO_AMOUNT: '&6 Số lượng gộp&7: &f{0}'
+BARREL_INFO_FOOTER: '&8&m---------------&6&l WildStacker &8&m---------------'
+SPAWNER_INFO_HEADER: '&8&m---------------&6&l WildStacker &8&m---------------'
+SPAWNER_INFO_TYPE: '&6 Lồng Spawner&7: &f{0}'
+SPAWNER_INFO_AMOUNT: '&6 Số lượng gộp&7: &f{0}'
+SPAWNER_INFO_UPGRADE: '&6 Cấp nâng cấp&7: &f{0}'
+SPAWNER_INFO_FOOTER: '&8&m---------------&6&l WildStacker &8&m---------------'
+ENTITY_INFO_HEADER: '&8&m---------------&6&l WildStacker &8&m---------------'
+ENTITY_INFO_UUID: '&6 UUID&7: &f{0}'
+ENTITY_INFO_TYPE: '&6 Loại&7: &f{0}'
+ENTITY_INFO_AMOUNT: '&6 Số lượng gộp&7: &f{0}'
+ENTITY_INFO_SPAWN_REASON: '&6 Nguồn sinh sản&7: &f{0}'
+ENTITY_INFO_NERFED: '&6 Bị vô hiệu AI&7: &f{0}'
+ENTITY_INFO_UPGRADE: '&6 Cấp nâng cấp&7: &f{0}'
+ENTITY_INFO_FOOTER: '&8&m---------------&6&l WildStacker &8&m---------------'
+
+# Called when simulating stacking of two objects
+OBJECT_SIMULATE_CHOOSE_SECOND: '&6&lWildStacker &7Vui lòng chọn đối tượng thứ hai.'
+OBJECT_SIMULATE_SUCCESS_RESULT: '&6&lWildStacker &7Kết quả: &aTHÀNH CÔNG&7. Có thể gộp chung.'
+OBJECT_SIMULATE_FAIL_RESULT: '&6&lWildStacker &7Kết quả: &c{0}&7. Không thể gộp chung.'
+
+# Used in the upgrades menu
+UPGRADE_CURRENT: '&6Cấp hiện tại: &7'
+UPGRADE_NEXT: '&6Cấp tiếp theo: &7'

@@ -1,0 +1,44 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "items/custom/system/talent_reset"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        -37,
+        0,
+        -90
+      ],
+      "translation": [
+        5.5,
+        0.5,
+        0.5
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        -82,
+        0
+      ],
+      "translation": [
+        0,
+        6.5,
+        1
+      ]
+    },
+    "gui": {
+      "rotation": [
+        29,
+        -126,
+        0
+      ],
+      "translation": [
+        0,
+        4,
+        0
+      ]
+    }
+  }
+}

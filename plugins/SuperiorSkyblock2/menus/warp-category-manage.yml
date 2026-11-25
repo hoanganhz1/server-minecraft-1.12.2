@@ -1,0 +1,50 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+title: '&lDanh mục: {0}'
+previous-menu: true
+
+pattern:
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ ! @ @ ~ @ @ $ @'
+  - '@ @ @ @ @ @ @ @ @'
+
+success-update-sound:
+  type: ENTITY_EXPERIENCE_ORB_PICKUP
+  volume: 0.2
+  pitch: 0.2
+
+category-rename: '!'
+category-icon: '~'
+category-warps: '$'
+
+items:
+  '!':
+    type: BOOK
+    name: '&6Đổi Tên Danh Mục'
+    lore:
+      - '&f '
+      - '&f '
+      - '&7&o(( &f&oNhấp &7&ođể đổi tên danh mục. ))'
+  '~':
+    type: STONE
+    lore:
+      - '&f '
+      - '&f '
+      - '&7&oBạn có thể dùng các biến sau:'
+      - '&7&o{0} dùng cho tên điểm warp.'
+      - '&7&o{1} dùng cho tọa độ điểm warp.'
+      - '&7&o{2} dùng cho trạng thái công khai.'
+      - '&7&o(( &f&oChuột phải &7&ođể sửa biểu tượng. ))'
+      - '&7&o(( &f&oChuột trái &7&ođể sửa ô của danh mục. ))'
+  '$':
+    type: ENDER_PEARL
+    name: '&6Điểm Dịch Chuyển Đảo'
+    lore:
+      - '&f '
+      - '&f '
+      - '&7&o(( &f&oNhấp &7&ođể sửa điểm warp trong danh mục. ))'

@@ -1,0 +1,1228 @@
+# =====================================================================
+# HỆ THỐNG TRANG BỊ LIÊN QUÂN MOBILE & THIÊN PHÚ RPG (MINECRAFT 1.12.2)
+# TECHNICAL GAME ARTIST & GAMEPLAY DEVELOPER — OPTIMIZED EDITION
+# - Lưu trữ Slot bằng String ID (giảm 95% dung lượng DB, chống corrupt NBT)
+# - Triệt tiêu hoàn toàn AssertionError tại AliasesMap.matchAlias (1.12.2)
+# - Tối ưu hóa Vòng lặp Nội tại bằng System.currentTimeMillis()
+# =====================================================================
+
+import:
+    java.lang.System
+    org.bukkit.inventory.ItemStack
+    org.bukkit.event.inventory.InventoryDragEvent
+
+# ---------------------------------------------------------------------
+# 1. HỆ THỐNG PHÂN QUYỀN Ô TRANG BỊ THEO RANK (3 -> 6 Ô) & MỞ KHÓA MASTERY/BOUNTY
+# ---------------------------------------------------------------------
+function getMaxAoVSlots(p: player) :: number:
+    set {_u} to uuid of {_p}
+    set {_max} to 3
+    set {_dfMastery} to ({df_data::%{_u}%::mastery} ? 0)
+    set {_martialMastery} to ({martial_mastery::%{_u}%} ? 0)
+    if {_dfMastery} >= 100:
+        set {_max} to 4
+    else if {_martialMastery} >= 100:
+        set {_max} to 4
+    if ({bounty::%{_u}%} ? 0) >= 100000000:
+        if {_max} < 5:
+            set {_max} to 5
+    if {_p} has permission "rank.vip":
+        if {_max} < 4:
+            set {_max} to 4
+    if {_p} has permission "rank.king":
+        if {_max} < 5:
+            set {_max} to 5
+    if {_p} has permission "rank.master":
+        set {_max} to 6
+    return {_max}
+
+function getMaxCardSlots(p: player) :: number:
+    return getMaxAoVSlots({_p})
+
+# ---------------------------------------------------------------------
+# 2. BẢNG 12 TRANG BỊ LIÊN QUÂN (QUY ĐỔI PHẲNG / 200, GIỮ NGUYÊN % & NỘI TẠI)
+# ---------------------------------------------------------------------
+function createAoVItem(id: text) :: item:
+    # ------------------ NHÓM CÔNG VẬT LÝ ------------------
+    if {_id} is "thanh_kiem":
+        set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore::2} to "&7Loại: &cTrang Bị Công Vật Lý &8(Liên Quân)"
+        set {_lore::3} to "&f• &7Sát thương gốc: &c+5.0 ATK"
+        set {_lore::4} to "&f• &7Tỷ lệ chí mạng: &e+25.0%%"
+        set {_lore::5} to ""
+        set {_lore::6} to "&6&lNỘI TẠI DUY NHẤT: ÁNH SÁNG"
+        set {_lore::7} to "&7Tăng thêm &c+40.0%% Sát thương chí mạng &8(trần x1.95)&7."
+        set {_lore::8} to ""
+        set {_lore::9} to "&e▸ Mở /trangbilq để lắp vào Khay!"
+        set {_lore::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_item} to makeCustomRPItem("thanh_kiem", "&6&l✦ THÁNH KIẾM ✦", {_lore::*})
+        set string tag "AoVItem" of nbt compound of {_item} to "thanh_kiem"
+        return {_item}
+
+    else if {_id} is "muramasa":
+        set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore::2} to "&7Loại: &cTrang Bị Công Vật Lý &8(Liên Quân)"
+        set {_lore::3} to "&f• &7Sát thương gốc: &c+4.0 ATK"
+        set {_lore::4} to "&f• &7Giảm hồi chiêu: &b+10.0%% CDR"
+        set {_lore::5} to ""
+        set {_lore::6} to "&b&lNỘI TẠI DUY NHẤT: PHÁ GIÁP"
+        set {_lore::7} to "&7Tăng &b+35.0%% Xuyên giáp &7(PEN chuẩn)."
+        set {_lore::8} to ""
+        set {_lore::9} to "&e▸ Mở /trangbilq để lắp vào Khay!"
+        set {_lore::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_item} to makeCustomRPItem("muramasa", "&b&l✦ KIẾM MURAMASA ✦", {_lore::*})
+        set string tag "AoVItem" of nbt compound of {_item} to "muramasa"
+        return {_item}
+
+    else if {_id} is "nanh_fenrir":
+        set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore::2} to "&7Loại: &cTrang Bị Công Vật Lý &8(Liên Quân)"
+        set {_lore::3} to "&f• &7Sát thương gốc: &c+6.5 ATK"
+        set {_lore::4} to ""
+        set {_lore::5} to "&4&lNỘI TẠI DUY NHẤT: CHINH PHẠT"
+        set {_lore::6} to "&7Khi máu mục tiêu &e< 50%% Máu tối đa&7, toàn bộ"
+        set {_lore::7} to "&7sát thương tăng thêm &c+22.0%% &8(+10%% ST Chuẩn)&7."
+        set {_lore::8} to ""
+        set {_lore::9} to "&e▸ Mở /trangbilq để lắp vào Khay!"
+        set {_lore::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_item} to makeCustomRPItem("nanh_fenrir", "&c&l✦ NANH FENRIR ✦", {_lore::*})
+        set string tag "AoVItem" of nbt compound of {_item} to "nanh_fenrir"
+        return {_item}
+
+    else if {_id} is "song_dao":
+        set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore::2} to "&7Loại: &cTrang Bị Công Vật Lý &8(Liên Quân)"
+        set {_lore::3} to "&f• &7Sát thương gốc: &c+2.5 ATK"
+        set {_lore::4} to "&f• &7Tỷ lệ chí mạng: &e+25.0%%"
+        set {_lore::5} to "&f• &7Tốc độ di chuyển: &a+7.0%% Speed"
+        set {_lore::6} to ""
+        set {_lore::7} to "&a&lNỘI TẠI DUY NHẤT: CUỒNG PHONG"
+        set {_lore::8} to "&7Khi đánh đòn Chí Mạng, nhận hiệu ứng"
+        set {_lore::9} to "&fHaste II &7và &bSpeed II &7trong &e2 giây&7."
+        set {_lore::10} to ""
+        set {_lore::11} to "&e▸ Mở /trangbilq để lắp vào Khay!"
+        set {_lore::12} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_item} to makeCustomRPItem("song_dao", "&a&l✦ SONG ĐAO BÃO TÁP ✦", {_lore::*})
+        set string tag "AoVItem" of nbt compound of {_item} to "song_dao"
+        return {_item}
+
+    else if {_id} is "quy_kiem":
+        set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore::2} to "&7Loại: &cTrang Bị Công Vật Lý &8(Liên Quân)"
+        set {_lore::3} to "&f• &7Sát thương gốc: &c+5.0 ATK"
+        set {_lore::4} to "&f• &7Hút máu vật lý: &d+18.0%% Lifesteal"
+        set {_lore::5} to ""
+        set {_lore::6} to "&c&lNỘI TẠI DUY NHẤT: HUYẾT THỆ"
+        set {_lore::7} to "&7Hút máu &d+18.0%% &7theo sát thương vật lý thực gây ra."
+        set {_lore::8} to ""
+        set {_lore::9} to "&e▸ Mở /trangbilq để lắp vào Khay!"
+        set {_lore::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_item} to makeCustomRPItem("quy_kiem", "&4&l✦ QUỶ KIẾM ✦", {_lore::*})
+        set string tag "AoVItem" of nbt compound of {_item} to "quy_kiem"
+        return {_item}
+
+    else if {_id} is "thuong_xuyen_pha":
+        set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore::2} to "&7Loại: &cTrang Bị Công Vật Lý &8(Liên Quân)"
+        set {_lore::3} to "&f• &7Sát thương gốc: &c+5.0 ATK"
+        set {_lore::4} to "&f• &7Máu tối đa: &a+14.0 HP &8(+7 Tim)"
+        set {_lore::5} to "&f• &7Giáp điểm: &9+20.0 DEF"
+        set {_lore::6} to "&f• &7Xuyên giáp: &b+15.0%% PEN"
+        set {_lore::7} to ""
+        set {_lore::8} to "&6&lNỘI TẠI DUY NHẤT: NGHIỀN NÁT"
+        set {_lore::9} to "&7Khi rời giao tranh sau &e5 giây&7, nhận hiệu ứng"
+        set {_lore::10} to "&bSpeed I &7liên tục tăng tốc độ di chuyển."
+        set {_lore::11} to ""
+        set {_lore::12} to "&e▸ Mở /trangbilq để lắp vào Khay!"
+        set {_lore::13} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_item} to makeCustomRPItem("thuong_xuyen_pha", "&e&l✦ THƯƠNG XUYÊN PHÁ ✦", {_lore::*})
+        set string tag "AoVItem" of nbt compound of {_item} to "thuong_xuyen_pha"
+        return {_item}
+
+    # ------------------ NHÓM PHÒNG THỦ ------------------
+    else if {_id} is "giap_thong_kho":
+        set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore::2} to "&7Loại: &9Trang Bị Phòng Thủ &8(Liên Quân)"
+        set {_lore::3} to "&f• &7Máu tối đa: &a+24.0 HP &8(+12 Tim)"
+        set {_lore::4} to "&f• &7Giáp điểm: &9+65.0 DEF"
+        set {_lore::5} to ""
+        set {_lore::6} to "&4&lNỘI TẠI DUY NHẤT: PHẢN KÍCH"
+        set {_lore::7} to "&7Khi chịu đòn cận chiến, phản lại &c12.0%% ST"
+        set {_lore::8} to "&7thô trước giáp cho kẻ tấn công."
+        set {_lore::9} to ""
+        set {_lore::10} to "&e▸ Mở /trangbilq để lắp vào Khay!"
+        set {_lore::11} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_item} to makeCustomRPItem("giap_thong_kho", "&c&l✦ GIÁP THỐNG KHỔ ✦", {_lore::*})
+        set string tag "AoVItem" of nbt compound of {_item} to "giap_thong_kho"
+        return {_item}
+
+    else if {_id} is "khien_that_truyen":
+        set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore::2} to "&7Loại: &9Trang Bị Phòng Thủ &8(Liên Quân)"
+        set {_lore::3} to "&f• &7Máu tối đa: &a+24.0 HP &8(+12 Tim)"
+        set {_lore::4} to "&f• &7Giáp điểm: &9+70.0 DEF"
+        set {_lore::5} to ""
+        set {_lore::6} to "&8&lNỘI TẠI DUY NHẤT: TRÓI BUỘC"
+        set {_lore::7} to "&7Kẻ tấn công bạn bị &8Mining Fatigue II"
+        set {_lore::8} to "&7và &7Slowness I &7trong &e3 giây&7."
+        set {_lore::9} to ""
+        set {_lore::10} to "&e▸ Mở /trangbilq để lắp vào Khay!"
+        set {_lore::11} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_item} to makeCustomRPItem("khien_that_truyen", "&6&l✦ KHIÊN THẤT TRUYỀN ✦", {_lore::*})
+        set string tag "AoVItem" of nbt compound of {_item} to "khien_that_truyen"
+        return {_item}
+
+    else if {_id} is "giap_gaia":
+        set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore::2} to "&7Loại: &9Trang Bị Phòng Thủ &8(Liên Quân)"
+        set {_lore::3} to "&f• &7Máu tối đa: &a+26.0 HP &8(+13 Tim)"
+        set {_lore::4} to "&f• &7Giáp điểm: &9+50.0 DEF"
+        set {_lore::5} to "&f• &7Tốc độ di chuyển: &a+5.0%% Speed"
+        set {_lore::6} to ""
+        set {_lore::7} to "&a&lNỘI TẠI DUY NHẤT: HỒI PHỤC"
+        set {_lore::8} to "&7Trúng đòn hồi &a+8.0%% Máu tối đa"
+        set {_lore::9} to "&8(Trần 25 HP, Hồi chiêu: 12 giây)&7."
+        set {_lore::10} to ""
+        set {_lore::11} to "&e▸ Mở /trangbilq để lắp vào Khay!"
+        set {_lore::12} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_item} to makeCustomRPItem("giap_gaia", "&a&l✦ GIÁP GAIA ✦", {_lore::*})
+        set string tag "AoVItem" of nbt compound of {_item} to "giap_gaia"
+        return {_item}
+
+    else if {_id} is "huan_chuong_troy":
+        set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore::2} to "&7Loại: &9Trang Bị Phòng Thủ &8(Liên Quân)"
+        set {_lore::3} to "&f• &7Máu tối đa: &a+22.0 HP &8(+11 Tim)"
+        set {_lore::4} to "&f• &7Giáp điểm: &9+60.0 DEF"
+        set {_lore::5} to "&f• &7Giảm hồi chiêu: &b+10.0%% CDR"
+        set {_lore::6} to ""
+        set {_lore::7} to "&6&lNỘI TẠI DUY NHẤT: HỘ MỆNH"
+        set {_lore::8} to "&7Mỗi &e15 giây&7, nhận khiên ảo &628.0 HP &7(10s)."
+        set {_lore::9} to ""
+        set {_lore::10} to "&e▸ Mở /trangbilq để lắp vào Khay!"
+        set {_lore::11} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_item} to makeCustomRPItem("huan_chuong_troy", "&e&l✦ HUÂN CHƯƠNG TROY ✦", {_lore::*})
+        set string tag "AoVItem" of nbt compound of {_item} to "huan_chuong_troy"
+        return {_item}
+
+    else if {_id} is "giap_ho_menh":
+        set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore::2} to "&7Loại: &9Trang Bị Phòng Thủ &8(Liên Quân)"
+        set {_lore::3} to "&f• &7Sát thương gốc: &c+2.0 ATK"
+        set {_lore::4} to "&f• &7Máu tối đa: &a+14.0 HP &8(+7 Tim)"
+        set {_lore::5} to "&f• &7Giáp điểm: &9+40.0 DEF"
+        set {_lore::6} to ""
+        set {_lore::7} to "&e&lNỘI TẠI DUY NHẤT: PHỤC SINH"
+        set {_lore::8} to "&7Miễn tử giữ &c1 HP&7, sau &e2 giây &7hồi"
+        set {_lore::9} to "&a35.0%% Máu tối đa &8(Hồi chiêu: 150s)&7."
+        set {_lore::10} to ""
+        set {_lore::11} to "&e▸ Mở /trangbilq để lắp vào Khay!"
+        set {_lore::12} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_item} to makeCustomRPItem("giap_ho_menh", "&6&l✦ GIÁP HỘ MỆNH ✦", {_lore::*})
+        set string tag "AoVItem" of nbt compound of {_item} to "giap_ho_menh"
+        return {_item}
+
+    else if {_id} is "phu_chu_truong_sinh":
+        set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore::2} to "&7Loại: &9Trang Bị Phòng Thủ &8(Liên Quân)"
+        set {_lore::3} to "&f• &7Máu tối đa: &a+38.0 HP &8(+19 Tim)"
+        set {_lore::4} to "&f• &7Giáp điểm: &9+30.0 DEF"
+        set {_lore::5} to "&f• &7Hiệu quả hồi máu: &d+12.0%% Hồi phục"
+        set {_lore::6} to ""
+        set {_lore::7} to "&d&lNỘI TẠI DUY NHẤT: TRƯỜNG SINH"
+        set {_lore::8} to "&7Khi rời giao tranh sau &e5 giây&7, tự hồi &a+2.5%%"
+        set {_lore::9} to "&7Máu tối đa mỗi &f2 giây&7."
+        set {_lore::10} to ""
+        set {_lore::11} to "&e▸ Mở /trangbilq để lắp vào Khay!"
+        set {_lore::12} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_item} to makeCustomRPItem("phu_chu_truong_sinh", "&d&l✦ PHÙ CHÚ TRƯỜNG SINH ✦", {_lore::*})
+        set string tag "AoVItem" of nbt compound of {_item} to "phu_chu_truong_sinh"
+        return {_item}
+
+    return air
+
+function getAoVItemId(i: object) :: text:
+    if {_i} is not set:
+        return ""
+    if {_i} is air:
+        return ""
+    if type of {_i} is air:
+        return ""
+    if {_i} is an instance of ItemStack:
+        if {_i}.getAmount() <= 0:
+            return ""
+    else:
+        if item amount of {_i} <= 0:
+            return ""
+    set {_tag} to string tag "AoVItem" of nbt compound of {_i}
+    if {_tag} is set:
+        return {_tag}
+    return ""
+
+function getAoVItemName(id: text) :: text:
+    if {_id} is "thanh_kiem":
+        return "&6&lThánh Kiếm"
+    if {_id} is "muramasa":
+        return "&b&lKiếm Muramasa"
+    if {_id} is "nanh_fenrir":
+        return "&c&lNanh Fenrir"
+    if {_id} is "song_dao":
+        return "&a&lSong Đao Bão Táp"
+    if {_id} is "quy_kiem":
+        return "&4&lQuỷ Kiếm"
+    if {_id} is "thuong_xuyen_pha":
+        return "&e&lThương Xuyên Phá"
+    if {_id} is "giap_thong_kho":
+        return "&c&lGiáp Thống Khổ"
+    if {_id} is "khien_that_truyen":
+        return "&6&lKhiên Thất Truyền"
+    if {_id} is "giap_gaia":
+        return "&a&lGiáp Gaia"
+    if {_id} is "huan_chuong_troy":
+        return "&e&lHuân Chương Troy"
+    if {_id} is "giap_ho_menh":
+        return "&6&lGiáp Hộ Mệnh"
+    if {_id} is "phu_chu_truong_sinh":
+        return "&d&lPhù Chú Trường Sinh"
+    return "&6Trang Bị Liên Quân"
+
+# Tự động di trú dữ liệu cũ (nếu {aov_slot::*} đang lưu ItemStack thì chuyển thành String ID)
+function migrateAoVSlotToId(u: text, idx: number) :: text:
+    set {_val} to {aov_slot::%{_u}%::%{_idx}%}
+    if {_val} is not set:
+        return ""
+    if {_val} is a text:
+        return {_val}
+    set {_extracted} to getAoVItemId({_val})
+    if {_extracted} is not "":
+        set {aov_slot::%{_u}%::%{_idx}%} to {_extracted}
+        return {_extracted}
+    delete {aov_slot::%{_u}%::%{_idx}%}
+    return ""
+
+# ---------------------------------------------------------------------
+# 3. ĐỒNG BỘ CHỈ SỐ TRANG BỊ LIÊN QUÂN (RECALC AOV BONUSES)
+# ---------------------------------------------------------------------
+function recalcAoVBonuses(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_max} to getMaxAoVSlots({_p})
+
+    set {aov_bonus::%{_u}%::damage} to 0.0
+    set {aov_bonus::%{_u}%::crit_chance} to 0.0
+    set {aov_bonus::%{_u}%::crit_damage} to 0.0
+    set {aov_bonus::%{_u}%::armor_pen} to 0.0
+    set {aov_bonus::%{_u}%::lifesteal} to 0.0
+    set {aov_bonus::%{_u}%::hp} to 0.0
+    set {aov_bonus::%{_u}%::def} to 0.0
+    set {aov_bonus::%{_u}%::cdr} to 0.0
+    set {aov_bonus::%{_u}%::speed} to 0.0
+    set {aov_bonus::%{_u}%::heal_bonus} to 0.0
+    set {aov_bonus::%{_u}%::cdr_overflow} to 0.0
+
+    delete {aov_bonus::%{_u}%::has_thanhkiem}
+    delete {aov_bonus::%{_u}%::has_muramasa}
+    delete {aov_bonus::%{_u}%::has_fenrir}
+    delete {aov_bonus::%{_u}%::has_songdao}
+    delete {aov_bonus::%{_u}%::has_quykiem}
+    delete {aov_bonus::%{_u}%::has_xuyenpha}
+    delete {aov_bonus::%{_u}%::has_thongkho}
+    delete {aov_bonus::%{_u}%::has_thatruyen}
+    delete {aov_bonus::%{_u}%::has_gaia}
+    delete {aov_bonus::%{_u}%::has_troy}
+    delete {aov_bonus::%{_u}%::has_homenh}
+    delete {aov_bonus::%{_u}%::has_truongsinh}
+
+    loop integers from 1 to {_max}:
+        set {_id} to migrateAoVSlotToId({_u}, loop-integer)
+        if {_id} is "thanh_kiem":
+            add 5.0 to {aov_bonus::%{_u}%::damage}
+            add 25.0 to {aov_bonus::%{_u}%::crit_chance}
+            add 40.0 to {aov_bonus::%{_u}%::crit_damage}
+            set {aov_bonus::%{_u}%::has_thanhkiem} to true
+        else if {_id} is "muramasa":
+            add 4.0 to {aov_bonus::%{_u}%::damage}
+            add 10.0 to {aov_bonus::%{_u}%::cdr}
+            add 35.0 to {aov_bonus::%{_u}%::armor_pen}
+            set {aov_bonus::%{_u}%::has_muramasa} to true
+        else if {_id} is "nanh_fenrir":
+            add 6.5 to {aov_bonus::%{_u}%::damage}
+            set {aov_bonus::%{_u}%::has_fenrir} to true
+        else if {_id} is "song_dao":
+            add 2.5 to {aov_bonus::%{_u}%::damage}
+            add 25.0 to {aov_bonus::%{_u}%::crit_chance}
+            add 7.0 to {aov_bonus::%{_u}%::speed}
+            set {aov_bonus::%{_u}%::has_songdao} to true
+        else if {_id} is "quy_kiem":
+            add 5.0 to {aov_bonus::%{_u}%::damage}
+            add 18.0 to {aov_bonus::%{_u}%::lifesteal}
+            set {aov_bonus::%{_u}%::has_quykiem} to true
+        else if {_id} is "thuong_xuyen_pha":
+            add 5.0 to {aov_bonus::%{_u}%::damage}
+            add 14.0 to {aov_bonus::%{_u}%::hp}
+            add 20.0 to {aov_bonus::%{_u}%::def}
+            add 15.0 to {aov_bonus::%{_u}%::armor_pen}
+            set {aov_bonus::%{_u}%::has_xuyenpha} to true
+        else if {_id} is "giap_thong_kho":
+            add 24.0 to {aov_bonus::%{_u}%::hp}
+            add 65.0 to {aov_bonus::%{_u}%::def}
+            set {aov_bonus::%{_u}%::has_thongkho} to true
+        else if {_id} is "khien_that_truyen":
+            add 24.0 to {aov_bonus::%{_u}%::hp}
+            add 70.0 to {aov_bonus::%{_u}%::def}
+            set {aov_bonus::%{_u}%::has_thatruyen} to true
+        else if {_id} is "giap_gaia":
+            add 26.0 to {aov_bonus::%{_u}%::hp}
+            add 50.0 to {aov_bonus::%{_u}%::def}
+            add 5.0 to {aov_bonus::%{_u}%::speed}
+            set {aov_bonus::%{_u}%::has_gaia} to true
+        else if {_id} is "huan_chuong_troy":
+            add 22.0 to {aov_bonus::%{_u}%::hp}
+            add 60.0 to {aov_bonus::%{_u}%::def}
+            add 10.0 to {aov_bonus::%{_u}%::cdr}
+            set {aov_bonus::%{_u}%::has_troy} to true
+        else if {_id} is "giap_ho_menh":
+            add 2.0 to {aov_bonus::%{_u}%::damage}
+            add 14.0 to {aov_bonus::%{_u}%::hp}
+            add 40.0 to {aov_bonus::%{_u}%::def}
+            set {aov_bonus::%{_u}%::has_homenh} to true
+        else if {_id} is "phu_chu_truong_sinh":
+            add 38.0 to {aov_bonus::%{_u}%::hp}
+            add 30.0 to {aov_bonus::%{_u}%::def}
+            add 12.0 to {aov_bonus::%{_u}%::heal_bonus}
+            set {aov_bonus::%{_u}%::has_truongsinh} to true
+
+    # Vô Quả Giả Nội tại: Tinh Thông Trang Bị Liên Quân (+15% AD, HP và DEF nếu không có Trái Ác Quỷ)
+    set {_is_no_fruit} to false
+    if {df_data::%{_u}%::fruit} is not set:
+        set {_is_no_fruit} to true
+    else if {df_data::%{_u}%::fruit} is "none" or "":
+        set {_is_no_fruit} to true
+
+    if {_is_no_fruit} is true:
+        set {aov_bonus::%{_u}%::damage} to {aov_bonus::%{_u}%::damage} * 1.15
+        set {aov_bonus::%{_u}%::hp} to {aov_bonus::%{_u}%::hp} * 1.15
+        set {aov_bonus::%{_u}%::def} to {aov_bonus::%{_u}%::def} * 1.15
+
+    # Giới hạn Trần CDR tối đa 40.0% (Phần vượt trần chuyển hóa thành sát thương kỹ năng)
+    if {aov_bonus::%{_u}%::cdr} > 40.0:
+        set {aov_bonus::%{_u}%::cdr_overflow} to {aov_bonus::%{_u}%::cdr} - 40.0
+        set {aov_bonus::%{_u}%::cdr} to 40.0
+    else:
+        set {aov_bonus::%{_u}%::cdr_overflow} to 0.0
+
+    set {aov_bonus::%{_u}%::damage} to roundOneDecimal({aov_bonus::%{_u}%::damage})
+    set {aov_bonus::%{_u}%::ad} to {aov_bonus::%{_u}%::damage}
+    set {aov_bonus::%{_u}%::crit_chance} to roundOneDecimal({aov_bonus::%{_u}%::crit_chance})
+    set {aov_bonus::%{_u}%::crit_damage} to roundOneDecimal({aov_bonus::%{_u}%::crit_damage})
+    set {aov_bonus::%{_u}%::armor_pen} to roundOneDecimal({aov_bonus::%{_u}%::armor_pen})
+    set {aov_bonus::%{_u}%::lifesteal} to roundOneDecimal({aov_bonus::%{_u}%::lifesteal})
+    set {aov_bonus::%{_u}%::hp} to roundOneDecimal({aov_bonus::%{_u}%::hp})
+    set {aov_bonus::%{_u}%::def} to roundOneDecimal({aov_bonus::%{_u}%::def})
+    set {aov_bonus::%{_u}%::cdr} to roundOneDecimal({aov_bonus::%{_u}%::cdr})
+    set {aov_bonus::%{_u}%::speed} to roundOneDecimal({aov_bonus::%{_u}%::speed})
+
+    loop integers from 1 to 6:
+        set {aov_equip::%{_u}%::%loop-integer%} to {aov_slot::%{_u}%::%loop-integer%}
+
+    set {card_bonus::%{_u}%::crit_chance} to {aov_bonus::%{_u}%::crit_chance}
+    set {card_bonus::%{_u}%::crit_damage} to {aov_bonus::%{_u}%::crit_damage}
+    set {card_bonus::%{_u}%::accuracy} to 0.0
+    set {card_bonus::%{_u}%::dodge} to 0.0
+
+    recalcPlayerMaxHealth({_p})
+
+    set {_walk} to 0.2 * (1 + ({aov_bonus::%{_u}%::speed} / 100))
+    if {_walk} > 1.0:
+        set {_walk} to 1.0
+    set walk speed of {_p} to {_walk}
+
+function countEquippedAoV(p: player) :: number:
+    set {_u} to uuid of {_p}
+    set {_max} to getMaxAoVSlots({_p})
+    set {_cnt} to 0
+    loop integers from 1 to {_max}:
+        set {_id} to migrateAoVSlotToId({_u}, loop-integer)
+        if {_id} is not "":
+            add 1 to {_cnt}
+    return {_cnt}
+
+function hasAoVItemInTray(p: player, id: text) :: boolean:
+    set {_u} to uuid of {_p}
+    set {_max} to getMaxAoVSlots({_p})
+    loop integers from 1 to {_max}:
+        set {_equipped_id} to migrateAoVSlotToId({_u}, loop-integer)
+        if {_equipped_id} is {_id}:
+            return true
+    return false
+
+# ---------------------------------------------------------------------
+# 4. GUI NÂNG CẤP THIÊN PHÚ (/thienphu) - ICON PHÁT SÁNG HIDEFLAGS:63
+# ---------------------------------------------------------------------
+command /thienphu:
+    aliases: /talent
+    trigger:
+        openTalentUpgradeGUI(player)
+
+function openTalentUpgradeGUI(p: player):
+    set {_inv} to createStandardUI({_p}, "UI_G3_A", "&8✦ &6&lBẢNG THIÊN PHÚ & CHỈ SỐ &8✦", 6, orange stained glass pane named " ", "UI_G3", "Thiên Phú & Trang Bị")
+    openStandardUI({_p}, {_inv}, "UI_G3_A", "UI_G3")
+    refreshTalentUpgradeGUI({_p})
+
+function refreshTalentUpgradeGUI(p: player):
+    initTalentData({_p})
+    recalcAoVBonuses({_p})
+    set {_u} to uuid of {_p}
+
+    set {_cc} to getTalentTotal({_p}, "crit_chance")
+    set {_cd} to getTalentTotal({_p}, "crit_damage")
+    set {_acc} to getTalentTotal({_p}, "accuracy")
+    set {_dod} to getTalentTotal({_p}, "dodge")
+    set {_equipped} to countEquippedAoV({_p})
+    set {_max_slots} to getMaxAoVSlots({_p})
+    set {_hp} to (max health of {_p}) * 2
+    set {_atk} to ({aov_bonus::%{_u}%::damage} ? 0)
+    set {_pen} to ({aov_bonus::%{_u}%::armor_pen} ? 0)
+    set {_cdr} to ({aov_bonus::%{_u}%::cdr} ? 0)
+    set {_ls} to ({aov_bonus::%{_u}%::lifesteal} ? 0)
+
+    set {_cdrWarn} to ""
+    if {_cdr} >= 40:
+        set {_cdrWarn} to " &c&l(ĐẠT TRẦN CDR)"
+
+    set {_h_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_h_lore::2} to "&8▪ &7Người Chơi: &e%name of {_p}%"
+    set {_h_lore::3} to "&8▪ &7Điểm Thiên Phú: &6&l%{talent::%{_u}%::points}% Điểm &7(Đã cộng: &e%{talent::%{_u}%::spent}%&7)"
+    set {_h_lore::4} to "&8▪ &7Khay Trang Bị: &d%{_equipped}%/%{_max_slots}% Món"
+    set {_h_lore::5} to ""
+    set {_h_lore::6} to "&6✦ BẢNG 9 CHỈ SỐ THỰC CHIẾN CỘNG DỒN ✦"
+    set {_h_lore::7} to "&f❤ Máu Tối Đa (HP): &a%{_hp}% HP &8(%(round({_hp} / 2))% Tim)"
+    set {_h_lore::8} to "&f⚔ Sát Thương AoV (ATK): &c+%{_atk}% ST"
+    set {_h_lore::9} to "&f⚡ Tỷ Lệ Chí Mạng (CC): &e%{_cc}%%%"
+    set {_h_lore::10} to "&f☠ Sát Thương CM (CD): &4%{_cd}%%%"
+    set {_h_lore::11} to "&f⚓ Xuyên Giáp (PEN): &b%{_pen}%%%"
+    set {_h_lore::12} to "&f✦ Né Tránh (DODGE): &a%{_dod}%%% &8(Né đòn kẻ địch, trần 70%%)"
+    set {_h_lore::13} to "&f❖ Chính Xác (ACC): &b+%{_acc}%%% &8(Xuyên trừ Né kẻ địch)"
+    set {_cdrText} to "%{_cdr}%%%"
+    set {_h_lore::14} to "&f◷ Giảm Hồi Chiêu (CDR): &3%{_cdrText}%%{_cdrWarn}%"
+    set {_h_lore::15} to "&f✪ Hút Máu (LS): &d%{_ls}%%%"
+    set {_h_lore::16} to ""
+    set {_h_lore::17} to "&e▸ Né Thực Chiến: &fmax(0, Né bạn - CX địch) &8(Trần 70%%)"
+    set {_h_lore::18} to "&e▸ Khắc Chế Né: &fĐòn đánh của bạn giảm &b-%{_acc}%%% &fNé của đối thủ"
+    set {_h_lore::19} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_pName} to name of {_p}
+    set {_head} to makePlayerProfileHead({_p}, {_pName}, {_h_lore::*}, "&e&l✦ BẢNG 9 CHỈ SỐ THỰC CHIẾN ✦")
+    set slot 4 of {_p}'s current inventory to {_head}
+
+    set {_b_cc} to getTalentBase({_p}, "crit_chance")
+    set {_a_cc} to ({aov_bonus::%{_u}%::crit_chance} ? 0)
+    set {_cclore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_cclore::2} to "&7Gốc: &e%{_b_cc}%%% &8| &6AoV: +%{_a_cc}%%%"
+    set {_cclore::3} to "&7Tổng hiện tại: &f%{_cc}%%%"
+    set {_cclore::4} to "&7Mỗi điểm: &a+0.5%% &8| &7Giá: &61 Điểm TP"
+    set {_cclore::5} to ""
+    set {_cclore::6} to "&e▸ Chuột Trái: &fCộng 1 điểm"
+    set {_cclore::7} to "&6▸ Chuột Phải / Shift: &fCộng 5 điểm"
+    set {_cclore::8} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 19 of {_p}'s current inventory to makeGlowingItem(gold sword, "&c&lNÂNG CẤP: TỶ LỆ CHÍ MẠNG", {_cclore::*})
+
+    set {_b_cd} to getTalentBase({_p}, "crit_damage")
+    set {_a_cd} to ({aov_bonus::%{_u}%::crit_damage} ? 0)
+    set {_cdlore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_cdlore::2} to "&7Gốc: &e%{_b_cd}%%% &8| &6AoV: +%{_a_cd}%%%"
+    set {_cdlore::3} to "&7Tổng hiện tại: &f%{_cd}%%%"
+    set {_cdlore::4} to "&7Mỗi điểm: &a+2.0%% &8| &7Giá: &61 Điểm TP"
+    set {_cdlore::5} to ""
+    set {_cdlore::6} to "&e▸ Chuột Trái: &fCộng 1 điểm"
+    set {_cdlore::7} to "&6▸ Chuột Phải / Shift: &fCộng 5 điểm"
+    set {_cdlore::8} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 21 of {_p}'s current inventory to makeGlowingItem(blaze powder, "&4&lNÂNG CẤP: SÁT THƯƠNG CHÍ MẠNG", {_cdlore::*})
+
+    set {_b_acc} to getTalentBase({_p}, "accuracy")
+    set {_acclore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_acclore::2} to "&7Gốc: &e+%{_b_acc}%%%"
+    set {_acclore::3} to "&7Tổng hiện tại: &f+%{_acc}%%%"
+    set {_acclore::4} to "&7Mỗi điểm: &a+1.0%% &8| &7Giá: &61 Điểm TP"
+    set {_acclore::5} to "&7Công dụng: &bXuyên trừ %{_acc}%%% Né Tránh của địch"
+    set {_acclore::6} to ""
+    set {_acclore::7} to "&e▸ Chuột Trái: &fCộng 1 điểm"
+    set {_acclore::8} to "&6▸ Chuột Phải / Shift: &fCộng 5 điểm"
+    set {_acclore::9} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 23 of {_p}'s current inventory to makeGlowingItem(bow, "&b&lNÂNG CẤP: CHÍNH XÁC", {_acclore::*})
+
+    set {_b_dod} to getTalentBase({_p}, "dodge")
+    set {_dodlore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_dodlore::2} to "&7Gốc: &e%{_b_dod}%%% &8(Tối đa 20%% từ TP)"
+    set {_dodlore::3} to "&7Tổng hiện tại: &f%{_dod}%%%"
+    set {_dodlore::4} to "&7Mỗi điểm: &a+0.4%% &8| &7Giá: &61 Điểm TP"
+    set {_dodlore::5} to "&7Công dụng: &aNé đòn kẻ địch (bị giảm bởi CX địch, trần 70%%)"
+    set {_dodlore::6} to ""
+    set {_dodlore::7} to "&e▸ Chuột Trái: &fCộng 1 điểm"
+    set {_dodlore::8} to "&6▸ Chuột Phải / Shift: &fCộng 5 điểm"
+    set {_dodlore::9} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 25 of {_p}'s current inventory to makeGlowingItem(feather, "&a&lNÂNG CẤP: NÉ TRÁNH", {_dodlore::*})
+
+    set {_resLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_resLore::2} to "&8▪ &7Phẩm chất: &6BẢO VẬT THẦN BÍ"
+    set {_resLore::3} to "&f❖ Hoàn trả lại &e100%% Điểm Thiên Phú &fđã cộng."
+    set {_resLore::4} to "&f❖ Đưa toàn bộ 4 nhánh chỉ số về mức ban đầu."
+    set {_resLore::5} to ""
+    set {_resLore::6} to "&7Giá mua nhanh: &630 Coin &8(hoặc đổi tại /nganhang)"
+    set {_resLore::7} to ""
+    set {_resLore::8} to "&e▸ Chuột Trái: &fDùng 1 Quả Cầu có sẵn trong túi"
+    set {_resLore::9} to "&b▸ Chuột Phải: &fMua & Tẩy ngay (&630 Coin&f)"
+    set {_resLore::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 30 of {_p}'s current inventory to makeCustomRPItem("talent_reset", "&6&l✦ QUẢ CẦU TẨY THIÊN PHÚ ✦", {_resLore::*})
+
+    set {_ghLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_ghLore::2} to "&7Ghép 3 thẻ cùng bậc thành thẻ bậc cao hơn."
+    set {_ghLore::3} to "&7Mở rộng sức mạnh tiềm năng chỉ số RPG."
+    set {_ghLore::4} to ""
+    set {_ghLore::5} to "&e▸ Nhấp để mở Bàn Ghép Thẻ (/ghepthe)!"
+    set {_ghLore::6} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 32 of {_p}'s current inventory to makeGlowingItem(crafting table, "&e&l✦ BÀN GHÉP THẺ THIÊN PHÚ ✦", {_ghLore::*})
+
+on inventory click:
+    set {_u} to uuid of player
+    if {ui_active::%{_u}%} is not "UI_G3_A":
+        stop
+    cancel event
+    if clicked inventory is not player's current inventory:
+        stop
+
+    set {_times} to 1
+    if event.isRightClick() is true:
+        set {_times} to 5
+    if event.isShiftClick() is true:
+        set {_times} to 5
+
+    set {_slot} to index of event-slot
+    if {_slot} is 19:
+        upgradeTalentStat(player, "crit_chance", {_times})
+        refreshTalentUpgradeGUI(player)
+    else if {_slot} is 21:
+        upgradeTalentStat(player, "crit_damage", {_times})
+        refreshTalentUpgradeGUI(player)
+    else if {_slot} is 23:
+        upgradeTalentStat(player, "accuracy", {_times})
+        refreshTalentUpgradeGUI(player)
+    else if {_slot} is 25:
+        upgradeTalentStat(player, "dodge", {_times})
+        refreshTalentUpgradeGUI(player)
+    else if {_slot} is 30:
+        set {_u} to uuid of player
+        if ({talent::%{_u}%::spent} ? 0) <= 0:
+            sendSystemMsg(player, "error", "Bạn chưa cộng điểm Thiên Phú nào để tẩy!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+        if event.isLeftClick() is true:
+            if countPlayerItemByTag(player, "talent_reset") > 0:
+                removePlayerItemByTag(player, "talent_reset", 1)
+                resetTalentPoints(player)
+                sendSystemMsg(player, "talent", "Đã dùng 1 Quả Cầu Tẩy Điểm và hoàn lại 100%% điểm!")
+                play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to player
+                refreshTalentUpgradeGUI(player)
+            else:
+                sendSystemMsg(player, "error", "Bạn không có Quả Cầu Tẩy Điểm trong túi! Chuột Phải để mua ngay ($50,000).")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+        else if event.isRightClick() is true:
+            if getCoinBalance(player) >= 30:
+                takeCoinBalance(player, 30)
+                resetTalentPoints(player)
+                sendSystemMsg(player, "talent", "Đã thanh toán 30 Coin tẩy điểm Thiên Phú thành công!")
+                play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to player
+                refreshTalentUpgradeGUI(player)
+            else:
+                sendSystemMsg(player, "error", "Bạn thiếu Coin! Cần 30 Coin để tẩy điểm (Đổi tại /nganhang).")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+    else if {_slot} is 32:
+        wait 1 tick
+        openAoVShopGUI(player)
+
+command /trangbilq:
+    aliases: /build, /aov, /khaythe
+    trigger:
+        openAoVTrayGUI(player)
+
+function openAoVTrayGUI(p: player):
+    set {_inv} to createStandardUI({_p}, "UI_G3_B", "&8✦ &6&lKHAY TRANG BỊ LIÊN QUÂN &8✦", 4, orange stained glass pane named " ", "UI_G3", "Thiên Phú & Trang Bị")
+    openStandardUI({_p}, {_inv}, "UI_G3_B", "UI_G3")
+    refreshAoVTrayGUI({_p})
+
+function refreshAoVTrayGUI(p: player):
+    initTalentData({_p})
+    recalcAoVBonuses({_p})
+    set {_u} to uuid of {_p}
+    set {_max_slots} to getMaxAoVSlots({_p})
+    set {_equipped} to countEquippedAoV({_p})
+
+    set {_b::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_b::2} to "&8▪ &7Ô trang bị đã dùng: &e%{_equipped}%/%{_max_slots}% Ô"
+    set {_b::3} to ""
+    set {_b::4} to "&c⚔ Sát Thương Gốc: &f+%{aov_bonus::%{_u}%::damage}% ST"
+    set {_b::5} to "&e⚔ Tỷ Lệ Chí Mạng: &f+%{aov_bonus::%{_u}%::crit_chance}%%%"
+    set {_b::6} to "&4⚔ ST Chí Mạng: &f+%{aov_bonus::%{_u}%::crit_damage}%%%"
+    set {_b::7} to "&b⚔ Xuyên Giáp: &f+%{aov_bonus::%{_u}%::armor_pen}%%%"
+    set {_b::8} to "&d✦ Hút Máu: &f+%{aov_bonus::%{_u}%::lifesteal}%%%"
+    set {_b::9} to "&a❤ Máu Tối Đa: &f+%{aov_bonus::%{_u}%::hp}% HP &8(+%(round({aov_bonus::%{_u}%::hp} / 2))% Tim)"
+    set {_b::10} to "&9❖ Giáp Điểm (DEF): &f+%{aov_bonus::%{_u}%::def}% DEF"
+    set {_b::11} to "&3◷ Giảm Hồi Chiêu: &f+%{aov_bonus::%{_u}%::cdr}%%%"
+    set {_b::12} to "&f✦ Tốc Độ Chạy: &f+%{aov_bonus::%{_u}%::speed}%%%"
+    set {_b::13} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 4 of {_p}'s current inventory to makeGlowingItem(book, "&6&l✦ CHỈ SỐ TRANG BỊ LIÊN QUÂN ✦", {_b::*})
+
+    # 6 Ô Trang bị: 3 Ô mặc định (11, 13, 15) + 3 Ô Rank (20, 22, 24)
+    # Ánh xạ index 1..6
+    set {_slot_map::1} to 11
+    set {_slot_map::2} to 13
+    set {_slot_map::3} to 15
+    set {_slot_map::4} to 20
+    set {_slot_map::5} to 22
+    set {_slot_map::6} to 24
+
+    loop integers from 1 to 6:
+        set {_rawSlot} to {_slot_map::%loop-integer%}
+        if loop-integer <= {_max_slots}:
+            set {_eqId} to migrateAoVSlotToId({_u}, loop-integer)
+            if {_eqId} is not "":
+                set {_disp} to createAoVItem({_eqId})
+                add "" and "&c▸ Nhấn để tháo Trang Bị về túi đồ!" to lore of {_disp}
+                set slot {_rawSlot} of {_p}'s current inventory to {_disp}
+            else:
+                set slot {_rawSlot} of {_p}'s current inventory to yellow stained glass pane named "&e&l[Ô TRANG BỊ SỐ %loop-integer% - TRỐNG]" with lore ("&7Nhấn vào một &6Trang Bị Liên Quân &7trong" and "&7túi đồ của bạn để lắp vào ô này." and "" and "&e▸ Lưu ý: Không lắp 2 món cùng loại!")
+        else:
+            if loop-integer is 4:
+                set {_req} to "&b&lVIP"
+            else if loop-integer is 5:
+                set {_req} to "&d&lKING"
+            else:
+                set {_req} to "&6&lMASTER"
+            set slot {_rawSlot} of {_p}'s current inventory to red stained glass pane named "&c&l[Ô TRANG BỊ SỐ %loop-integer% - ĐÃ KHÓA]" with lore ("&7Yêu cầu nâng cấp Rank %{_req}%" and "&7tại &e/coinshop &7để mở khóa ô này!" and "" and "&c✖ Chưa đủ điều kiện mở khóa")
+
+on inventory click:
+    set {_u} to uuid of player
+    if {ui_active::%{_u}%} is not "UI_G3_B":
+        stop
+    cancel event
+    set {_max_slots} to getMaxAoVSlots(player)
+
+    # 1. Nhấn vào túi đồ cá nhân để LẮP TRANG BỊ
+    if clicked inventory is player's inventory:
+        set {_rawItem} to event.getCurrentItem()
+        if {_rawItem} is not set:
+            stop
+        if {_rawItem} is air:
+            stop
+        if type of {_rawItem} is air:
+            stop
+        if {_rawItem} is an instance of ItemStack:
+            if {_rawItem}.getAmount() <= 0:
+                stop
+
+        set {_id} to getAoVItemId({_rawItem})
+        if {_id} is "":
+            sendSystemMsg(player, "error", "Vật phẩm này không phải là Trang Bị Liên Quân hợp lệ!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+
+        if hasAoVItemInTray(player, {_id}) is true:
+            set {_dupName} to getAoVItemName({_id})
+            sendSystemMsg(player, "error", "Bạn đã trang bị %{_dupName}% &crồi! Mỗi món chỉ được lắp 1 lần duy nhất.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+
+        set {_free_idx} to 0
+        loop integers from 1 to {_max_slots}:
+            set {_checkId} to migrateAoVSlotToId({_u}, loop-integer)
+            if {_checkId} is "":
+                set {_free_idx} to loop-integer
+                stop loop
+
+        if {_free_idx} is 0:
+            sendSystemMsg(player, "error", "Tất cả các ô trang bị đã mở khóa (%{_max_slots}%/%{_max_slots}%) đều đã đầy!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+
+        set {_amt} to {_rawItem}.getAmount()
+        if {_amt} <= 1:
+            set clicked slot to air
+        else:
+            set item amount of clicked slot to ({_amt} - 1)
+
+        set {aov_slot::%{_u}%::%{_free_idx}%} to {_id}
+        recalcAoVBonuses(player)
+        set {_eqName} to getAoVItemName({_id})
+        sendSystemMsg(player, "combat", "Đã lắp %{_eqName}% &fvào ô số &e%{_free_idx}%&f!")
+        play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to player
+        refreshAoVTrayGUI(player)
+        stop
+
+    # 2. Thao tác trên GUI Khay Trang Bị
+    if clicked inventory is not player's current inventory:
+        stop
+    set {_slot} to index of event-slot
+
+    set {_slot_idx} to 0
+    if {_slot} is 11:
+        set {_slot_idx} to 1
+    else if {_slot} is 13:
+        set {_slot_idx} to 2
+    else if {_slot} is 15:
+        set {_slot_idx} to 3
+    else if {_slot} is 20:
+        set {_slot_idx} to 4
+    else if {_slot} is 22:
+        set {_slot_idx} to 5
+    else if {_slot} is 24:
+        set {_slot_idx} to 6
+
+    if {_slot_idx} > 0:
+        if {_slot_idx} <= {_max_slots}:
+            set {_curId} to migrateAoVSlotToId({_u}, {_slot_idx})
+            if {_curId} is not "":
+                set {_returnItem} to createAoVItem({_curId})
+                if player cannot hold {_returnItem}:
+                    sendSystemMsg(player, "error", "Túi đồ của bạn đã đầy! Hãy dọn chỗ trống trước khi tháo trang bị.")
+                    play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+                    stop
+                delete {aov_slot::%{_u}%::%{_slot_idx}%}
+                give {_returnItem} to player
+                recalcAoVBonuses(player)
+                set {_unequipName} to getAoVItemName({_curId})
+                sendSystemMsg(player, "combat", "Đã tháo %{_unequipName}% &fvề túi đồ!")
+                play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 0.9 to player
+                refreshAoVTrayGUI(player)
+        else:
+            sendSystemMsg(player, "error", "Ô trang bị số &e%{_slot_idx}% &cđang bị khóa! Nâng cấp Rank tại &e/coinshop &cđể mở khóa.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+
+command /shopaov:
+    aliases: /repaov, /aovshop
+    trigger:
+        openAoVShopGUI(player)
+
+function openAoVShopGUI(p: player):
+    set {_inv} to createStandardUI({_p}, "UI_G3_C", "&8✦ &6&lXƯỞNG RÈN TRANG BỊ LIÊN QUÂN &8✦", 6, orange stained glass pane named " ", "UI_G3", "Thiên Phú & Trang Bị")
+    openStandardUI({_p}, {_inv}, "UI_G3_C", "UI_G3")
+    refreshAoVShopGUI({_p})
+
+function getAoVCoinPrice(id: text) :: number:
+    if {_id} is "thanh_kiem" or "muramasa" or "quy_kiem" or "giap_gaia" or "huan_chuong_troy":
+        return 200
+    else if {_id} is "nanh_fenrir":
+        return 280
+    else if {_id} is "giap_ho_menh":
+        return 350
+    else if {_id} is "phu_chu_truong_sinh":
+        return 300
+    else if {_id} is "song_dao" or "thuong_xuyen_pha" or "giap_thong_kho" or "khien_that_truyen":
+        return 120
+    return 0
+
+function refreshAoVShopGUI(p: player):
+    # Slot 4: Mua Rương Trang Bị Liên Quân
+    delete {_chestLore::*}
+    set {_chestLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_chestLore::2} to "&8▪ &7Vật phẩm: &6&lRƯƠNG TRANG BỊ AOV"
+    set {_chestLore::3} to "&fMở ngẫu nhiên 1 trong 12 Trang Bị Cực Phẩm."
+    set {_chestLore::4} to ""
+    set {_chestLore::5} to "&e✦ CHI PHÍ MUA RƯƠNG:"
+    set {_chestLore::6} to "&f• Giá: &6160 Coin &8(Đổi tại /nganhang)"
+    set {_chestLore::7} to ""
+    set {_chestLore::8} to "&a▸ Click: &fMua Rương Trang Bị AoV!"
+    set {_chestLore::9} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_chestItem} to makeCustomRPItem("aov_chest", "&6&l✦ MUA RƯƠNG TRANG BỊ AOV ✦", {_chestLore::*})
+    set slot 4 of {_p}'s current inventory to {_chestItem}
+
+    set slot 9 of {_p}'s current inventory to book named "&c&lNHÓM CÔNG VẬT LÝ" with lore ("&76 Trang Bị Tấn Công uy lực" and "&7tăng Sát thương, Chí mạng, Xuyên giáp...")
+
+    set {_tk} to createAoVItem("thanh_kiem")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f• Giá: &6200 Coin" and "" and "&a▸ Nhấn để Rèn Thánh Kiếm!" to lore of {_tk}
+    if hasAoVItemInTray({_p}, "thanh_kiem") is true:
+        add "&a✔ ĐANG LẮP TRONG KHAY" to lore of {_tk}
+    set slot 10 of {_p}'s current inventory to {_tk}
+
+    set {_mura} to createAoVItem("muramasa")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f• Giá: &6200 Coin" and "" and "&a▸ Nhấn để Rèn Muramasa!" to lore of {_mura}
+    if hasAoVItemInTray({_p}, "muramasa") is true:
+        add "&a✔ ĐANG LẮP TRONG KHAY" to lore of {_mura}
+    set slot 11 of {_p}'s current inventory to {_mura}
+
+    set {_fenrir} to createAoVItem("nanh_fenrir")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f• Giá: &6280 Coin" and "" and "&a▸ Nhấn để Rèn Nanh Fenrir!" to lore of {_fenrir}
+    if hasAoVItemInTray({_p}, "nanh_fenrir") is true:
+        add "&a✔ ĐANG LẮP TRONG KHAY" to lore of {_fenrir}
+    set slot 12 of {_p}'s current inventory to {_fenrir}
+
+    set {_sd} to createAoVItem("song_dao")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f• Giá: &6120 Coin" and "" and "&a▸ Nhấn để Rèn Song Đao Bão Táp!" to lore of {_sd}
+    if hasAoVItemInTray({_p}, "song_dao") is true:
+        add "&a✔ ĐANG LẮP TRONG KHAY" to lore of {_sd}
+    set slot 13 of {_p}'s current inventory to {_sd}
+
+    set {_qk} to createAoVItem("quy_kiem")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f• Giá: &6200 Coin" and "" and "&a▸ Nhấn để Rèn Quỷ Kiếm!" to lore of {_qk}
+    if hasAoVItemInTray({_p}, "quy_kiem") is true:
+        add "&a✔ ĐANG LẮP TRONG KHAY" to lore of {_qk}
+    set slot 14 of {_p}'s current inventory to {_qk}
+
+    set {_txp} to createAoVItem("thuong_xuyen_pha")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f• Giá: &6120 Coin" and "" and "&a▸ Nhấn để Rèn Thương Xuyên Phá!" to lore of {_txp}
+    if hasAoVItemInTray({_p}, "thuong_xuyen_pha") is true:
+        add "&a✔ ĐANG LẮP TRONG KHAY" to lore of {_txp}
+    set slot 15 of {_p}'s current inventory to {_txp}
+
+    set slot 18 of {_p}'s current inventory to book named "&a&lNHÓM THỦ & HỒI PHỤC" with lore ("&76 Trang Bị Phòng Thủ vững chãi" and "&7tăng Máu tối đa, Giáp, Kháng phép...")
+
+    set {_gtk} to createAoVItem("giap_thong_kho")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f• Giá: &6120 Coin" and "" and "&a▸ Nhấn để Rèn Giáp Thống Khổ!" to lore of {_gtk}
+    if hasAoVItemInTray({_p}, "giap_thong_kho") is true:
+        add "&a✔ ĐANG LẮP TRONG KHAY" to lore of {_gtk}
+    set slot 19 of {_p}'s current inventory to {_gtk}
+
+    set {_ktt} to createAoVItem("khien_that_truyen")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f• Giá: &6120 Coin" and "" and "&a▸ Nhấn để Rèn Khiên Thất Truyền!" to lore of {_ktt}
+    if hasAoVItemInTray({_p}, "khien_that_truyen") is true:
+        add "&a✔ ĐANG LẮP TRONG KHAY" to lore of {_ktt}
+    set slot 20 of {_p}'s current inventory to {_ktt}
+
+    set {_gaia} to createAoVItem("giap_gaia")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f• Giá: &6200 Coin" and "" and "&a▸ Nhấn để Rèn Giáp Gaia!" to lore of {_gaia}
+    if hasAoVItemInTray({_p}, "giap_gaia") is true:
+        add "&a✔ ĐANG LẮP TRONG KHAY" to lore of {_gaia}
+    set slot 21 of {_p}'s current inventory to {_gaia}
+
+    set {_troy} to createAoVItem("huan_chuong_troy")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f• Giá: &6200 Coin" and "" and "&a▸ Nhấn để Rèn Huân Chương Troy!" to lore of {_troy}
+    if hasAoVItemInTray({_p}, "huan_chuong_troy") is true:
+        add "&a✔ ĐANG LẮP TRONG KHAY" to lore of {_troy}
+    set slot 22 of {_p}'s current inventory to {_troy}
+
+    set {_ghm} to createAoVItem("giap_ho_menh")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f• Giá: &6350 Coin" and "" and "&a▸ Nhấn để Rèn Giáp Hộ Mệnh!" to lore of {_ghm}
+    if hasAoVItemInTray({_p}, "giap_ho_menh") is true:
+        add "&a✔ ĐANG LẮP TRONG KHAY" to lore of {_ghm}
+    set slot 23 of {_p}'s current inventory to {_ghm}
+
+    set {_pcts} to createAoVItem("phu_chu_truong_sinh")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f• Giá: &6300 Coin" and "" and "&a▸ Nhấn để Rèn Phù Chú Trường Sinh!" to lore of {_pcts}
+    if hasAoVItemInTray({_p}, "phu_chu_truong_sinh") is true:
+        add "&a✔ ĐANG LẮP TRONG KHAY" to lore of {_pcts}
+    set slot 24 of {_p}'s current inventory to {_pcts}
+
+    # Slot 49: Hiển thị Số Dư Coin & Thông Tin Thợ Rèn
+    delete {_balLore::*}
+    set {_balLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_balLore::2} to "&7Số dư Coin: &6%routerFormatNumber(getCoinBalance({_p}))% ⛁"
+    set {_balLore::3} to "&7Dùng Coin để rèn trang bị Liên Quân độc quyền!"
+    set {_balLore::4} to "&e▸ Đổi Money thành Coin tại &a/nganhang&e!"
+    set {_balLore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 49 of {_p}'s current inventory to makeGlowingItem(sunflower, "&e&l✦ SỐ DƯ COIN & RÈN AOV ✦", {_balLore::*})
+
+function craftAoVItem(p: player, id: text):
+    set {_item} to createAoVItem({_id})
+    if {_item} is air:
+        stop
+
+    set {_cost} to getAoVCoinPrice({_id})
+    if {_cost} <= 0:
+        stop
+
+    if getCoinBalance({_p}) < {_cost}:
+        sendSystemMsg({_p}, "error", "Bạn thiếu Coin! Cần %{_cost}% Coin để rèn (Đổi tại /nganhang).")
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+
+    takeCoinBalance({_p}, {_cost})
+    giveItemSafely({_p}, {_item})
+
+    set {_craftedName} to getAoVItemName({_id})
+    sendSystemMsg({_p}, "economy", "Rèn thành công %{_craftedName}%&f! (-%{_cost}% Coin)")
+    play sound "BLOCK_ANVIL_USE" with volume 1 and pitch 1 to {_p}
+    play sound "ENTITY_PLAYER_LEVELUP" with volume 0.8 and pitch 1.3 to {_p}
+    set {_loc} to location of {_p}
+    add 1 to y-coordinate of {_loc}
+    spawnVisualParticle("FIREWORKS_SPARK", {_loc}, 20, 0.4, 0.5, 0.4, 0.08)
+    refreshAoVShopGUI({_p})
+
+on inventory click:
+    set {_u} to uuid of player
+    if {ui_active::%{_u}%} is not "UI_G3_C":
+        stop
+    cancel event
+    if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+        player.updateInventory()
+    if clicked inventory is not player's current inventory:
+        stop
+
+    set {_slot} to index of event-slot
+    if {_slot} is 45 or 46 or 53:
+        stop
+
+    if {_slot} is 4:
+        if getCoinBalance(player) < 160:
+            sendSystemMsg(player, "error", "Bạn thiếu Coin! Cần 160 Coin để mua Rương Trang Bị AoV (Đổi tại /nganhang).")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+        takeCoinBalance(player, 160)
+        set {_chest} to createAoVChest()
+        giveItemSafely(player, {_chest})
+        sendSystemMsg(player, "forge", "Đã mua thành công &6&lRương Trang Bị AoV&f! (-160 Coin)")
+        play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1.2 to player
+        refreshAoVShopGUI(player)
+    else if {_slot} is 10:
+        craftAoVItem(player, "thanh_kiem")
+    else if {_slot} is 11:
+        craftAoVItem(player, "muramasa")
+    else if {_slot} is 12:
+        craftAoVItem(player, "nanh_fenrir")
+    else if {_slot} is 13:
+        craftAoVItem(player, "song_dao")
+    else if {_slot} is 14:
+        craftAoVItem(player, "quy_kiem")
+    else if {_slot} is 15:
+        craftAoVItem(player, "thuong_xuyen_pha")
+    else if {_slot} is 19:
+        craftAoVItem(player, "giap_thong_kho")
+    else if {_slot} is 20:
+        craftAoVItem(player, "khien_that_truyen")
+    else if {_slot} is 21:
+        craftAoVItem(player, "giap_gaia")
+    else if {_slot} is 22:
+        craftAoVItem(player, "huan_chuong_troy")
+    else if {_slot} is 23:
+        craftAoVItem(player, "giap_ho_menh")
+    else if {_slot} is 24:
+        craftAoVItem(player, "phu_chu_truong_sinh")
+
+# ---------------------------------------------------------------------
+# 7. CHỐNG KÉO THẢ GUI QUA REFLECT (INVENTORY DRAG EVENT)
+# ---------------------------------------------------------------------
+on InventoryDragEvent:
+    set {_who} to event.getWhoClicked()
+    if {_who} is set:
+        set {_active} to {ui_active::%uuid of {_who}%}
+        if {_active} is "UI_G3_A" or "UI_G3_B" or "UI_G3_C":
+            cancel event
+
+# ---------------------------------------------------------------------
+# 8. VÒNG LẶP ĐỊNH KỲ NỘI TẠI NGOÀI GIAO TRANH & HỒI SINH (EVERY 2 SECONDS)
+# ---------------------------------------------------------------------
+every 2 seconds:
+    set {_nowMs} to System.currentTimeMillis()
+    loop all players:
+        set {_u} to uuid of loop-player
+        if loop-player is not alive:
+            delete {aov_revive_pending::%{_u}%}
+            continue
+        if health of loop-player <= 0:
+            delete {aov_revive_pending::%{_u}%}
+            continue
+
+        # 1. Huân Chương Troy: Tạo khiên Hấp Thụ (Absorption I 10s) mỗi 15s
+        if {aov_bonus::%{_u}%::has_troy} is true:
+            set {_can_troy} to true
+            if {aov_cd_ms::%{_u}%::troy} is set:
+                if ({_nowMs} - {aov_cd_ms::%{_u}%::troy}) < 15000:
+                    set {_can_troy} to false
+            if {_can_troy} is true:
+                set {aov_cd_ms::%{_u}%::troy} to {_nowMs}
+                apply absorption 1 to loop-player for 10 seconds
+                set {_ploc} to location of loop-player
+                add 1 to y-coordinate of {_ploc}
+                spawnVisualParticle("SPELL_MOB", {_ploc}, 8, 0.3, 0.4, 0.3, 0.05)
+
+        # 2. Kiểm tra rời giao tranh sau 5 giây (Out of combat >= 5s)
+        set {_ooc} to false
+        if {last_combat::%{_u}%} is not set:
+            set {_ooc} to true
+        else if difference between {last_combat::%{_u}%} and now >= 5 seconds:
+            set {_ooc} to true
+
+        if {_ooc} is true:
+            if {aov_bonus::%{_u}%::has_xuyenpha} is true:
+                apply speed 1 to loop-player for 3 seconds
+
+            if {aov_bonus::%{_u}%::has_truongsinh} is true:
+                set {_can_ts_heal} to true
+                if {mera_curse_until::%{_u}%} is set:
+                    if System.currentTimeMillis() < {mera_curse_until::%{_u}%}:
+                        set {_can_ts_heal} to false
+                    else:
+                        delete {mera_curse_until::%{_u}%}
+                if {_can_ts_heal} is true:
+                    if health of loop-player > 0:
+                        if health of loop-player < max health of loop-player:
+                            set {_h_amt} to (max health of loop-player) * 0.024
+                            heal loop-player by {_h_amt}
+                            set {_ploc2} to location of loop-player
+                            add 1 to y-coordinate of {_ploc2}
+                            spawnVisualParticle("VILLAGER_HAPPY", {_ploc2}, 3, 0.3, 0.4, 0.3, 0.05)
+
+        # 3. Giáp Hộ Mệnh: Hồi phục 40% Máu tối đa (Bảo vệ dự phòng nếu chưa hồi phục tức thì)
+        if {aov_revive_pending::%{_u}%} is set:
+            if difference between {aov_revive_pending::%{_u}%} and now >= 2 seconds:
+                delete {aov_revive_pending::%{_u}%}
+                if loop-player is alive:
+                    if health of loop-player > 0:
+                        set {_heal_res} to (max health of loop-player) * 0.40
+                        if {aov_bonus::%{_u}%::has_truongsinh} is true:
+                            set {_heal_res} to {_heal_res} * 1.2
+                        heal loop-player by {_heal_res}
+                        send action bar "&a&l✦ GIÁP HỘ MỆNH: HỒI ĐẦY 40%% MÁU TỐI ĐA! ✦" to loop-player
+                        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to loop-player
+                        set {_rloc} to location of loop-player
+                        add 1 to y-coordinate of {_rloc}
+                        spawnVisualParticle("FIREWORKS_SPARK", {_rloc}, 25, 0.4, 0.6, 0.4, 0.08)
+
+# ---------------------------------------------------------------------
+# 9. LỆNH QUẢN TRỊ VIÊN TRANG BỊ LIÊN QUÂN (/aovadmin)
+# ---------------------------------------------------------------------
+command /aovadmin <text> [<player>] [<text>] [<number>]:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        if arg-1 is "give":
+            if arg-2 is not set:
+                sendSystemMsg(sender, "error", "Cú pháp: /aovadmin give <player> <item_id> [amount]")
+                stop
+            if arg-3 is not set:
+                sendSystemMsg(sender, "error", "Thiếu ID trang bị! Gõ /aovadmin list để xem danh sách.")
+                stop
+            set {_item} to createAoVItem(arg-3)
+            if {_item} is air:
+                sendSystemMsg(sender, "error", "ID trang bị '%arg-3%' không tồn tại! Gõ /aovadmin list.")
+                stop
+            set {_amt} to 1
+            if arg-4 is set:
+                set {_amt} to floor(arg-4)
+            if {_amt} < 1:
+                set {_amt} to 1
+            loop {_amt} times:
+                if arg-2 can hold {_item}:
+                    give {_item} to arg-2
+                else:
+                    drop {_item} at location of arg-2
+            set {_givenName} to getAoVItemName(arg-3)
+            sendSystemMsg(sender, "economy", "Đã trao &6%{_amt}%x %{_givenName}% &fcho &e%name of arg-2%&f!")
+            play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to arg-2
+
+        else if arg-1 is "list":
+            send "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" to sender
+            send "&6&lDANH SÁCH 12 TRANG BỊ LIÊN QUÂN:" to sender
+            send "&c• Công Vật Lý: &fthanh_kiem, muramasa, nanh_fenrir, song_dao, quy_kiem, thuong_xuyen_pha" to sender
+            send "&9• Phòng Thủ: &fgiap_thong_kho, khien_that_truyen, giap_gaia, huan_chuong_troy, giap_ho_menh, phu_chu_truong_sinh" to sender
+            send "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" to sender
+
+        else if arg-1 is "clear":
+            if arg-2 is not set:
+                sendSystemMsg(sender, "error", "Cú pháp: /aovadmin clear <player>")
+                stop
+            set {_u} to uuid of arg-2
+            delete {aov_slot::%{_u}%::*}
+            delete {aov_equip::%{_u}%::*}
+            recalcAoVBonuses(arg-2)
+            sendSystemMsg(sender, "combat", "Đã xóa sạch Khay Trang Bị của &e%name of arg-2%&f!")
+
+        else:
+            send "&e&lLệnh /aovadmin:" to sender
+            send "&7• /aovadmin give <player> <item_id> [amount]" to sender
+            send "&7• /aovadmin list &8- Xem 12 ID trang bị" to sender
+            send "&7• /aovadmin clear <player> &8- Xóa khay trang bị" to sender
+
+# ---------------------------------------------------------------------
+# 10. RƯƠNG TRANG BỊ LIÊN QUÂN 3D & LỆNH /ghepthe CHUYỂN HƯỚNG
+# ---------------------------------------------------------------------
+function createAoVChest() :: item:
+    set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lore::2} to "&7Loại: &6Bảo Vật Sử Thi &8(Liên Quân)"
+    set {_lore::3} to "&7Khi mở, nhận ngẫu nhiên &61 trong 12"
+    set {_lore::4} to "&7Trang Bị Liên Quân cực phẩm!"
+    set {_lore::5} to ""
+    set {_lore::6} to "&e▸ Chuột Phải để mở Rương!"
+    set {_lore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_item} to makeCustomRPItem("aov_chest", "&6&l✦ RƯƠNG TRANG BỊ LIÊN QUÂN ✦", {_lore::*})
+    set string tag "AoVChest" of nbt compound of {_item} to "true"
+    set string tag "SkyblockItem" of nbt compound of {_item} to "aov_chest"
+    return {_item}
+
+command /aovchest <text> [<player>] [<number>]:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        if arg-1 is "give":
+            if arg-2 is not set:
+                sendSystemMsg(sender, "error", "Cú pháp: /aovchest give <player> [amount]")
+                stop
+            set {_amt} to 1
+            if arg-3 is set:
+                set {_amt} to floor(arg-3)
+            if {_amt} < 1:
+                set {_amt} to 1
+            set {_c} to createAoVChest()
+            loop {_amt} times:
+                if arg-2 can hold {_c}:
+                    give {_c} to arg-2
+                else:
+                    drop {_c} at location of arg-2
+            sendSystemMsg(sender, "economy", "Đã trao &6%{_amt}%x Rương Trang Bị LQ &fcho &e%name of arg-2%&f!")
+
+on rightclick:
+    set {_tool} to player's tool
+    if {_tool} is not set:
+        stop
+    if {_tool} is air:
+        stop
+    if type of {_tool} is air:
+        stop
+
+    set {_tag} to string tag "AoVChest" of nbt compound of {_tool}
+    if {_tag} is "true":
+        cancel event
+        set {_amt} to {_tool}.getAmount()
+        if {_amt} <= 1:
+            set player's tool to air
+        else:
+            set item amount of player's tool to ({_amt} - 1)
+
+        set {_pool::1} to "thanh_kiem"
+        set {_pool::2} to "muramasa"
+        set {_pool::3} to "nanh_fenrir"
+        set {_pool::4} to "song_dao"
+        set {_pool::5} to "quy_kiem"
+        set {_pool::6} to "thuong_xuyen_pha"
+        set {_pool::7} to "giap_thong_kho"
+        set {_pool::8} to "khien_that_truyen"
+        set {_pool::9} to "giap_gaia"
+        set {_pool::10} to "huan_chuong_troy"
+        set {_pool::11} to "giap_ho_menh"
+        set {_pool::12} to "phu_chu_truong_sinh"
+
+        set {_rand} to random integer between 1 and 12
+        set {_pick_id} to {_pool::%{_rand}%}
+        set {_reward} to createAoVItem({_pick_id})
+
+        if player can hold {_reward}:
+            give {_reward} to player
+        else:
+            drop {_reward} at location of player
+
+        set {_rewardName} to getAoVItemName({_pick_id})
+        sendSystemMsg(player, "economy", "Chúc mừng! Bạn đã mở được %{_rewardName}%&f!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to player
+        set {_loc} to location of player
+        add 1 to y-coordinate of {_loc}
+        spawnVisualParticle("FIREWORKS_SPARK", {_loc}, 30, 0.5, 0.8, 0.5, 0.1)
+
+command /ghepthe:
+    aliases: /mergecards
+    trigger:
+        sendSystemMsg(player, "combat", "Hệ thống Thẻ Thiên Phú đã nâng cấp lên Trang Bị Liên Quân!")
+        sendSystemMsg(player, "combat", "Đang mở Xưởng Rèn Liên Quân (/shopaov)...")
+        openAoVShopGUI(player)
+
+on join:
+    wait 5 ticks
+    if player is online:
+        recalcAoVBonuses(player)

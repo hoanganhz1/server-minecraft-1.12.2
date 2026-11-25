@@ -1,0 +1,1011 @@
+# =====================================================================
+# THƯ VIỆN HÌNH ẢNH & ARTWORK ĐỘC QUYỀN (MINECRAFT 1.12.2 - SKBEE + REFLECT)
+# TECHNICAL GAME ARTIST & SENIOR SKRIPT DEVELOPER — PHASE 12 UPGRADE
+# - Kiến trúc Resource Pack Vanilla Durability Predicate (diamond_hoe 1561)
+# - Hỗ trợ Rig 3D ArmorStand đa trạng thái (Idle / Attack / Roar / Hit Shake)
+# - Tương thích ngược 100% với hệ thống Đầu 3D Base64 cũ
+# =====================================================================
+
+options:
+    rp_direct_url: https://github.com/hoanganhz1/server-minecraft-1.12.2/releases/download/v1/OnePieceSkyblock_RP.zip
+
+import:
+    java.io.File
+    java.util.Scanner
+    java.nio.file.Files
+    java.nio.file.Paths
+    java.util.Base64
+    java.util.UUID
+    java.nio.charset.StandardCharsets
+    java.lang.reflect.Array
+    java.lang.Byte
+    java.lang.Boolean
+    java.lang.Short
+    java.lang.Integer
+    java.lang.String
+    java.lang.System
+    java.lang.Math
+    io.netty.buffer.Unpooled
+    net.minecraft.server.v1_12_R1.PacketDataSerializer
+    net.minecraft.server.v1_12_R1.PacketPlayOutEntityDestroy
+    com.comphenix.protocol.ProtocolLibrary
+    com.comphenix.protocol.PacketType
+    com.comphenix.protocol.events.PacketContainer
+    com.comphenix.protocol.wrappers.WrappedDataWatcher
+    com.comphenix.protocol.wrappers.WrappedDataWatcher$Registry as DataWatcherRegistry
+    com.comphenix.protocol.wrappers.WrappedDataWatcher$WrappedDataWatcherObject as DataWatcherObject
+    org.bukkit.Bukkit
+    org.bukkit.Material
+    org.bukkit.Particle
+    org.bukkit.Location
+    org.bukkit.entity.ArmorStand
+    org.bukkit.inventory.ItemStack
+    org.bukkit.event.player.PlayerArmorStandManipulateEvent
+    org.bukkit.event.player.PlayerResourcePackStatusEvent
+    org.bukkit.event.player.PlayerResourcePackStatusEvent$Status as RPStatus
+    com.destroystokyo.paper.profile.ProfileProperty
+
+# ---------------------------------------------------------------------
+# 1. BẢNG ÁNH XẠ DAMAGE ID RESOURCE PACK (DURABILITY ID 1..1550 TRÊN DIAMOND_HOE)
+# ---------------------------------------------------------------------
+function loadRPModelRegistry():
+    delete {rp_model_id::*}
+    set {_f} to new File("plugins/Skript/rp_models.txt")
+    if {_f}.exists() is true:
+        set {_scanner} to new Scanner({_f})
+        set {_cnt} to 0
+        while {_scanner}.hasNextLine() is true:
+            set {_line} to {_scanner}.nextLine()
+            set {_idx} to {_line}.indexOf(":")
+            if {_idx} > 0:
+                set {_k} to lowercase {_line}.substring(0, {_idx})
+                set {_vStr} to {_line}.substring({_idx} + 1)
+                set {_v} to {_vStr} parsed as number
+                if {_v} is set:
+                    set {rp_model_id::%{_k}%} to {_v}
+                    add 1 to {_cnt}
+        {_scanner}.close()
+        send "[VisualArtLib] Đã nạp %{_cnt}% Model ID từ rp_models.txt" to console
+
+on load:
+    loadRPModelRegistry()
+
+function getCustomModelDataId(key: text) :: number:
+    set {_k} to lowercase {_key}
+
+    # A. Nhóm Trái Ác Quỷ & Sự Kiện Hoang Dã (ID 1 - 9 & Tier S)
+    if {_k} is "fruit_mera" or "mera" or "mera_fruit" or "mera_mera_no_mi":
+        return 1
+    if {_k} is "fruit_gomu" or "gomu" or "gomu_fruit" or "gomu_gomu_no_mi":
+        return 2
+    if {_k} is "fruit_ope" or "ope" or "ope_fruit" or "ope_ope_no_mi":
+        return 3
+    if {_k} is "fruit_seiryu" or "seiryu" or "seiryu_fruit" or "uo_uo_no_mi":
+        return 4
+    if {_k} is "df_chest" or "wild_fruit" or "devil_core" or "golden_box":
+        return 5
+    if {_k} is "skill_slot_1" or "slot_1" or "hiken":
+        return 6
+    if {_k} is "skill_slot_2" or "slot_2" or "higan":
+        return 7
+    if {_k} is "skill_slot_3" or "slot_3" or "dai_enkai_entei":
+        return 8
+    if {_k} is "skill_awaken" or "awakening_stone" or "gear_fifth":
+        return 9
+    if {_k} is "fruit_gura" or "gura" or "gura_fruit" or "gura_gura_no_mi":
+        return 467
+    if {_k} is "fruit_pika" or "pika" or "pika_fruit" or "pika_pika_no_mi":
+        return 760
+    if {_k} is "fruit_goro" or "goro" or "goro_fruit" or "goro_goro_no_mi":
+        return 451
+    if {_k} is "fruit_phoenix" or "phoenix" or "phoenix_fruit" or "tori_tori_no_mi_model_phoenix":
+        return 956
+    if {_k} is "devil_fruit_encyclopedia":
+        return 325
+    if {_k} is "rumble_ball":
+        return 801
+
+    # B. Nhóm Võ Học & 3 Loại Haki (ID 20 - 24)
+    if {_k} is "kiem_dao" or "martial_kiem_dao" or "yoru":
+        return 20
+    if {_k} is "luc_thuc" or "martial_luc_thuc" or "shigan":
+        return 21
+    if {_k} is "haki_ken" or "ken" or "kenbunshoku_haki_aura":
+        return 22
+    if {_k} is "haki_buso" or "buso" or "busoshoku_haki_hardening":
+        return 23
+    if {_k} is "haki_hao" or "hao" or "haoshoku_haki_infusion":
+        return 24
+
+    # C. Nhóm 12 Trang Bị Liên Quân & Rương AoV (ID 30 - 42)
+    if {_k} is "aov_chest" or "iron_box":
+        return 30
+    if {_k} is "thanh_kiem" or "thanhkiem":
+        return 31
+    if {_k} is "muramasa" or "kiemmuramasa":
+        return 32
+    if {_k} is "nanh_fenrir" or "nanhfenrir":
+        return 33
+    if {_k} is "giap_ho_menh" or "giaphomenh":
+        return 34
+    if {_k} is "giap_gaia" or "giapgaia":
+        return 35
+    if {_k} is "huan_chuong_troy" or "huanchuongtroy":
+        return 36
+    if {_k} is "song_dao" or "songdao":
+        return 37
+    if {_k} is "quy_kiem" or "quykiem":
+        return 38
+    if {_k} is "thuong_xuyen_pha" or "diet-than-cung" or "diet_than_cung":
+        return 39
+    if {_k} is "giap_thong_kho" or "giapthongkho" or "set1_helmet":
+        return 40
+    if {_k} is "khien_that_truyen" or "khienthattruyen" or "set2_helmet":
+        return 41
+    if {_k} is "phu_chu_truong_sinh" or "phuchutruongsinh" or "set3_helmet" or "porata_earring" or "porata":
+        return 42
+
+    # D. Nhóm Thiên Phú, Cờ Hải Tặc, Boss & Bù Nhìn (ID 50 - 66)
+    if {_k} is "talent_reset" or "talent_reset_orb" or "axe_dial":
+        return 50
+    if {_k} is "flag_dragon" or "hoa_long":
+        return 51
+    if {_k} is "flag_gold" or "hoang_kim":
+        return 52
+    if {_k} is "flag_phoenix" or "bat_tu_dieu":
+        return 53
+    if {_k} is "boss_akainu_icon" or "akainu_head" or "magu_magu_no_mi":
+        return 54
+    if {_k} is "boss_aokiji_icon" or "aokiji_head" or "hie_hie_no_mi":
+        return 55
+    if {_k} is "bounty_poster" or "poster" or "wanted_poster":
+        return 56
+
+    if {_k} is "seaking_idle":
+        return 60
+    if {_k} is "seaking_attack":
+        return 61
+    if {_k} is "seaking_roar":
+        return 62
+
+    if {_k} is "dummy_normal_idle" or "dummy_normal":
+        return 63
+    if {_k} is "dummy_boss_idle" or "dummy_boss":
+        return 64
+    if {_k} is "dummy_logia_idle" or "dummy_logia":
+        return 65
+    if {_k} is "dummy_hit_shake":
+        return 66
+
+    # E. Nhóm 13 Danh Kiếm & Vũ Khí Đặc Chủng (Phân khu 1 & 2)
+    if {_k} is "katana":
+        return 564
+    if {_k} is "katana_overlay_haki" or "katana_haki":
+        return 566
+    if {_k} is "sandai_kitetsu":
+        return 829
+    if {_k} is "sandai_kitetsu_haki":
+        return 830
+    if {_k} is "sandai_kitetsu_sheathed":
+        return 831
+    if {_k} is "wado_ichimonji":
+        return 988
+    if {_k} is "wado_ichimonji_haki":
+        return 989
+    if {_k} is "wado_ichimonji_sheathed":
+        return 990
+    if {_k} is "nidai_kitetsu":
+        return 717
+    if {_k} is "nidai_kitetsu_haki":
+        return 718
+    if {_k} is "nidai_kitetsu_sheathed":
+        return 719
+    if {_k} is "shusui":
+        return 865
+    if {_k} is "shusui_haki":
+        return 866
+    if {_k} is "shusui_sheathed":
+        return 867
+    if {_k} is "gryphon":
+        return 463
+    if {_k} is "gryphon_haki":
+        return 464
+    if {_k} is "kikoku":
+        return 574
+    if {_k} is "kikoku_haki":
+        return 575
+    if {_k} is "soul_solid":
+        return 890
+    if {_k} is "soul_solid_haki":
+        return 891
+    if {_k} is "soul_solid_sheathed":
+        return 892
+    if {_k} is "enma":
+        return 366
+    if {_k} is "enma_haki":
+        return 367
+    if {_k} is "enma_sheathed":
+        return 368
+    if {_k} is "ame_no_habakiri":
+        return 118
+    if {_k} is "ame_no_habakiri_haki":
+        return 119
+    if {_k} is "ame_no_habakiri_sheathed":
+        return 120
+    if {_k} is "yoru":
+        return 20
+    if {_k} is "yoru_haki":
+        return 1021
+    if {_k} is "bisento":
+        return 705
+    if {_k} is "bisento_overlay_haki" or "bisento_haki":
+        return 196
+    if {_k} is "murakumogiri":
+        return 705
+    if {_k} is "murakumogiri_haki":
+        return 706
+
+    # F. Tra cứu mở rộng Phân khu 2 (ID 100 - 1550) qua bảng biến {rp_model_id::*}
+    if {rp_model_id::%{_k}%} is set:
+        return {rp_model_id::%{_k}%}
+
+    return 1
+
+# ---------------------------------------------------------------------
+# 2. HÀM TẠO VẬT PHẨM RESOURCE PACK & 3D RIG ITEM
+# ---------------------------------------------------------------------
+function isValidItem(item: item) :: boolean:
+    if {_item} is not set:
+        return false
+    if {_item} is air:
+        return false
+    if type of {_item} is air:
+        return false
+    return true
+
+function get3DModelDamageId(key: text) :: number:
+    return getCustomModelDataId({_key})
+
+function makeCustomRPItem(key: text, itemName: text, itemLore: texts) :: item:
+    set {_id} to getCustomModelDataId({_key})
+    if {_id} is not set:
+        set {_id} to 1
+    set {_item} to 1 of diamond hoe
+    if {_itemName} is set:
+        set name of {_item} to colored {_itemName}
+    if {_itemLore::*} is set:
+        set lore of {_item} to {_itemLore::*}
+    set data value of {_item} to {_id}
+    set damage of {_item} to {_id}
+    set {_nbt} to nbt compound of {_item}
+    set byte tag "Unbreakable" of {_nbt} to 1
+    set int tag "HideFlags" of {_nbt} to 63
+    set string tag "CustomModelKey" of {_nbt} to {_key}
+    set data value of {_item} to {_id}
+    set damage of {_item} to {_id}
+    return {_item}
+
+function create3DRigItem(key: text) :: item:
+    set {_id} to get3DModelDamageId({_key})
+    if {_id} is not set:
+        set {_id} to 60
+    set {_item} to 1 of diamond hoe
+    set name of {_item} to "&73D_RIG_%{_key}%"
+    set data value of {_item} to {_id}
+    set damage of {_item} to {_id}
+    set {_nbt} to nbt compound of {_item}
+    set byte tag "Unbreakable" of {_nbt} to 1
+    set int tag "HideFlags" of {_nbt} to 63
+    set byte tag "Is3DRig" of {_nbt} to 1
+    set string tag "CustomModelKey" of {_nbt} to {_key}
+    set data value of {_item} to {_id}
+    set damage of {_item} to {_id}
+    return {_item}
+
+function apply3DModelToEntity(e: entity, key: text):
+    if {_e} is not set:
+        stop
+    set {_rig} to create3DRigItem({_key})
+    set helmet of {_e} to {_rig}
+    if {_e} is an armor stand:
+        set {_entNbt} to nbt compound of {_e}
+        set int tag "DisabledSlots" of {_entNbt} to 2039583
+        set byte tag "NoBasePlate" of {_entNbt} to 1
+
+function play3DEntityPose(e: entity, poseKey: text, revertKey: text, ticks: number):
+    if {_e} is not set:
+        stop
+    if {_e} is not alive:
+        stop
+    set {_uuid} to uuid of {_e}
+    set {_poseItem} to create3DRigItem({_poseKey})
+    set helmet of {_e} to {_poseItem}
+    set {entity_3d_pose_lock::%{_uuid}%} to {_poseKey}
+    wait "%{_ticks}% ticks" parsed as timespan
+    if {_e} is alive:
+        if {entity_3d_pose_lock::%{_uuid}%} is {_poseKey}:
+            delete {entity_3d_pose_lock::%{_uuid}%}
+            set {_revItem} to create3DRigItem({_revertKey})
+            set helmet of {_e} to {_revItem}
+
+# ---------------------------------------------------------------------
+# 3. TƯƠNG THÍCH NGƯỢC VỚI HỆ THỐNG ĐẦU 3D CŨ (FORWARDING SANG RP)
+# ---------------------------------------------------------------------
+function b64FromTextureHash(hashOrB64: text) :: text:
+    if {_hashOrB64} starts with "eyJ":
+        return {_hashOrB64}
+    set {_json} to "{""textures"":{""SKIN"":{""url"":""http://textures.minecraft.net/texture/%{_hashOrB64}%""}}}"
+    set {_bytes} to {_json}.getBytes(StandardCharsets.UTF_8)
+    return Base64.getEncoder().encodeToString({_bytes})
+
+function getTextureUUID(seed: text) :: text:
+    set {_bytes} to {_seed}.getBytes(StandardCharsets.UTF_8)
+    return UUID.nameUUIDFromBytes({_bytes}).toString()
+
+function getVisualHash(key: text) :: text:
+    if {custom_head_skin::%{_key}%} is set:
+        return {custom_head_skin::%{_key}%}
+    if {_key} is "mera_fruit":
+        return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGNkM2JlNzQ3YjBiODE3ZWIwODEyZjM4OTEwYjVjNzE3YTdhNmExMmYxZDczMTAzOWM1NzExZDExZWYzMmEzIn19fQ=="
+    if {_key} is "gomu_fruit":
+        return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGM3NzAxZDllMDM4MjRjNjY4N2YzNTcxZjEyYTIxYjg3MTNhNWE4YzRlNDE1ZTZkMWE0YjYzYzg4MWYxYTExYyJ9fX0="
+    if {_key} is "ope_fruit":
+        return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTNjOWMwOWIzNzAzOWE4MWY0N2MxODgwMjFkMTE4YjYyMzI4NTM4NjQyNjJmOWE1MzA4N2QyZTc3NDFhMzIxIn19fQ=="
+    if {_key} is "seiryu_fruit":
+        return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2Y2MTM3YzUzODViNmEzYjUyMWEzYzI5MTMyNmM0N2YwZDM2ZDhkNDRmODI0MWQ0NmUxODA4MjNkMmE0OWE5In19fQ=="
+    if {_key} is "devil_core":
+        return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2VkMWFiYTczZjYzOWY0YmM0MmJkNDgxOTZjNzE1MTk3YmUyNzEyYzNiOTYyYzk3ZWJmOWU5ZWQ4ZWZhMDI1In19fQ=="
+    if {_key} is "awakening_stone":
+        return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDVjNmRjMmJiZjUxYzM2Y2ZjNzcxNDU4NWE2YTU2ODNlZjJiMTRkNDdkOGZmNzE0NjU0YTg5M2Y1ZGE2MjIifX19"
+    if {_key} is "aov_chest":
+        return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDVjNmRjMmJiZjUxYzM2Y2ZjNzcxNDU4NWE2YTU2ODNlZjJiMTRkNDdkOGZmNzE0NjU0YTg5M2Y1ZGE2MjIifX19"
+    if {_key} is "talent_reset_orb":
+        return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzZjOTg5ODhkN2M2MDcxMTNiODJkODg1OGIxZjI5YjQyNDQxYjc2ZjNmNmE3N2UxMjk3OTViNDUwMTdjOThmIn19fQ=="
+    if {_key} is "set1_helmet":
+        return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWE0ZjY4YzhmYjI3ZjU5OGQ3OGU1OTIxMmM4ZTdjNWExOGEyMTU4ZDkxMmE5MzE5NTQ2NzIyZDNhOGUxIn19fQ=="
+    if {_key} is "set2_helmet":
+        return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjA1MzFmM2I0OTdjOTE4YjM1ZTdmNDg5ODAxZDI4YTc0OGIyZDVmNWIzYzRiMzkzOThmODgzOTI0MzE3ZmI2MSJ9fX0="
+    if {_key} is "set3_helmet":
+        return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjBjNzI0NjIxMjExYjZhMTgzYjQxOTU3ZDQxOGU4Yjg5MTkxNTI5MmQxNzgyMmUxNDU1Mjk3OTcwNzQ1MGQzNCJ9fX0="
+    return ""
+
+function makeCustomSkull(id: text, b64: text, name: text, lore: texts) :: item:
+    if {_id} is not set:
+        set {_bytes} to {_b64}.getBytes(StandardCharsets.UTF_8)
+        set {_id} to UUID.nameUUIDFromBytes({_bytes}).toString()
+    else if length of {_id} < 8:
+        set {_bytes} to {_b64}.getBytes(StandardCharsets.UTF_8)
+        set {_id} to UUID.nameUUIDFromBytes({_bytes}).toString()
+
+    set {_item} to 1 of player head
+    set data value of {_item} to 3
+    set damage of {_item} to 3
+
+    if {_name} is set:
+        set name of {_item} to colored {_name}
+    if {_lore::*} is set:
+        set lore of {_item} to {_lore::*}
+
+    if length of {_b64} > 10:
+        add "{SkullOwner:{Id:""%{_id}%"",Properties:{textures:[{Value:""%{_b64}%""}]}},HideFlags:63}" to nbt of {_item}
+
+    return {_item}
+
+function makeTextureSkull(hash: text, name: text, lore: texts) :: item:
+    set {_b64} to b64FromTextureHash({_hash})
+    set {_id} to getTextureUUID({_hash})
+    return makeCustomSkull({_id}, {_b64}, {_name}, {_lore::*})
+
+# Tương thích ngược: Mọi lời gọi makeVisualSkullByKey được chuyển hướng 100% sang makeCustomRPItem
+function makeVisualSkullByKey(key: text, name: text, lore: texts) :: item:
+    return makeCustomRPItem({_key}, {_name}, {_lore::*})
+
+# ---------------------------------------------------------------------
+# 4. HÀM TẠO GIÁP DA NHUỘM RGB & THUỐC ĐỔI MÀU NBT
+# ---------------------------------------------------------------------
+function makeRgbLeatherArmor(mat: item, r: number, g: number, b: number, name: text, lore: texts) :: item:
+    set {_color} to (round({_r}) * 65536) + (round({_g}) * 256) + round({_b})
+    if {_mat} is not set:
+        set {_mat} to leather chestplate
+    set {_item} to {_mat} with nbt "{Unbreakable:1b,HideFlags:63,display:{color:%{_color}%}}"
+    if {_name} is set:
+        set name of {_item} to colored {_name}
+    if {_lore::*} is set:
+        set lore of {_item} to {_lore::*}
+    return {_item}
+
+function makeCustomPotion(color: number, name: text, lore: texts) :: item:
+    set {_item} to potion with nbt "{CustomPotionColor:%round({_color})%,HideFlags:63}"
+    if {_name} is set:
+        set name of {_item} to colored {_name}
+    if {_lore::*} is set:
+        set lore of {_item} to {_lore::*}
+    return {_item}
+
+function makeRgbPotion(r: number, g: number, b: number, name: text, lore: texts) :: item:
+    set {_color} to (round({_r}) * 65536) + (round({_g}) * 256) + round({_b})
+    return makeCustomPotion({_color}, {_name}, {_lore::*})
+
+# ---------------------------------------------------------------------
+# 5. HÀM TẠO TRANG BỊ PHÁT SÁNG & KHIÊN HOA VĂN
+# ---------------------------------------------------------------------
+function makeGlowingItem(mat: item, name: text, lore: texts) :: item:
+    if {_mat} is not set:
+        set {_mat} to diamond sword
+    set {_item} to {_mat} with nbt "{Unbreakable:1b,HideFlags:63,ench:[{id:34s,lvl:1s}]}"
+    if {_name} is set:
+        set name of {_item} to colored {_name}
+    if {_lore::*} is set:
+        set lore of {_item} to {_lore::*}
+    return {_item}
+
+function makeBannerShield(baseColor: number, patternsNbt: text, name: text, lore: texts) :: item:
+    if {_patternsNbt} is set:
+        if length of {_patternsNbt} > 0:
+            set {_item} to shield with nbt "{BlockEntityTag:{Base:%round({_baseColor})%,Patterns:[%{_patternsNbt}%]},HideFlags:63,Unbreakable:1b}"
+        else:
+            set {_item} to shield with nbt "{BlockEntityTag:{Base:%round({_baseColor})%},HideFlags:63,Unbreakable:1b}"
+    else:
+        set {_item} to shield with nbt "{BlockEntityTag:{Base:%round({_baseColor})%},HideFlags:63,Unbreakable:1b}"
+    if {_name} is set:
+        set name of {_item} to colored {_name}
+    if {_lore::*} is set:
+        set lore of {_item} to {_lore::*}
+    return {_item}
+
+function makeBlackGoldShield(name: text, lore: texts) :: item:
+    set {_p} to "{Color:11,Pattern:""cs""},{Color:11,Pattern:""flo""},{Color:0,Pattern:""cbo""},{Color:11,Pattern:""cr""}"
+    return makeBannerShield(0, {_p}, {_name}, {_lore::*})
+
+# ---------------------------------------------------------------------
+# 6. HIỆU ỨNG HẠT PARTICLE & HOLOGRAM SÁT THƯƠNG
+# ---------------------------------------------------------------------
+function spawnVisualParticle(pType: text, loc: location, count: number = 10, offX: number = 0.3, offY: number = 0.5, offZ: number = 0.3, speed: number = 0.05):
+    if {_loc} is not set:
+        stop
+    set {_w} to {_loc}.getWorld()
+    if {_w} is not set:
+        stop
+    set {_pEnum} to Particle.valueOf({_pType})
+    if {_pEnum} is set:
+        set {_null} to {_not_set}
+        {_w}.spawnParticle({_pEnum}, {_loc}, round({_count}), {_offX}, {_offY}, {_offZ}, {_speed}, {_null})
+
+function getDamageTagPriority(tag: text) :: number:
+    if {_tag} is "dodge" or "logia":
+        return 10
+    if {_tag} is "true":
+        return 5
+    if {_tag} is "crit":
+        return 4
+    if {_tag} is "haki":
+        return 3
+    if {_tag} is "normal":
+        return 1
+    return 0
+
+function setDamageVisualTag(victim: entity, tag: text):
+    if {_victim} is not set:
+        stop
+    set {_u} to uuid of {_victim}
+    set {_curTag} to {dmg_tag::%{_u}%} ? "normal"
+    set {_curPri} to getDamageTagPriority({_curTag})
+    set {_newPri} to getDamageTagPriority({_tag})
+    if {_newPri} >= {_curPri}:
+        set {dmg_tag::%{_u}%} to {_tag}
+
+function formatDamageHoloText(dmgVal: number, tag: text) :: text:
+    set {_rounded} to (round({_dmgVal} * 10)) / 10
+    set {_dStr} to "%{_rounded}%"
+    if {_tag} is "crit":
+        return "&6&l⚡ -%{_dStr}%"
+    else if {_tag} is "true":
+        return "&b&l✦ -%{_dStr}%"
+    else if {_tag} is "haki":
+        return "&5&l⚔ -%{_dStr}%"
+    else if {_tag} is "dodge":
+        return "&7&l» NÉ"
+    else if {_tag} is "logia":
+        return "&e&l✦ LOGIA"
+    return "&c-%{_dStr}%"
+
+function spawnPacketDamageHolo(loc: location, text: text, victimUuid: text = ""):
+    if {_loc} is not set:
+        stop
+    set {_w} to {_loc}.getWorld()
+    if {_w} is not set:
+        stop
+
+    # 1. Rate-limit: tối đa 6 hologram/giây trên cùng victimUuid (cho qua crit, true, dodge, logia)
+    if {_victimUuid} is not "":
+        set {_isBypass} to false
+        if {_text} contains "⚡" or "✦" or "⚔" or "»" or "NÉ" or "LOGIA":
+            set {_isBypass} to true
+        if {_isBypass} is false:
+            set {_nowMs} to System.currentTimeMillis()
+            if {dmg_holo_reset::%{_victimUuid}%} is not set:
+                set {dmg_holo_reset::%{_victimUuid}%} to {_nowMs} + 1000
+                set {dmg_holo_count::%{_victimUuid}%} to 0
+            else if {_nowMs} > {dmg_holo_reset::%{_victimUuid}%}:
+                set {dmg_holo_reset::%{_victimUuid}%} to {_nowMs} + 1000
+                set {dmg_holo_count::%{_victimUuid}%} to 0
+
+            if {dmg_holo_count::%{_victimUuid}%} >= 6:
+                stop
+            add 1 to {dmg_holo_count::%{_victimUuid}%}
+
+    # 2. Packet Culling: chỉ gửi tới người chơi cùng thế giới trong bán kính 24 block
+    loop all players:
+        if loop-player.getWorld() is {_w}:
+            if distance between loop-player and {_loc} <= 24:
+                add loop-player to {_viewers::*}
+    if size of {_viewers::*} is 0:
+        stop
+
+    # 3. Entity ID ảo: quay vòng 150000000 -> 190000000
+    if {virtual_eid_counter} is not set:
+        set {virtual_eid_counter} to 150000000
+    add 1 to {virtual_eid_counter}
+    if {virtual_eid_counter} > 190000000:
+        set {virtual_eid_counter} to 150000000
+    set {_eid} to {virtual_eid_counter}
+
+    # 4. Offset ngẫu nhiên X, Z từ -0.45 đến 0.45, Y từ +0.9 đến +1.5
+    set {_rx} to random number between -0.45 and 0.45
+    set {_rz} to random number between -0.45 and 0.45
+    set {_ry} to random number between 0.9 and 1.5
+    set {_hLoc} to {_loc}.clone().add({_rx}, {_ry}, {_rz})
+
+    set {_pm} to ProtocolLibrary.getProtocolManager()
+    set {_eidInt} to Integer.valueOf("%{_eid}%")
+    set {_zeroInt} to Integer.valueOf("0")
+    set {_dyInt} to Integer.valueOf("450")
+
+    # Bước 1: SPAWN_ENTITY_LIVING
+    set {_spawn} to {_pm}.createPacket(PacketType.Play.Server.SPAWN_ENTITY_LIVING)
+    {_spawn}.getIntegers().write(0, {_eidInt})
+    {_spawn}.getIntegers().write(1, Integer.valueOf("30"))
+    {_spawn}.getUUIDs().write(0, UUID.randomUUID())
+    {_spawn}.getDoubles().write(0, {_hLoc}.getX())
+    {_spawn}.getDoubles().write(1, {_hLoc}.getY())
+    {_spawn}.getDoubles().write(2, {_hLoc}.getZ())
+
+    set {_watcher} to {_spawn}.getDataWatcherModifier().read(0)
+    set {_byteSerializer} to DataWatcherRegistry.get(Byte.class)
+    set {_strSerializer} to DataWatcherRegistry.get(String.class)
+    set {_boolSerializer} to DataWatcherRegistry.get(Boolean.class)
+
+    {_watcher}.setObject(new DataWatcherObject(0, {_byteSerializer}), Byte.valueOf("32"))
+    {_watcher}.setObject(new DataWatcherObject(2, {_strSerializer}), colored {_text})
+    {_watcher}.setObject(new DataWatcherObject(3, {_boolSerializer}), Boolean.TRUE)
+    {_watcher}.setObject(new DataWatcherObject(5, {_boolSerializer}), Boolean.TRUE)
+    {_watcher}.setObject(new DataWatcherObject(11, {_byteSerializer}), Byte.valueOf("25"))
+
+    {_spawn}.getDataWatcherModifier().write(0, {_watcher})
+
+    loop {_viewers::*}:
+        if loop-value is online:
+            {_pm}.sendServerPacket(loop-value, {_spawn})
+
+    # Bước 2: ENTITY_METADATA
+    set {_meta} to {_pm}.createPacket(PacketType.Play.Server.ENTITY_METADATA)
+    {_meta}.getIntegers().write(0, {_eidInt})
+    {_meta}.getWatchableCollectionModifier().write(0, {_watcher}.getWatchableObjects())
+
+    loop {_viewers::*}:
+        if loop-value is online:
+            {_pm}.sendServerPacket(loop-value, {_meta})
+
+    # Bước 3: Hoạt ảnh trôi lên (REL_ENTITY_MOVE) 4 nhịp cách nhau 2 ticks
+    loop 4 times:
+        wait 2 ticks
+        set {_move} to {_pm}.createPacket(PacketType.Play.Server.REL_ENTITY_MOVE)
+        {_move}.getIntegers().write(0, {_eidInt})
+        {_move}.getIntegers().write(1, {_zeroInt})
+        {_move}.getIntegers().write(2, {_dyInt})
+        {_move}.getIntegers().write(3, {_zeroInt})
+        {_move}.getBooleans().write(0, Boolean.FALSE)
+        loop {_viewers::*}:
+            if loop-value-2 is online:
+                {_pm}.sendServerPacket(loop-value-2, {_move})
+
+    # Bước 4: Tự hủy sau tổng 16 ticks (~0.8s) bằng ENTITY_DESTROY
+    wait 8 ticks
+    set {_buf} to new PacketDataSerializer(Unpooled.buffer())
+    {_buf}.d(1)
+    {_buf}.d({_eid})
+    set {_nmsPacket} to new PacketPlayOutEntityDestroy()
+    {_nmsPacket}.a({_buf})
+    set {_destroy} to PacketContainer.fromPacket({_nmsPacket})
+
+    loop {_viewers::*}:
+        if loop-value is online:
+            {_pm}.sendServerPacket(loop-value, {_destroy})
+
+function spawnDamageHologram(loc: location, txt: text):
+    spawnPacketDamageHolo({_loc}, {_txt}, "")
+
+# ---------------------------------------------------------------------
+# 7. SỰ KIỆN BẢO VỆ CHỐNG CÀY ĐẤT & BẢO VỆ ĐỘ BỀN VẬT PHẨM RESOURCE PACK
+# ---------------------------------------------------------------------
+on rightclick on grass or dirt or grass path or farmland:
+    set {_tool} to player's tool
+    if isValidItem({_tool}) is true:
+        set {_nbt} to nbt compound of {_tool}
+        if tag "CustomModelKey" of {_nbt} is set:
+            cancel event
+
+on item damage:
+    if isValidItem(event-item) is true:
+        set {_nbt} to nbt compound of event-item
+        if tag "CustomModelKey" of {_nbt} is set:
+            cancel event
+
+# Lớp 1: Chặn PlayerArmorStandManipulateEvent (Chuột phải tháo/lắp đồ trên ArmorStand)
+on PlayerArmorStandManipulateEvent:
+    set {_stand} to event.getRightClicked()
+    if {_stand} is set:
+        set {_helm} to helmet of {_stand}
+        if isValidItem({_helm}) is true:
+            set {_nbt} to nbt compound of {_helm}
+            if byte tag "Is3DRig" of {_nbt} is 1:
+                cancel event
+                stop
+            if tag "CustomModelKey" of {_nbt} is set:
+                cancel event
+                stop
+        set {_entNbt} to nbt compound of {_stand}
+        if int tag "DisabledSlots" of {_entNbt} is 2039583:
+            cancel event
+
+# Lớp 2: Chặn rightclick trực tiếp lên ArmorStand mang model
+on rightclick on armor stand:
+    if clicked entity is set:
+        set {_helm} to helmet of clicked entity
+        if isValidItem({_helm}) is true:
+            set {_nbt} to nbt compound of {_helm}
+            if tag "CustomModelKey" of {_nbt} is set:
+                cancel event
+
+# Lớp 3: Tự động tịch thu nếu phôi Is3DRig lọt vào túi đồ hoặc tay người chơi
+on inventory click:
+    if player does not have permission "rp.bypass":
+        if {rp_verified::%uuid of player%} is not true:
+            cancel event
+            sendSystemMsg(player, "warning", "Vui lòng hoàn tất nạp Resource Pack để thao tác túi đồ!")
+            stop
+    set {_clicked} to event-item
+    if isValidItem({_clicked}) is true:
+        set {_nbt} to nbt compound of {_clicked}
+        if byte tag "Is3DRig" of {_nbt} is 1:
+            cancel event
+            remove {_clicked} from player's inventory
+
+on rightclick:
+    if player does not have permission "rp.bypass":
+        if {rp_verified::%uuid of player%} is not true:
+            cancel event
+            stop
+    set {_tool} to player's tool
+    if isValidItem({_tool}) is true:
+        set {_nbt} to nbt compound of {_tool}
+        if byte tag "Is3DRig" of {_nbt} is 1:
+            cancel event
+            delete player's tool
+
+# Lớp 4: Chặn nhặt dưới đất và chặn rơi khi thực thể chết
+on pickup:
+    if player does not have permission "rp.bypass":
+        if {rp_verified::%uuid of player%} is not true:
+            cancel event
+            stop
+    set {_item} to event-item
+    if isValidItem({_item}) is true:
+        set {_nbt} to nbt compound of {_item}
+        if byte tag "Is3DRig" of {_nbt} is 1:
+            cancel event
+            delete event-entity
+
+on death:
+    remove all diamond hoe from drops
+
+# ---------------------------------------------------------------------
+# 8. HỆ THỐNG ÉP BUỘC CÀI ĐẶT & KHÓA CỨNG RESOURCE PACK ĐỘC QUYỀN
+# ---------------------------------------------------------------------
+on join:
+    set {_u} to uuid of player
+    delete {rp_verified::%{_u}%}
+    delete {rp_downloading::%{_u}%}
+    if player has permission "rp.bypass":
+        set {rp_verified::%{_u}%} to true
+        stop
+
+    # Kiểm tra xem server.properties đã tự động gửi gói tài nguyên kèm mã SHA-1 chưa
+    set {_mcServer} to Bukkit.getServer().getServer()
+    set {_serverRp} to {_mcServer}.getResourcePack()
+    if {_serverRp} is not set:
+        set {_serverRp} to ""
+
+    # Nếu server.properties chưa cấu hình thì Skript mới chủ động gọi setResourcePack (chống gửi trùng lặp ngắt download)
+    if {_serverRp} is "":
+        wait 10 ticks
+        if player is online:
+            if {rp_verified::%{_u}%} is not true:
+                if {rp_downloading::%{_u}%} is not true:
+                    set {_p} to player
+                    {_p}.setResourcePack("{@rp_direct_url}")
+                    sendSystemMsg(player, "info", "Đang đồng bộ &b&lResource Pack 3D&f, vui lòng chờ...")
+    else:
+        # Máy chủ Paper đã tự động gửi packet theo server.properties, chỉ hiển thị thông báo tiến trình
+        wait 5 ticks
+        if player is online:
+            if {rp_verified::%{_u}%} is not true:
+                if {rp_downloading::%{_u}%} is not true:
+                    sendSystemMsg(player, "info", "Đang đồng bộ &b&lResource Pack 3D&f, vui lòng chờ...")
+
+    # Bộ đếm timeout 60 giây kiểm soát chống hack/mod chặn packet
+    wait 60 seconds
+    if player is online:
+        if player has permission "rp.bypass":
+            stop
+        if {rp_verified::%{_u}%} is not true:
+            set {_kickMsg} to "&c&lONE PIECE SKYBLOCK &8- &4&lHẾT THỜI GIAN NẠP PACK%nl%%nl%&eĐã quá 60 giây nhưng máy chủ chưa nhận được phản hồi nạp Resource Pack!%nl%&7(Hệ thống nghi vấn bạn đang dùng bản mod/hack chặn gói tin tài nguyên)%nl%%nl%&fCách khắc phục:%nl%&a1. &fVào màn hình danh sách máy chủ &eMultiplayer&f.%nl%&a2. &fChọn server &eOne Piece Skyblock&f, nhấn &bSửa &7(Edit)&f.%nl%&a3. &fChuyển dòng &eGói tài nguyên &7(Server Resource Packs)&f thành &aBẬT &7(Enabled)&f.%nl%&a4. &fĐăng nhập lại vào máy chủ để tiếp tục trải nghiệm!%nl%%nl%&7Link tải dự phòng: &b{@rp_direct_url}"
+            kick player due to colored {_kickMsg}
+
+on quit:
+    delete {rp_verified::%uuid of player%}
+    delete {rp_downloading::%uuid of player%}
+
+on PlayerResourcePackStatusEvent:
+    set {_status} to event.getStatus()
+    set {_p} to event.getPlayer()
+    set {_u} to uuid of {_p}
+    if {_status} is RPStatus.ACCEPTED:
+        if {rp_downloading::%{_u}%} is not true:
+            set {rp_downloading::%{_u}%} to true
+            sendSystemMsg({_p}, "info", "Đang tải gói đồ họa độc quyền &eOnePieceSkyblock_RP &7(36.7 MB)&f... Vui lòng đợi trong giây lát!")
+    else if {_status} is RPStatus.SUCCESSFULLY_LOADED:
+        if {rp_verified::%{_u}%} is not true:
+            set {rp_verified::%{_u}%} to true
+            delete {rp_downloading::%{_u}%}
+            sendSystemMsg({_p}, "info", "Gói đồ họa &b&lResource Pack 3D&f đã được nạp &athành công&f! Chúc bạn trải nghiệm thế giới Hải Tặc vui vẻ.")
+    else if {_status} is RPStatus.DECLINED:
+        delete {rp_verified::%{_u}%}
+        delete {rp_downloading::%{_u}%}
+        set {_kickMsg} to "&c&lONE PIECE SKYBLOCK &8- &4&lYÊU CẦU RESOURCE PACK%nl%%nl%&eBạn đã từ chối tải gói tài nguyên bắt buộc của máy chủ!%nl%&7Hệ thống mô hình 3D, âm thanh và giao diện RPG yêu cầu gói tài nguyên này.%nl%%nl%&fCách khắc phục:%nl%&a1. &fThoát ra màn hình danh sách máy chủ &eMultiplayer&f.%nl%&a2. &fChọn server &eOne Piece Skyblock&f, nhấn &bSửa &7(Edit)&f.%nl%&a3. &fChuyển dòng &eGói tài nguyên &7(Server Resource Packs)&f thành &aBẬT &7(Enabled)&f.%nl%&a4. &fĐăng nhập lại vào máy chủ để thưởng thức!%nl%%nl%&7Link tải trực tiếp: &b{@rp_direct_url}"
+        kick {_p} due to colored {_kickMsg}
+    else if {_status} is RPStatus.FAILED_DOWNLOAD:
+        delete {rp_verified::%{_u}%}
+        delete {rp_downloading::%{_u}%}
+        set {_kickMsg} to "&c&lONE PIECE SKYBLOCK &8- &4&lTẢI RESOURCE PACK THẤT BẠI%nl%%nl%&eĐã xảy ra lỗi trong quá trình tải gói tài nguyên máy chủ!%nl%&7Nguyên nhân thường do mạng gián đoạn hoặc xung đột bộ nhớ đệm cũ.%nl%%nl%&fCách khắc phục:%nl%&a1. &fKiểm tra lại đường truyền kết nối mạng Internet.%nl%&a2. &fMở thư mục &e.minecraft/server-resource-packs&f và xóa toàn bộ file rác bên trong.%nl%&a3. &fKhởi động lại Minecraft và đăng nhập lại vào máy chủ.%nl%%nl%&7Link tải trực tiếp: &b{@rp_direct_url}"
+        kick {_p} due to colored {_kickMsg}
+
+on drop:
+    if player does not have permission "rp.bypass":
+        if {rp_verified::%uuid of player%} is not true:
+            cancel event
+
+on leftclick:
+    if player does not have permission "rp.bypass":
+        if {rp_verified::%uuid of player%} is not true:
+            cancel event
+
+on swap hand items:
+    if player does not have permission "rp.bypass":
+        if {rp_verified::%uuid of player%} is not true:
+            cancel event
+            stop
+
+on damage:
+    if attacker is a player:
+        if attacker does not have permission "rp.bypass":
+            if {rp_verified::%uuid of attacker%} is not true:
+                cancel event
+                stop
+    if victim is a player:
+        if victim does not have permission "rp.bypass":
+            if {rp_verified::%uuid of victim%} is not true:
+                cancel event
+                stop
+
+on command:
+    if sender is a player:
+        if sender does not have permission "rp.bypass":
+            if {rp_verified::%uuid of sender%} is not true:
+                set {_c} to lowercase command
+                if {_c} contains ":":
+                    set {_parts::*} to {_c} split at ":"
+                    set {_c} to {_parts::2}
+                if {_c} is "login" or "l" or "register" or "reg":
+                    stop
+                cancel event
+                sendSystemMsg(sender, "warning", "Bạn cần hoàn tất nạp Resource Pack trước khi sử dụng lệnh!")
+
+# ---------------------------------------------------------------------
+# 9. LỆNH KIỂM THỬ HÌNH ẢNH (/visualtest) & ĐỔI SKIN ĐẦU (/setheadskin)
+# ---------------------------------------------------------------------
+command /setheadskin <text> <text>:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        set {custom_head_skin::%arg-1%} to arg-2
+        send "&a[VisualArtLib] &fĐã cập nhật Texture cho khóa &e%arg-1%&f! Đang trao mẫu thử..." to sender
+        set {_i} to makeVisualSkullByKey(arg-1, "&6&lMẫu Đầu: &e%arg-1%", ("&7Đã cập nhật qua /setheadskin"))
+        give {_i} to player
+
+
+command /visualtest <text> [<text>] [<player>]:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        set {_target} to player
+
+        if arg-1 is "reloadmodels" or "loadmodels":
+            loadRPModelRegistry()
+            send "&a[VisualArtLib] &7Đã nạp lại bảng Model ID từ rp_models.txt!" to sender
+            stop
+
+        if arg-1 is "get":
+            if arg-2 is not set:
+                send "&cCú pháp: /visualtest get <tên_vật_phẩm> [<người_chơi>]" to sender
+                send "&eTra cứu bảng tên tại: &fRESOURCEPACK_ASSET_MAPPING.md" to sender
+                stop
+            if arg-3 is set:
+                set {_target} to arg-3
+            set {_k} to lowercase arg-2
+            set {_id} to getCustomModelDataId({_k})
+            if {_id} is not set:
+                set {_id} to 1
+            set {_item} to makeCustomRPItem({_k}, "&6&l✦ %{_k}% ✦", ("&7Item Resource Pack (Phân khu 1 & 2)" and "&eDamage ID: %{_id}% | Predicate Durability"))
+            give {_item} to {_target}
+            send "&a[VisualArtLib] &7Đã trao vật phẩm &e%{_k}% &7(ID: &6%{_id}%&7) cho &e%name of {_target}%&7!" to sender
+            stop
+
+        if arg-2 is set:
+            set {_p} to (arg-2 parsed as player)
+            if {_p} is set:
+                set {_target} to {_p}
+        if arg-3 is set:
+            set {_target} to arg-3
+
+        if {_target} is not online:
+            send "&cNgười chơi không online!" to sender
+            stop
+
+        if arg-1 is "rp":
+            set {_item} to makeCustomRPItem("thanh_kiem", "&6&l✦ THÁNH KIẾM RP (TEST) ✦", ("&7Vật phẩm Resource Pack 2D/3D" and "&eDamage ID: 31 | Predicate Durability"))
+            give {_item} to {_target}
+            send "&a[VisualArtLib] &7Đã trao Vật Phẩm Resource Pack Thử Nghiệm cho &e%name of {_target}%&7!" to sender
+
+        else if arg-1 is "3d":
+            set {_loc} to location of {_target}
+            set {_w} to {_loc}.getWorld()
+            set {_as} to {_w}.spawn({_loc}, ArmorStand.class)
+            {_as}.setVisible(false)
+            {_as}.setGravity(false)
+            {_as}.setCustomName(colored "&3&l✦ THỬ NGHIỆM MÔ HÌNH 3D VUA BIỂN ✦")
+            {_as}.setCustomNameVisible(true)
+            set {_asNbt} to nbt compound of {_as}
+            set int tag "DisabledSlots" of {_asNbt} to 2039583
+            set byte tag "Visible" of {_asNbt} to 0
+            set byte tag "NoBasePlate" of {_asNbt} to 1
+            apply3DModelToEntity({_as}, "seaking_idle")
+            send "&a[VisualArtLib] &7Đã triệu hồi Mô hình 3D Thử Nghiệm tại vị trí của bạn!" to sender
+            play3DEntityPose({_as}, "seaking_roar", "seaking_idle", 40)
+            wait 10 seconds
+            if {_as} is set:
+                if {_as}.isValid() is true:
+                    {_as}.remove()
+
+        else if arg-1 is "clear" or "clear3d" or "xoa":
+            set {_cnt} to 0
+            loop all armor stands in radius 15 around {_target}:
+                set {_name} to loop-entity.getCustomName()
+                if {_name} contains "3D" or "VUA BIỂN" or "THỬ NGHIỆM":
+                    loop-entity.remove()
+                    add 1 to {_cnt}
+            send "&a[VisualArtLib] &7Đã xóa &e%{_cnt}% &7mô hình 3D thử nghiệm trong bán kính 15 block!" to sender
+
+        else if arg-1 is "particle":
+            set {_loc} to location of {_target}
+            add 1 to y-coordinate of {_loc}
+            spawnVisualParticle("CRIT_MAGIC", {_loc}, 20, 0.5, 0.5, 0.5, 0.1)
+            spawnVisualParticle("FLAME", {_loc}, 15, 0.3, 0.4, 0.3, 0.05)
+            send "&a[VisualArtLib] &7Đã phát hiệu ứng hạt CRIT_MAGIC & FLAME tại vị trí &e%name of {_target}%&7!" to sender
+
+        else if arg-1 is "skull":
+            set {_i} to makeVisualSkullByKey("devil_core", "&d&lLõi Ác Quỷ (Test 3D)", ("&7Đầu 3D tạo qua Paper PlayerProfile API" and "&aThử nghiệm thành công!"))
+            give {_i} to {_target}
+            send "&a[VisualArtLib] &7Đã trao Đầu 3D Thử Nghiệm cho &e%name of {_target}%&7!" to sender
+
+        else if arg-1 is "armor":
+            set {_i} to makeRgbLeatherArmor(leather chestplate, 180, 20, 20, "&c&lGiáp Thống Khổ (Test RGB)", ("&7Giáp da nhuộm RGB 16 triệu màu" and "&aMàu Đỏ Thẫm (180, 20, 20)"))
+            give {_i} to {_target}
+            send "&a[VisualArtLib] &7Đã trao Giáp Da RGB Thử Nghiệm cho &e%name of {_target}%&7!" to sender
+
+        else if arg-1 is "potion":
+            set {_i} to makeCustomPotion(8388736, "&5&lThuốc Tím Hắc Ám (Test Potion)", ("&7Thuốc thần dược đổi màu NBT" and "&5Mã màu: 8388736 (Tím)"))
+            give {_i} to {_target}
+            send "&a[VisualArtLib] &7Đã trao Thuốc Đổi Màu cho &e%name of {_target}%&7!" to sender
+
+        else if arg-1 is "shield":
+            set {_i} to makeBlackGoldShield("&6&lKhiên Thất Truyền (Test Shield)", ("&7Khiên cờ hiệu hoa văn Đen-Vàng" and "&eBanner NBT BlockEntityTag"))
+            give {_i} to {_target}
+            send "&a[VisualArtLib] &7Đã trao Khiên Cờ Hiệu cho &e%name of {_target}%&7!" to sender
+
+        else if arg-1 is "glowing":
+            set {_i} to makeGlowingItem(diamond sword, "&b&lThánh Kiếm (Test Glow)", ("&7Vũ khí phát sáng HideFlags:63" and "&bKhông lộ enchantment vanilla"))
+            give {_i} to {_target}
+            send "&a[VisualArtLib] &7Đã trao Trang Bị Phát Sáng cho &e%name of {_target}%&7!" to sender
+
+        else if arg-1 is "msg":
+            sendSystemMsg({_target}, "combat", "Bạn vừa tung Tuyệt Kỹ &eHỏa Quyền&f!")
+            sendSystemMsg({_target}, "training", "Mastery Trái Ác Quỷ đạt cấp &a100&f!")
+            sendSystemMsg({_target}, "economy", "Nhận &6$50,000&f từ bán khoáng sản!")
+            sendSystemMsg({_target}, "crew", "Căn cứ được cộng &b+50 Uy Danh&f!")
+            sendSystemMsg({_target}, "error", "Năng lượng Haki không đủ để duy trì!")
+            broadcastDualCard("&6&l✦ TRÁI ÁC QUỶ", "&e%name of {_target}% &7vừa phong ấn &dTrái Ác Quỷ Thần Thoại&7!", "Đạt được sức mạnh siêu phàm của Đại Hải Trình!")
+            broadcastWorldEvent("boss", "SIÊU BOSS ĐÔ ĐỐC AKAINU XUẤT HIỆN!", "Vị trí: Tọa độ trung tâm Đấu Trường Thử Thách!", "Hải tặc tiêu diệt sẽ nhận 5,000,000 Beri và Rương Cực Phẩm!")
+
+        else:
+            send "&cCú pháp: /visualtest <get|rp|3d|clear|particle|skull|armor|potion|shield|glowing|msg> [tên|player]" to sender
+
+# ---------------------------------------------------------------------
+# 10. BỘ HÀM THÔNG BÁO CHUẨN HÓA (CHAT NOTIFICATIONS & BROADCASTS)
+# ---------------------------------------------------------------------
+function sendSystemMsg(p: player, type: text, msg: text):
+    if {_p} is not online:
+        stop
+    if {_type} is "combat":
+        send colored "&c&l⚔ CHIẾN ĐẤU &8&l┃ &f%{_msg}%" to {_p}
+    else if {_type} is "talent":
+        send colored "&b&l✦ THIÊN PHÚ &8&l┃ &f%{_msg}%" to {_p}
+    else if {_type} is "training":
+        send colored "&6&l✦ TU LUYỆN &8&l┃ &f%{_msg}%" to {_p}
+    else if {_type} is "economy":
+        send colored "&a&l✪ GIAO DỊCH &8&l┃ &f%{_msg}%" to {_p}
+    else if {_type} is "crew":
+        send colored "&b&l⚓ HẠM ĐỘI &8&l┃ &f%{_msg}%" to {_p}
+    else if {_type} is "info":
+        send colored "&9&l✦ HỆ THỐNG &8&l┃ &f%{_msg}%" to {_p}
+    else if {_type} is "warning":
+        send colored "&e&l⚠ CHÚ Ý &8&l┃ &e%{_msg}%" to {_p}
+    else if {_type} is "error":
+        send colored "&4&l✖ CẢNH BÁO &8&l┃ &c%{_msg}%" to {_p}
+    else:
+        send colored "&e&l✦ THÔNG BÁO &8&l┃ &f%{_msg}%" to {_p}
+
+function broadcastWorldEvent(theme: text, title: text, line1: text, line2: text):
+    set {_border} to "   &8&m⎯⎯⎯⎯⎯⎯⎯&6&l✦ &e&l⚔ &6&l✦&8&m⎯⎯⎯⎯⎯⎯⎯"
+    set {_titleLine} to "  &6&l⚔ %{_title}%"
+    if {_theme} is "boss":
+        set {_border} to "   &8&m⎯⎯⎯⎯⎯⎯⎯&4&l✦ &c&l☠ &4&l✦&8&m⎯⎯⎯⎯⎯⎯⎯"
+        set {_titleLine} to "  &c&l☠ %{_title}%"
+    else if {_theme} is "fruit":
+        set {_border} to "   &8&m⎯⎯⎯⎯⎯⎯⎯&5&l✦ &d&l❖ &5&l✦&8&m⎯⎯⎯⎯⎯⎯⎯"
+        set {_titleLine} to "  &d&l❖ %{_title}%"
+    else if {_theme} is "koth":
+        set {_border} to "   &8&m⎯⎯⎯⎯⎯⎯⎯&6&l✦ &e&l⚔ &6&l✦&8&m⎯⎯⎯⎯⎯⎯⎯"
+        set {_titleLine} to "  &6&l⚔ %{_title}%"
+    broadcast colored {_border}
+    broadcast colored {_titleLine}
+    broadcast colored "  &e&l▸ &f%{_line1}%"
+    broadcast colored "  &e&l▸ &f%{_line2}%"
+    broadcast colored {_border}
+
+function broadcastDualCard(badge: text, line1: text, line2: text):
+    broadcast colored "  %{_badge}% &8&l┃ &f%{_line1}%"
+    broadcast colored "  &8&l┗ &e&l▸ &f%{_line2}%"
+
+on quit:
+    delete {dmg_tag::%uuid of player%}
+    delete {dmg_holo_count::%uuid of player%}
+    delete {dmg_holo_reset::%uuid of player%}
+    delete {skill_exact_dmg::%uuid of player%}
+
+on unload:
+    delete {dmg_tag::*}
+    delete {dmg_holo_count::*}
+    delete {dmg_holo_reset::*}
+    delete {dummy_last_dmg::*}
+    delete {skill_exact_dmg::*}

@@ -1,0 +1,532 @@
+[01:16:40 SEVERE]: ################################################
+[01:16:40 SEVERE]: ##                                            ##
+[01:16:40 SEVERE]: ## An error occured while loading the plugin! ##
+[01:16:40 SEVERE]: ##                                            ##
+[01:16:40 SEVERE]: ################################################
+[01:16:40 SEVERE]:  
+[01:16:40 SEVERE]: The plugin doesn't support your minecraft version.
+[01:16:40 SEVERE]: Please try a different version.
+[01:16:40 SEVERE]:  
+[01:16:40 SEVERE]: Stack Trace:
+[01:16:40 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.onLoad(SuperiorSkyblockPlugin.java:175)
+[01:16:40 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.loadPlugins(CraftServer.java:323)
+[01:16:40 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.reload(CraftServer.java:806)
+[01:16:40 SEVERE]: 	at org.bukkit.Bukkit.reload(Bukkit.java:559)
+[01:16:40 SEVERE]: 	at org.bukkit.command.defaults.ReloadCommand.execute(ReloadCommand.java:55)
+[01:16:40 SEVERE]: 	at org.bukkit.command.SimpleCommandMap.dispatch(SimpleCommandMap.java:152)
+[01:16:40 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchCommand(CraftServer.java:685)
+[01:16:40 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnection.handleCommand(PlayerConnection.java:1492)
+[01:16:40 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnection.a(PlayerConnection.java:1297)
+[01:16:40 SEVERE]: 	at net.minecraft.server.v1_12_R1.PacketPlayInChat.a(PacketPlayInChat.java:45)
+[01:16:40 SEVERE]: 	at net.minecraft.server.v1_12_R1.PacketPlayInChat.a(PacketPlayInChat.java:5)
+[01:16:40 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnectionUtils.lambda$ensureMainThread$0(PlayerConnectionUtils.java:14)
+[01:16:40 SEVERE]: 	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+[01:16:40 SEVERE]: 	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+[01:16:40 SEVERE]: 	at net.minecraft.server.v1_12_R1.SystemUtils.a(SourceFile:46)
+[01:16:40 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.D(MinecraftServer.java:850)
+[01:16:40 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.D(DedicatedServer.java:423)
+[01:16:40 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.C(MinecraftServer.java:774)
+[01:16:40 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:666)
+[01:16:40 SEVERE]: 	at java.base/java.lang.Thread.run(Thread.java:842)
+[01:16:40 SEVERE]: Caused by: com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSLoadException: An error occurred while loading nms jar
+[01:16:40 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.findImplementationClass(BuiltinNMSHandlersFactoryMethod.java:67)
+[01:16:40 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.internal.BaseNMSLoader.loadNMSHandler(BaseNMSLoader.java:19)
+[01:16:40 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.loadNMSAdapter(SuperiorSkyblockPlugin.java:413)
+[01:16:40 SEVERE]: 	... 20 more
+[01:16:40 SEVERE]: Caused by: java.nio.file.FileSystemException: plugins\SuperiorSkyblock2\.cache\v1_12_R1.jar: The process cannot access the file because it is being used by another process
+[01:16:40 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.translateToIOException(WindowsException.java:92)
+[01:16:40 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:103)
+[01:16:40 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:108)
+[01:16:40 SEVERE]: 	at java.base/sun.nio.fs.WindowsFileSystemProvider.implDelete(WindowsFileSystemProvider.java:275)
+[01:16:40 SEVERE]: 	at java.base/sun.nio.fs.AbstractFileSystemProvider.deleteIfExists(AbstractFileSystemProvider.java:110)
+[01:16:40 SEVERE]: 	at java.base/java.nio.file.Files.deleteIfExists(Files.java:1191)
+[01:16:40 SEVERE]: 	at java.base/java.nio.file.Files.copy(Files.java:3148)
+[01:16:40 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.loadNMSToRuntime(BuiltinNMSHandlersFactoryMethod.java:97)
+[01:16:40 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.<init>(BuiltinNMSHandlersFactoryMethod.java:61)
+[01:16:40 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod.createNMSLoader(BuiltinNMSHandlersFactoryMethod.java:45)
+[01:16:40 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSHandlersFactory.createNMSLoader(NMSHandlersFactory.java:43)
+[01:16:40 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSHandlersFactory.createNMSLoader(NMSHandlersFactory.java:29)
+[01:16:40 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.loadNMSAdapter(SuperiorSkyblockPlugin.java:411)
+[01:16:40 SEVERE]: 	... 20 more
+[01:16:40 SEVERE]:  
+[01:16:40 SEVERE]: ################################################
+[01:16:43 INFO]: Enabling SuperiorSkyblock2 v2026.3
+[01:16:43 SEVERE]: ################################################
+[01:16:43 SEVERE]: ##                                            ##
+[01:16:43 SEVERE]: ## An error occured while loading the plugin! ##
+[01:16:43 SEVERE]: ##                                            ##
+[01:16:43 SEVERE]: ################################################
+[01:16:43 SEVERE]:  
+[01:16:43 SEVERE]: Failed to load SuperiorSkyblock2.
+[01:16:43 SEVERE]: Failed on NMS_INITIALIZED
+[01:16:43 SEVERE]: 
+[01:16:43 SEVERE]: Shutting down the server...
+[01:16:43 SEVERE]:  
+[01:16:43 SEVERE]: Stack Trace:
+[01:16:43 SEVERE]: 	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:264)
+[01:16:43 SEVERE]: 	at org.bukkit.plugin.java.JavaPluginLoader.enablePlugin(JavaPluginLoader.java:316)
+[01:16:43 SEVERE]: 	at org.bukkit.plugin.SimplePluginManager.enablePlugin(SimplePluginManager.java:405)
+[01:16:43 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.enablePlugin(CraftServer.java:395)
+[01:16:43 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.enablePlugins(CraftServer.java:344)
+[01:16:43 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.reload(CraftServer.java:808)
+[01:16:43 SEVERE]: 	at org.bukkit.Bukkit.reload(Bukkit.java:559)
+[01:16:43 SEVERE]: 	at org.bukkit.command.defaults.ReloadCommand.execute(ReloadCommand.java:55)
+[01:16:43 SEVERE]: 	at org.bukkit.command.SimpleCommandMap.dispatch(SimpleCommandMap.java:152)
+[01:16:43 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchCommand(CraftServer.java:685)
+[01:16:43 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnection.handleCommand(PlayerConnection.java:1492)
+[01:16:43 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnection.a(PlayerConnection.java:1297)
+[01:16:43 SEVERE]: 	at net.minecraft.server.v1_12_R1.PacketPlayInChat.a(PacketPlayInChat.java:45)
+[01:16:43 SEVERE]: 	at net.minecraft.server.v1_12_R1.PacketPlayInChat.a(PacketPlayInChat.java:5)
+[01:16:43 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnectionUtils.lambda$ensureMainThread$0(PlayerConnectionUtils.java:14)
+[01:16:43 SEVERE]: 	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+[01:16:43 SEVERE]: 	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+[01:16:43 SEVERE]: 	at net.minecraft.server.v1_12_R1.SystemUtils.a(SourceFile:46)
+[01:16:43 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.D(MinecraftServer.java:850)
+[01:16:43 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.D(DedicatedServer.java:423)
+[01:16:43 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.C(MinecraftServer.java:774)
+[01:16:43 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:666)
+[01:16:43 SEVERE]: 	at java.base/java.lang.Thread.run(Thread.java:842)
+[01:16:43 SEVERE]:  
+[01:16:43 SEVERE]: ################################################
+[01:16:46 INFO]: Disabling SuperiorSkyblock2 v2026.3
+[01:16:46 SEVERE]: An unexpected error occurred while disabling the plugin:
+[01:16:46 SEVERE]: java.lang.NullPointerException: Cannot invoke "com.bgsoftware.superiorskyblock.api.player.container.PlayersContainer.getSuperiorPlayer(java.util.UUID)" because "this.playersContainer" is null
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:66)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:60)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:55)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:50)
+	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.lambda$onDisable$2(SuperiorSkyblockPlugin.java:361)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at java.base/java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1092)
+	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.onDisable(SuperiorSkyblockPlugin.java:360)
+	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:266)
+	at org.bukkit.plugin.java.JavaPluginLoader.disablePlugin(JavaPluginLoader.java:350)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugin(SimplePluginManager.java:437)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugins(SimplePluginManager.java:424)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugins(SimplePluginManager.java:417)
+	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.disablePlugins(CraftServer.java:363)
+	at net.minecraft.server.v1_12_R1.MinecraftServer.stop(MinecraftServer.java:486)
+	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:702)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+
+[01:16:46 INFO]: Shutting down stats client...
+[01:25:18 SEVERE]: ################################################
+[01:25:18 SEVERE]: ##                                            ##
+[01:25:18 SEVERE]: ## An error occured while loading the plugin! ##
+[01:25:18 SEVERE]: ##                                            ##
+[01:25:18 SEVERE]: ################################################
+[01:25:18 SEVERE]:  
+[01:25:18 SEVERE]: The plugin doesn't support your minecraft version.
+[01:25:18 SEVERE]: Please try a different version.
+[01:25:18 SEVERE]:  
+[01:25:18 SEVERE]: Stack Trace:
+[01:25:18 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.onLoad(SuperiorSkyblockPlugin.java:175)
+[01:25:18 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.loadPlugins(CraftServer.java:323)
+[01:25:18 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.reload(CraftServer.java:806)
+[01:25:18 SEVERE]: 	at org.bukkit.Bukkit.reload(Bukkit.java:559)
+[01:25:18 SEVERE]: 	at org.bukkit.command.defaults.ReloadCommand.execute(ReloadCommand.java:55)
+[01:25:18 SEVERE]: 	at org.bukkit.command.SimpleCommandMap.dispatch(SimpleCommandMap.java:152)
+[01:25:18 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchCommand(CraftServer.java:685)
+[01:25:18 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchServerCommand(CraftServer.java:648)
+[01:25:18 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.aP(DedicatedServer.java:463)
+[01:25:18 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.D(DedicatedServer.java:424)
+[01:25:18 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.C(MinecraftServer.java:774)
+[01:25:18 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:666)
+[01:25:18 SEVERE]: 	at java.base/java.lang.Thread.run(Thread.java:842)
+[01:25:18 SEVERE]: Caused by: com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSLoadException: An error occurred while loading nms jar
+[01:25:18 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.findImplementationClass(BuiltinNMSHandlersFactoryMethod.java:67)
+[01:25:18 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.internal.BaseNMSLoader.loadNMSHandler(BaseNMSLoader.java:19)
+[01:25:18 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.loadNMSAdapter(SuperiorSkyblockPlugin.java:413)
+[01:25:18 SEVERE]: 	... 13 more
+[01:25:18 SEVERE]: Caused by: java.nio.file.FileSystemException: plugins\SuperiorSkyblock2\.cache\v1_12_R1.jar: The process cannot access the file because it is being used by another process
+[01:25:18 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.translateToIOException(WindowsException.java:92)
+[01:25:18 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:103)
+[01:25:18 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:108)
+[01:25:18 SEVERE]: 	at java.base/sun.nio.fs.WindowsFileSystemProvider.implDelete(WindowsFileSystemProvider.java:275)
+[01:25:18 SEVERE]: 	at java.base/sun.nio.fs.AbstractFileSystemProvider.deleteIfExists(AbstractFileSystemProvider.java:110)
+[01:25:18 SEVERE]: 	at java.base/java.nio.file.Files.deleteIfExists(Files.java:1191)
+[01:25:18 SEVERE]: 	at java.base/java.nio.file.Files.copy(Files.java:3148)
+[01:25:18 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.loadNMSToRuntime(BuiltinNMSHandlersFactoryMethod.java:97)
+[01:25:18 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.<init>(BuiltinNMSHandlersFactoryMethod.java:61)
+[01:25:18 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod.createNMSLoader(BuiltinNMSHandlersFactoryMethod.java:45)
+[01:25:18 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSHandlersFactory.createNMSLoader(NMSHandlersFactory.java:43)
+[01:25:18 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSHandlersFactory.createNMSLoader(NMSHandlersFactory.java:29)
+[01:25:18 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.loadNMSAdapter(SuperiorSkyblockPlugin.java:411)
+[01:25:18 SEVERE]: 	... 13 more
+[01:25:18 SEVERE]:  
+[01:25:18 SEVERE]: ################################################
+[01:25:20 INFO]: Enabling SuperiorSkyblock2 v2026.3
+[01:25:20 SEVERE]: ################################################
+[01:25:20 SEVERE]: ##                                            ##
+[01:25:20 SEVERE]: ## An error occured while loading the plugin! ##
+[01:25:20 SEVERE]: ##                                            ##
+[01:25:20 SEVERE]: ################################################
+[01:25:20 SEVERE]:  
+[01:25:20 SEVERE]: Failed to load SuperiorSkyblock2.
+[01:25:20 SEVERE]: Failed on NMS_INITIALIZED
+[01:25:20 SEVERE]: 
+[01:25:20 SEVERE]: Shutting down the server...
+[01:25:20 SEVERE]:  
+[01:25:20 SEVERE]: Stack Trace:
+[01:25:20 SEVERE]: 	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:264)
+[01:25:20 SEVERE]: 	at org.bukkit.plugin.java.JavaPluginLoader.enablePlugin(JavaPluginLoader.java:316)
+[01:25:20 SEVERE]: 	at org.bukkit.plugin.SimplePluginManager.enablePlugin(SimplePluginManager.java:405)
+[01:25:20 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.enablePlugin(CraftServer.java:395)
+[01:25:20 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.enablePlugins(CraftServer.java:344)
+[01:25:20 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.reload(CraftServer.java:808)
+[01:25:20 SEVERE]: 	at org.bukkit.Bukkit.reload(Bukkit.java:559)
+[01:25:20 SEVERE]: 	at org.bukkit.command.defaults.ReloadCommand.execute(ReloadCommand.java:55)
+[01:25:20 SEVERE]: 	at org.bukkit.command.SimpleCommandMap.dispatch(SimpleCommandMap.java:152)
+[01:25:20 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchCommand(CraftServer.java:685)
+[01:25:20 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchServerCommand(CraftServer.java:648)
+[01:25:20 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.aP(DedicatedServer.java:463)
+[01:25:20 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.D(DedicatedServer.java:424)
+[01:25:20 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.C(MinecraftServer.java:774)
+[01:25:20 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:666)
+[01:25:20 SEVERE]: 	at java.base/java.lang.Thread.run(Thread.java:842)
+[01:25:20 SEVERE]:  
+[01:25:20 SEVERE]: ################################################
+[01:25:23 INFO]: Disabling SuperiorSkyblock2 v2026.3
+[01:25:23 SEVERE]: An unexpected error occurred while disabling the plugin:
+[01:25:23 SEVERE]: java.lang.NullPointerException: Cannot invoke "com.bgsoftware.superiorskyblock.api.player.container.PlayersContainer.getSuperiorPlayer(java.util.UUID)" because "this.playersContainer" is null
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:66)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:60)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:55)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:50)
+	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.lambda$onDisable$2(SuperiorSkyblockPlugin.java:361)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at java.base/java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1092)
+	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.onDisable(SuperiorSkyblockPlugin.java:360)
+	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:266)
+	at org.bukkit.plugin.java.JavaPluginLoader.disablePlugin(JavaPluginLoader.java:350)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugin(SimplePluginManager.java:437)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugins(SimplePluginManager.java:424)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugins(SimplePluginManager.java:417)
+	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.disablePlugins(CraftServer.java:363)
+	at net.minecraft.server.v1_12_R1.MinecraftServer.stop(MinecraftServer.java:486)
+	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:702)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+
+[01:25:23 INFO]: Shutting down stats client...
+[00:18:42 SEVERE]: ################################################
+[00:18:42 SEVERE]: ##                                            ##
+[00:18:42 SEVERE]: ## An error occured while loading the plugin! ##
+[00:18:42 SEVERE]: ##                                            ##
+[00:18:42 SEVERE]: ################################################
+[00:18:42 SEVERE]:  
+[00:18:42 SEVERE]: The plugin doesn't support your minecraft version.
+[00:18:42 SEVERE]: Please try a different version.
+[00:18:42 SEVERE]:  
+[00:18:42 SEVERE]: Stack Trace:
+[00:18:42 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.onLoad(SuperiorSkyblockPlugin.java:175)
+[00:18:42 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.loadPlugins(CraftServer.java:323)
+[00:18:42 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.reload(CraftServer.java:806)
+[00:18:42 SEVERE]: 	at org.bukkit.Bukkit.reload(Bukkit.java:559)
+[00:18:42 SEVERE]: 	at org.bukkit.command.defaults.ReloadCommand.execute(ReloadCommand.java:55)
+[00:18:42 SEVERE]: 	at org.bukkit.command.SimpleCommandMap.dispatch(SimpleCommandMap.java:152)
+[00:18:42 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchCommand(CraftServer.java:685)
+[00:18:42 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnection.handleCommand(PlayerConnection.java:1492)
+[00:18:42 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnection.a(PlayerConnection.java:1297)
+[00:18:42 SEVERE]: 	at net.minecraft.server.v1_12_R1.PacketPlayInChat.a(PacketPlayInChat.java:45)
+[00:18:42 SEVERE]: 	at net.minecraft.server.v1_12_R1.PacketPlayInChat.a(PacketPlayInChat.java:5)
+[00:18:42 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnectionUtils.lambda$ensureMainThread$0(PlayerConnectionUtils.java:14)
+[00:18:42 SEVERE]: 	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+[00:18:42 SEVERE]: 	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+[00:18:42 SEVERE]: 	at net.minecraft.server.v1_12_R1.SystemUtils.a(SourceFile:46)
+[00:18:42 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.D(MinecraftServer.java:850)
+[00:18:42 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.D(DedicatedServer.java:423)
+[00:18:42 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.C(MinecraftServer.java:774)
+[00:18:42 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:666)
+[00:18:42 SEVERE]: 	at java.base/java.lang.Thread.run(Thread.java:842)
+[00:18:42 SEVERE]: Caused by: com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSLoadException: An error occurred while loading nms jar
+[00:18:42 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.findImplementationClass(BuiltinNMSHandlersFactoryMethod.java:67)
+[00:18:42 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.internal.BaseNMSLoader.loadNMSHandler(BaseNMSLoader.java:19)
+[00:18:42 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.loadNMSAdapter(SuperiorSkyblockPlugin.java:413)
+[00:18:42 SEVERE]: 	... 20 more
+[00:18:42 SEVERE]: Caused by: java.nio.file.FileSystemException: plugins\SuperiorSkyblock2\.cache\v1_12_R1.jar: The process cannot access the file because it is being used by another process
+[00:18:42 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.translateToIOException(WindowsException.java:92)
+[00:18:42 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:103)
+[00:18:42 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:108)
+[00:18:42 SEVERE]: 	at java.base/sun.nio.fs.WindowsFileSystemProvider.implDelete(WindowsFileSystemProvider.java:275)
+[00:18:42 SEVERE]: 	at java.base/sun.nio.fs.AbstractFileSystemProvider.deleteIfExists(AbstractFileSystemProvider.java:110)
+[00:18:42 SEVERE]: 	at java.base/java.nio.file.Files.deleteIfExists(Files.java:1191)
+[00:18:42 SEVERE]: 	at java.base/java.nio.file.Files.copy(Files.java:3148)
+[00:18:42 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.loadNMSToRuntime(BuiltinNMSHandlersFactoryMethod.java:97)
+[00:18:42 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.<init>(BuiltinNMSHandlersFactoryMethod.java:61)
+[00:18:42 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod.createNMSLoader(BuiltinNMSHandlersFactoryMethod.java:45)
+[00:18:42 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSHandlersFactory.createNMSLoader(NMSHandlersFactory.java:43)
+[00:18:42 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSHandlersFactory.createNMSLoader(NMSHandlersFactory.java:29)
+[00:18:42 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.loadNMSAdapter(SuperiorSkyblockPlugin.java:411)
+[00:18:42 SEVERE]: 	... 20 more
+[00:18:42 SEVERE]:  
+[00:18:42 SEVERE]: ################################################
+[00:18:46 INFO]: Enabling SuperiorSkyblock2 v2026.3
+[00:18:46 SEVERE]: ################################################
+[00:18:46 SEVERE]: ##                                            ##
+[00:18:46 SEVERE]: ## An error occured while loading the plugin! ##
+[00:18:46 SEVERE]: ##                                            ##
+[00:18:46 SEVERE]: ################################################
+[00:18:46 SEVERE]:  
+[00:18:46 SEVERE]: Failed to load SuperiorSkyblock2.
+[00:18:46 SEVERE]: Failed on NMS_INITIALIZED
+[00:18:46 SEVERE]: 
+[00:18:46 SEVERE]: Shutting down the server...
+[00:18:46 SEVERE]:  
+[00:18:46 SEVERE]: Stack Trace:
+[00:18:46 SEVERE]: 	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:264)
+[00:18:46 SEVERE]: 	at org.bukkit.plugin.java.JavaPluginLoader.enablePlugin(JavaPluginLoader.java:316)
+[00:18:46 SEVERE]: 	at org.bukkit.plugin.SimplePluginManager.enablePlugin(SimplePluginManager.java:405)
+[00:18:46 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.enablePlugin(CraftServer.java:395)
+[00:18:46 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.enablePlugins(CraftServer.java:344)
+[00:18:46 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.reload(CraftServer.java:808)
+[00:18:46 SEVERE]: 	at org.bukkit.Bukkit.reload(Bukkit.java:559)
+[00:18:46 SEVERE]: 	at org.bukkit.command.defaults.ReloadCommand.execute(ReloadCommand.java:55)
+[00:18:46 SEVERE]: 	at org.bukkit.command.SimpleCommandMap.dispatch(SimpleCommandMap.java:152)
+[00:18:46 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchCommand(CraftServer.java:685)
+[00:18:46 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnection.handleCommand(PlayerConnection.java:1492)
+[00:18:46 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnection.a(PlayerConnection.java:1297)
+[00:18:46 SEVERE]: 	at net.minecraft.server.v1_12_R1.PacketPlayInChat.a(PacketPlayInChat.java:45)
+[00:18:46 SEVERE]: 	at net.minecraft.server.v1_12_R1.PacketPlayInChat.a(PacketPlayInChat.java:5)
+[00:18:46 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnectionUtils.lambda$ensureMainThread$0(PlayerConnectionUtils.java:14)
+[00:18:46 SEVERE]: 	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+[00:18:46 SEVERE]: 	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+[00:18:46 SEVERE]: 	at net.minecraft.server.v1_12_R1.SystemUtils.a(SourceFile:46)
+[00:18:46 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.D(MinecraftServer.java:850)
+[00:18:46 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.D(DedicatedServer.java:423)
+[00:18:46 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.C(MinecraftServer.java:774)
+[00:18:46 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:666)
+[00:18:46 SEVERE]: 	at java.base/java.lang.Thread.run(Thread.java:842)
+[00:18:46 SEVERE]:  
+[00:18:46 SEVERE]: ################################################
+[00:18:52 INFO]: Disabling SuperiorSkyblock2 v2026.3
+[00:18:52 SEVERE]: An unexpected error occurred while disabling the plugin:
+[00:18:52 SEVERE]: java.lang.NullPointerException: Cannot invoke "com.bgsoftware.superiorskyblock.api.player.container.PlayersContainer.getSuperiorPlayer(java.util.UUID)" because "this.playersContainer" is null
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:66)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:60)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:55)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:50)
+	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.lambda$onDisable$2(SuperiorSkyblockPlugin.java:361)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at java.base/java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1092)
+	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.onDisable(SuperiorSkyblockPlugin.java:360)
+	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:266)
+	at org.bukkit.plugin.java.JavaPluginLoader.disablePlugin(JavaPluginLoader.java:350)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugin(SimplePluginManager.java:437)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugins(SimplePluginManager.java:424)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugins(SimplePluginManager.java:417)
+	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.disablePlugins(CraftServer.java:363)
+	at net.minecraft.server.v1_12_R1.MinecraftServer.stop(MinecraftServer.java:486)
+	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:702)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+
+[00:18:52 INFO]: Shutting down stats client...
+[19:27:34 SEVERE]: ################################################
+[19:27:34 SEVERE]: ##                                            ##
+[19:27:34 SEVERE]: ## An error occured while loading the plugin! ##
+[19:27:34 SEVERE]: ##                                            ##
+[19:27:34 SEVERE]: ################################################
+[19:27:34 SEVERE]:  
+[19:27:34 SEVERE]: The plugin doesn't support your minecraft version.
+[19:27:34 SEVERE]: Please try a different version.
+[19:27:34 SEVERE]:  
+[19:27:34 SEVERE]: Stack Trace:
+[19:27:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.onLoad(SuperiorSkyblockPlugin.java:175)
+[19:27:34 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.loadPlugins(CraftServer.java:323)
+[19:27:34 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.reload(CraftServer.java:806)
+[19:27:34 SEVERE]: 	at org.bukkit.Bukkit.reload(Bukkit.java:559)
+[19:27:34 SEVERE]: 	at org.bukkit.command.defaults.ReloadCommand.execute(ReloadCommand.java:55)
+[19:27:34 SEVERE]: 	at org.bukkit.command.SimpleCommandMap.dispatch(SimpleCommandMap.java:152)
+[19:27:34 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchCommand(CraftServer.java:685)
+[19:27:34 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchServerCommand(CraftServer.java:648)
+[19:27:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.aP(DedicatedServer.java:463)
+[19:27:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.D(DedicatedServer.java:424)
+[19:27:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.C(MinecraftServer.java:774)
+[19:27:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:666)
+[19:27:34 SEVERE]: 	at java.base/java.lang.Thread.run(Thread.java:842)
+[19:27:34 SEVERE]: Caused by: com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSLoadException: An error occurred while loading nms jar
+[19:27:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.findImplementationClass(BuiltinNMSHandlersFactoryMethod.java:67)
+[19:27:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.internal.BaseNMSLoader.loadNMSHandler(BaseNMSLoader.java:19)
+[19:27:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.loadNMSAdapter(SuperiorSkyblockPlugin.java:413)
+[19:27:34 SEVERE]: 	... 13 more
+[19:27:34 SEVERE]: Caused by: java.nio.file.FileSystemException: plugins\SuperiorSkyblock2\.cache\v1_12_R1.jar: The process cannot access the file because it is being used by another process
+[19:27:34 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.translateToIOException(WindowsException.java:92)
+[19:27:34 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:103)
+[19:27:34 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:108)
+[19:27:34 SEVERE]: 	at java.base/sun.nio.fs.WindowsFileSystemProvider.implDelete(WindowsFileSystemProvider.java:275)
+[19:27:34 SEVERE]: 	at java.base/sun.nio.fs.AbstractFileSystemProvider.deleteIfExists(AbstractFileSystemProvider.java:110)
+[19:27:34 SEVERE]: 	at java.base/java.nio.file.Files.deleteIfExists(Files.java:1191)
+[19:27:34 SEVERE]: 	at java.base/java.nio.file.Files.copy(Files.java:3148)
+[19:27:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.loadNMSToRuntime(BuiltinNMSHandlersFactoryMethod.java:97)
+[19:27:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.<init>(BuiltinNMSHandlersFactoryMethod.java:61)
+[19:27:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod.createNMSLoader(BuiltinNMSHandlersFactoryMethod.java:45)
+[19:27:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSHandlersFactory.createNMSLoader(NMSHandlersFactory.java:43)
+[19:27:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSHandlersFactory.createNMSLoader(NMSHandlersFactory.java:29)
+[19:27:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.loadNMSAdapter(SuperiorSkyblockPlugin.java:411)
+[19:27:34 SEVERE]: 	... 13 more
+[19:27:34 SEVERE]:  
+[19:27:34 SEVERE]: ################################################
+[19:27:36 INFO]: Enabling SuperiorSkyblock2 v2026.3
+[19:27:36 SEVERE]: ################################################
+[19:27:36 SEVERE]: ##                                            ##
+[19:27:36 SEVERE]: ## An error occured while loading the plugin! ##
+[19:27:36 SEVERE]: ##                                            ##
+[19:27:36 SEVERE]: ################################################
+[19:27:36 SEVERE]:  
+[19:27:36 SEVERE]: Failed to load SuperiorSkyblock2.
+[19:27:36 SEVERE]: Failed on NMS_INITIALIZED
+[19:27:36 SEVERE]: 
+[19:27:36 SEVERE]: Shutting down the server...
+[19:27:36 SEVERE]:  
+[19:27:36 SEVERE]: Stack Trace:
+[19:27:36 SEVERE]: 	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:264)
+[19:27:36 SEVERE]: 	at org.bukkit.plugin.java.JavaPluginLoader.enablePlugin(JavaPluginLoader.java:316)
+[19:27:36 SEVERE]: 	at org.bukkit.plugin.SimplePluginManager.enablePlugin(SimplePluginManager.java:405)
+[19:27:36 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.enablePlugin(CraftServer.java:395)
+[19:27:36 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.enablePlugins(CraftServer.java:344)
+[19:27:36 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.reload(CraftServer.java:808)
+[19:27:36 SEVERE]: 	at org.bukkit.Bukkit.reload(Bukkit.java:559)
+[19:27:36 SEVERE]: 	at org.bukkit.command.defaults.ReloadCommand.execute(ReloadCommand.java:55)
+[19:27:36 SEVERE]: 	at org.bukkit.command.SimpleCommandMap.dispatch(SimpleCommandMap.java:152)
+[19:27:36 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchCommand(CraftServer.java:685)
+[19:27:36 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchServerCommand(CraftServer.java:648)
+[19:27:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.aP(DedicatedServer.java:463)
+[19:27:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.D(DedicatedServer.java:424)
+[19:27:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.C(MinecraftServer.java:774)
+[19:27:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:666)
+[19:27:36 SEVERE]: 	at java.base/java.lang.Thread.run(Thread.java:842)
+[19:27:36 SEVERE]:  
+[19:27:36 SEVERE]: ################################################
+[19:27:40 INFO]: Disabling SuperiorSkyblock2 v2026.3
+[19:27:40 SEVERE]: An unexpected error occurred while disabling the plugin:
+[19:27:40 SEVERE]: java.lang.NullPointerException: Cannot invoke "com.bgsoftware.superiorskyblock.api.player.container.PlayersContainer.getSuperiorPlayer(java.util.UUID)" because "this.playersContainer" is null
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:66)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:60)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:55)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:50)
+	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.lambda$onDisable$2(SuperiorSkyblockPlugin.java:361)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at java.base/java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1092)
+	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.onDisable(SuperiorSkyblockPlugin.java:360)
+	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:266)
+	at org.bukkit.plugin.java.JavaPluginLoader.disablePlugin(JavaPluginLoader.java:350)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugin(SimplePluginManager.java:437)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugins(SimplePluginManager.java:424)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugins(SimplePluginManager.java:417)
+	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.disablePlugins(CraftServer.java:363)
+	at net.minecraft.server.v1_12_R1.MinecraftServer.stop(MinecraftServer.java:486)
+	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:702)
+	at java.base/java.lang.Thread.run(Thread.java:842)
+
+[19:27:40 INFO]: Shutting down stats client...
+[20:08:34 SEVERE]: ################################################
+[20:08:34 SEVERE]: ##                                            ##
+[20:08:34 SEVERE]: ## An error occured while loading the plugin! ##
+[20:08:34 SEVERE]: ##                                            ##
+[20:08:34 SEVERE]: ################################################
+[20:08:34 SEVERE]:  
+[20:08:34 SEVERE]: The plugin doesn't support your minecraft version.
+[20:08:34 SEVERE]: Please try a different version.
+[20:08:34 SEVERE]:  
+[20:08:34 SEVERE]: Stack Trace:
+[20:08:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.onLoad(SuperiorSkyblockPlugin.java:175)
+[20:08:34 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.loadPlugins(CraftServer.java:323)
+[20:08:34 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.reload(CraftServer.java:806)
+[20:08:34 SEVERE]: 	at org.bukkit.Bukkit.reload(Bukkit.java:559)
+[20:08:34 SEVERE]: 	at org.bukkit.command.defaults.ReloadCommand.execute(ReloadCommand.java:55)
+[20:08:34 SEVERE]: 	at org.bukkit.command.SimpleCommandMap.dispatch(SimpleCommandMap.java:152)
+[20:08:34 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchCommand(CraftServer.java:685)
+[20:08:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnection.handleCommand(PlayerConnection.java:1492)
+[20:08:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnection.a(PlayerConnection.java:1297)
+[20:08:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.PacketPlayInChat.a(PacketPlayInChat.java:45)
+[20:08:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.PacketPlayInChat.a(PacketPlayInChat.java:5)
+[20:08:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnectionUtils.lambda$ensureMainThread$0(PlayerConnectionUtils.java:14)
+[20:08:34 SEVERE]: 	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+[20:08:34 SEVERE]: 	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+[20:08:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.SystemUtils.a(SourceFile:46)
+[20:08:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.D(MinecraftServer.java:850)
+[20:08:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.D(DedicatedServer.java:423)
+[20:08:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.C(MinecraftServer.java:774)
+[20:08:34 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:666)
+[20:08:34 SEVERE]: 	at java.base/java.lang.Thread.run(Thread.java:1583)
+[20:08:34 SEVERE]: Caused by: com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSLoadException: An error occurred while loading nms jar
+[20:08:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.findImplementationClass(BuiltinNMSHandlersFactoryMethod.java:67)
+[20:08:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.internal.BaseNMSLoader.loadNMSHandler(BaseNMSLoader.java:19)
+[20:08:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.loadNMSAdapter(SuperiorSkyblockPlugin.java:413)
+[20:08:34 SEVERE]: 	... 20 more
+[20:08:34 SEVERE]: Caused by: java.nio.file.FileSystemException: plugins\SuperiorSkyblock2\.cache\v1_12_R1.jar: The process cannot access the file because it is being used by another process
+[20:08:34 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.translateToIOException(WindowsException.java:92)
+[20:08:34 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:103)
+[20:08:34 SEVERE]: 	at java.base/sun.nio.fs.WindowsException.rethrowAsIOException(WindowsException.java:108)
+[20:08:34 SEVERE]: 	at java.base/sun.nio.fs.WindowsFileSystemProvider.implDelete(WindowsFileSystemProvider.java:273)
+[20:08:34 SEVERE]: 	at java.base/sun.nio.fs.AbstractFileSystemProvider.deleteIfExists(AbstractFileSystemProvider.java:109)
+[20:08:34 SEVERE]: 	at java.base/java.nio.file.Files.deleteIfExists(Files.java:1191)
+[20:08:34 SEVERE]: 	at java.base/java.nio.file.Files.copy(Files.java:3128)
+[20:08:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.loadNMSToRuntime(BuiltinNMSHandlersFactoryMethod.java:97)
+[20:08:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod$BuiltinNMSLoader.<init>(BuiltinNMSHandlersFactoryMethod.java:61)
+[20:08:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.method.BuiltinNMSHandlersFactoryMethod.createNMSLoader(BuiltinNMSHandlersFactoryMethod.java:45)
+[20:08:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSHandlersFactory.createNMSLoader(NMSHandlersFactory.java:43)
+[20:08:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.libs.com.bgsoftware.common.nmsloader.NMSHandlersFactory.createNMSLoader(NMSHandlersFactory.java:29)
+[20:08:34 SEVERE]: 	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.loadNMSAdapter(SuperiorSkyblockPlugin.java:411)
+[20:08:34 SEVERE]: 	... 20 more
+[20:08:34 SEVERE]:  
+[20:08:34 SEVERE]: ################################################
+[20:08:36 INFO]: Enabling SuperiorSkyblock2 v2026.3
+[20:08:36 SEVERE]: ################################################
+[20:08:36 SEVERE]: ##                                            ##
+[20:08:36 SEVERE]: ## An error occured while loading the plugin! ##
+[20:08:36 SEVERE]: ##                                            ##
+[20:08:36 SEVERE]: ################################################
+[20:08:36 SEVERE]:  
+[20:08:36 SEVERE]: Failed to load SuperiorSkyblock2.
+[20:08:36 SEVERE]: Failed on NMS_INITIALIZED
+[20:08:36 SEVERE]: 
+[20:08:36 SEVERE]: Shutting down the server...
+[20:08:36 SEVERE]:  
+[20:08:36 SEVERE]: Stack Trace:
+[20:08:36 SEVERE]: 	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:264)
+[20:08:36 SEVERE]: 	at org.bukkit.plugin.java.JavaPluginLoader.enablePlugin(JavaPluginLoader.java:316)
+[20:08:36 SEVERE]: 	at org.bukkit.plugin.SimplePluginManager.enablePlugin(SimplePluginManager.java:405)
+[20:08:36 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.enablePlugin(CraftServer.java:395)
+[20:08:36 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.enablePlugins(CraftServer.java:344)
+[20:08:36 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.reload(CraftServer.java:808)
+[20:08:36 SEVERE]: 	at org.bukkit.Bukkit.reload(Bukkit.java:559)
+[20:08:36 SEVERE]: 	at org.bukkit.command.defaults.ReloadCommand.execute(ReloadCommand.java:55)
+[20:08:36 SEVERE]: 	at org.bukkit.command.SimpleCommandMap.dispatch(SimpleCommandMap.java:152)
+[20:08:36 SEVERE]: 	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.dispatchCommand(CraftServer.java:685)
+[20:08:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnection.handleCommand(PlayerConnection.java:1492)
+[20:08:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnection.a(PlayerConnection.java:1297)
+[20:08:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.PacketPlayInChat.a(PacketPlayInChat.java:45)
+[20:08:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.PacketPlayInChat.a(PacketPlayInChat.java:5)
+[20:08:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.PlayerConnectionUtils.lambda$ensureMainThread$0(PlayerConnectionUtils.java:14)
+[20:08:36 SEVERE]: 	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+[20:08:36 SEVERE]: 	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+[20:08:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.SystemUtils.a(SourceFile:46)
+[20:08:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.D(MinecraftServer.java:850)
+[20:08:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.DedicatedServer.D(DedicatedServer.java:423)
+[20:08:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.C(MinecraftServer.java:774)
+[20:08:36 SEVERE]: 	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:666)
+[20:08:36 SEVERE]: 	at java.base/java.lang.Thread.run(Thread.java:1583)
+[20:08:36 SEVERE]:  
+[20:08:36 SEVERE]: ################################################
+[20:08:39 INFO]: Disabling SuperiorSkyblock2 v2026.3
+[20:08:39 SEVERE]: An unexpected error occurred while disabling the plugin:
+[20:08:39 SEVERE]: java.lang.NullPointerException: Cannot invoke "com.bgsoftware.superiorskyblock.api.player.container.PlayersContainer.getSuperiorPlayer(java.util.UUID)" because "this.playersContainer" is null
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:66)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:60)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:55)
+	at com.bgsoftware.superiorskyblock.player.PlayersManagerImpl.getSuperiorPlayer(PlayersManagerImpl.java:50)
+	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.lambda$onDisable$2(SuperiorSkyblockPlugin.java:361)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at java.base/java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1116)
+	at com.bgsoftware.superiorskyblock.SuperiorSkyblockPlugin.onDisable(SuperiorSkyblockPlugin.java:360)
+	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:266)
+	at org.bukkit.plugin.java.JavaPluginLoader.disablePlugin(JavaPluginLoader.java:350)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugin(SimplePluginManager.java:437)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugins(SimplePluginManager.java:424)
+	at org.bukkit.plugin.SimplePluginManager.disablePlugins(SimplePluginManager.java:417)
+	at org.bukkit.craftbukkit.v1_12_R1.CraftServer.disablePlugins(CraftServer.java:363)
+	at net.minecraft.server.v1_12_R1.MinecraftServer.stop(MinecraftServer.java:486)
+	at net.minecraft.server.v1_12_R1.MinecraftServer.run(MinecraftServer.java:702)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+[20:08:39 INFO]: Shutting down stats client...

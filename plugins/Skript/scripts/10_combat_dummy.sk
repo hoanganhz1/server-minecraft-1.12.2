@@ -1,0 +1,255 @@
+# =====================================================================
+# HỆ THỐNG BÙ NHÌN THỬ SÁT THƯƠNG — COMBAT DPS DUMMY (PAPER 1.12.2)
+# 10_combat_dummy.sk — PHASE 9 & PHASE 10 MASTER SPEC (PHẦN IV)
+# 1. Ba Mẫu Bù Nhìn: normal (0% giáp), boss (60% giáp, 40% máu), logia (45% né, miễn nhiễm nếu không bật Haki)
+# 2. Xóa no damage ticks để nhận đòn liên hoàn
+# 3. Hologram sát thương bay lên tự xóa sau 0.8s (⚔ Chí mạng, ⚡ Xuyên giáp, ✦ Né tránh)
+# 4. Ghi nhận phiên DPS và gửi bảng báo cáo sau 5 giây ngừng đánh
+# 5. Lệnh quản trị: /dummyadmin <spawn|remove|clearall> [<normal|boss|logia>]
+# =====================================================================
+
+import:
+    java.util.UUID
+    org.bukkit.Bukkit
+    org.bukkit.Location
+    org.bukkit.Particle
+    org.bukkit.Sound
+    org.bukkit.entity.Player
+    org.bukkit.entity.LivingEntity
+    org.bukkit.entity.Zombie
+    org.bukkit.entity.ArmorStand
+    org.bukkit.entity.Entity
+
+# ---------------------------------------------------------------------
+# 1. HÀM KHỞI TẠO VÀ TRIỆU HỒI BÙ NHÌN THỬ SÁT THƯƠNG
+# ---------------------------------------------------------------------
+
+function spawnCombatDummy(p: player, type: text):
+    set {_loc} to location of {_p}
+    set {_w} to {_loc}.getWorld()
+    if {_w} is not set:
+        stop
+
+    set {_type} to lowercase {_type}
+    if {_type} is not "normal":
+        if {_type} is not "boss":
+            if {_type} is not "logia":
+                send "&c[DummyAdmin] &7Loại Bù Nhìn không hợp lệ! Hãy chọn: &enormal&7, &cboss&7, hoặc &blogia&7." to {_p}
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+                stop
+
+    set {_dummy} to {_w}.spawn({_loc}, ArmorStand.class)
+    {_dummy}.setVisible(false)
+    {_dummy}.setGravity(false)
+    {_dummy}.setCustomNameVisible(true)
+    {_dummy}.setCollidable(false)
+    {_dummy}.setMaximumNoDamageTicks(0)
+    {_dummy}.setNoDamageTicks(0)
+    set {_dummyNbt} to nbt compound of {_dummy}
+    set int tag "DisabledSlots" of {_dummyNbt} to 2039583
+    set byte tag "Visible" of {_dummyNbt} to 0
+    set byte tag "NoBasePlate" of {_dummyNbt} to 1
+
+    set {_uuid} to uuid of {_dummy}
+    set {dummy_type::%{_uuid}%} to {_type}
+    set {dummy_list::%{_uuid}%} to {_uuid}
+    set {dummy_loc::%{_uuid}%} to {_loc}
+    {_dummy}.addScoreboardTag("CombatDummy:%{_type}%")
+
+    set {_baseKey} to "dummy_%{_type}%_idle"
+
+    if {_type} is "normal":
+        set {_name} to "&e&l❖ BÙ NHÌN TÂN BINH &7[0%% Giáp]"
+        set name of {_dummy} to colored {_name}
+        set max health of {_dummy} to 500
+        set health of {_dummy} to 500
+        apply3DModelToEntity({_dummy}, {_baseKey})
+
+    else if {_type} is "boss":
+        set {_name} to "&c&l❖ BÙ NHÌN ĐÔ ĐỐC &7[60%% Giáp | Máu 40%%]"
+        set name of {_dummy} to colored {_name}
+        set max health of {_dummy} to 500
+        set health of {_dummy} to 200
+        apply3DModelToEntity({_dummy}, {_baseKey})
+
+    else if {_type} is "logia":
+        set {_name} to "&b&l✦ BÙ NHÌN ẢO ẢNH LOGIA &7[38%% Né | Hệ Logia]"
+        set name of {_dummy} to colored {_name}
+        set max health of {_dummy} to 500
+        set health of {_dummy} to 500
+        apply3DModelToEntity({_dummy}, {_baseKey})
+
+    spawnVisualParticle("FIREWORKS_SPARK", {_loc}, 20, 0.4, 0.8, 0.4, 0.05)
+    spawnVisualParticle("PORTAL", {_loc}, 30, 0.5, 0.9, 0.5, 0.1)
+    play sound "BLOCK_ANVIL_USE" with volume 1 and pitch 1.2 at {_loc}
+    send "&a[DummyAdmin] &7Đã triệu hồi thành công %{_name}% &7tại vị trí của bạn!" to {_p}
+
+# ---------------------------------------------------------------------
+# 2. HÀM XÓA BÙ NHÌN GẦN NHẤT HOẶC ĐANG CHỈ VÀO
+# ---------------------------------------------------------------------
+
+function removeNearbyCombatDummy(p: player):
+    set {_target} to target entity of {_p}
+    if {_target} is set:
+        set {_u} to uuid of {_target}
+        if {dummy_type::%{_u}%} is set:
+            set {_dName} to name of {_target}
+            clear {dummy_type::%{_u}%}
+            clear {dummy_list::%{_u}%}
+            clear {dummy_loc::%{_u}%}
+            {_target}.remove()
+            spawnVisualParticle("SMOKE_LARGE", location of {_p}, 15, 0.3, 0.5, 0.3, 0.05)
+            play sound "ENTITY_ITEM_BREAK" with volume 1 and pitch 1 to {_p}
+            send "&a[DummyAdmin] &7Đã xóa Bù Nhìn &e%{_dName}%&7!" to {_p}
+            stop
+
+    loop entities in radius 4 around {_p}:
+        set {_lu} to uuid of loop-entity
+        if {dummy_type::%{_lu}%} is set:
+            set {_dName} to name of loop-entity
+            clear {dummy_type::%{_lu}%}
+            clear {dummy_list::%{_lu}%}
+            clear {dummy_loc::%{_lu}%}
+            loop-entity.remove()
+            spawnVisualParticle("SMOKE_LARGE", location of loop-entity, 15, 0.3, 0.5, 0.3, 0.05)
+            play sound "ENTITY_ITEM_BREAK" with volume 1 and pitch 1 to {_p}
+            send "&a[DummyAdmin] &7Đã xóa Bù Nhìn &e%{_dName}% &7gần bạn nhất!" to {_p}
+            stop
+
+    send "&c[DummyAdmin] &7Không tìm thấy Bù Nhìn nào trong bán kính 4 block!" to {_p}
+    play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+
+# ---------------------------------------------------------------------
+# 3. HÀM DỌN DẸP TOÀN BỘ BÙ NHÌN TRÊN MÁY CHỦ
+# ---------------------------------------------------------------------
+
+function clearAllCombatDummies() :: number:
+    set {_count} to 0
+    loop {dummy_list::*}:
+        set {_uidStr} to loop-value
+        set {_uid} to UUID.fromString({_uidStr})
+        if {_uid} is set:
+            set {_ent} to Bukkit.getEntity({_uid})
+            if {_ent} is set:
+                {_ent}.remove()
+                add 1 to {_count}
+        clear {dummy_type::%{_uidStr}%}
+        clear {dummy_loc::%{_uidStr}%}
+    clear {dummy_list::*}
+    return {_count}
+
+# ---------------------------------------------------------------------
+# 4. HÀM TỔNG KẾT VÀ GỬI BÁO CÁO THỬ SÁT THƯƠNG DPS
+# ---------------------------------------------------------------------
+
+function sendDummyReport(p: player):
+    set {_u} to uuid of {_p}
+    set {_start_ms} to {dummy_session::%{_u}%::start_ms}
+    set {_last_ms} to {dummy_session::%{_u}%::last_hit_ms}
+    set {_diff_ms} to {_last_ms} - {_start_ms}
+    set {_secs} to {_diff_ms} / 1000
+    if {_secs} < 1.0:
+        set {_secs} to 1.0
+    set {_secs} to roundOneDecimal({_secs})
+
+    set {_totalDmg} to {dummy_session::%{_u}%::total_damage} ? 0
+    set {_totalHits} to {dummy_session::%{_u}%::total_hits} ? 0
+    set {_critHits} to {dummy_session::%{_u}%::crit_hits} ? 0
+    set {_maxHit} to {dummy_session::%{_u}%::max_hit} ? 0
+    set {_dType} to {dummy_session::%{_u}%::target_type} ? "normal"
+
+    set {_dps} to roundOneDecimal({_totalDmg} / {_secs})
+    set {_critRate} to 0
+    if {_totalHits} > 0:
+        set {_critRate} to roundOneDecimal(({_critHits} / {_totalHits}) * 100)
+
+    set {_targetName} to "&e❖ Bù Nhìn Tân Binh &7[0%% Giáp]"
+    if {_dType} is "boss":
+        set {_targetName} to "&c❖ Bù Nhìn Đô Đốc &7[60%% Giáp | Máu 40%%]"
+    else if {_dType} is "logia":
+        set {_targetName} to "&b✦ Bù Nhìn Ảo Ảnh Logia &7[38%% Né | Hệ Logia]"
+
+    send "" to {_p}
+    send "&8&m------------------------" to {_p}
+    send "&6&l✦ BÁO CÁO THỬ SÁT THƯƠNG DPS ✦" to {_p}
+    send "&e• Mục tiêu: %{_targetName}%" to {_p}
+    send "&e• Thời gian: &b%{_secs}% giây" to {_p}
+    send "&e• Tổng sát thương: &c%{_totalDmg}% HP" to {_p}
+    send "&e• DPS Trung Bình: &a%{_dps}% HP/giây" to {_p}
+    send "&e• Đòn mạnh nhất (Max): &6%{_maxHit}% HP" to {_p}
+    send "&e• Số đòn (Hits): &f%{_totalHits}% &7(Chí mạng: &c%{_critHits}%&7)" to {_p}
+    send "&e• Tỷ lệ Chí Mạng thực: &d%{_critRate}%%%" to {_p}
+    send "&8&m------------------------" to {_p}
+    send "" to {_p}
+
+    send action bar "&a&l✔ ĐÃ HOÀN THÀNH PHIÊN THỬ DPS! &7(Xem chi tiết trong khung chat)" to {_p}
+    play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.5 to {_p}
+
+    clear {dummy_session::%{_u}%::*}
+
+# ---------------------------------------------------------------------
+# 5. VÒNG LẶP KIỂM TRA NGỪNG ĐÁNH 5 GIÂY ĐỂ XUẤT BÁO CÁO
+# ---------------------------------------------------------------------
+
+every 1 second:
+    loop all players:
+        set {_u} to uuid of loop-player
+        if {dummy_session::%{_u}%::active} is true:
+            if difference between {dummy_session::%{_u}%::last_hit} and now >= 5 seconds:
+                set {dummy_session::%{_u}%::active} to false
+                sendDummyReport(loop-player)
+
+on quit:
+    clear {dummy_session::%uuid of player%::*}
+
+# ---------------------------------------------------------------------
+# 6. BẢO VỆ BÙ NHÌN KHỎI SÁT THƯƠNG MÔI TRƯỜNG & KHÔNG RƠI ĐỒ KHI CHẾT
+# ---------------------------------------------------------------------
+
+on damage:
+    set {_u} to uuid of victim
+    if {dummy_type::%{_u}%} is set:
+        if damage cause is fire, burn, lava, melting, fall, suffocation, cactus, drown, or contact:
+            cancel event
+            stop
+        set {_baseKey} to "dummy_%{dummy_type::%{_u}%}%_idle"
+        play3DEntityPose(victim, "dummy_hit_shake", {_baseKey}, 4)
+
+on death:
+    set {_u} to uuid of victim
+    if {dummy_type::%{_u}%} is set:
+        clear drops
+        clear {dummy_type::%{_u}%}
+        clear {dummy_list::%{_u}%}
+        clear {dummy_loc::%{_u}%}
+
+# ---------------------------------------------------------------------
+# 7. LỆNH QUẢN TRỊ BÙ NHÌN THỬ SÁT THƯƠNG (/dummyadmin)
+# ---------------------------------------------------------------------
+
+command /dummyadmin [<text>] [<text>]:
+    permission: op
+    permission message: &cBạn không có quyền quản trị Bù Nhìn Thử Sát Thương!
+    trigger:
+        if arg-1 is not set:
+            send "&6&l✦ QUẢN TRỊ BÙ NHÌN THỬ SÁT THƯƠNG (/dummyadmin) ✦" to player
+            send "&e• /dummyadmin spawn <normal|boss|logia> &7- Triệu hồi Bù Nhìn tại vị trí đứng" to player
+            send "&e• /dummyadmin remove &7- Xóa Bù Nhìn đang chỉ vào hoặc gần nhất" to player
+            send "&e• /dummyadmin clearall &7- Dọn dẹp toàn bộ Bù Nhìn trên server" to player
+            stop
+
+        if arg-1 is "spawn":
+            if arg-2 is not set:
+                send "&cCú pháp: /dummyadmin spawn <normal|boss|logia>" to player
+                stop
+            spawnCombatDummy(player, arg-2)
+
+        else if arg-1 is "remove":
+            removeNearbyCombatDummy(player)
+
+        else if arg-1 is "clearall":
+            set {_c} to clearAllCombatDummies()
+            send "&a[DummyAdmin] &7Đã dọn dẹp &e%{_c}% &7Bù Nhìn trên toàn bộ máy chủ!" to player
+
+        else:
+            send "&cCú pháp không hợp lệ! Gõ /dummyadmin để xem hướng dẫn." to player

@@ -1,0 +1,386 @@
+# =====================================================================
+# CỬA HÀNG COIN & NÂNG CẤP RANK (CHESTCOMMANDS v4.0.5 - MINECRAFT 1.12.2)
+# Phụ thuộc: PlayerPoints, CrazyEnchantments, LuckPerms, Skript (/coinshopbuy)
+# =====================================================================
+menu-settings:
+  name: '&8✦ &6&lCỬA HÀNG COIN (XU) &8✦'
+  rows: 5
+  commands:
+    - 'coinshop'
+    - 'xu'
+    - 'cshop'
+  auto-refresh: 3
+
+# =====================================================================
+# HÀNG 1: VIỀN ĐEN & VÍ TIỀN NGƯỜI CHƠI
+# =====================================================================
+b_1_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 1
+  POSITION-Y: 1
+b_2_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 2
+  POSITION-Y: 1
+b_3_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 3
+  POSITION-Y: 1
+b_4_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 4
+  POSITION-Y: 1
+b_6_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 6
+  POSITION-Y: 1
+b_7_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 7
+  POSITION-Y: 1
+b_8_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 8
+  POSITION-Y: 1
+b_9_1:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 9
+  POSITION-Y: 1
+
+player_wallet:
+  MATERIAL: SKULL_ITEM
+  DURABILITY: 3
+  SKULL-OWNER: '{player}'
+  NAME: '&e&lVÍ TIỀN CỦA BẠN'
+  LORE:
+    - '&8&m------------------------------'
+    - '&7Tài khoản: &f{player}'
+    - '&7Rank hiện tại: %talent_rank%'
+    - '&7Số dư Money: &a${money}'
+    - '&7Số dư Coin: &6%playerpoints_points% Coin'
+    - '&8&m------------------------------'
+  POSITION-X: 5
+  POSITION-Y: 1
+  KEEP-OPEN: true
+
+# =====================================================================
+# HÀNG 2: VẬT PHẨM HỖ TRỢ PHÙ PHÉP & THIÊN PHÚ
+# =====================================================================
+b_1_2:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 1
+  POSITION-Y: 2
+b_9_2:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 9
+  POSITION-Y: 2
+
+item_protection_scroll:
+  MATERIAL: PAPER
+  NAME: '&b&lĐÁ BẢO HIỂM PHÙ PHÉP'
+  LORE:
+    - '&7Bảo vệ Vũ khí / Công cụ không bị'
+    - '&7phá hủy khi ép Custom Enchant thất bại.'
+    - ''
+    - '&7Giá bán: &650 Coin'
+    - '&e▶ Nhấn để mua ngay!'
+  POSITION-X: 2
+  POSITION-Y: 2
+  ACTIONS:
+    - 'console: coinshopbuy {player} protection_scroll'
+  KEEP-OPEN: true
+
+item_dust_success:
+  MATERIAL: SUGAR
+  NAME: '&a&lBỤI TĂNG TỶ LỆ THÀNH CÔNG (+15%)'
+  LORE:
+    - '&7Rắc vào Sách Custom Enchant để tăng'
+    - '&7+15% tỷ lệ ép thành công vào trang bị.'
+    - ''
+    - '&7Giá bán: &635 Coin'
+    - '&e▶ Nhấn để mua ngay!'
+  POSITION-X: 4
+  POSITION-Y: 2
+  ACTIONS:
+    - 'console: coinshopbuy {player} success_dust'
+  KEEP-OPEN: true
+
+item_epic_card_pack:
+  MATERIAL: CHEST
+  NAME: '&6&lRƯƠNG TRANG BỊ LIÊN QUÂN 3D'
+  LORE:
+    - '&7Mở ngẫu nhiên nhận 1 trong 12 món'
+    - '&7Trang Bị Liên Quân Mobile 3D cực phẩm!'
+    - '&f• Thánh Kiếm, Muramasa, Fenrir, Quỷ Kiếm...'
+    - '&f• Giáp Thống Khổ, Gaia, Troy, Hộ Mệnh...'
+    - ''
+    - '&7Giá bán: &680 Coin'
+    - '&e▶ Nhấn để mua ngay!'
+  POSITION-X: 6
+  POSITION-Y: 2
+  ACTIONS:
+    - 'console: coinshopbuy {player} aov_chest'
+  KEEP-OPEN: true
+
+item_reset_talent:
+  MATERIAL: MAGMA_CREAM
+  NAME: '&c&lBÙA TẨY ĐIỂM THIÊN PHÚ'
+  LORE:
+    - '&7Nhận Quả Cầu Năng Lượng Tẩy Điểm 3D'
+    - '&7hoàn trả lại 100% số Điểm Thiên Phú đã cộng.'
+    - ''
+    - '&7Giá bán: &640 Coin'
+    - '&e▶ Nhấn để mua ngay!'
+  POSITION-X: 8
+  POSITION-Y: 2
+  ACTIONS:
+    - 'console: coinshopbuy {player} reset_talent'
+  KEEP-OPEN: true
+
+# =====================================================================
+# HÀNG 3: DẢI NGĂN CÁCH
+# =====================================================================
+b_1_3:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 1
+  POSITION-Y: 3
+b_2_3:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 4
+  NAME: '&e&l⬇ GÓI NÂNG CẤP RANK VĨNH VIỄN ⬇'
+  POSITION-X: 2
+  POSITION-Y: 3
+b_3_3:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 4
+  NAME: '&e&l⬇ GÓI NÂNG CẤP RANK VĨNH VIỄN ⬇'
+  POSITION-X: 3
+  POSITION-Y: 3
+b_4_3:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 4
+  NAME: '&e&l⬇ GÓI NÂNG CẤP RANK VĨNH VIỄN ⬇'
+  POSITION-X: 4
+  POSITION-Y: 3
+b_5_3:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 4
+  NAME: '&e&l⬇ GÓI NÂNG CẤP RANK VĨNH VIỄN ⬇'
+  POSITION-X: 5
+  POSITION-Y: 3
+b_6_3:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 4
+  NAME: '&e&l⬇ GÓI NÂNG CẤP RANK VĨNH VIỄN ⬇'
+  POSITION-X: 6
+  POSITION-Y: 3
+b_7_3:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 4
+  NAME: '&e&l⬇ GÓI NÂNG CẤP RANK VĨNH VIỄN ⬇'
+  POSITION-X: 7
+  POSITION-Y: 3
+b_8_3:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 4
+  NAME: '&e&l⬇ GÓI NÂNG CẤP RANK VĨNH VIỄN ⬇'
+  POSITION-X: 8
+  POSITION-Y: 3
+b_9_3:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 9
+  POSITION-Y: 3
+
+# =====================================================================
+# HÀNG 4: MUA RANK VIP / KING / MASTER
+# =====================================================================
+b_1_4:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 1
+  POSITION-Y: 4
+b_9_4:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 9
+  POSITION-Y: 4
+
+rank_vip:
+  MATERIAL: IRON_INGOT
+  NAME: '&b&lNÂNG CẤP RANK: [VIP]'
+  LORE:
+    - '&7Quyền lợi vĩnh viễn:'
+    - '&f• Bay trên Đảo (&b/is fly&f)'
+    - '&f• Lệnh &e/workbench, /hat'
+    - '&f• &a+5% Giá bán &fmọi mặt hàng tại /shop'
+    - '&f• Mở khóa &6Ô Trang Bị Liên Quân thứ 4'
+    - '&f• Treo tối đa &e5 món &ftrên Chợ Đen (/ah)'
+    - '&7  (Giới hạn Đảo nâng cấp độc lập tại /is upgrades)'
+    - ''
+    - '&7Giá nâng cấp: &6300 Coin'
+    - '&e▶ Nhấn để nâng cấp lên VIP!'
+  POSITION-X: 3
+  POSITION-Y: 4
+  ACTIONS:
+    - 'console: coinshopbuy {player} rank_vip'
+  KEEP-OPEN: false
+
+rank_king:
+  MATERIAL: GOLD_INGOT
+  NAME: '&d&lNÂNG CẤP RANK: [KING]'
+  LORE:
+    - '&7Quyền lợi vĩnh viễn (Kế thừa VIP):'
+    - '&f• Lệnh &e/enderchest, /feed'
+    - '&f• &a+10% Giá bán &fmọi mặt hàng tại /shop'
+    - '&f• Mở khóa &6Ô Trang Bị Liên Quân thứ 5'
+    - '&f• Giữ EXP khi chết (&eessentials.keepxp&f)'
+    - '&f• Treo tối đa &e10 món &ftrên Chợ Đen (/ah)'
+    - '&7  (Giới hạn Đảo nâng cấp độc lập tại /is upgrades)'
+    - ''
+    - '&7Giá nâng cấp: &6700 Coin'
+    - '&e▶ Nhấn để nâng cấp lên KING!'
+  POSITION-X: 5
+  POSITION-Y: 4
+  ACTIONS:
+    - 'console: coinshopbuy {player} rank_king'
+  KEEP-OPEN: false
+
+rank_master:
+  MATERIAL: DIAMOND
+  NAME: '&6&lNÂNG CẤP RANK: [MASTER]'
+  LORE:
+    - '&7Quyền lợi tối thượng (Kế thừa KING):'
+    - '&f• Lệnh &e/heal, /fix, /anvil'
+    - '&f• &a+20% Giá bán &fmọi mặt hàng tại /shop'
+    - '&f• Mở khóa tối đa &66 Ô Trang Bị Liên Quân'
+    - '&f• &cGiữ cả Đồ & EXP khi chết (&eessentials.keepinv&f)'
+    - '&f• Treo tối đa &e20 món &ftrên Chợ Đen (/ah)'
+    - '&7  (Giới hạn Đảo nâng cấp độc lập tại /is upgrades)'
+    - ''
+    - '&7Giá nâng cấp: &61500 Coin'
+    - '&e▶ Nhấn để nâng cấp lên MASTER!'
+  POSITION-X: 7
+  POSITION-Y: 4
+  ACTIONS:
+    - 'console: coinshopbuy {player} rank_master'
+  KEEP-OPEN: false
+
+# =====================================================================
+# HÀNG 5: QUAY LẠI MENU & ĐÓNG
+# =====================================================================
+back_main_menu:
+  MATERIAL: ARROW
+  NAME: '&e◀ QUAY LẠI MENU CHÍNH'
+  LORE:
+    - '&7Trở về Menu Trung Tâm (/menu)'
+  POSITION-X: 1
+  POSITION-Y: 5
+  ACTIONS:
+    - 'menu'
+
+b_2_5:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 2
+  POSITION-Y: 5
+item_df_chest:
+  MATERIAL: APPLE
+  NAME: '&6&lRƯƠNG TRÁI ÁC QUỶ 3D'
+  LORE:
+    - '&7Mở ngẫu nhiên nhận 1 trong 4 Trái Ác Quỷ 3D:'
+    - '&f• Mera, Gomu, Ope, Uouo Seiryu'
+    - ''
+    - '&7Giá bán: &6250 Coin'
+    - '&e▶ Nhấn để mua ngay!'
+  POSITION-X: 3
+  POSITION-Y: 5
+  ACTIONS:
+    - 'console: coinshopbuy {player} df_chest'
+  KEEP-OPEN: true
+
+b_4_5:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 4
+  POSITION-Y: 5
+
+item_awakening_stone:
+  MATERIAL: NETHER_STAR
+  NAME: '&e&lĐÁ THỨC TỈNH ÁNH SAO'
+  LORE:
+    - '&7Dùng để Thức Tỉnh Trái Ác Quỷ khi đạt Mastery Lv.100'
+    - '&7trong giao diện &e/traiacquy&7!'
+    - '&f• Tăng &c+25% Sát thương kỹ năng'
+    - '&f• Giảm &b-20% Thời gian hồi chiêu'
+    - ''
+    - '&7Giá bán: &6150 Coin'
+    - '&e▶ Nhấn để mua ngay!'
+  POSITION-X: 5
+  POSITION-Y: 5
+  ACTIONS:
+    - 'console: coinshopbuy {player} awakening_stone'
+  KEEP-OPEN: true
+
+b_6_5:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 6
+  POSITION-Y: 5
+
+item_df_remover:
+  MATERIAL: POTION
+  NAME: '&5&lTHUỐC XÓA NĂNG LỰC ÁC QUỶ'
+  LORE:
+    - '&7Thanh tẩy hoàn toàn Trái Ác Quỷ hiện tại'
+    - '&7để bạn có thể an toàn đổi sang Trái Ác Quỷ khác!'
+    - ''
+    - '&7Giá bán: &6100 Coin'
+    - '&e▶ Nhấn để mua ngay!'
+  POSITION-X: 7
+  POSITION-Y: 5
+  ACTIONS:
+    - 'console: coinshopbuy {player} df_remover'
+  KEEP-OPEN: true
+b_8_5:
+  MATERIAL: STAINED_GLASS_PANE
+  DURABILITY: 15
+  NAME: '&r'
+  POSITION-X: 8
+  POSITION-Y: 5
+
+close_menu:
+  MATERIAL: BARRIER
+  NAME: '&c&lĐÓNG MENU'
+  LORE:
+    - '&7Nhấn để đóng cửa hàng.'
+  POSITION-X: 9
+  POSITION-Y: 5

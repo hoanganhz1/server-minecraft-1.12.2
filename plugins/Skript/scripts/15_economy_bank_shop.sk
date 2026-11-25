@@ -1,0 +1,961 @@
+# =====================================================================
+# HỆ THỐNG KINH TẾ TRUNG TÂM: NGÂN HÀNG, /shop & /cshop (PHASE 15)
+# Paper 1.12.2 / Skript 2.6.4 / Vault (Money) & PlayerPoints (Coin)
+# Tỷ giá niêm yết cứng: $10,000 Money = 1 Coin (Khóa chống lạm phát)
+# =====================================================================
+
+import:
+    org.bukkit.event.inventory.InventoryDragEvent
+
+options:
+    exchange_rate: 10000
+    bank_buy_coin_fee_pct: 0
+
+# =====================================================================
+# PHẦN 1: HÀM MỞ GIAO DIỆN NGÂN HÀNG QUY ĐỔI (UI_BANK - 36 Ô)
+# =====================================================================
+
+function openBankExchangeGUI(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_pBal} to {_p}'s balance
+    set {_balStr} to routerFormatNumber({_pBal})
+    set {_coinBal} to getCoinBalance({_p})
+    set {_coinStr} to routerFormatNumber({_coinBal})
+
+    set {_retUI} to {ui_bank_return::%{_u}%} ? "UI_ROOT"
+    set {_retName} to "Menu Tổng"
+    if {_retUI} is "UI_SHOP":
+        set {_retName} to "Siêu Thị /shop"
+    else if {_retUI} is "UI_CSHOP":
+        set {_retName} to "Cửa Hàng /cshop"
+    else if {_retUI} is "UI_G6_C":
+        set {_retName} to "Giao Thương G6"
+
+    set {_inv} to createStandardUI({_p}, "UI_BANK", "&8✦ &6&lNGÂN HÀNG QUY ĐỔI TIỀN TỆ &8✦", 4, green stained glass pane named " ", {_retUI}, {_retName})
+
+    # Slot 4: Sổ Tiết Kiệm (Đầu Người Chơi)
+    set {_pName} to name of {_p}
+    delete {_headLore::*}
+    set {_headLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_headLore::2} to "&8▪ &7Chủ Tài Khoản: &e%{_pName}%"
+    set {_headLore::3} to "&8▪ &7Tỷ Giá Cố Định: &a$10,000 &f= &61 Coin"
+    set {_headLore::4} to ""
+    set {_headLore::5} to "&6✦ SỐ DƯ TÀI KHOẢN ✦"
+    set {_headLore::6} to "&f • &7Tiền Mặt (Vault): &a$%{_balStr}%"
+    set {_headLore::7} to "&f • &7Coin Sức Mạnh (Points): &6%{_coinStr}% Coin"
+    set {_headLore::8} to ""
+    set {_headLore::9} to "&e▸ Đổi Money sang Coin để mua Trang Bị RPG & Danh Kiếm!"
+    set {_headLore::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 4 of {_inv} to makePlayerProfileHead({_p}, {_pName}, {_headLore::*}, "&6&l✦ SỔ TIẾT KIỆM HẢI TẶC ✦")
+
+    # Hàng 2 (Slots 10..14): Đổi Money -> Coin
+    set slot 10 of {_inv} to makeGlowingItem(gold ingot, "&a&l✦ MUA 1 COIN &8[&a$10,000&8] ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Chi phí: &a$10,000 Money" and "&7Nhận được: &6+1 Coin" and "" and "&a▸ Nhấp để Đổi 1 Coin!"))
+    set slot 11 of {_inv} to makeGlowingItem(gold ingot, "&a&l✦ MUA 10 COIN &8[&a$100,000&8] ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Chi phí: &a$100,000 Money" and "&7Nhận được: &6+10 Coin" and "" and "&a▸ Nhấp để Đổi 10 Coin!"))
+    set slot 12 of {_inv} to makeGlowingItem(gold ingot, "&a&l✦ MUA 50 COIN &8[&a$500,000&8] ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Chi phí: &a$500,000 Money" and "&7Nhận được: &6+50 Coin" and "" and "&a▸ Nhấp để Đổi 50 Coin!"))
+    set slot 13 of {_inv} to makeGlowingItem(gold ingot, "&a&l✦ MUA 100 COIN &8[&a$1,000,000&8] ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Chi phí: &a$1,000,000 Money" and "&7Nhận được: &6+100 Coin" and "" and "&a▸ Nhấp để Đổi 100 Coin!"))
+
+    set {_maxBuyCoins} to floor({_pBal} / {@exchange_rate})
+    set slot 14 of {_inv} to makeGlowingItem(gold block, "&e&l✦ ĐỔI TẤT CẢ MONEY ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Quy đổi tối đa với số tiền bạn có:" and "&f • &7Ước tính nhận: &6+%{_maxBuyCoins}% Coin" and "&f • &7Tiêu tốn: &a$%routerFormatNumber({_maxBuyCoins} * {@exchange_rate})%" and "" and "&e▸ Nhấp để Đổi Toàn Bộ!"))
+
+    # Slot 16: Lối tắt Cửa Hàng Coin (/cshop)
+    set slot 16 of {_inv} to makeGlowingItem(diamond, "&b&l✦ CỬA HÀNG COIN (/cshop) ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Dùng Coin mua Bảo Vật Ác Quỷ, Rank VIP" and "&7và mở khóa Trang Bị RPG tối thượng!" and "" and "&b▸ Nhấp để mở /cshop"))
+
+    # Hàng 3 (Slots 19..23): Rút Coin -> Money
+    set slot 19 of {_inv} to makeGlowingItem(paper, "&c&l✦ RÚT 1 COIN &8[&a+$10,000&8] ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Chi phí: &61 Coin" and "&7Nhận lại: &a+$10,000 Money" and "" and "&c▸ Nhấp để Rút $10,000!"))
+    set slot 20 of {_inv} to makeGlowingItem(paper, "&c&l✦ RÚT 10 COIN &8[&a+$100,000&8] ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Chi phí: &610 Coin" and "&7Nhận lại: &a+$100,000 Money" and "" and "&c▸ Nhấp để Rút $100,000!"))
+    set slot 21 of {_inv} to makeGlowingItem(paper, "&c&l✦ RÚT 50 COIN &8[&a+$500,000&8] ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Chi phí: &650 Coin" and "&7Nhận lại: &a+$500,000 Money" and "" and "&c▸ Nhấp để Rút $500,000!"))
+    set slot 22 of {_inv} to makeGlowingItem(paper, "&c&l✦ RÚT 100 COIN &8[&a+$1,000,000&8] ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Chi phí: &6100 Coin" and "&7Nhận lại: &a+$1,000,000 Money" and "" and "&c▸ Nhấp để Rút $1,000,000!"))
+
+    set slot 23 of {_inv} to makeGlowingItem(iron block, "&6&l✦ RÚT TOÀN BỘ COIN ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Đổi toàn bộ Coin thành Money mặt:" and "&f • &7Ước tính nhận: &a+$%routerFormatNumber({_coinBal} * {@exchange_rate})%" and "&f • &7Tiêu tốn: &6%{_coinStr}% Coin" and "" and "&6▸ Nhấp để Rút Toàn Bộ!"))
+
+    # Slot 25: Lối tắt Siêu Thị Tài Nguyên (/shop)
+    set slot 25 of {_inv} to makeGlowingItem(chest, "&a&l✦ SIÊU THỊ SKYBLOCK (/shop) ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Dùng Money mặt mua sắm nông sản, quặng," and "&7vật liệu căn cứ và Spawner đảo!" and "" and "&a▸ Nhấp để mở /shop"))
+
+    # Slot 31: Quy Tắc Tỷ Giá
+    delete {_rLore::*}
+    set {_rLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_rLore::2} to "&8▪ &7Tỷ giá trao đổi chính thức: &a$10,000 = 1 Coin"
+    set {_rLore::3} to "&8▪ &7Ngân hàng đảm bảo thanh khoản 100%% không mất phí."
+    set {_rLore::4} to "&8▪ &7Mọi giao dịch nạp / rút đều cộng trực tiếp số dư."
+    set {_rLore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 31 of {_inv} to book named "&e&l✦ QUY CHUẨN TỶ GIÁ TIỀN TỆ ✦" with lore {_rLore::*}
+
+    openStandardUI({_p}, {_inv}, "UI_BANK", {_retUI})
+
+# =====================================================================
+# PHẦN 2: SIÊU THỊ TÀI NGUYÊN SKYBLOCK (/shop - 100% MONEY)
+# =====================================================================
+
+function openResourceShopHubGUI(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_pBal} to {_p}'s balance
+    set {_balStr} to routerFormatNumber({_pBal})
+
+    set {_inv} to createStandardUI({_p}, "UI_SHOP", "&8✦ &2&lĐẠI SIÊU THỊ TÀI NGUYÊN SKYBLOCK &8✦", 4, green stained glass pane named " ", "UI_G6_C", "Trung Tâm Giao Thương")
+
+    # Slot 4: Ví Tiền Mặt & Đặc Quyền Multiplier
+    delete {_vLore::*}
+    set {_vLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_vLore::2} to "&8▪ &7Tiền Mặt Hiện Có: &a$%{_balStr}%"
+    set {_vLore::3} to ""
+    set {_vLore::4} to "&6✦ ĐẶC QUYỀN GIÁ BÁN (/sellgui) ✦"
+    set {_vLore::5} to "&f • &7Mặc Định: &e+0%% Multiplier"
+    set {_vLore::6} to "&f • &bRank VIP: &a+5%% Giá Bán"
+    set {_vLore::7} to "&f • &eRank KING: &a+10%% Giá Bán"
+    set {_vLore::8} to "&f • &dRank MASTER: &a+20%% Giá Bán"
+    set {_vLore::9} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_pName} to name of {_p}
+    set slot 4 of {_inv} to makePlayerProfileHead({_p}, {_pName}, {_vLore::*}, "&a&l✦ VÍ TIỀN MẶT & ĐẶC QUYỀN ✦")
+
+    # Slot 10: Gian Hàng 1 - Khối Xây Dựng
+    set slot 10 of {_inv} to makeGlowingItem(grass, "&a&l✦ GIAN 1: KHỐI XÂY DỰNG ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Đá, đất, gỗ, kính, thạch anh, hắc diện thạch..." and "" and "&a▸ Nhấn để mở gian hàng!"))
+
+    # Slot 11: Gian Hàng 2 - Nông Sản & Trứng Thú
+    set slot 11 of {_inv} to makeGlowingItem(wheat, "&e&l✦ GIAN 2: NÔNG SẢN & THÚ NUÔI ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Hạt giống, củ quả, mía, xô nước, trứng gia súc..." and "" and "&e▸ Nhấn để mở gian hàng!"))
+
+    # Slot 12: Gian Hàng 3 - Khoáng Sản & Giả Kim
+    set slot 12 of {_inv} to makeGlowingItem(diamond, "&b&l✦ GIAN 3: KHOÁNG SẢN & GIẢ KIM ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Than, sắt, vàng, kim cương, ngọc lục bảo, totem..." and "" and "&b▸ Nhấn để mở gian hàng!"))
+
+    # Slot 14: Gian Hàng 4 - Khối Uy Danh & Spawners
+    set slot 14 of {_inv} to makeGlowingItem(beacon, "&d&l✦ GIAN 4: UY DANH & SPAWNERS ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Khối kim cương, beacon, lồng quái sinh sản..." and "" and "&d▸ Nhấn để mở gian hàng!"))
+
+    # Slot 16: Bán Nhanh (/sellgui)
+    set slot 16 of {_inv} to makeGlowingItem(gold ingot, "&6&l✦ BÁN NHANH VẬT PHẨM (/sellgui) ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Mở rương gom đồ tự động bán lấy Money." and "" and "&6▸ Nhấp để Bán Nhanh (/sellgui)"))
+
+    # Slot 22: Vào Ngân Hàng Quy Đổi
+    set slot 22 of {_inv} to makeGlowingItem(emerald, "&e&l✦ NGÂN HÀNG QUY ĐỔI COIN ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Đổi Money sang Coin để mua Trang Bị RPG." and "" and "&e▸ Nhấp để vào Ngân Hàng"))
+
+    openStandardUI({_p}, {_inv}, "UI_SHOP", "UI_G6_C")
+
+function openResourceShopCategoryGUI(p: player, cat: number):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_pBal} to {_p}'s balance
+
+    if {_cat} is 1:
+        # Khối Xây Dựng (54 ô)
+        set {_inv} to createStandardUI({_p}, "UI_SHOP_1", "&8✦ &2&lKHỐI XÂY DỰNG CĂN CỨ &8✦", 6, grass named " ", "UI_SHOP", "Siêu Thị /shop")
+        # 12 Mặt hàng
+        # Format: slot, item phôi, giá x16, giá x64
+        setupShopItem({_inv}, 10, cobblestone, "Đá Cuội", 800, 3200, 16, 64)
+        setupShopItem({_inv}, 11, stone, "Đá Mịn", 1200, 4800, 16, 64)
+        setupShopItem({_inv}, 12, oak wood plank, "Gỗ Sồi", 1600, 6400, 16, 64)
+        setupShopItem({_inv}, 13, birch wood plank, "Gỗ Bạch Dương", 1600, 6400, 16, 64)
+        setupShopItem({_inv}, 14, spruce wood plank, "Gỗ Vân Sam", 1600, 6400, 16, 64)
+        setupShopItem({_inv}, 15, dirt, "Khối Đất", 1600, 6400, 16, 64)
+        setupShopItem({_inv}, 16, grass, "Khối Cỏ", 3200, 12800, 16, 64)
+        setupShopItem({_inv}, 19, sand, "Khối Cát", 1600, 6400, 16, 64)
+        setupShopItem({_inv}, 20, glass, "Kính Trong Suốt", 2400, 9600, 16, 64)
+        setupShopItem({_inv}, 21, quartz block, "Đá Thạch Anh", 6400, 25600, 16, 64)
+        setupShopItem({_inv}, 22, sea lantern, "Đèn Biển", 8000, 32000, 16, 64)
+        setupShopItem({_inv}, 23, obsidian, "Hắc Diện Thạch", 16000, 64000, 16, 64)
+        openStandardUI({_p}, {_inv}, "UI_SHOP_1", "UI_SHOP")
+
+    else if {_cat} is 2:
+        # Nông Sản & Trứng Thú (54 ô)
+        set {_inv} to createStandardUI({_p}, "UI_SHOP_2", "&8✦ &e&lNÔNG SẢN & THÚ NUÔI SKYBLOCK &8✦", 6, wheat named " ", "UI_SHOP", "Siêu Thị /shop")
+        setupShopItem({_inv}, 10, wheat seeds, "Hạt Lúa Giống", 1600, 6400, 16, 64)
+        setupShopItem({_inv}, 11, carrot, "Cà Rốt", 1600, 6400, 16, 64)
+        setupShopItem({_inv}, 12, potato, "Khoai Tây", 1600, 6400, 16, 64)
+        setupShopItem({_inv}, 13, pumpkin seeds, "Hạt Bí Ngô", 1600, 6400, 16, 64)
+        setupShopItem({_inv}, 14, melon seeds, "Hạt Dưa Hấu", 1600, 6400, 16, 64)
+        setupShopItem({_inv}, 15, sugar canes, "Cây Mía Đường", 3200, 12800, 16, 64)
+        setupShopItem({_inv}, 16, cactus, "Xương Rồng", 3200, 12800, 16, 64)
+        setupShopItem({_inv}, 19, nether wart, "Bướu Địa Ngục", 3200, 12800, 16, 64)
+        setupShopItem({_inv}, 20, soul sand, "Cát Linh Hồn", 4800, 19200, 16, 64)
+        setupShopItem({_inv}, 21, water bucket, "Xô Nước", 2000, 10000, 1, 5)
+        setupShopItem({_inv}, 22, lava bucket, "Xô Dung Nham", 2000, 10000, 1, 5)
+        setupShopItem({_inv}, 29, egg, "Trứng Heo", 15000, 75000, 1, 5)
+        setupShopItem({_inv}, 30, egg, "Trứng Cừu", 15000, 75000, 1, 5)
+        setupShopItem({_inv}, 31, egg, "Trứng Bò", 15000, 75000, 1, 5)
+        setupShopItem({_inv}, 32, egg, "Trứng Dân Làng", 150000, 750000, 1, 5)
+        openStandardUI({_p}, {_inv}, "UI_SHOP_2", "UI_SHOP")
+
+    else if {_cat} is 3:
+        # Khoáng Sản & Giả Kim (54 ô)
+        set {_inv} to createStandardUI({_p}, "UI_SHOP_3", "&8✦ &b&lKHOÁNG SẢN & GIẢ KIM SKYBLOCK &8✦", 6, diamond named " ", "UI_SHOP", "Siêu Thị /shop")
+        setupShopItem({_inv}, 10, coal, "Than Đá", 300, 4800, 1, 16)
+        setupShopItem({_inv}, 11, iron ingot, "Thỏi Sắt", 800, 12800, 1, 16)
+        setupShopItem({_inv}, 12, gold ingot, "Thỏi Vàng", 1200, 19200, 1, 16)
+        setupShopItem({_inv}, 13, redstone, "Bột Đá Đỏ", 500, 8000, 1, 16)
+        setupShopItem({_inv}, 14, lapis lazuli, "Ngọc Lưu Ly (Lapis)", 500, 8000, 1, 16)
+        setupShopItem({_inv}, 15, diamond, "Kim Cương", 3500, 56000, 1, 16)
+        setupShopItem({_inv}, 16, emerald, "Ngọc Lục Bảo", 5000, 80000, 1, 16)
+        setupShopItem({_inv}, 19, blaze rod, "Que Quỷ Lửa", 2500, 40000, 1, 16)
+        setupShopItem({_inv}, 20, ender pearl, "Ngọc Ender", 3000, 48000, 1, 16)
+        setupShopItem({_inv}, 21, cobweb, "Mạng Nhện", 400, 6400, 1, 16)
+        setupShopItem({_inv}, 22, golden apple, "Táo Vàng", 20000, 100000, 1, 5)
+        setupShopItem({_inv}, 23, shield, "Khiên Gỗ", 10000, 10000, 1, 1)
+        setupShopItem({_inv}, 24, totem of undying, "Totem Bất Tử", 150000, 150000, 1, 1)
+        setupShopItem({_inv}, 25, nether star, "Ngôi Sao Địa Ngục", 250000, 250000, 1, 1)
+        openStandardUI({_p}, {_inv}, "UI_SHOP_3", "UI_SHOP")
+
+    else if {_cat} is 4:
+        # Khối Uy Danh & Spawners Đảo (54 ô)
+        set {_inv} to createStandardUI({_p}, "UI_SHOP_4", "&8✦ &d&lKHỐI UY DANH & LỒNG SPAWNERS &8✦", 6, beacon named " ", "UI_SHOP", "Siêu Thị /shop")
+        setupShopSingleItem({_inv}, 10, diamond block, "&b&l✦ KHỐI KIM CƯƠNG ✦", 35000, ("&7Tăng Uy Danh Căn Cứ &b+150 Level"))
+        setupShopSingleItem({_inv}, 11, emerald block, "&a&l✦ KHỐI LỤC BẢO ✦", 50000, ("&7Tăng Uy Danh Căn Cứ &a+200 Level"))
+        setupShopSingleItem({_inv}, 12, beacon, "&e&l✦ BEACON CĂN CỨ ✦", 300000, ("&7Tăng Uy Danh Căn Cứ &e+500 Level"))
+        setupShopSingleItem({_inv}, 13, dragon egg, "&5&l✦ TRỨNG RỒNG ENDER ✦", 800000, ("&7Tăng Uy Danh Căn Cứ &5+1,000 Level"))
+
+        setupShopSingleItem({_inv}, 19, monster spawner, "&c&l✦ LỒNG SPAWNER: ZOMBIE ✦", 20000, ("&7Sinh quái Zombie tự động"))
+        setupShopSingleItem({_inv}, 20, monster spawner, "&f&l✦ LỒNG SPAWNER: SKELETON ✦", 20000, ("&7Sinh quái Skeleton tự động"))
+        setupShopSingleItem({_inv}, 21, monster spawner, "&a&l✦ LỒNG SPAWNER: CREEPER ✦", 35000, ("&7Sinh quái Creeper tự động"))
+        setupShopSingleItem({_inv}, 22, monster spawner, "&4&l✦ LỒNG SPAWNER: SPIDER ✦", 35000, ("&7Sinh quái Nhện tự động"))
+        setupShopSingleItem({_inv}, 23, monster spawner, "&6&l✦ LỒNG SPAWNER: BLAZE ✦", 50000, ("&7Sinh quái Quỷ Lửa tự động"))
+        setupShopSingleItem({_inv}, 24, monster spawner, "&9&l✦ LỒNG SPAWNER: IRON GOLEM ✦", 350000, ("&7Sinh Người Sắt - Uy Danh &b+5,000 Level"))
+        openStandardUI({_p}, {_inv}, "UI_SHOP_4", "UI_SHOP")
+
+function setupShopItem(inv: inventory, sl: number, it: item, nameStr: text, p1: number, p2: number, q1: number, q2: number):
+    delete {_lore::*}
+    set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lore::2} to "&7Vật phẩm: &f%{_nameStr}%"
+    set {_lore::3} to ""
+    set {_lore::4} to "&a• Click Trái: &fMua x%{_q1}% &7(&a$%routerFormatNumber({_p1})%&7)"
+    if {_q2} > {_q1}:
+        set {_lore::5} to "&e• Click Phải: &fMua x%{_q2}% &7(&a$%routerFormatNumber({_p2})%&7)"
+    set {_lore::6} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_i} to {_it}
+    set name of {_i} to colored "&f&l%{_nameStr}%"
+    set lore of {_i} to {_lore::*}
+    set slot {_sl} of {_inv} to {_i}
+
+function setupShopSingleItem(inv: inventory, sl: number, it: item, nameStr: text, price: number, extraLore: texts):
+    delete {_lore::*}
+    set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lore::2} to "&7Giá niêm yết: &a$%routerFormatNumber({_price})% Money"
+    set {_lore::3} to ""
+    if {_extraLore::*} is set:
+        loop {_extraLore::*}:
+            add loop-value to {_lore::*}
+        add "" to {_lore::*}
+    add "&a▸ Nhấp chuột để Mua x1!" to {_lore::*}
+    add "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" to {_lore::*}
+    set {_i} to makeGlowingItem({_it}, {_nameStr}, {_lore::*})
+    set slot {_sl} of {_inv} to {_i}
+
+# =====================================================================
+# PHẦN 3: CỬA HÀNG COIN BẢO VẬT RPG & RANK (/cshop - 100% COIN)
+# =====================================================================
+
+function openCoinShopHubGUI(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_coinBal} to getCoinBalance({_p})
+    set {_coinStr} to routerFormatNumber({_coinBal})
+
+    set {_inv} to createStandardUI({_p}, "UI_CSHOP", "&8✦ &6&lCỬA HÀNG COIN BẢO VẬT & RANK &8✦", 4, gold ingot named " ", "UI_G6_C", "Trung Tâm Giao Thương")
+
+    # Slot 4: Ví Coin
+    delete {_vLore::*}
+    set {_vLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_vLore::2} to "&8▪ &7Coin Sức Mạnh: &6%{_coinStr}% Coin"
+    set {_vLore::3} to "&8▪ &7Tỷ Giá Ngân Hàng: &a$10,000 &f= &61 Coin"
+    set {_vLore::4} to ""
+    set {_vLore::5} to "&e▸ Dùng Coin mua Rank vĩnh viễn, Bảo Vật Ác Quỷ,"
+    set {_vLore::6} to "&e  Rương Trang Bị AoV và mở lối tắt Xưởng Rèn!"
+    set {_vLore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_pName} to name of {_p}
+    set slot 4 of {_inv} to makePlayerProfileHead({_p}, {_pName}, {_vLore::*}, "&6&l✦ VÍ COIN NGƯỜI CHƠI ✦")
+
+    # Slot 10: Tab 1 - Thăng Hạng Rank
+    set slot 10 of {_inv} to makeGlowingItem(nether star, "&e&l✦ TAB 1: THĂNG HẠNG RANK VIP ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Nâng cấp Rank VIP, KING, MASTER vĩnh viễn." and "&7Tăng Multiplier bán đồ, fly và quyền lợi đảo!" and "" and "&e▸ Nhấn để xem các gói Rank!"))
+
+    # Slot 12: Tab 2 - Bảo Vật Ác Quỷ & Thiên Phú
+    set slot 12 of {_inv} to makeCustomRPItem("df_chest", "&c&l✦ TAB 2: BẢO VẬT ÁC QUỶ & TP ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Đá Thức Tỉnh, Bùa Tinh Tú, Trái Bí Ẩn," and "&7Quả Cầu Tẩy Thiên Phú, Rumble Ball..." and "" and "&c▸ Nhấn để xem bảo vật!"))
+
+    # Slot 14: Tab 3 - Rương AoV & Phù Phép CE
+    set slot 14 of {_inv} to makeCustomRPItem("aov_chest", "&b&l✦ TAB 3: RƯƠNG AOV & PHÙ PHÉP CE ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Rương Trang Bị Liên Quân Sử Thi 3D," and "&7Bụi Tăng Tỷ Lệ & Giấy Bảo Hiểm CrazyEnchants!" and "" and "&b▸ Nhấn để xem rương & bùa!"))
+
+    # Slot 16: Tab 4 - Lối Tắt 3 Xưởng Sức Mạnh
+    set slot 16 of {_inv} to makeCustomRPItem("yoru", "&d&l✦ TAB 4: LỐI TẮT 3 ĐẠI XƯỞNG RÈN ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Mở nhanh Xưởng 12 Trang Bị AoV, Lò Rèn Giáp" and "&7và Xưởng 13 Danh Kiếm One Piece (Thuần Coin)!" and "" and "&d▸ Nhấn để mở lối tắt!"))
+
+    # Slot 22: Ngân Hàng Quy Đổi
+    set slot 22 of {_inv} to makeGlowingItem(emerald, "&a&l✦ NGÂN HÀNG QUY ĐỔI (/nganhang) ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Nạp thêm Coin bằng Money mặt với tỷ giá $10,000 = 1 Coin." and "" and "&a▸ Nhấp để vào Ngân Hàng"))
+
+    openStandardUI({_p}, {_inv}, "UI_CSHOP", "UI_G6_C")
+
+function openCoinShopTabGUI(p: player, tab: number):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_coinBal} to getCoinBalance({_p})
+    set {_coinStr} to routerFormatNumber({_coinBal})
+
+    if {_tab} is 1:
+        # Tab 1: Thăng Hạng Rank (36 ô)
+        set {_inv} to createStandardUI({_p}, "UI_CSHOP_1", "&8✦ &e&lTHĂNG HẠNG RANK VIP (VĨNH VIỄN) &8✦", 4, nether star named " ", "UI_CSHOP", "Cửa Hàng /cshop")
+
+        # Rank VIP (300 Coin)
+        delete {_lore1::*}
+        set {_lore1::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore1::2} to "&8▪ &7Hạng Rank: &b&l[VIP] &8(Vĩnh Viễn)"
+        set {_lore1::3} to "&8▪ &7Giá: &6300 Coin &7($3,000,000 tham chiếu)"
+        set {_lore1::4} to ""
+        set {_lore1::5} to "&6✦ ĐẶC QUYỀN RANK VIP ✦"
+        set {_lore1::6} to "&f • &bLệnh bay tự do căn cứ: &e/is fly"
+        set {_lore1::7} to "&f • &a+5%% Giá Bán tài nguyên tại &e/sellgui"
+        set {_lore1::8} to "&f • &eQuyền mở bàn chế tạo di động: &e/workbench"
+        set {_lore1::9} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore1::10} to "&e▸ Nhấp chuột để Mua Rank VIP!"
+        set slot 11 of {_inv} to makeGlowingItem(iron ingot, "&b&l✦ GÓI RANK: [VIP] ✦", {_lore1::*})
+
+        # Rank KING (700 Coin)
+        delete {_lore2::*}
+        set {_lore2::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore2::2} to "&8▪ &7Hạng Rank: &e&l[KING] &8(Vĩnh Viễn)"
+        set {_lore2::3} to "&8▪ &7Giá: &6700 Coin &7($7,000,000 tham chiếu)"
+        set {_lore2::4} to ""
+        set {_lore2::5} to "&6✦ ĐẶC QUYỀN RANK KING ✦"
+        set {_lore2::6} to "&f • &7Bao gồm toàn bộ quyền hạn &b[VIP]"
+        set {_lore2::7} to "&f • &a+10%% Giá Bán tài nguyên tại &e/sellgui"
+        set {_lore2::8} to "&f • &eLệnh mở hòm Ender di động: &e/enderchest"
+        set {_lore2::9} to "&f • &dHiệu ứng phát sáng & Chat màu nổi bật"
+        set {_lore2::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore2::11} to "&e▸ Nhấp chuột để Mua Rank KING!"
+        set slot 13 of {_inv} to makeGlowingItem(gold ingot, "&e&l✦ GÓI RANK: [KING] ✦", {_lore2::*})
+
+        # Rank MASTER (1,500 Coin)
+        delete {_lore3::*}
+        set {_lore3::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore3::2} to "&8▪ &7Hạng Rank: &d&l[MASTER] &8(Vĩnh Viễn)"
+        set {_lore3::3} to "&8▪ &7Giá: &61,500 Coin &7($15,000,000 tham chiếu)"
+        set {_lore3::4} to ""
+        set {_lore3::5} to "&6✦ ĐẶC QUYỀN RANK MASTER ✦"
+        set {_lore3::6} to "&f • &7Bao gồm toàn bộ quyền hạn &e[KING]"
+        set {_lore3::7} to "&f • &a+20%% Giá Bán tài nguyên tại &e/sellgui"
+        set {_lore3::8} to "&f • &cLệnh hồi phục tức thời: &e/feed &f& &e/heal"
+        set {_lore3::9} to "&f • &6Danh hiệu Bá Chủ Độc Quyền máy chủ"
+        set {_lore3::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_lore3::11} to "&e▸ Nhấp chuột để Mua Rank MASTER!"
+        set slot 15 of {_inv} to makeGlowingItem(diamond, "&d&l✦ GÓI RANK: [MASTER] ✦", {_lore3::*})
+
+        openStandardUI({_p}, {_inv}, "UI_CSHOP_1", "UI_CSHOP")
+
+    else if {_tab} is 2:
+        # Tab 2: Bảo Vật Ác Quỷ & Thiên Phú (36 ô)
+        set {_inv} to createStandardUI({_p}, "UI_CSHOP_2", "&8✦ &c&lBẢO VẬT ÁC QUỶ & THIÊN PHÚ &8✦", 4, apple named " ", "UI_CSHOP", "Cửa Hàng /cshop")
+        setupCoinShopItem({_inv}, 10, makeCustomRPItem("bounty_poster", "&e&l✦ LỆNH TRUY NÃ HẢI TẶC ✦", ("&7Treo thưởng PvP người chơi")), 10, "Lệnh Truy Nã")
+        setupCoinShopItem({_inv}, 11, makeCustomRPItem("rumble_ball", "&e&l✦ VIÊN BIẾN HÌNH RUMBLE BALL ✦", ("&7Bột thuốc gia tăng năng lực Quái Thú")), 15, "Rumble Ball")
+        setupCoinShopItem({_inv}, 12, makeCustomRPItem("talent_reset", "&6&l✦ QUẢ CẦU TẨY THIÊN PHÚ ✦", ("&7Tẩy toàn bộ 4 chỉ số Thiên Phú và hoàn 100%% điểm")), 30, "Quả Cầu Tẩy Điểm")
+        setupCoinShopItem({_inv}, 13, makeCustomRPItem("unidentified_df", "&d&l✦ TRÁI ÁC QUỶ BÍ ẨN ✦", ("&7Trái cây thần bí chưa giám định")), 50, "Trái Ác Quỷ Bí Ẩn")
+        setupCoinShopItem({_inv}, 14, makeCustomRPItem("df_remover", "&c&l✦ THUỐC XÓA TRÁI ÁC QUỶ ✦", ("&7Thanh tẩy năng lực an toàn tại Vegapunk")), 100, "Thuốc Xóa Ác Quỷ")
+        setupCoinShopItem({_inv}, 15, makeCustomRPItem("awakening_stone", "&6&l✦ ĐÁ THỨC TỈNH ÁNH SAO 3D ✦", ("&7Thức Tỉnh cảnh giới tối thượng Lv.100")), 150, "Đá Thức Tỉnh")
+        setupCoinShopItem({_inv}, 16, makeCustomRPItem("awakening_talisman", "&e&l✦ BÙA THỨC TỈNH TINH TÚ ✦", ("&7Bùa hộ mệnh Thức Tỉnh năng lực")), 200, "Bùa Thức Tỉnh")
+        setupCoinShopItem({_inv}, 22, makeCustomRPItem("df_chest", "&5&l✦ RƯƠNG TRÁI ÁC QUỶ THẦN BÍ ✦", ("&7Mở ngẫu nhiên 1 trong 8 Trái Ác Quỷ")), 250, "Rương Trái Ác Quỷ")
+        openStandardUI({_p}, {_inv}, "UI_CSHOP_2", "UI_CSHOP")
+
+    else if {_tab} is 3:
+        # Tab 3: Rương AoV & Phù Phép CE (36 ô)
+        set {_inv} to createStandardUI({_p}, "UI_CSHOP_3", "&8✦ &b&lRƯƠNG AOV & PHÙ PHÉP CRAZYENCHANTS &8✦", 4, book named " ", "UI_CSHOP", "Cửa Hàng /cshop")
+        setupCoinShopItem({_inv}, 11, makeGlowingItem(sugar, "&a&l✦ BỤI PHÙ PHÉP TỶ LỆ +15%% (CE) ✦", ("&7Tăng 15%% tỷ lệ thành công khi đập sách CE")), 35, "Bụi Phù Phép CE")
+        setupCoinShopItem({_inv}, 13, makeGlowingItem(paper, "&f&l✦ ĐÁ BẢO HIỂM PHÙ PHÉP WHITE SCROLL ✦", ("&7Bảo vệ trang bị không bị phá hủy khi ép xịt CE")), 50, "White Scroll CE")
+        setupCoinShopItem({_inv}, 15, makeCustomRPItem("aov_chest", "&6&l✦ RƯƠNG TRANG BỊ LIÊN QUÂN 3D ✦", ("&7Mở ngẫu nhiên 1 trong 12 Trang Bị AoV")), 160, "Rương AoV 3D")
+        openStandardUI({_p}, {_inv}, "UI_CSHOP_3", "UI_CSHOP")
+
+    else if {_tab} is 4:
+        # Tab 4: Lối Tắt 3 Xưởng Sức Mạnh (36 ô)
+        set {_inv} to createStandardUI({_p}, "UI_CSHOP_4", "&8✦ &d&lLỐI TẮT 3 ĐẠI XƯỞNG RÈN RPG &8✦", 4, anvil named " ", "UI_CSHOP", "Cửa Hàng /cshop")
+        set slot 10 of {_inv} to makeCustomRPItem("aov_chest", "&6&l✦ XƯỞNG 12 TRANG BỊ LIÊN QUÂN ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Thanh toán 100%% bằng Coin (120 - 350 Coin/món)." and "&7Không cần quặng, không cần Money phụ!" and "" and "&6▸ Nhấp để mở /shopaov"))
+        set slot 12 of {_inv} to makeGlowingItem(diamond chestplate, "&c&l✦ LÒ RÈN 3 BỘ GIÁP TIER 1-3 ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Rèn trọn bộ giáp Hộ Vệ, Huyết Chiến, Bất Diệt." and "&7Thanh toán thuần Coin (20 - 260 Coin/mảnh)!" and "" and "&c▸ Nhấp để mở /rengiap"))
+        set slot 14 of {_inv} to makeGlowingItem(diamond pickaxe, "&e&l✦ RÈN VŨ KHÍ & CÔNG CỤ FARM ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Rèn Kiếm, Cung, Cúp, Rìu Farm Huyền Thoại." and "&7Thanh toán thuần Coin (70 - 120 Coin)!" and "" and "&e▸ Nhấp để mở /rencongcu"))
+        set slot 16 of {_inv} to makeCustomRPItem("yoru", "&a&l✦ XƯỞNG 13 DANH KIẾM ONE PIECE ✦", ("&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&7Rèn 13 Tuyệt Phẩm Kiếm: Yoru, Enma, Gryphon..." and "&7Thanh toán thuần Coin (60 - 1,200 Coin)!" and "" and "&a▸ Nhấp để mở /danhkiem"))
+        openStandardUI({_p}, {_inv}, "UI_CSHOP_4", "UI_CSHOP")
+
+function setupCoinShopItem(inv: inventory, sl: number, it: item, price: number, nameStr: text):
+    delete {_lore::*}
+    set {_lore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lore::2} to "&8▪ &7Vật phẩm: &f%{_nameStr}%"
+    set {_lore::3} to "&8▪ &7Giá Niêm Yết: &6%{_price}% Coin"
+    set {_lore::4} to ""
+    set {_lore::5} to "&a▸ Nhấp chuột để Mua x1!"
+    set {_lore::6} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    add {_lore::*} to lore of {_it}
+    set slot {_sl} of {_inv} to {_it}
+
+# =====================================================================
+# PHẦN 4: XỬ LÝ CLICK & CHỐNG SHIFT-CLICK CHO TOÀN BỘ GIAO DIỆN KINH TẾ
+# =====================================================================
+
+on InventoryDragEvent:
+    set {_who} to event.getWhoClicked()
+    set {_u} to uuid of {_who}
+    if {ui_active::%{_u}%} is "UI_BANK" or "UI_SHOP" or "UI_SHOP_1" or "UI_SHOP_2" or "UI_SHOP_3" or "UI_SHOP_4" or "UI_CSHOP" or "UI_CSHOP_1" or "UI_CSHOP_2" or "UI_CSHOP_3" or "UI_CSHOP_4":
+        cancel event
+
+on inventory click:
+    set {_u} to uuid of player
+    set {_activeUI} to {ui_active::%{_u}%}
+    if {_activeUI} is not "UI_BANK":
+        if {_activeUI} does not contain "UI_SHOP":
+            if {_activeUI} does not contain "UI_CSHOP":
+                stop
+
+    cancel event
+    if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+        player.updateInventory()
+        stop
+    if clicked inventory is not player's current inventory:
+        stop
+
+    set {_slot} to index of event-slot
+
+    # Nhường các ô điều hướng đáy cho 99_ui_router.sk (Hàng 4: 27, 28, 35 | Hàng 6: 45, 46, 53)
+    if {_slot} is 27 or 28 or 35 or 45 or 46 or 53:
+        stop
+
+    # -------------------------------------------------------------
+    # 1. GIAO DỊCH TẠI NGÂN HÀNG (UI_BANK)
+    # -------------------------------------------------------------
+    if {_activeUI} is "UI_BANK":
+        set {_pBal} to player's balance
+        set {_coinBal} to getCoinBalance(player)
+
+        # Đổi Money -> Coin
+        if {_slot} is 10:
+            executeExchangeMoneyToCoin(player, 1)
+        else if {_slot} is 11:
+            executeExchangeMoneyToCoin(player, 10)
+        else if {_slot} is 12:
+            executeExchangeMoneyToCoin(player, 50)
+        else if {_slot} is 13:
+            executeExchangeMoneyToCoin(player, 100)
+        else if {_slot} is 14:
+            set {_maxCoins} to floor({_pBal} / {@exchange_rate})
+            if {_maxCoins} < 1:
+                sendSystemMsg(player, "error", "Bạn không có đủ $10,000 để đổi Coin!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+                stop
+            executeExchangeMoneyToCoin(player, {_maxCoins})
+
+        # Lối tắt sang CShop
+        else if {_slot} is 16:
+            set {ui_bank_return::%{_u}%} to "UI_BANK"
+            wait 1 tick
+            openCoinShopHubGUI(player)
+
+        # Rút Coin -> Money
+        else if {_slot} is 19:
+            executeExchangeCoinToMoney(player, 1)
+        else if {_slot} is 20:
+            executeExchangeCoinToMoney(player, 10)
+        else if {_slot} is 21:
+            executeExchangeCoinToMoney(player, 50)
+        else if {_slot} is 22:
+            executeExchangeCoinToMoney(player, 100)
+        else if {_slot} is 23:
+            if {_coinBal} < 1:
+                sendSystemMsg(player, "error", "Bạn không có Coin nào trong tài khoản để rút!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+                stop
+            executeExchangeCoinToMoney(player, {_coinBal})
+
+        # Lối tắt sang Shop
+        else if {_slot} is 25:
+            set {ui_bank_return::%{_u}%} to "UI_BANK"
+            wait 1 tick
+            openResourceShopHubGUI(player)
+        stop
+
+    # -------------------------------------------------------------
+    # 2. HUB SIÊU THỊ TÀI NGUYÊN (UI_SHOP)
+    # -------------------------------------------------------------
+    if {_activeUI} is "UI_SHOP":
+        if {_slot} is 10:
+            wait 1 tick
+            openResourceShopCategoryGUI(player, 1)
+        else if {_slot} is 11:
+            wait 1 tick
+            openResourceShopCategoryGUI(player, 2)
+        else if {_slot} is 12:
+            wait 1 tick
+            openResourceShopCategoryGUI(player, 3)
+        else if {_slot} is 14:
+            wait 1 tick
+            openResourceShopCategoryGUI(player, 4)
+        else if {_slot} is 16:
+            wait 1 tick
+            close player's inventory
+            delete {ui_active::%{_u}%}
+            delete {ui_parent::%{_u}%}
+            wait 1 tick
+            make player execute command "sellgui"
+        else if {_slot} is 22:
+            set {ui_bank_return::%{_u}%} to "UI_SHOP"
+            wait 1 tick
+            openBankExchangeGUI(player)
+        stop
+
+    # -------------------------------------------------------------
+    # 3. GIAN HÀNG CON SIÊU THỊ (UI_SHOP_1..4)
+    # -------------------------------------------------------------
+    if {_activeUI} is "UI_SHOP_1":
+        handleShopPurchase(player, 1, {_slot}, "%click type%")
+        stop
+    else if {_activeUI} is "UI_SHOP_2":
+        handleShopPurchase(player, 2, {_slot}, "%click type%")
+        stop
+    else if {_activeUI} is "UI_SHOP_3":
+        handleShopPurchase(player, 3, {_slot}, "%click type%")
+        stop
+    else if {_activeUI} is "UI_SHOP_4":
+        handleShopPurchase(player, 4, {_slot}, "%click type%")
+        stop
+
+    # -------------------------------------------------------------
+    # 4. HUB CỬA HÀNG COIN (UI_CSHOP)
+    # -------------------------------------------------------------
+    if {_activeUI} is "UI_CSHOP":
+        if {_slot} is 10:
+            wait 1 tick
+            openCoinShopTabGUI(player, 1)
+        else if {_slot} is 12:
+            wait 1 tick
+            openCoinShopTabGUI(player, 2)
+        else if {_slot} is 14:
+            wait 1 tick
+            openCoinShopTabGUI(player, 3)
+        else if {_slot} is 16:
+            wait 1 tick
+            openCoinShopTabGUI(player, 4)
+        else if {_slot} is 22:
+            set {ui_bank_return::%{_u}%} to "UI_CSHOP"
+            wait 1 tick
+            openBankExchangeGUI(player)
+        stop
+
+    # -------------------------------------------------------------
+    # 5. TAB CON CỬA HÀNG COIN (UI_CSHOP_1..4)
+    # -------------------------------------------------------------
+    if {_activeUI} is "UI_CSHOP_1":
+        handleCShopRankPurchase(player, {_slot})
+        stop
+    else if {_activeUI} is "UI_CSHOP_2":
+        handleCShopItemPurchase(player, {_slot})
+        stop
+    else if {_activeUI} is "UI_CSHOP_3":
+        handleCShopChestCEPurchase(player, {_slot})
+        stop
+    else if {_activeUI} is "UI_CSHOP_4":
+        if {_slot} is 10:
+            wait 1 tick
+            openAoVShopGUI(player)
+        else if {_slot} is 12:
+            wait 1 tick
+            openArmorForgeMainGUI(player)
+        else if {_slot} is 14:
+            wait 1 tick
+            openGearForgeGUI(player)
+        else if {_slot} is 16:
+            wait 1 tick
+            openMeitoForgeGUI(player)
+        stop
+
+# =====================================================================
+# PHẦN 5: CÁC HÀM XỬ LÝ GIAO DỊCH KINH TẾ (ATOMIC TRANSACTION)
+# =====================================================================
+
+function executeExchangeMoneyToCoin(p: player, coinAmt: number):
+    set {_u} to uuid of {_p}
+    set {_cost} to round({_coinAmt} * {@exchange_rate})
+    if {_p}'s balance < {_cost}:
+        sendSystemMsg({_p}, "economy", "Bạn không đủ tiền mặt! Cần &a$%routerFormatNumber({_cost})%&f để mua &6%{_coinAmt}% Coin&f.")
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+    remove {_cost} from {_p}'s balance
+    giveCoinBalance({_p}, {_coinAmt})
+    sendSystemMsg({_p}, "economy", "Giao dịch thành công! Đã đổi &a$%routerFormatNumber({_cost})% &fsang &6+%{_coinAmt}% Coin&f.")
+    play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to {_p}
+    wait 1 tick
+    openBankExchangeGUI({_p})
+
+function executeExchangeCoinToMoney(p: player, coinAmt: number):
+    set {_u} to uuid of {_p}
+    set {_reward} to round({_coinAmt} * {@exchange_rate})
+    if takeCoinBalance({_p}, {_coinAmt}) is false:
+        sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần có &6%{_coinAmt}% Coin&f.")
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+    add {_reward} to {_p}'s balance
+    sendSystemMsg({_p}, "economy", "Rút Coin thành công! Đã rút &6%{_coinAmt}% Coin &fđổi lấy &a+$%routerFormatNumber({_reward})% Money&f.")
+    play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.4 to {_p}
+    wait 1 tick
+    openBankExchangeGUI({_p})
+
+function handleShopPurchase(p: player, cat: number, sl: number, clickStr: text):
+    set {_u} to uuid of {_p}
+    set {_isRight} to false
+    if {_clickStr} contains "RIGHT":
+        set {_isRight} to true
+
+    # Khối Xây Dựng
+    if {_cat} is 1:
+        if {_sl} is 10:
+            executeShopBuy({_p}, cobblestone, 800, 3200, 16, 64, {_isRight}, "Đá Cuội")
+        else if {_sl} is 11:
+            executeShopBuy({_p}, stone, 1200, 4800, 16, 64, {_isRight}, "Đá Mịn")
+        else if {_sl} is 12:
+            executeShopBuy({_p}, oak wood plank, 1600, 6400, 16, 64, {_isRight}, "Gỗ Sồi")
+        else if {_sl} is 13:
+            executeShopBuy({_p}, birch wood plank, 1600, 6400, 16, 64, {_isRight}, "Gỗ Bạch Dương")
+        else if {_sl} is 14:
+            executeShopBuy({_p}, spruce wood plank, 1600, 6400, 16, 64, {_isRight}, "Gỗ Vân Sam")
+        else if {_sl} is 15:
+            executeShopBuy({_p}, dirt, 1600, 6400, 16, 64, {_isRight}, "Khối Đất")
+        else if {_sl} is 16:
+            executeShopBuy({_p}, grass, 3200, 12800, 16, 64, {_isRight}, "Khối Cỏ")
+        else if {_sl} is 19:
+            executeShopBuy({_p}, sand, 1600, 6400, 16, 64, {_isRight}, "Khối Cát")
+        else if {_sl} is 20:
+            executeShopBuy({_p}, glass, 2400, 9600, 16, 64, {_isRight}, "Kính Trong Suốt")
+        else if {_sl} is 21:
+            executeShopBuy({_p}, quartz block, 6400, 25600, 16, 64, {_isRight}, "Đá Thạch Anh")
+        else if {_sl} is 22:
+            executeShopBuy({_p}, sea lantern, 8000, 32000, 16, 64, {_isRight}, "Đèn Biển")
+        else if {_sl} is 23:
+            executeShopBuy({_p}, obsidian, 16000, 64000, 16, 64, {_isRight}, "Hắc Diện Thạch")
+
+    # Nông Sản & Thú
+    else if {_cat} is 2:
+        if {_sl} is 10:
+            executeShopBuy({_p}, wheat seeds, 1600, 6400, 16, 64, {_isRight}, "Hạt Lúa Giống")
+        else if {_sl} is 11:
+            executeShopBuy({_p}, carrot, 1600, 6400, 16, 64, {_isRight}, "Cà Rốt")
+        else if {_sl} is 12:
+            executeShopBuy({_p}, potato, 1600, 6400, 16, 64, {_isRight}, "Khoai Tây")
+        else if {_sl} is 13:
+            executeShopBuy({_p}, pumpkin seeds, 1600, 6400, 16, 64, {_isRight}, "Hạt Bí Ngô")
+        else if {_sl} is 14:
+            executeShopBuy({_p}, melon seeds, 1600, 6400, 16, 64, {_isRight}, "Hạt Dưa Hấu")
+        else if {_sl} is 15:
+            executeShopBuy({_p}, sugar canes, 3200, 12800, 16, 64, {_isRight}, "Cây Mía Đường")
+        else if {_sl} is 16:
+            executeShopBuy({_p}, cactus, 3200, 12800, 16, 64, {_isRight}, "Xương Rồng")
+        else if {_sl} is 19:
+            executeShopBuy({_p}, nether wart, 3200, 12800, 16, 64, {_isRight}, "Bướu Địa Ngục")
+        else if {_sl} is 20:
+            executeShopBuy({_p}, soul sand, 4800, 19200, 16, 64, {_isRight}, "Cát Linh Hồn")
+        else if {_sl} is 21:
+            executeShopBuy({_p}, water bucket, 2000, 10000, 1, 5, {_isRight}, "Xô Nước")
+        else if {_sl} is 22:
+            executeShopBuy({_p}, lava bucket, 2000, 10000, 1, 5, {_isRight}, "Xô Dung Nham")
+        else if {_sl} is 29:
+            executeShopBuyEgg({_p}, "PIG", 15000, 75000, 1, 5, {_isRight}, "Trứng Heo")
+        else if {_sl} is 30:
+            executeShopBuyEgg({_p}, "SHEEP", 15000, 75000, 1, 5, {_isRight}, "Trứng Cừu")
+        else if {_sl} is 31:
+            executeShopBuyEgg({_p}, "COW", 15000, 75000, 1, 5, {_isRight}, "Trứng Bò")
+        else if {_sl} is 32:
+            executeShopBuyEgg({_p}, "VILLAGER", 150000, 750000, 1, 5, {_isRight}, "Trứng Dân Làng")
+
+    # Khoáng Sản
+    else if {_cat} is 3:
+        if {_sl} is 10:
+            executeShopBuy({_p}, coal, 300, 4800, 1, 16, {_isRight}, "Than Đá")
+        else if {_sl} is 11:
+            executeShopBuy({_p}, iron ingot, 800, 12800, 1, 16, {_isRight}, "Thỏi Sắt")
+        else if {_sl} is 12:
+            executeShopBuy({_p}, gold ingot, 1200, 19200, 1, 16, {_isRight}, "Thỏi Vàng")
+        else if {_sl} is 13:
+            executeShopBuy({_p}, redstone, 500, 8000, 1, 16, {_isRight}, "Bột Đá Đỏ")
+        else if {_sl} is 14:
+            executeShopBuy({_p}, lapis lazuli, 500, 8000, 1, 16, {_isRight}, "Ngọc Lưu Ly")
+        else if {_sl} is 15:
+            executeShopBuy({_p}, diamond, 3500, 56000, 1, 16, {_isRight}, "Kim Cương")
+        else if {_sl} is 16:
+            executeShopBuy({_p}, emerald, 5000, 80000, 1, 16, {_isRight}, "Ngọc Lục Bảo")
+        else if {_sl} is 19:
+            executeShopBuy({_p}, blaze rod, 2500, 40000, 1, 16, {_isRight}, "Que Quỷ Lửa")
+        else if {_sl} is 20:
+            executeShopBuy({_p}, ender pearl, 3000, 48000, 1, 16, {_isRight}, "Ngọc Ender")
+        else if {_sl} is 21:
+            executeShopBuy({_p}, cobweb, 400, 6400, 1, 16, {_isRight}, "Mạng Nhện")
+        else if {_sl} is 22:
+            executeShopBuy({_p}, golden apple, 20000, 100000, 1, 5, {_isRight}, "Táo Vàng")
+        else if {_sl} is 23:
+            executeShopBuy({_p}, shield, 10000, 10000, 1, 1, {_isRight}, "Khiên Gỗ")
+        else if {_sl} is 24:
+            executeShopBuy({_p}, totem of undying, 150000, 150000, 1, 1, {_isRight}, "Totem Bất Tử")
+        else if {_sl} is 25:
+            executeShopBuy({_p}, nether star, 250000, 250000, 1, 1, {_isRight}, "Ngôi Sao Địa Ngục")
+
+    # Uy Danh & Spawners
+    else if {_cat} is 4:
+        if {_sl} is 10:
+            executeShopBuy({_p}, diamond block, 35000, 35000, 1, 1, {_isRight}, "Khối Kim Cương")
+        else if {_sl} is 11:
+            executeShopBuy({_p}, emerald block, 50000, 50000, 1, 1, {_isRight}, "Khối Lục Bảo")
+        else if {_sl} is 12:
+            executeShopBuy({_p}, beacon, 300000, 300000, 1, 1, {_isRight}, "Beacon Căn Cứ")
+        else if {_sl} is 13:
+            executeShopBuy({_p}, dragon egg, 800000, 800000, 1, 1, {_isRight}, "Trứng Rồng Ender")
+        else if {_sl} is 19:
+            executeShopBuySpawner({_p}, "zombie", 20000, "Spawner Zombie")
+        else if {_sl} is 20:
+            executeShopBuySpawner({_p}, "skeleton", 20000, "Spawner Skeleton")
+        else if {_sl} is 21:
+            executeShopBuySpawner({_p}, "creeper", 35000, "Spawner Creeper")
+        else if {_sl} is 22:
+            executeShopBuySpawner({_p}, "spider", 35000, "Spawner Spider")
+        else if {_sl} is 23:
+            executeShopBuySpawner({_p}, "blaze", 50000, "Spawner Blaze")
+        else if {_sl} is 24:
+            executeShopBuySpawner({_p}, "iron_golem", 350000, "Spawner Iron Golem")
+
+function executeShopBuy(p: player, it: item, p1: number, p2: number, q1: number, q2: number, isRight: boolean, nameStr: text):
+    set {_price} to {_p1}
+    set {_amt} to {_q1}
+    if {_isRight} is true:
+        if {_q2} > {_q1}:
+            set {_price} to {_p2}
+            set {_amt} to {_q2}
+
+    if {_p}'s balance < {_price}:
+        sendSystemMsg({_p}, "economy", "Bạn không đủ tiền! Cần &a$%routerFormatNumber({_price})% Money&f để mua &e%{_amt}%x %{_nameStr}%&f.")
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+
+    remove {_price} from {_p}'s balance
+    giveItemSafely({_p}, {_amt} of {_it})
+    sendSystemMsg({_p}, "economy", "Mua thành công &a%{_amt}%x %{_nameStr}% &7(&c-$%routerFormatNumber({_price})%&7)!")
+    play sound "ENTITY_ITEM_PICKUP" with volume 1 and pitch 1.2 to {_p}
+
+function executeShopBuyEgg(p: player, mob: text, p1: number, p2: number, q1: number, q2: number, isRight: boolean, nameStr: text):
+    set {_price} to {_p1}
+    set {_amt} to {_q1}
+    if {_isRight} is true:
+        if {_q2} > {_q1}:
+            set {_price} to {_p2}
+            set {_amt} to {_q2}
+
+    if {_p}'s balance < {_price}:
+        sendSystemMsg({_p}, "economy", "Bạn không đủ tiền! Cần &a$%routerFormatNumber({_price})% Money&f để mua &e%{_amt}%x %{_nameStr}%&f.")
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+
+    remove {_price} from {_p}'s balance
+    execute console command "ws give %name of {_p}% egg %{_mob}% %{_amt}%"
+    sendSystemMsg({_p}, "economy", "Mua thành công &a%{_amt}%x %{_nameStr}% &7(&c-$%routerFormatNumber({_price})%&7)!")
+    play sound "ENTITY_ITEM_PICKUP" with volume 1 and pitch 1.2 to {_p}
+
+function executeShopBuySpawner(p: player, mob: text, price: number, nameStr: text):
+    if {_p}'s balance < {_price}:
+        sendSystemMsg({_p}, "economy", "Bạn không đủ tiền! Cần &a$%routerFormatNumber({_price})% Money&f để mua &d%{_nameStr}%&f.")
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+    remove {_price} from {_p}'s balance
+    execute console command "ws give %name of {_p}% spawner %{_mob}% 1"
+    sendSystemMsg({_p}, "economy", "Mua thành công &d%{_nameStr}% &7(&c-$%routerFormatNumber({_price})%&7)!")
+    play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to {_p}
+
+function handleCShopRankPurchase(p: player, sl: number):
+    set {_pName} to name of {_p}
+    if {_sl} is 11:
+        # Rank VIP (300 Coin)
+        if {_p} has permission "rank.vip":
+            sendSystemMsg({_p}, "warning", "Bạn đã sở hữu Rank VIP trở lên rồi!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        if takeCoinBalance({_p}, 300) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần có &6300 Coin&f để mua Rank VIP.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        execute console command "lp user %{_pName}% parent set vip"
+        syncPlayerNametagTeam({_p})
+        broadcastDualCard("&e&l✦ THĂNG HẠNG RANK", "%{_pName}% đã nâng cấp thành công Rank [VIP] Vĩnh Viễn!", "Nhận quyền bay /is fly & +5%% tiền bán tại /sellgui!")
+        play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to {_p}
+        wait 1 tick
+        openCoinShopTabGUI({_p}, 1)
+
+    else if {_sl} is 13:
+        # Rank KING (700 Coin)
+        if {_p} has permission "rank.king":
+            sendSystemMsg({_p}, "warning", "Bạn đã sở hữu Rank KING trở lên rồi!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        if takeCoinBalance({_p}, 700) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần có &6700 Coin&f để mua Rank KING.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        execute console command "lp user %{_pName}% parent set king"
+        syncPlayerNametagTeam({_p})
+        broadcastDualCard("&e&l✦ THĂNG HẠNG RANK", "%{_pName}% đã nâng cấp thành công Rank [KING] Vĩnh Viễn!", "Nhận toàn bộ quyền VIP, /enderchest & +10%% tiền bán tại /sellgui!")
+        play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to {_p}
+        wait 1 tick
+        openCoinShopTabGUI({_p}, 1)
+
+    else if {_sl} is 15:
+        # Rank MASTER (1,500 Coin)
+        if {_p} has permission "rank.master":
+            sendSystemMsg({_p}, "warning", "Bạn đã đạt cảnh giới Rank MASTER cao nhất rồi!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        if takeCoinBalance({_p}, 1500) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần có &61,500 Coin&f để mua Rank MASTER.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        execute console command "lp user %{_pName}% parent set master"
+        syncPlayerNametagTeam({_p})
+        broadcastDualCard("&6&l✦ THĂNG HẠNG TỐI CAO", "%{_pName}% đã đăng quang Rank [MASTER] Vĩnh Viễn!", "Mở khóa toàn bộ đặc quyền máy chủ & +20%% tiền bán tại /sellgui!")
+        play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to {_p}
+        wait 1 tick
+        openCoinShopTabGUI({_p}, 1)
+
+function handleCShopItemPurchase(p: player, sl: number):
+    if {_sl} is 10:
+        # Wanted Poster (10 Coin)
+        if takeCoinBalance({_p}, 10) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần &610 Coin&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        giveItemSafely({_p}, getWantedPosterItem())
+        sendSystemMsg({_p}, "talent", "Mua thành công &e1x Lệnh Truy Nã Hải Tặc &7(-10 Coin)!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to {_p}
+
+    else if {_sl} is 11:
+        # Rumble Ball (15 Coin)
+        if takeCoinBalance({_p}, 15) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần &615 Coin&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        giveItemSafely({_p}, getRumbleBallItem())
+        sendSystemMsg({_p}, "talent", "Mua thành công &e1x Rumble Ball &7(-15 Coin)!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to {_p}
+
+    else if {_sl} is 12:
+        # Talent Reset (30 Coin)
+        if takeCoinBalance({_p}, 30) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần &630 Coin&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        giveItemSafely({_p}, createResetScroll())
+        sendSystemMsg({_p}, "talent", "Mua thành công &61x Quả Cầu Tẩy Điểm Thiên Phú &7(-30 Coin)!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to {_p}
+
+    else if {_sl} is 13:
+        # Unidentified DF (50 Coin)
+        if takeCoinBalance({_p}, 50) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần &650 Coin&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        giveItemSafely({_p}, getUnidentifiedFruitItem())
+        sendSystemMsg({_p}, "talent", "Mua thành công &d1x Trái Ác Quỷ Bí Ẩn &7(-50 Coin)!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to {_p}
+
+    else if {_sl} is 14:
+        # DF Remover (100 Coin)
+        if takeCoinBalance({_p}, 100) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần &6100 Coin&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        giveItemSafely({_p}, getFruitRemoverItem())
+        sendSystemMsg({_p}, "talent", "Mua thành công &c1x Thuốc Xóa Trái Ác Quỷ &7(-100 Coin)!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to {_p}
+
+    else if {_sl} is 15:
+        # Awakening Stone (150 Coin)
+        if takeCoinBalance({_p}, 150) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần &6150 Coin&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        giveItemSafely({_p}, getAwakeningStoneItem())
+        sendSystemMsg({_p}, "talent", "Mua thành công &61x Đá Thức Tỉnh Ánh Sao 3D &7(-150 Coin)!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to {_p}
+
+    else if {_sl} is 16:
+        # Awakening Talisman (200 Coin)
+        if takeCoinBalance({_p}, 200) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần &6200 Coin&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        giveItemSafely({_p}, getAwakeningTalismanItem())
+        sendSystemMsg({_p}, "talent", "Mua thành công &e1x Bùa Thức Tỉnh Tinh Tú &7(-200 Coin)!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to {_p}
+
+    else if {_sl} is 22:
+        # DF Chest (250 Coin)
+        if takeCoinBalance({_p}, 250) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần &6250 Coin&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        giveItemSafely({_p}, getRandomFruitChestItem())
+        sendSystemMsg({_p}, "talent", "Mua thành công &51x Rương Trái Ác Quỷ Thần Bí &7(-250 Coin)!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to {_p}
+
+function handleCShopChestCEPurchase(p: player, sl: number):
+    set {_pName} to name of {_p}
+    if {_sl} is 11:
+        # Bụi CE (35 Coin)
+        if takeCoinBalance({_p}, 35) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần &635 Coin&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        execute console command "ce dust Success 1 %{_pName}% 15"
+        sendSystemMsg({_p}, "talent", "Mua thành công &a1x Bụi Tăng Tỷ Lệ +15%% (CE) &7(-35 Coin)!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to {_p}
+
+    else if {_sl} is 13:
+        # White Scroll CE (50 Coin)
+        if takeCoinBalance({_p}, 50) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần &650 Coin&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        execute console command "ce scroll White 1 %{_pName}%"
+        sendSystemMsg({_p}, "talent", "Mua thành công &f1x Đá Bảo Hiểm Phù Phép White Scroll &7(-50 Coin)!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to {_p}
+
+    else if {_sl} is 15:
+        # Rương AoV (160 Coin)
+        if takeCoinBalance({_p}, 160) is false:
+            sendSystemMsg({_p}, "talent", "Bạn không đủ Coin! Cần &6160 Coin&f.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+        giveItemSafely({_p}, createAoVChest())
+        sendSystemMsg({_p}, "talent", "Mua thành công &61x Rương Trang Bị Liên Quân 3D &7(-160 Coin)!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.3 to {_p}
+
+# =====================================================================
+# PHẦN 6: HỆ THỐNG CÂU LỆNH ĐIỀU HƯỚNG (/nganhang, /shop, /cshop)
+# =====================================================================
+
+command /nganhang:
+    aliases: /doitien, /bank, /exchange
+    trigger:
+        set {ui_bank_return::%uuid of player%} to "UI_ROOT"
+        openBankExchangeGUI(player)
+
+command /shop:
+    aliases: /cuahang, /sieuthi
+    trigger:
+        openResourceShopHubGUI(player)
+
+command /cshop:
+    aliases: /coinshop, /shopcoin
+    trigger:
+        openCoinShopHubGUI(player)
+
+
+# =====================================================================
+# BẢO VỆ & GHI ĐÈ ƯU TIÊN TUYỆT ĐỐI CHO CÁC LỆNH KINH TẾ
+# =====================================================================
+
+on command "/shop" or "/cuahang" or "/sieuthi":
+    cancel event
+    set {ui_shop_return::%uuid of player%} to "UI_G6_C"
+    openResourceShopHubGUI(player)
+
+on command "/cshop" or "/coinshop" or "/shopcoin":
+    cancel event
+    set {ui_cshop_return::%uuid of player%} to "UI_G6_C"
+    openCoinShopHubGUI(player)
+
+on command "/nganhang" or "/doitien" or "/bank" or "/exchange":
+    cancel event
+    set {ui_bank_return::%uuid of player%} to "UI_ROOT"
+    openBankExchangeGUI(player)

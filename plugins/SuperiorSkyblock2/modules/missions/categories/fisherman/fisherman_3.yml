@@ -1,0 +1,109 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+# The mission file to use
+mission-file: FishingMissions
+
+# Whether the mission should be given when completing all requirements.
+auto-reward: true
+
+# Rewards given when completing the mission.
+rewards:
+  commands:
+    - 'eco give %player% 50000'
+    - 'talentadmin addpoints %player% 10'
+    - 'is admin msg %player% &e&lNgư Dân | &7Hoàn thành xuất sắc nhiệm vụ Ngư Dân III!'
+    - 'is admin msg %player% &e&lNgư Dân | &7Giờ bạn đã nắm vững nghệ thuật câu cá rồi!'
+    - 'is admin msg %player% &e&lNgư Dân | &7&oChúc mừng bạn đã trở thành Ngư Dân Chuyên Nghiệp!'
+
+# List of required missions that must be completed before completing this one.
+required-missions:
+  - 'fisherman_1'
+  - 'fisherman_2'
+
+# List of all required caughts must be gathered in order to complete the mission.
+required-caughts:
+  '1':
+    types:
+      - 'BOW'
+      - 'ENCHANTED_BOOK'
+      - 'FISHING_ROD'
+      - 'NAME_TAG'
+      - 'SADDLE'
+    amount: 3
+
+# Icons used in the menus.
+icons:
+  locked:
+    type: PAPER
+    name: '&aNgư Dân III'
+    lore:
+      - '&7Ngoài biển khơi ẩn chứa rất nhiều kho báu.'
+      - '&7Câu được 3 vật phẩm kho báu.'
+      - ''
+      - '&6Yêu Cầu Câu Cá:'
+      - '&8 - &7x3 Kho Báu'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+10 Điểm Thiên Phú'
+      - '&8 - &7$50,000'
+      - ''
+      - '&6Kho báu đã câu: &7{1}/3'
+      - '&c&l ✘ &7Chưa Mở Khóa'
+    amount: 3
+  not-completed:
+    type: PAPER
+    name: '&aNgư Dân III'
+    lore:
+      - '&7Ngoài biển khơi ẩn chứa rất nhiều kho báu.'
+      - '&7Câu được 3 vật phẩm kho báu.'
+      - ''
+      - '&6Yêu Cầu Câu Cá:'
+      - '&8 - &7x3 Kho Báu'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+10 Điểm Thiên Phú'
+      - '&8 - &7$50,000'
+      - ''
+      - '&6Kho báu đã câu: &7{1}/3'
+      - '&6Tiến độ: &7{0}%'
+      - '&c&l ✘ &7Chưa Hoàn Thành'
+    amount: 3
+  can-complete:
+    type: PAPER
+    name: '&aNgư Dân III'
+    lore:
+      - '&7Ngoài biển khơi ẩn chứa rất nhiều kho báu.'
+      - '&7Câu được 3 vật phẩm kho báu.'
+      - ''
+      - '&6Yêu Cầu Câu Cá:'
+      - '&8 - &7x3 Kho Báu'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+10 Điểm Thiên Phú'
+      - '&8 - &7$50,000'
+      - ''
+      - '&6Kho báu đã câu: &73/3'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Nhấp để nhận phần thưởng.'
+    amount: 3
+    glow: true
+  completed:
+    type: MAP
+    name: '&aNgư Dân III'
+    lore:
+      - '&7Ngoài biển khơi ẩn chứa rất nhiều kho báu.'
+      - '&7Câu được 3 vật phẩm kho báu.'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+10 Điểm Thiên Phú'
+      - '&8 - &7$50,000'
+      - ''
+      - '&6Kho báu đã câu: &73/3'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Đã Nhận Thưởng.'
+    amount: 3

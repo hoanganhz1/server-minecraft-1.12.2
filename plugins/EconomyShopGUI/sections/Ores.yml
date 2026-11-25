@@ -1,0 +1,18 @@
+enable: true
+slot: 14
+title: '&b&lKhoáng Sản & Quặng'
+hidden: false
+sub-section: false
+display-item: false
+fill-item:
+  material: AIR
+nav-bar:
+  mode: INHERIT
+item:
+  material: DIAMOND
+  displayname: '&b&lKhoáng Sản & Quặng'
+  name: '&b&lKhoáng Sản & Quặng'
+  lore:
+  - '&7Mua bán Than, Sắt, Vàng, Lưu ly,'
+  - '&7Đá đỏ, Kim cương, Ngọc lục bảo.'
+  - '&8(Giá mua gấp 4 lần giá bán)'

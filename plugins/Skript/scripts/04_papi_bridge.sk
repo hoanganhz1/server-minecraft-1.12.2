@@ -1,0 +1,340 @@
+# =====================================================================
+# CẦU NỐI PLACEHOLDERAPI CHO HỆ THỐNG THIÊN PHÚ & GIÁP SET (1.12.2)
+# Sử dụng skript-reflect + ProtocolLib (ByteBuddy) để đăng ký trực tiếp
+# PlaceholderExpansion "%talent_<chỉ_số>%" vào PlaceholderAPI (persist=true)
+# Dùng cho ChestCommands (/menu), Scoreboard, Hologram, Chat...
+# =====================================================================
+
+import:
+    java.lang.reflect.Array
+    java.lang.reflect.InvocationHandler
+    org.bukkit.Bukkit
+    me.clip.placeholderapi.PlaceholderAPI
+    me.clip.placeholderapi.expansion.PlaceholderExpansion
+    com.comphenix.net.bytebuddy.ByteBuddy
+    com.comphenix.net.bytebuddy.implementation.FixedValue
+    com.comphenix.net.bytebuddy.implementation.InvocationHandlerAdapter
+    com.comphenix.net.bytebuddy.matcher.ElementMatchers
+
+function formatStatNum(n: number) :: text:
+    if {_n} is not set:
+        return "0.0"
+    set {_r} to (round({_n} * 10)) / 10
+    return "%{_r}%"
+
+function resolveTalentPlaceholder(offPlayer: object, params: text) :: text:
+    if {_offPlayer} is not set:
+        return ""
+    if {_params} is not set:
+        return ""
+
+    set {_u} to {_offPlayer}.getUniqueId().toString()
+    set {_key} to lowercase {_params}
+
+    # Điểm Thiên Phú
+    if {_key} is "points":
+        if {talent::%{_u}%::points} is set:
+            return "%{talent::%{_u}%::points}%"
+        return "0"
+    if {_key} is "spent":
+        if {talent::%{_u}%::spent} is set:
+            return "%{talent::%{_u}%::spent}%"
+        return "0"
+
+    # Chỉ số gốc
+    set {_b_cc} to 5.0
+    if {talent::%{_u}%::crit_chance} is set:
+        set {_b_cc} to {talent::%{_u}%::crit_chance}
+    set {_b_cd} to 150.0
+    if {talent::%{_u}%::crit_damage} is set:
+        set {_b_cd} to {talent::%{_u}%::crit_damage}
+    set {_b_acc} to 0.0
+    if {talent::%{_u}%::accuracy} is set:
+        set {_b_acc} to {talent::%{_u}%::accuracy}
+    set {_b_dod} to 0.0
+    if {talent::%{_u}%::dodge} is set:
+        set {_b_dod} to {talent::%{_u}%::dodge}
+
+    # Chỉ số cộng từ Thẻ Thiên Phú
+    set {_c_cc} to 0.0
+    if {card_bonus::%{_u}%::crit_chance} is set:
+        set {_c_cc} to {card_bonus::%{_u}%::crit_chance}
+    set {_c_cd} to 0.0
+    if {card_bonus::%{_u}%::crit_damage} is set:
+        set {_c_cd} to {card_bonus::%{_u}%::crit_damage}
+    set {_c_acc} to 0.0
+    if {card_bonus::%{_u}%::accuracy} is set:
+        set {_c_acc} to {card_bonus::%{_u}%::accuracy}
+    set {_c_dod} to 0.0
+    if {card_bonus::%{_u}%::dodge} is set:
+        set {_c_dod} to {card_bonus::%{_u}%::dodge}
+
+    # Tổng 4 chỉ số Thiên Phú (Dùng cho /menu ChestCommands, Scoreboard, chat)
+    if {_key} is "crit_chance":
+        return formatStatNum(getTalentTotal({_offPlayer}, "crit_chance"))
+    if {_key} is "crit_damage":
+        return formatStatNum(getTalentTotal({_offPlayer}, "crit_damage"))
+    if {_key} is "accuracy":
+        return formatStatNum(getTalentTotal({_offPlayer}, "accuracy"))
+    if {_key} is "dodge":
+        return formatStatNum(getTalentTotal({_offPlayer}, "dodge"))
+
+    # Chỉ số gốc riêng
+    if {_key} is "base_crit_chance":
+        return formatStatNum({_b_cc})
+    if {_key} is "base_crit_damage":
+        return formatStatNum({_b_cd})
+    if {_key} is "base_accuracy":
+        return formatStatNum({_b_acc})
+    if {_key} is "base_dodge":
+        return formatStatNum({_b_dod})
+
+    # Chỉ số Thẻ riêng
+    if {_key} is "card_crit_chance":
+        return formatStatNum({_c_cc})
+    if {_key} is "card_crit_damage":
+        return formatStatNum({_c_cd})
+    if {_key} is "card_accuracy":
+        return formatStatNum({_c_acc})
+    if {_key} is "card_dodge":
+        return formatStatNum({_c_dod})
+
+    # Khay Trang Bị Liên Quân & Thẻ Thiên Phú (Tương thích ngược)
+    if {_key} is "cards_max" or "aov_max":
+        set {_max} to 3
+        if {_offPlayer}.isOnline() is true:
+            set {_online} to {_offPlayer}.getPlayer()
+            set {_max} to getMaxAoVSlots({_online})
+        return "%{_max}%"
+
+    if {_key} is "cards_equipped" or "aov_equipped":
+        set {_max} to 3
+        if {_offPlayer}.isOnline() is true:
+            set {_online} to {_offPlayer}.getPlayer()
+            set {_max} to getMaxAoVSlots({_online})
+        set {_cnt} to 0
+        loop integers from 1 to {_max}:
+            if {aov_slot::%{_u}%::%loop-integer%} is set:
+                add 1 to {_cnt}
+            else if {card_slot::%{_u}%::%loop-integer%} is set:
+                add 1 to {_cnt}
+        return "%{_cnt}%"
+
+    # Trạng thái Bộ Giáp 1/2/3/4
+    set {_s1} to 0
+    if {set_hovedaidia::%{_u}%} is set:
+        set {_s1} to {set_hovedaidia::%{_u}%}
+    set {_s2} to 0
+    if {set_huyetchien::%{_u}%} is set:
+        set {_s2} to {set_huyetchien::%{_u}%}
+    set {_s3} to 0
+    if {set_batdiet::%{_u}%} is set:
+        set {_s3} to {set_batdiet::%{_u}%}
+
+    if {_key} is "set_1" or "set_hovedaidia":
+        return "%{_s1}%"
+    if {_key} is "set_2" or "set_huyetchien":
+        return "%{_s2}%"
+    if {_key} is "set_3" or "set_batdiet":
+        return "%{_s3}%"
+
+    if {_key} is "rank":
+        if {_offPlayer}.isOnline() is true:
+            set {_online} to {_offPlayer}.getPlayer()
+            if {_online} has permission "rank.master":
+                return "&6&l[MASTER]"
+            if {_online} has permission "rank.king":
+                return "&d&l[KING]"
+            if {_online} has permission "rank.vip":
+                return "&b&l[VIP]"
+        return "&7[Thành Viên]"
+
+    if {_key} is "set_active":
+        set {_parts::*} to ""
+        delete {_parts::*}
+        if {_s1} > 0:
+            add "&aHộ Vệ [%{_s1}%/4]" to {_parts::*}
+        if {_s2} > 0:
+            add "&cHuyết Chiến [%{_s2}%/4]" to {_parts::*}
+        if {_s3} > 0:
+            add "&6Thánh Quang [%{_s3}%/4]" to {_parts::*}
+        if size of {_parts::*} is 0:
+            return "&7Không có"
+        return join {_parts::*} with "&7, "
+
+    # Trái Ác Quỷ (07_devil_fruits.sk)
+    if {_key} is "df_name" or "devil_fruit" or "fruit":
+        return getDevilFruitPapiName({_u})
+    if {_key} is "df_fullname" or "devil_fruit_fullname":
+        return getDevilFruitPapiFullName({_u})
+    if {_key} is "df_mastery" or "mastery":
+        return getDevilFruitPapiMastery({_u})
+    if {_key} is "df_awakened" or "awakened":
+        return getDevilFruitPapiAwakened({_u})
+    if {_key} is "df_exp":
+        return getDevilFruitPapiExp({_u})
+
+    # Haki & Tiền Truy Nã One Piece (08_haki_and_bounty.sk)
+    if {_key} is "haki" or "haki_status":
+        return getHakiPapiStatus({_u})
+    if {_key} is "bounty" or "bounty_formatted" or "beri":
+        return getBountyPapiFormatted({_u})
+    if {_key} is "bounty_raw" or "beri_raw":
+        if {bounty::%{_u}%} is set:
+            return "%{bounty::%{_u}%}%"
+        return "0"
+
+    # Võ Học Vô Quả Giả (07_devil_fruits.sk)
+    if {_key} is "martial_style" or "vohoc_style":
+        if {martial_style::%{_u}%} is "kiem_dao":
+            return "&aKiếm Đạo Đại Tông Sư"
+        else if {martial_style::%{_u}%} is "luc_thuc":
+            return "&eLục Thức Hải Quân"
+        return "&7Chưa chọn"
+    if {_key} is "martial_mastery" or "vohoc_mastery":
+        return "%{martial_mastery::%{_u}%} ? 0%"
+
+    # Băng Hải Tặc & Đảo Kho Báu KOTH (11_pirate_crew_koth.sk)
+    if {_key} is "crew_name" or "banghaitac":
+        if {_offPlayer}.isOnline() is true:
+            set {_onP} to {_offPlayer}.getPlayer()
+            set {_is} to getCrewIsland({_onP})
+            if {_is} is set:
+                return getCrewDisplayName({_is})
+        return "&7Chưa có Băng"
+
+    if {_key} is "crew_rank":
+        if {_offPlayer}.isOnline() is true:
+            set {_onP} to {_offPlayer}.getPlayer()
+            set {_is} to getCrewIsland({_onP})
+            if {_is} is set:
+                set {_b} to getCrewTotalBounty({_is})
+                return getCrewRankText({_b})
+        return "&7Chưa phân hạng"
+
+    if {_key} is "crew_bounty":
+        if {_offPlayer}.isOnline() is true:
+            set {_onP} to {_offPlayer}.getPlayer()
+            set {_is} to getCrewIsland({_onP})
+            if {_is} is set:
+                set {_b} to getCrewTotalBounty({_is})
+                return formatBeriComma({_b})
+        return "0"
+
+    if {_key} is "crew_flag":
+        if {_offPlayer}.isOnline() is true:
+            set {_onP} to {_offPlayer}.getPlayer()
+            set {_isUuid} to getCrewIslandUUID({_onP})
+            return getCrewFlagName({_isUuid})
+        return "&7Chưa treo cờ"
+
+    if {_key} is "koth_status":
+        if {koth_active} is true:
+            return "&aĐang diễn ra &8(%{koth_time_left}%s)"
+        return "&7Chờ 20:30"
+
+    # Đệ Tử Đồng Hành (12_disciple_system.sk)
+    if {_key} is "pet_sm" or "disciple_sm" or "disciple_power":
+        if {disciple::%{_u}%::power} is set:
+            return formatDisciplePower({disciple::%{_u}%::power})
+        return "0"
+
+    if {_key} is "pet_mode" or "disciple_mode":
+        if {disciple::%{_u}%::mode} is set:
+            set {_m} to {disciple::%{_u}%::mode}
+            if {_m} is "follow":
+                return "&aĐi Theo"
+            if {_m} is "protect":
+                return "&eBảo Vệ"
+            if {_m} is "attack":
+                return "&cTấn Công"
+            if {_m} is "home":
+                return "&7Về Nhà"
+            if {_m} is "fusion":
+                return "&bHợp Thể"
+            return "%{_m}%"
+        return "&7Chưa có"
+
+    return ""
+
+function talentPapiInvoke(ihProxy: object, expProxy: object, method: object, args: object) :: object:
+    if {_method} is not set:
+        return {_null}
+    set {_m} to {_method}.getName()
+    if {_m} is "onRequest" or "onPlaceholderRequest":
+        if {_args} is set:
+            set {_p} to Array.get({_args}, 0)
+            set {_param} to Array.get({_args}, 1)
+            return resolveTalentPlaceholder({_p}, {_param})
+        return ""
+    return {_null}
+
+function registerTalentPapiExpansion():
+    set {_papi} to Bukkit.getPluginManager().getPlugin("PlaceholderAPI")
+    if {_papi} is not set:
+        send "[TalentPAPI] Không tìm thấy plugin PlaceholderAPI!" to console
+        stop
+
+    if {-talent::papi_expansion} is set:
+        {-talent::papi_expansion}.unregister()
+        delete {-talent::papi_expansion}
+
+    set {_methods::invoke} to function reference "talentPapiInvoke"
+    set {_handler} to new proxy instance of InvocationHandler using {_methods::*}
+
+    set {_b} to new ByteBuddy().subclass(PlaceholderExpansion.class)
+    set {_b} to {_b}.method(ElementMatchers.named("getIdentifier").or(ElementMatchers.named("getName"))).intercept(FixedValue.value("talent"))
+    set {_b} to {_b}.method(ElementMatchers.named("getAuthor")).intercept(FixedValue.value("SkyblockRPG"))
+    set {_b} to {_b}.method(ElementMatchers.named("getVersion")).intercept(FixedValue.value("1.0.0"))
+    set {_b} to {_b}.method(ElementMatchers.named("persist").or(ElementMatchers.named("canRegister"))).intercept(FixedValue.value(true))
+    set {_b} to {_b}.method(ElementMatchers.named("toString")).intercept(FixedValue.value("TalentPlaceholderExpansion"))
+    set {_b} to {_b}.method(ElementMatchers.named("onRequest").or(ElementMatchers.named("onPlaceholderRequest"))).intercept(InvocationHandlerAdapter.of({_handler}))
+
+    set {_dynClass} to {_b}.make().load(PlaceholderExpansion.class.getClassLoader()).getLoaded()
+    set {_exp} to {_dynClass}.getDeclaredConstructor().newInstance()
+    set {_ok} to {_exp}.register()
+    if {_ok} is true:
+        set {-talent::papi_expansion} to {_exp}
+        send "[TalentPAPI] Đã đăng ký PlaceholderAPI expansion '%%talent_*%%' thành công!" to console
+        if Bukkit.getPluginManager().isPluginEnabled("ChestCommands") is true:
+            execute console command "cc reload"
+    else:
+        send "[TalentPAPI] Đăng ký PlaceholderAPI expansion thất bại!" to console
+
+on load:
+    wait 5 ticks
+    registerTalentPapiExpansion()
+
+on unload:
+    if {-talent::papi_expansion} is set:
+        {-talent::papi_expansion}.unregister()
+        delete {-talent::papi_expansion}
+
+command /talentpapi <text>:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        if arg-1 is "reload":
+            registerTalentPapiExpansion()
+            send "&a[TalentPAPI] &7Đã nạp lại PlaceholderAPI expansion &e%%talent_*%%&7!" to sender
+        else if arg-1 is "check":
+            if sender is not a player:
+                send "&cHãy dùng lệnh này trong game để kiểm tra placeholder của bản thân." to sender
+                stop
+            send "&8&m---------------------------------" to sender
+            send "&e&lKIỂM TRA PLACEHOLDER THIÊN PHÚ & ONE PIECE:" to sender
+            send "&7• %%talent_points%%: &6%resolveTalentPlaceholder(player, "points")%" to sender
+            send "&7• %%talent_crit_chance%%: &c%resolveTalentPlaceholder(player, "crit_chance")%%%" to sender
+            send "&7• %%talent_crit_damage%%: &4%resolveTalentPlaceholder(player, "crit_damage")%%%" to sender
+            send "&7• %%talent_accuracy%%: &b+%resolveTalentPlaceholder(player, "accuracy")%%%" to sender
+            send "&7• %%talent_dodge%%: &a%resolveTalentPlaceholder(player, "dodge")%%%" to sender
+            send "&7• %%talent_aov_equipped%%/%%talent_aov_max%%: &e%resolveTalentPlaceholder(player, "aov_equipped")%/%resolveTalentPlaceholder(player, "aov_max")%" to sender
+            send "&7• %%talent_df_name%%: %resolveTalentPlaceholder(player, "df_name")% &7(Lv.%resolveTalentPlaceholder(player, "df_mastery")%) [%resolveTalentPlaceholder(player, "df_awakened")%&7]" to sender
+            send "&7• %%talent_haki%%: %resolveTalentPlaceholder(player, "haki")%" to sender
+            send "&7• %%talent_bounty%%: &6%resolveTalentPlaceholder(player, "bounty")% Beri" to sender
+            send "&7• %%talent_set_active%%: %resolveTalentPlaceholder(player, "set_active")%" to sender
+            set {_papiTest} to PlaceholderAPI.setPlaceholders(player, "Trái=%%talent_df_name%% | LQ=%%talent_aov_equipped%%/%%talent_aov_max%% | Bounty=%%talent_bounty%%")
+            send "&7• PAPI Test: &e%{_papiTest}%" to sender
+            send "&8&m---------------------------------" to sender
+        else:
+            send "&cCú pháp: /talentpapi <reload|check>" to sender

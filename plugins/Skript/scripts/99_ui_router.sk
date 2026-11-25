@@ -1,0 +1,1302 @@
+# =====================================================================
+# BỘ ĐIỀU PHỐI GIAO DIỆN TRUNG TÂM (99_ui_router.sk)
+# Nạp cuối cùng sau toàn bộ module 01..14
+# Cung cấp: openMenuById, openUIRoot, openUIG1..openUIG6, cầu nối Cấp 3,
+# xử lý sự kiện click/close/drag và các lệnh điều hướng người chơi.
+# =====================================================================
+
+import:
+    java.lang.System
+    org.bukkit.event.inventory.InventoryDragEvent
+    me.clip.placeholderapi.PlaceholderAPI
+
+# ---------------------------------------------------------------------
+# 1. HÀM HỖ TRỢ BIỂU TƯỢNG VÀ NỘI DUNG HIỂN THỊ
+# ---------------------------------------------------------------------
+
+function getDFDisplayName(f: text) :: text:
+    set {_k} to lowercase {_f}
+    if {_k} is "mera":
+        return "Mera Mera no Mi"
+    if {_k} is "gomu":
+        return "Gomu Gomu no Mi"
+    if {_k} is "ope":
+        return "Ope Ope no Mi"
+    if {_k} is "seiryu":
+        return "Uo Uo no Mi (Seiryu)"
+    if {_k} is "gura":
+        return "Gura Gura no Mi"
+    if {_k} is "pika":
+        return "Pika Pika no Mi"
+    if {_k} is "goro":
+        return "Goro Goro no Mi"
+    if {_k} is "phoenix":
+        return "Tori Tori no Mi (Phoenix)"
+    return {_f}
+
+function getMartialDisplayName(m: text) :: text:
+    set {_k} to lowercase {_m}
+    if {_k} is "kiem_dao":
+        return "Kiếm Đạo"
+    if {_k} is "luc_thuc":
+        return "Lục Thức"
+    return {_m}
+
+function makePorataIcon(title: text, pLore: texts) :: item:
+    set {_item} to 1 of ghast tear
+    set name of {_item} to colored {_title}
+    if {_pLore::*} is set:
+        set lore of {_item} to {_pLore::*}
+    add "{Unbreakable:1b,HideFlags:63,ench:[{id:34s,lvl:1s}],SkyblockItem:""porata_earring""}" to nbt of {_item}
+    return {_item}
+
+# ---------------------------------------------------------------------
+# 2. ĐIỀU PHỐI GIAO DIỆN TẬP TRUNG (openMenuById)
+# ---------------------------------------------------------------------
+
+function openMenuById(p: player, uiId: text):
+    if {_p} is not online:
+        stop
+
+    # Khóa kiểm định Resource Pack
+    if {_p} does not have permission "rp.bypass":
+        if {rp_verified::%uuid of {_p}%} is not true:
+            sendSystemMsg({_p}, "warning", "Vui lòng hoàn tất nạp Resource Pack để mở giao diện!")
+            stop
+
+    play sound "UI_BUTTON_CLICK" with volume 1 and pitch 1 to {_p}
+
+    # Cấp 1 — Giao Diện Gốc
+    if {_uiId} is "UI_ROOT":
+        openUIRoot({_p})
+
+    # Cấp 2 — 6 Menu Nhóm Cha
+    else if {_uiId} is "UI_G1":
+        openUIG1({_p})
+    else if {_uiId} is "UI_G2":
+        openUIG2({_p})
+    else if {_uiId} is "UI_G3":
+        openUIG3({_p})
+    else if {_uiId} is "UI_G4":
+        openUIG4({_p})
+    else if {_uiId} is "UI_G5":
+        openUIG5({_p})
+    else if {_uiId} is "UI_G6":
+        openUIG6({_p})
+
+    # Cấp 3 — Chuyển tiếp tới 19 Màn Hình Tác Vụ Con
+    else if {_uiId} is "UI_G1_A":
+        openUIG1A({_p})
+    else if {_uiId} is "UI_G1_B":
+        openUIG1B({_p})
+    else if {_uiId} is "UI_G1_C":
+        openUIG1C({_p})
+    else if {_uiId} is "UI_G1_D":
+        openUIG1D({_p})
+
+    else if {_uiId} is "UI_G2_A":
+        openUIG2A({_p})
+    else if {_uiId} is "UI_G2_B":
+        openUIG2B({_p})
+    else if {_uiId} is "UI_G2_C":
+        openUIG2C({_p})
+
+    else if {_uiId} is "UI_G3_A":
+        openUIG3A({_p})
+    else if {_uiId} is "UI_G3_B":
+        openUIG3B({_p})
+    else if {_uiId} is "UI_G3_C":
+        openUIG3C({_p})
+
+    else if {_uiId} is "UI_G4_A":
+        openUIG4A({_p})
+    else if {_uiId} is "UI_G4_B":
+        openUIG4B({_p})
+    else if {_uiId} is "UI_G4_C":
+        openUIG4C({_p})
+
+    else if {_uiId} is "UI_G5_A":
+        openUIG5A({_p})
+    else if {_uiId} is "UI_G5_B":
+        openUIG5B({_p})
+    else if {_uiId} is "UI_G5_C":
+        openUIG5C({_p})
+
+    else if {_uiId} is "UI_G6_A":
+        openUIG6A({_p})
+    else if {_uiId} is "UI_G6_B":
+        openUIG6B({_p})
+    else if {_uiId} is "UI_G6_C":
+        openUIG6C({_p})
+
+    # Hệ Thống Kinh Tế Mới (Phase 15: Ngân Hàng, /shop & /cshop)
+    else if {_uiId} is "UI_BANK":
+        openBankExchangeGUI({_p})
+    else if {_uiId} is "UI_SHOP":
+        openResourceShopHubGUI({_p})
+    else if {_uiId} is "UI_SHOP_1":
+        openResourceShopCategoryGUI({_p}, 1)
+    else if {_uiId} is "UI_SHOP_2":
+        openResourceShopCategoryGUI({_p}, 2)
+    else if {_uiId} is "UI_SHOP_3":
+        openResourceShopCategoryGUI({_p}, 3)
+    else if {_uiId} is "UI_SHOP_4":
+        openResourceShopCategoryGUI({_p}, 4)
+    else if {_uiId} is "UI_CSHOP":
+        openCoinShopHubGUI({_p})
+    else if {_uiId} is "UI_CSHOP_1":
+        openCoinShopTabGUI({_p}, 1)
+    else if {_uiId} is "UI_CSHOP_2":
+        openCoinShopTabGUI({_p}, 2)
+    else if {_uiId} is "UI_CSHOP_3":
+        openCoinShopTabGUI({_p}, 3)
+    else if {_uiId} is "UI_CSHOP_4":
+        openCoinShopTabGUI({_p}, 4)
+
+# ---------------------------------------------------------------------
+# 3. GIAO DIỆN CẤP 1 — UI_ROOT: TRUNG TÂM HẢI TẶC (54 Ô)
+# ---------------------------------------------------------------------
+
+function openUIRoot(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_pName} to name of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_ROOT", "&6&l✦ TRUNG TÂM HẢI TẶC ✦", 6, yellow stained glass pane named " ", "NONE", "")
+
+    # 1. Trích xuất chỉ số người chơi
+    set {_rank} to "&7THÀNH VIÊN"
+    if {_p} has permission "rank.master":
+        set {_rank} to "&d&lMASTER"
+    else if {_p} has permission "rank.king":
+        set {_rank} to "&6&lKING"
+    else if {_p} has permission "rank.vip":
+        set {_rank} to "&a&lVIP"
+
+    set {_bal} to balance of {_p}
+    set {_balStr} to routerFormatNumber({_bal})
+
+    set {_rawCoin} to PlaceholderAPI.setPlaceholders({_p}, "%%playerpoints_points%%")
+    set {_coinVal} to ({_rawCoin} parsed as number) ? 0
+    set {_coinStr} to routerFormatNumber({_coinVal})
+
+    set {_tp} to ({talent::%{_u}%::points} ? 0)
+    set {_bounty} to ({bounty::%{_u}%} ? 1000000)
+    set {_bountyStr} to routerFormatNumber({_bounty})
+
+    set {_power} to "&7Vô Quả Giả (Chưa học võ)"
+    if {df_data::%{_u}%::fruit} is set:
+        set {_fKey} to {df_data::%{_u}%::fruit}
+        set {_dfName} to getDFDisplayName({_fKey})
+        set {_power} to "&dTrái Ác Quỷ: &e%{_dfName}%"
+    else if {martial_style::%{_u}%} is set:
+        set {_mKey} to {martial_style::%{_u}%}
+        set {_mName} to getMartialDisplayName({_mKey})
+        set {_power} to "&aVõ Học: &e%{_mName}%"
+
+    set {_oreLv} to "Cấp 1 (Cơ Bản)"
+    if {_p} has permission "ore.level5":
+        set {_oreLv} to "Cấp 5 (Thần Thoại)"
+    else if {_p} has permission "ore.level4":
+        set {_oreLv} to "Cấp 4 (Cực Phẩm)"
+    else if {_p} has permission "ore.level3":
+        set {_oreLv} to "Cấp 3 (Hiếm)"
+    else if {_p} has permission "ore.level2":
+        set {_oreLv} to "Cấp 2 (Nâng Cao)"
+
+    # Slot 4: Hồ Sơ Hải Tặc
+    delete {_pLore::*}
+    set {_pLore::1} to "&8▪ &7Phẩm cấp: &6&lHẢI TẶC ĐẠI HẢI TRÌNH"
+    set {_pLore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_pLore::3} to "&f❖ Danh Vọng Rank: %{_rank}%"
+    set {_pLore::4} to "&f❖ Tiền Mặt: &a$%{_balStr}%"
+    set {_pLore::5} to "&f❖ Xu Web/Point: &e%{_coinStr}% Xu"
+    set {_pLore::6} to "&f❖ Điểm Thiên Phú: &b%{_tp}% Điểm"
+    set {_pLore::7} to "&f❖ Tiền Truy Nã: &6%{_bountyStr}% Beri"
+    set {_pLore::8} to "&f❖ Năng Lực Chiến Đấu: %{_power}%"
+    set {_pLore::9} to "&f❖ Lò Khai Khoáng Đảo: &a%{_oreLv}%"
+    set {_pLore::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_pLore::11} to "&7Bảng tổng hợp hồ sơ cá nhân hải tặc."
+    set {_head} to makePlayerProfileHead({_p}, {_pName}, {_pLore::*})
+    set slot 4 of {_inv} to {_head}
+
+    # Slot 20: Nhóm 1 — Năng Lực Ác Quỷ & Võ Học
+    delete {_g1Lore::*}
+    set {_g1Lore::1} to "&8▪ &7Hệ thống: &c&lTRÁI ÁC QUỶ & VÕ HỌC"
+    set {_g1Lore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_g1Lore::3} to "&f❖ Kho 8 Trái Ác Quỷ & 2 Đại Môn Phái Võ Học"
+    set {_g1Lore::4} to "&f❖ Thí nghiệm Vegapunk & Bách Khoa Toàn Thư"
+    set {_g1Lore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_g1Lore::6} to "&a✔ Đã sẵn sàng tương tác"
+    set {_g1Lore::7} to "&e▸ Click: &fMở Menu Nhóm 1"
+    set {_itemG1} to makeCustomRPItem("fruit_mera", "&c&l✦ NĂNG LỰC ÁC QUỶ & VÕ HỌC ✦", {_g1Lore::*})
+    set slot 20 of {_inv} to {_itemG1}
+
+    # Slot 22: Nhóm 2 — Bá Khí Haki & Chiến Trường
+    delete {_g2Lore::*}
+    set {_g2Lore::1} to "&8▪ &7Hệ thống: &b&lBÁ KHÍ & CHIẾN TRANH"
+    set {_g2Lore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_g2Lore::3} to "&f❖ Haki Ba Màu: Quan Sát, Vũ Trang, Bá Vương"
+    set {_g2Lore::4} to "&f❖ Bảng Truy Nã Wanted & Boss Thế Giới / KOTH"
+    set {_g2Lore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_g2Lore::6} to "&a✔ Đã sẵn sàng tương tác"
+    set {_g2Lore::7} to "&e▸ Click: &fMở Menu Nhóm 2"
+    set {_itemG2} to makeCustomRPItem("haki_hao", "&b&l✦ BÁ KHÍ HAKI & CHIẾN TRƯỜNG ✦", {_g2Lore::*})
+    set slot 22 of {_inv} to {_itemG2}
+
+    # Slot 24: Nhóm 3 — Thiên Phú & Trang Bị AoV
+    delete {_g3Lore::*}
+    set {_g3Lore::1} to "&8▪ &7Hệ thống: &6&lTHIÊN PHÚ & TRANG BỊ LIÊN QUÂN"
+    set {_g3Lore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_g3Lore::3} to "&f❖ Bảng 9 Chỉ Số & Nâng Cấp Thiên Phú"
+    set {_g3Lore::4} to "&f❖ Khay 6 Ô Trang Bị AoV & Xưởng Rèn 12 Cực Phẩm"
+    set {_g3Lore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_g3Lore::6} to "&a✔ Đã sẵn sàng tương tác"
+    set {_g3Lore::7} to "&e▸ Click: &fMở Menu Nhóm 3"
+    set {_itemG3} to makeCustomRPItem("thanh_kiem", "&6&l✦ THIÊN PHÚ & TRANG BỊ AOV ✦", {_g3Lore::*})
+    set slot 24 of {_inv} to {_itemG3}
+
+    # Slot 29: Nhóm 4 — Đại Xưởng Rèn Giáp & Kiếm
+    delete {_g4Lore::*}
+    set {_g4Lore::1} to "&8▪ &7Hệ thống: &7&lRÈN ĐÚC & DANH KIẾM MEITO"
+    set {_g4Lore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_g4Lore::3} to "&f❖ Lò Rèn 3 Bộ Giáp Hộ Mệnh Tier 1-3"
+    set {_g4Lore::4} to "&f❖ Xưởng 13 Danh Kiếm One Piece & Đe Hắc Kiếm"
+    set {_g4Lore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_g4Lore::6} to "&a✔ Đã sẵn sàng tương tác"
+    set {_g4Lore::7} to "&e▸ Click: &fMở Menu Nhóm 4"
+    set {_itemG4} to makeCustomRPItem("yoru", "&7&l✦ ĐẠI XƯỞNG RÈN GIÁP & KIẾM ✦", {_g4Lore::*})
+    set slot 29 of {_inv} to {_itemG4}
+
+    # Slot 31: Nhóm 5 — Đệ Tử Đồng Hành & Hợp Thể (Ghast Tear phát sáng)
+    delete {_g5Lore::*}
+    set {_g5Lore::1} to "&8▪ &7Hệ thống: &3&lĐỆ TỬ & HỢP THỂ PORATA"
+    set {_g5Lore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_g5Lore::3} to "&f❖ Trang Bị, Cấp Độ & Trí Tuệ Nhân Tạo AI"
+    set {_g5Lore::4} to "&f❖ Bông Tai Porata, Kho Đậu Thần & 5 Bùa 24h"
+    set {_g5Lore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_g5Lore::6} to "&a✔ Đã sẵn sàng tương tác"
+    set {_g5Lore::7} to "&e▸ Click: &fMở Menu Nhóm 5"
+    set {_itemG5} to makePorataIcon("&3&l✦ ĐỆ TỬ ĐỒNG HÀNH & HỢP THỂ ✦", {_g5Lore::*})
+    set slot 31 of {_inv} to {_itemG5}
+
+    # Slot 33: Nhóm 6 — Hạm Đội, Đảo & Kinh Tế
+    delete {_g6Lore::*}
+    set {_g6Lore::1} to "&8▪ &7Hệ thống: &a&lHẠM ĐỘI & SKYBLOCK ISLAND"
+    set {_g6Lore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_g6Lore::3} to "&f❖ Băng Hải Tặc Bang Hội & 3 Cờ Buff 3D"
+    set {_g6Lore::4} to "&f❖ Nâng Cấp Đảo, Lò Quặng 5 Cấp & Chợ Kinh Tế"
+    set {_g6Lore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_g6Lore::6} to "&a✔ Đã sẵn sàng tương tác"
+    set {_g6Lore::7} to "&e▸ Click: &fMở Menu Nhóm 6"
+    set {_itemG6} to makeCustomRPItem("flag_dragon", "&a&l✦ HẠM ĐỘI, ĐẢO & KINH TẾ ✦", {_g6Lore::*})
+    set slot 33 of {_inv} to {_itemG6}
+
+    # Slot 47: Ngân Hàng Quy Đổi (Money ⇄ Coin)
+    set {_pBal} to {_p}'s balance
+    set {_balStr} to routerFormatNumber({_pBal})
+    set {_coinBal} to getCoinBalance({_p})
+    set {_coinStr} to routerFormatNumber({_coinBal})
+    delete {_bankLore::*}
+    set {_bankLore::1} to "&8▪ &7Tỷ giá niêm yết: &a$10,000 Money &f= &61 Coin"
+    set {_bankLore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_bankLore::3} to "&f❖ Money hiện có: &a$%{_balStr}%"
+    set {_bankLore::4} to "&f❖ Coin hiện có: &6%{_coinStr}% Coin"
+    set {_bankLore::5} to "&f❖ Đổi nhanh Money sang Coin để mua Trang Bị RPG"
+    set {_bankLore::6} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_bankLore::7} to "&e▸ Click: &fMở Ngân Hàng Quy Đổi (/nganhang)"
+    set slot 47 of {_inv} to makeGlowingItem(emerald, "&6&l✦ NGÂN HÀNG QUY ĐỔI (MONEY ⇄ COIN) ✦", {_bankLore::*})
+
+    # Slot 49: Bảng Điểm Sidebar
+    delete {_sbLore::*}
+    set {_sbLore::1} to "&8▪ &7Chức năng: &b&lBẢNG ĐIỂM SIDEBAR"
+    set {_sbLore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_sbLore::3} to "&f❖ Làm mới ngay lập tức thông tin hiển thị"
+    set {_sbLore::4} to "&f❖ Bật hoặc tắt giao diện hiển thị bên phải"
+    set {_sbLore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_sbLore::6} to "&e▸ Click: &fLàm mới / Bật-Tắt (/bangdiem)"
+    set {_sbItem} to compass named colored "&b&l✦ BẢNG ĐIỂM SIDEBAR (/bangdiem) ✦" with lore {_sbLore::*}
+    set slot 49 of {_inv} to {_sbItem}
+
+    openStandardUI({_p}, {_inv}, "UI_ROOT", "NONE")
+
+# ---------------------------------------------------------------------
+# 4. GIAO DIỆN CẤP 2 — NHÓM 1: NĂNG LỰC ÁC QUỶ & VÕ HỌC (36 Ô)
+# ---------------------------------------------------------------------
+
+function openUIG1(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G1", "&c&l✦ NĂNG LỰC ÁC QUỶ & VÕ HỌC ✦", 4, red stained glass pane named " ", "UI_ROOT", "Trung Tâm Hải Tặc")
+
+    # Slot 10: UI_G1_A — Kho Năng Lực Trái Ác Quỷ
+    delete {_lA::*}
+    set {_lA::1} to "&8▪ &7Phân loại: &c&lCHIẾN KỸ TRÁI ÁC QUỶ"
+    set {_lA::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lA::3} to "&f❖ Quản lý Mastery Lv.1-100 & EXP Kỹ Năng"
+    set {_lA::4} to "&f❖ Thông số 3 Chiêu Thức & Kích Hoạt Thức Tỉnh"
+    set {_lA::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lA::6} to "&7Lệnh gõ tắt: &e/traiacquy &7hoặc &e/df"
+    set {_lA::7} to "&e▸ Click: &fMở Kho Năng Lực"
+    set {_itemA} to makeCustomRPItem("fruit_mera", "&c&l✦ KHO NĂNG LỰC TRÁI ÁC QUỶ ✦", {_lA::*})
+    set slot 10 of {_inv} to {_itemA}
+
+    # Slot 12: UI_G1_B — Võ Học Đại Tông Sư
+    delete {_lB::*}
+    set {_lB::1} to "&8▪ &7Phân loại: &a&lVÕ HỌC THUẦN TÚY (VÔ QUẢ GIẢ)"
+    set {_lB::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lB::3} to "&f❖ Kiếm Đạo (+15%% Crit DMG) & Lục Thức (+8%% Né)"
+    set {_lB::4} to "&f❖ Hoàn toàn miễn nhiễm Lời Nguyền Nước Biển"
+    set {_lB::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lB::6} to "&7Lệnh gõ tắt: &e/vohoc &7hoặc &e/martial"
+    set {_lB::7} to "&e▸ Click: &fMở Võ Học Đại Tông Sư"
+    set {_itemB} to makeCustomRPItem("kiem_dao", "&a&l✦ VÕ HỌC ĐẠI TÔNG SƯ ✦", {_lB::*})
+    set slot 12 of {_inv} to {_itemB}
+
+    # Slot 14: UI_G1_C — Phòng Thí Nghiệm Vegapunk
+    delete {_lC::*}
+    set {_lC::1} to "&8▪ &7Phân loại: &d&lKHOA HỌC & ĐIỀU CHẾ ÁC QUỶ"
+    set {_lC::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lC::3} to "&f❖ Giám định Trái Bí Ẩn, Chiết xuất Tinh Hoa"
+    set {_lC::4} to "&f❖ Mua Rumble Ball, Thuốc Xóa Trái & Đá Thức Tỉnh"
+    set {_lC::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lC::6} to "&7Lệnh gõ tắt: &e/giamdinh &7hoặc &e/vegapunk"
+    set {_lC::7} to "&e▸ Click: &fVào Phòng Thí Nghiệm"
+    set {_itemC} to makeCustomRPItem("rumble_ball", "&d&l✦ PHÒNG THÍ NGHIỆM VEGAPUNK ✦", {_lC::*})
+    set slot 14 of {_inv} to {_itemC}
+
+    # Slot 16: UI_G1_D — Bách Khoa Trái Ác Quỷ
+    delete {_lD::*}
+    set {_lD::1} to "&8▪ &7Phân loại: &9&lĐỒ GIÁM TOÀN THƯ"
+    set {_lD::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lD::3} to "&f❖ Sưu tập 8 Trái Ác Quỷ Epic & Tier S"
+    set {_lD::4} to "&f❖ Thưởng vĩnh viễn tối đa +12.0%% Sát Thương"
+    set {_lD::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lD::6} to "&7Lệnh gõ tắt: &e/bachkhoatrai &7hoặc &e/pokedex"
+    set {_lD::7} to "&e▸ Click: &fTra Cứu Bách Khoa"
+    set {_itemD} to makeCustomRPItem("devil_fruit_encyclopedia", "&9&l✦ BÁCH KHOA TRÁI ÁC QUỶ ✦", {_lD::*})
+    set slot 16 of {_inv} to {_itemD}
+
+    # Slot 31: Tóm tắt Năng Lực hiện tại + Tinh Hoa Ác Quỷ
+    set {_curPower} to "&7Vô Năng Lực"
+    set {_dfMastery} to 1
+    if {df_data::%{_u}%::fruit} is set:
+        set {_rawF} to {df_data::%{_u}%::fruit}
+        set {_dfName} to getDFDisplayName({_rawF})
+        set {_curPower} to "&dTrái Ác Quỷ: &e%{_dfName}%"
+        set {_dfMastery} to ({df_data::%{_u}%::mastery} ? 1)
+    else if {martial_style::%{_u}%} is set:
+        set {_mKey} to {martial_style::%{_u}%}
+        set {_mName} to getMartialDisplayName({_mKey})
+        set {_curPower} to "&aVõ Học: &e%{_mName}%"
+        set {_dfMastery} to ({martial_mastery::%{_u}%} ? 1)
+
+    set {_essCnt} to 0
+    loop integers from 0 to 40:
+        set {_it} to slot loop-integer of {_p}'s inventory
+        if {_it} is set:
+            if {_it} is not air:
+                if type of {_it} is not air:
+                    if string tag "SkyblockItem" of nbt compound of {_it} is "df_essence":
+                        add item amount of {_it} to {_essCnt}
+
+    delete {_infoLore::*}
+    set {_infoLore::1} to "&8▪ &7Hồ sơ: &e&lNGỮ CẢNH NĂNG LỰC"
+    set {_infoLore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_infoLore::3} to "&f❖ Năng lực đang kích hoạt: %{_curPower}%"
+    set {_infoLore::4} to "&f❖ Tiến trình Mastery: &bLv.%{_dfMastery}%"
+    set {_infoLore::5} to "&f❖ Tinh Hoa Ác Quỷ trong túi: &5%{_essCnt}% Tinh Hoa"
+    set {_infoLore::6} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_infoLore::7} to "&7Sử dụng các menu con để điều chỉnh."
+    set {_itemInfo} to nether star named colored "&6&l✦ TỔNG QUAN NĂNG LỰC ✦" with lore {_infoLore::*}
+    set slot 31 of {_inv} to {_itemInfo}
+
+    openStandardUI({_p}, {_inv}, "UI_G1", "UI_ROOT")
+
+# ---------------------------------------------------------------------
+# 5. GIAO DIỆN CẤP 2 — NHÓM 2: BÁ KHÍ HAKI & CHIẾN TRƯỜNG (36 Ô)
+# ---------------------------------------------------------------------
+
+function openUIG2(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G2", "&b&l✦ BÁ KHÍ HAKI & CHIẾN TRƯỜNG ✦", 4, light blue stained glass pane named " ", "UI_ROOT", "Trung Tâm Hải Tặc")
+
+    # Slot 11: UI_G2_A — Hệ Thống Haki Ba Màu
+    delete {_lA::*}
+    set {_lA::1} to "&8▪ &7Phân loại: &b&lBÁ KHÍ HAKI"
+    set {_lA::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lA::3} to "&f❖ Quan Sát (Né & Soi), Vũ Trang (Crit & Ryuo)"
+    set {_lA::4} to "&f❖ Bá Vương Khí (Choáng AOE & Cường Hóa ST)"
+    set {_lA::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lA::6} to "&7Lệnh gõ tắt: &e/haki &7hoặc &e/hakis"
+    set {_lA::7} to "&e▸ Click: &fMở Bảng Haki"
+    set {_itemA} to makeCustomRPItem("haki_buso", "&b&l✦ HỆ THỐNG HAKI BA MÀU ✦", {_lA::*})
+    set slot 11 of {_inv} to {_itemA}
+
+    # Slot 13: UI_G2_B — Bảng Truy Nã Wanted
+    delete {_lB::*}
+    set {_lB::1} to "&8▪ &7Phân loại: &4&lSĂN TIỀN THƯỞNG HẢI TẶC"
+    set {_lB::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lB::3} to "&f❖ Bảng Xếp Hạng Top Tiền Thưởng Hải Tặc"
+    set {_lB::4} to "&f❖ Đặt tiền truy nã & Săn đầu đối thủ PvP"
+    set {_lB::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lB::6} to "&7Lệnh gõ tắt: &e/truyna &7hoặc &e/bounty"
+    set {_lB::7} to "&e▸ Click: &fMở Bảng Wanted"
+    set {_itemB} to makeCustomRPItem("bounty_poster", "&4&l✦ BẢNG TRUY NÃ WANTED ✦", {_lB::*})
+    set slot 13 of {_inv} to {_itemB}
+
+    # Slot 15: UI_G2_C — Sự Kiện Boss & KOTH
+    delete {_lC::*}
+    set {_lC::1} to "&8▪ &7Phân loại: &e&lCHIẾN TRƯỜNG & THẾ GIỚI"
+    set {_lC::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lC::3} to "&f❖ Trái Hoang Dã (2h), 3 Siêu Boss Đô Đốc (3h)"
+    set {_lC::4} to "&f❖ Chiến trường KOTH Laugh Tale & Cẩm Nang MOBA"
+    set {_lC::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lC::6} to "&7Lệnh gõ tắt: &e/events &7hoặc &e/koth"
+    set {_lC::7} to "&e▸ Click: &fXem Lịch Sự Kiện"
+    set {_itemC} to makeCustomRPItem("boss_akainu_icon", "&e&l✦ SỰ KIỆN BOSS & KOTH ✦", {_lC::*})
+    set slot 15 of {_inv} to {_itemC}
+
+    # Slot 31: Thông tin Haki & Truy Nã cá nhân
+    set {_bounty} to ({bounty::%{_u}%} ? 1000000)
+    set {_bountyStr} to routerFormatNumber({_bounty})
+    set {_hakiMastery} to {haki_mastery::%{_u}%}
+    if {_hakiMastery} is not set:
+        set {_hakiMastery} to 1
+    set {_maxHaki} to 100 + ({_hakiMastery} * 2)
+
+    delete {_infoLore::*}
+    set {_infoLore::1} to "&8▪ &7Hồ sơ: &b&lTIỀM LỰC CHIẾN ĐẤU"
+    set {_infoLore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_infoLore::3} to "&f❖ Cấp Độ Bá Khí: &bLv.%{_hakiMastery}%"
+    set {_infoLore::4} to "&f❖ Giới Hạn Bá Khí: &e%{_maxHaki}% Điểm"
+    set {_infoLore::5} to "&f❖ Tiền Truy Nã Hiện Tại: &6%{_bountyStr}% Beri"
+    set {_infoLore::6} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_infoLore::7} to "&7Rèn luyện Haki tăng uy danh hải tặc."
+    set {_itemInfo} to makeCustomRPItem("haki_ken", "&b&l✦ THÔNG SỐ BÁ KHÍ & TRUY NÃ ✦", {_infoLore::*})
+    set slot 31 of {_inv} to {_itemInfo}
+
+    openStandardUI({_p}, {_inv}, "UI_G2", "UI_ROOT")
+
+# ---------------------------------------------------------------------
+# 6. GIAO DIỆN CẤP 2 — NHÓM 3: THIÊN PHÚ & TRANG BỊ AOV (36 Ô)
+# ---------------------------------------------------------------------
+
+function openUIG3(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G3", "&6&l✦ THIÊN PHÚ & TRANG BỊ AOV ✦", 4, orange stained glass pane named " ", "UI_ROOT", "Trung Tâm Hải Tặc")
+
+    # Slot 11: UI_G3_A — Thiên Phú & Chỉ Số Tổng
+    delete {_lA::*}
+    set {_lA::1} to "&8▪ &7Phân loại: &b&lTIỀM NĂNG CHIẾN ĐẤU"
+    set {_lA::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lA::3} to "&f❖ Bảng Giám Sát 9 Chỉ Số Thực Chiến Toàn Diện"
+    set {_lA::4} to "&f❖ Nâng cấp 4 nhánh & Quả Cầu Tẩy Thiên Phú"
+    set {_lA::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lA::6} to "&7Lệnh gõ tắt: &e/thienphu &7hoặc &e/talent"
+    set {_lA::7} to "&e▸ Click: &fMở Bảng Thiên Phú"
+    set {_itemA} to makeCustomRPItem("talent_reset", "&b&l✦ THIÊN PHÚ & CHỈ SỐ TỔNG ✦", {_lA::*})
+    set slot 11 of {_inv} to {_itemA}
+
+    # Slot 13: UI_G3_B — Khay Trang Bị Liên Quân
+    delete {_lB::*}
+    set {_lB::1} to "&8▪ &7Phân loại: &6&lKHAY ĐỒ CHIẾN LƯỢC (3-6 Ô)"
+    set {_lB::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lB::3} to "&f❖ Lắp/tháo trang bị kích hoạt nội tại tức thì"
+    set {_lB::4} to "&f❖ Mở rộng tối đa 6 ô chiến đấu theo Rank"
+    set {_lB::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lB::6} to "&7Lệnh gõ tắt: &e/trangbilq &7hoặc &e/build"
+    set {_lB::7} to "&e▸ Click: &fMở Khay Trang Bị"
+    set {_itemB} to makeCustomRPItem("thanh_kiem", "&6&l✦ KHAY TRANG BỊ LIÊN QUÂN ✦", {_lB::*})
+    set slot 13 of {_inv} to {_itemB}
+
+    # Slot 15: UI_G3_C — Xưởng Rèn Trang Bị AoV
+    delete {_lC::*}
+    set {_lC::1} to "&8▪ &7Phân loại: &e&lCHẾ TẠO 12 BẢO VẬT LIÊN QUÂN"
+    set {_lC::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lC::3} to "&f❖ Rèn 6 món Công Vật Lý & 6 món Thủ Vệ"
+    set {_lC::4} to "&f❖ Mua Rương Trang Bị AoV Bí Ẩn"
+    set {_lC::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lC::6} to "&7Lệnh gõ tắt: &e/shopaov &7hoặc &e/repaov"
+    set {_lC::7} to "&e▸ Click: &fMở Xưởng Rèn AoV"
+    set {_itemC} to makeCustomRPItem("aov_chest", "&e&l✦ XƯỞNG RÈN TRANG BỊ AOV ✦", {_lC::*})
+    set slot 15 of {_inv} to {_itemC}
+
+    # Slot 31: Tóm tắt Thiên Phú & Khay AoV
+    set {_tp} to ({talent::%{_u}%::points} ? 0)
+    delete {_infoLore::*}
+    set {_infoLore::1} to "&8▪ &7Hồ sơ: &6&lTỔNG HỢP TRANG BỊ & ĐIỂM"
+    set {_infoLore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_infoLore::3} to "&f❖ Điểm Thiên Phú Chưa Dùng: &b%{_tp}% Điểm"
+    set {_infoLore::4} to "&f❖ Khay Trang Bị: Đang sử dụng hệ thống AoV"
+    set {_infoLore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_infoLore::6} to "&7Gõ &e/ghepthe &7để dung hợp thẻ thiên phú."
+    set {_itemInfo} to gold ingot named colored "&6&l✦ THIÊN PHÚ & KHAY ĐỒ ✦" with lore {_infoLore::*}
+    set slot 31 of {_inv} to {_itemInfo}
+
+    openStandardUI({_p}, {_inv}, "UI_G3", "UI_ROOT")
+
+# ---------------------------------------------------------------------
+# 7. GIAO DIỆN CẤP 2 — NHÓM 4: ĐẠI XƯỞNG RÈN GIÁP & KIẾM (36 Ô)
+# ---------------------------------------------------------------------
+
+function openUIG4(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G4", "&7&l✦ ĐẠI XƯỞNG RÈN GIÁP & KIẾM ✦", 4, gray stained glass pane named " ", "UI_ROOT", "Trung Tâm Hải Tặc")
+
+    # Slot 11: UI_G4_A — Lò Rèn 3 Bộ Giáp Tier 1-3
+    delete {_lA::*}
+    set {_lA::1} to "&8▪ &7Phân loại: &6&lGIÁP BẢO HỘ RPG TẬP TRUNG"
+    set {_lA::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lA::3} to "&f❖ Bộ 1 (Hộ Vệ Đại Địa), Bộ 2 (Huyết Chiến Sĩ)"
+    set {_lA::4} to "&f❖ Bộ 3 (Bất Diệt Thánh Quang) — Gom trọn 1 màn hình"
+    set {_lA::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lA::6} to "&7Lệnh gõ tắt: &e/rengiap"
+    set {_lA::7} to "&e▸ Click: &fMở Lò Rèn Giáp"
+    set {_itemA} to iron chestplate named colored "&6&l✦ LÒ RÈN 3 BỘ GIÁP TIER 1-3 ✦" with lore {_lA::*}
+    set slot 11 of {_inv} to {_itemA}
+
+    # Slot 13: UI_G4_B — Rèn Vũ Khí & Công Cụ Farm
+    delete {_lB::*}
+    set {_lB::1} to "&8▪ &7Phân loại: &d&lVŨ KHÍ & CÔNG CỤ SKYBLOCK"
+    set {_lB::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lB::3} to "&f❖ Kiếm Huyết Chiến, Cung Băng Giá"
+    set {_lB::4} to "&f❖ Cúp Khai Khoáng & Rìu Khai Thác Skyblock"
+    set {_lB::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lB::6} to "&7Lệnh gõ tắt: &e/rencongcu"
+    set {_lB::7} to "&e▸ Click: &fMở Rèn Công Cụ"
+    set {_itemB} to diamond pickaxe named colored "&d&l✦ RÈN VŨ KHÍ & CÔNG CỤ FARM ✦" with lore {_lB::*}
+    set slot 13 of {_inv} to {_itemB}
+
+    # Slot 15: UI_G4_C — Xưởng 13 Danh Kiếm Meito
+    delete {_lC::*}
+    set {_lC::1} to "&8▪ &7Phân loại: &e&lDANH KIẾM TRUYỀN THUYẾT"
+    set {_lC::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lC::3} to "&f❖ Rèn 13 Danh Kiếm One Piece chuẩn Model 3D"
+    set {_lC::4} to "&f❖ Đe Tôi Luyện Hắc Kiếm Vĩnh Cửu (Kokuto Tracker)"
+    set {_lC::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lC::6} to "&7Lệnh gõ tắt: &e/danhkiem &7hoặc &e/meito"
+    set {_lC::7} to "&e▸ Click: &fMở Xưởng Danh Kiếm"
+    set {_itemC} to makeCustomRPItem("yoru", "&e&l✦ XƯỞNG 13 DANH KIẾM MEITO ✦", {_lC::*})
+    set slot 15 of {_inv} to {_itemC}
+
+    # Slot 31: Tóm tắt thông tin thợ rèn
+    delete {_infoLore::*}
+    set {_infoLore::1} to "&8▪ &7Hồ sơ: &7&lĐẠI ĐOÃN THẦN KHÍ"
+    set {_infoLore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_infoLore::3} to "&f❖ Lò rèn hỗ trợ bảo hộ độ bền vật phẩm"
+    set {_infoLore::4} to "&f❖ Danh kiếm có thể thức tỉnh thành Hắc Kiếm"
+    set {_infoLore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_infoLore::6} to "&7Chuẩn bị đủ khoáng sản để chế tạo."
+    set {_itemInfo} to anvil named colored "&7&l✦ THÔNG TIN RÈN ĐÚC ✦" with lore {_infoLore::*}
+    set slot 31 of {_inv} to {_itemInfo}
+
+    openStandardUI({_p}, {_inv}, "UI_G4", "UI_ROOT")
+
+# ---------------------------------------------------------------------
+# 8. GIAO DIỆN CẤP 2 — NHÓM 5: ĐỆ TỬ ĐỒNG HÀNH & HỢP THỂ (36 Ô)
+# ---------------------------------------------------------------------
+
+function openUIG5(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G5", "&3&l✦ ĐỆ TỬ ĐỒNG HÀNH & HỢP THỂ ✦", 4, cyan stained glass pane named " ", "UI_ROOT", "Trung Tâm Hải Tặc")
+
+    # Slot 4: Hồ Sơ Tiến Hóa Đệ Tử
+    set {_hasPet} to false
+    if {disciple::%{_u}%::power} is set:
+        set {_hasPet} to true
+
+    set {_sm} to {disciple::%{_u}%::power} ? 2000
+    set {_smStr} to routerFormatNumber({_sm})
+
+    # Đọc thời gian hồi sinh thực tế từ {disciple_respawn_cd::%uuid%}
+    set {_nowMs} to System.currentTimeMillis()
+    set {_respawnMs} to {disciple_respawn_cd::%{_u}%} ? 0
+    set {_respawnText} to "&aSẵn sàng"
+    if {_nowMs} < {_respawnMs}:
+        set {_remSec} to ceil(({_respawnMs} - {_nowMs}) / 1000)
+        set {_respawnText} to "&cTrọng thương (&e%{_remSec}%s&c)"
+
+    delete {_petLore::*}
+    set {_petLore::1} to "&8▪ &7Phẩm cấp: &b&lĐỆ TỬ TRUYỀN THỪA"
+    set {_petLore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    if {_hasPet} is true:
+        set {_petName} to {disciple::%{_u}%::name}
+        if {_petName} is not set:
+            set {_petName} to "Tiểu Tử"
+        set {_curMode} to {disciple::%{_u}%::mode} ? "follow"
+        set {_modeText} to "&aĐi Theo"
+        if {_curMode} is "home":
+            set {_modeText} to "&dỞ Nhà (Nghỉ ngơi)"
+        else if {_curMode} is "protect":
+            set {_modeText} to "&eBảo Vệ"
+        else if {_curMode} is "attack":
+            set {_modeText} to "&cChiến Đấu"
+        else if {_curMode} is "fusion":
+            set {_modeText} to "&bĐang Hợp Thể Porata"
+        set {_petLore::3} to "&f❖ Tên Đệ Tử: &e%{_petName}%"
+        set {_petLore::4} to "&f❖ Trạng Thái: %{_modeText}%"
+        set {_petLore::5} to "&f❖ Sức Mạnh: &6%{_smStr}% SM"
+        set {_petLore::6} to "&f❖ Hồi Sinh: %{_respawnText}%"
+    else:
+        set {_petLore::3} to "&c✖ Bạn chưa sở hữu Đệ Tử Đồng Hành!"
+        set {_petLore::4} to "&7Nhấn vào nút &6&lMở Khóa Đệ Tử (Slot 22)&7 bên dưới"
+        set {_petLore::5} to "&7với giá &61,000 Coin &7để nhận Đệ Tử xuất chiến!"
+    set {_petLore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_petLore::8} to "&a✔ Triệt tiêu 100%% xung đột Slot 17 cũ"
+    set {_petHead} to makeCustomRPItem("phu_chu_truong_sinh", "&3&l✦ HỒ SƠ TIẾN HÓA ĐỆ TỬ ✦", {_petLore::*})
+    set slot 4 of {_inv} to {_petHead}
+
+    # Slot 11: UI_G5_A — Trang Bị & AI Đệ Tử
+    delete {_lA::*}
+    set {_lA::1} to "&8▪ &7Phân loại: &3&lTRANG BỊ & TÂM LÝ AI"
+    set {_lA::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lA::3} to "&f❖ Mặc 5 món: Mũ, Áo, Quần, Giày, Vũ Khí"
+    set {_lA::4} to "&f❖ Cài đặt Chiến Đấu / Hòa Bình & Tẩy Điểm"
+    set {_lA::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lA::6} to "&7Lệnh gõ tắt: &e/detu gear"
+    set {_lA::7} to "&e▸ Click: &fMở Trang Bị Đệ Tử"
+    set {_itemA} to iron sword named colored "&3&l✦ TRANG BỊ & AI ĐỆ TỬ ✦" with lore {_lA::*}
+    set slot 11 of {_inv} to {_itemA}
+
+    # Slot 13: UI_G5_B — Porata & Kho Đậu Thần (Ghast Tear phát sáng)
+    delete {_lB::*}
+    set {_lB::1} to "&8▪ &7Phân loại: &d&lBẢO VẬT HỢP THỂ & HỒI PHỤC"
+    set {_lB::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lB::3} to "&f❖ Hợp Thể Porata (Cấp 1-5, +50%% đến +150%%)"
+    set {_lB::4} to "&f❖ Trạm Đậu Thần Senzu (Hồi 100%% HP & Thể Lực)"
+    set {_lB::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lB::6} to "&7Lệnh gõ tắt: &e/detu porata"
+    set {_lB::7} to "&e▸ Click: &fMở Bảo Vật Porata"
+    set {_itemB} to makePorataIcon("&d&l✦ PORATA & KHO ĐẬU THẦN ✦", {_lB::*})
+    set slot 13 of {_inv} to {_itemB}
+
+    # Slot 15: UI_G5_C — Bùa 24h & Kỹ Năng Đệ Tử
+    delete {_lC::*}
+    set {_lC::1} to "&8▪ &7Phân loại: &b&lBÙA CHÚ & KỸ NĂNG ĐỆ TỬ"
+    set {_lC::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lC::3} to "&f❖ 5 Loại Bùa 24 Giờ gia hạn bằng Coin Xu"
+    set {_lC::4} to "&f❖ 6 Hệ Kỹ Năng AI Tự Động Xả Siêu Tốc (CD 1s-5s)"
+    set {_lC::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lC::6} to "&7Lệnh gõ tắt: &e/detu skill"
+    set {_lC::7} to "&e▸ Click: &fMở Bùa & Kỹ Năng"
+    set {_itemC} to enchanted book named colored "&b&l✦ BÙA 24H & KỸ NĂNG ĐỆ TỬ ✦" with lore {_lC::*}
+    set slot 15 of {_inv} to {_itemC}
+
+    # Slot 31: Tóm tắt trạng thái Đệ Tử
+    set {_porataLv} to {disciple::%{_u}%::porata_lv} ? 0
+    set {_porataMode} to {disciple::%{_u}%::mode} ? "follow"
+    set {_porataStatus} to "&7Chưa Mở Khóa"
+    if {_porataLv} > 0:
+        if {_porataMode} is "fusion":
+            set {_porataStatus} to "&aĐang Hợp Thể (Cấp %{_porataLv}%)"
+        else:
+            set {_porataStatus} to "&eSẵn Sàng (Cấp %{_porataLv}%)"
+
+    delete {_infoLore::*}
+    set {_infoLore::1} to "&8▪ &7Hồ sơ: &3&lLIÊN KẾT LINH HỒN"
+    set {_infoLore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_infoLore::3} to "&f❖ Trạng Thái Porata: %{_porataStatus}%"
+    set {_infoLore::4} to "&f❖ Cấp Bông Tai: &bCấp %{_porataLv}%/5"
+    set {_infoLore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_infoLore::6} to "&7Đồng hành hỗ trợ đắc lực trong mọi trận chiến."
+    set {_itemInfo} to ghast tear named colored "&3&l✦ TRẠNG THÁI LIÊN KẾT ✦" with lore {_infoLore::*}
+    set slot 31 of {_inv} to {_itemInfo}
+
+    # Slot 22: Nút Mở Khóa Đệ Tử Đồng Hành (1,000 Coin)
+    delete {_buyLore::*}
+    set {_buyLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    if {_hasPet} is true:
+        set {_buyLore::2} to "&8▪ &7Trạng thái: &a&lĐÃ MỞ KHÓA THÀNH CÔNG"
+        set {_buyLore::3} to "&fBạn đã sở hữu Đệ Tử Đồng Hành."
+        set {_buyLore::4} to "&fHãy trang bị vũ khí, giáp và học chiêu thức cho Đệ Tử!"
+        set {_buyLore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set slot 22 of {_inv} to makeGlowingItem(emerald, "&a&l✦ ĐÃ SỞ HỮU ĐỆ TỬ ĐỒNG HÀNH ✦", {_buyLore::*})
+    else:
+        set {_buyLore::2} to "&8▪ &7Bậc khởi điểm: &bTIER 1 &8(Sức Mạnh 2,000)"
+        set {_buyLore::3} to "&8▪ &7Hệ võ học: &aKiếm Đạo &7hoặc &bLục Thức &7(Ngẫu nhiên)"
+        set {_buyLore::4} to "&f❖ Đệ tử độc quyền đồng hành chiến đấu trên Đại Hải Trình."
+        set {_buyLore::5} to "&f❖ Tự động dùng chiêu thức, mang 5 món trang bị & thú cưỡi."
+        set {_buyLore::6} to "&f❖ Hỗ trợ hợp thể Bông Tai Porata gia tăng sức mạnh vượt trội."
+        set {_buyLore::7} to ""
+        set {_buyLore::8} to "&e✦ CHI PHÍ MỞ KHÓA:"
+        set {_buyLore::9} to "&f• Giá: &61,000 Coin &8(Đổi tại /nganhang)"
+        set {_buyLore::10} to ""
+        set {_buyLore::11} to "&a▸ Nhấn để Mở Khóa Đệ Tử Ngay!"
+        set {_buyLore::12} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set slot 22 of {_inv} to makeGlowingItem(nether star, "&6&l✦ MỞ KHÓA ĐỆ TỬ (1,000 COIN) ✦", {_buyLore::*})
+
+    openStandardUI({_p}, {_inv}, "UI_G5", "UI_ROOT")
+
+# ---------------------------------------------------------------------
+# 9. GIAO DIỆN CẤP 2 — NHÓM 6: HẠM ĐỘI, ĐẢO & KINH TẾ (36 Ô)
+# ---------------------------------------------------------------------
+
+function openUIG6(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G6", "&a&l✦ HẠM ĐỘI, ĐẢO & KINH TẾ ✦", 4, lime stained glass pane named " ", "UI_ROOT", "Trung Tâm Hải Tặc")
+
+    # Slot 11: UI_G6_A — Băng Hải Tặc & Cờ Buff 3D
+    delete {_lA::*}
+    set {_lA::1} to "&8▪ &7Phân loại: &4&lBANG HỘI HẢI TẶC"
+    set {_lA::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lA::3} to "&f❖ Danh sách thuyền viên & Quản lý bang phái"
+    set {_lA::4} to "&f❖ 3 Cờ Buff 3D: Hỏa Long, Hoàng Kim, Bất Tử Điểu"
+    set {_lA::5} to "&f❖ Nhiệm Vụ Hải Trình Vĩ Đại & Đảo Laugh Tale KOTH"
+    set {_lA::6} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lA::7} to "&7Lệnh gõ tắt: &e/banghaitac &7hoặc &e/crew"
+    set {_lA::8} to "&e▸ Click: &fMở Băng Hải Tặc"
+    set {_itemA} to makeCustomRPItem("flag_dragon", "&4&l✦ BĂNG HẢI TẶC & CỜ BUFF 3D ✦", {_lA::*})
+    set slot 11 of {_inv} to {_itemA}
+
+    # Slot 13: UI_G6_B — Căn Cứ Đảo & Lò Quặng
+    delete {_lB::*}
+    set {_lB::1} to "&8▪ &7Phân loại: &a&lLÃNH ĐỊA SKYBLOCK & KHAI KHOÁNG"
+    set {_lB::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lB::3} to "&f❖ Bảng Điều Khiển Đảo & Bật/Tắt Bay Skyblock"
+    set {_lB::4} to "&f❖ Trạng thái Lò Quặng 5 Cấp & Điểm Uy Danh Đảo"
+    set {_lB::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lB::6} to "&7Lệnh gõ tắt: &e/is &7hoặc &e/oresync"
+    set {_lB::7} to "&e▸ Click: &fMở Căn Cứ Đảo"
+    set {_itemB} to furnace named colored "&a&l✦ CĂN CỨ ĐẢO & LÒ QUẶNG ✦" with lore {_lB::*}
+    set slot 13 of {_inv} to {_itemB}
+
+    # Slot 15: UI_G6_C — Chợ Kinh Tế & Rank
+    delete {_lC::*}
+    set {_lC::1} to "&8▪ &7Phân loại: &e&lGIAO THƯƠNG & DANH VỌNG"
+    set {_lC::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lC::3} to "&f❖ Cửa Hàng Vật Phẩm, Bán Nhanh & Chợ Đấu Giá /ah"
+    set {_lC::4} to "&f❖ Sách Phù Phép Đặc Biệt /ce & Nâng Cấp Rank VIP/KING"
+    set {_lC::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_lC::6} to "&7Lệnh gõ tắt: &e/shop &7hoặc &e/coinshop"
+    set {_lC::7} to "&e▸ Click: &fMở Chợ Kinh Tế"
+    set {_itemC} to gold ingot named colored "&e&l✦ CHỢ KINH TẾ & RANK ✦" with lore {_lC::*}
+    set slot 15 of {_inv} to {_itemC}
+
+    # Slot 31: Tóm tắt Đảo & Kinh Tế
+    set {_bal} to balance of {_p}
+    set {_balStr} to routerFormatNumber({_bal})
+    delete {_infoLore::*}
+    set {_infoLore::1} to "&8▪ &7Hồ sơ: &a&lTÀI CHÍNH & LÃNH THỔ"
+    set {_infoLore::2} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_infoLore::3} to "&f❖ Tiền mặt: &a$%{_balStr}%"
+    set {_infoLore::4} to "&f❖ Lò khai khoáng hiện tại: Đã đồng bộ với Đảo"
+    set {_infoLore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_infoLore::6} to "&7Xây dựng đảo vững mạnh để xưng bá biển khơi."
+    set {_itemInfo} to emerald named colored "&a&l✦ TỔNG QUAN HẠM ĐỘI ✦" with lore {_infoLore::*}
+    set slot 31 of {_inv} to {_itemInfo}
+
+    openStandardUI({_p}, {_inv}, "UI_G6", "UI_ROOT")
+
+# ---------------------------------------------------------------------
+# 10. HÀM CẦU NỐI MỞ CÁC GIAO DIỆN CON CẤP 3 (STUBS / BRIDGES)
+# Áp dụng {ui_switching} bảo vệ trạng thái khi chuyển từ Cấp 2 sang Cấp 3
+# ---------------------------------------------------------------------
+
+function openUIG1A(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openDevilFruitGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G1_A"
+    set {ui_parent::%{_u}%} to "UI_G1"
+    delete {ui_switching::%{_u}%}
+
+function openUIG1B(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openMartialGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G1_B"
+    set {ui_parent::%{_u}%} to "UI_G1"
+    delete {ui_switching::%{_u}%}
+
+function openUIG1C(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openAppraisalGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G1_C"
+    set {ui_parent::%{_u}%} to "UI_G1"
+    delete {ui_switching::%{_u}%}
+
+function openUIG1D(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openPokedexGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G1_D"
+    set {ui_parent::%{_u}%} to "UI_G1"
+    delete {ui_switching::%{_u}%}
+
+function openUIG2A(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openHakiGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G2_A"
+    set {ui_parent::%{_u}%} to "UI_G2"
+    delete {ui_switching::%{_u}%}
+
+function openUIG2B(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openBountyGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G2_B"
+    set {ui_parent::%{_u}%} to "UI_G2"
+    delete {ui_switching::%{_u}%}
+
+function openUIG2C(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openEventsGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G2_C"
+    set {ui_parent::%{_u}%} to "UI_G2"
+    delete {ui_switching::%{_u}%}
+
+function openUIG3A(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openTalentUpgradeGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G3_A"
+    set {ui_parent::%{_u}%} to "UI_G3"
+    delete {ui_switching::%{_u}%}
+
+function openUIG3B(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openAoVTrayGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G3_B"
+    set {ui_parent::%{_u}%} to "UI_G3"
+    delete {ui_switching::%{_u}%}
+
+function openUIG3C(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openAoVShopGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G3_C"
+    set {ui_parent::%{_u}%} to "UI_G3"
+    delete {ui_switching::%{_u}%}
+
+function openUIG4A(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openArmorForgeMainGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G4_A"
+    set {ui_parent::%{_u}%} to "UI_G4"
+    delete {ui_switching::%{_u}%}
+
+function openUIG4B(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openGearForgeGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G4_B"
+    set {ui_parent::%{_u}%} to "UI_G4"
+    delete {ui_switching::%{_u}%}
+
+function openUIG4C(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openMeitoForgeGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G4_C"
+    set {ui_parent::%{_u}%} to "UI_G4"
+    delete {ui_switching::%{_u}%}
+
+function openUIG5A(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openDiscipleGearGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G5_A"
+    set {ui_parent::%{_u}%} to "UI_G5"
+    delete {ui_switching::%{_u}%}
+
+function openUIG5B(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openDisciplePorataGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G5_B"
+    set {ui_parent::%{_u}%} to "UI_G5"
+    delete {ui_switching::%{_u}%}
+
+function openUIG5C(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openDiscipleSkillGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G5_C"
+    set {ui_parent::%{_u}%} to "UI_G5"
+    delete {ui_switching::%{_u}%}
+
+function openUIG6A(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openCrewGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G6_A"
+    set {ui_parent::%{_u}%} to "UI_G6"
+    delete {ui_switching::%{_u}%}
+
+function openUIG6B(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openIslandBaseGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G6_B"
+    set {ui_parent::%{_u}%} to "UI_G6"
+    delete {ui_switching::%{_u}%}
+
+function openUIG6C(p: player):
+    set {_u} to uuid of {_p}
+    set {ui_switching::%{_u}%} to true
+    openEconomyHubGUI({_p})
+    set {ui_active::%{_u}%} to "UI_G6_C"
+    set {ui_parent::%{_u}%} to "UI_G6"
+    delete {ui_switching::%{_u}%}
+
+# ---------------------------------------------------------------------
+# 11. SỰ KIỆN QUẢN LÝ TRẠNG THÁI & ĐIỀU PHỐI CLICK/DRAG
+# ---------------------------------------------------------------------
+
+on inventory close:
+    set {_u} to uuid of player
+    # Bảo vệ trạng thái khi đang chuyển trang giữa 2 GUI
+    if {ui_switching::%{_u}%} is true:
+        delete {ui_switching::%{_u}%}
+        stop
+    delete {ui_active::%{_u}%}
+    delete {ui_parent::%{_u}%}
+
+on quit:
+    set {_u} to uuid of player
+    delete {ui_active::%{_u}%}
+    delete {ui_parent::%{_u}%}
+    delete {ui_switching::%{_u}%}
+
+on InventoryDragEvent:
+    set {_who} to event.getWhoClicked()
+    if {_who} is a player:
+        set {_u} to uuid of {_who}
+        if {ui_active::%{_u}%} is set:
+            cancel event
+
+on inventory click:
+    set {_u} to uuid of player
+    if {ui_active::%{_u}%} is not set:
+        stop
+
+    # Khóa cứng chống mọi thao tác di chuyển item Vanilla cho toàn bộ 26 GUI
+    cancel event
+    set {_clickType} to "%click type%"
+    if {_clickType} contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+        player.updateInventory()
+
+    # Nếu click vào túi đồ dưới của người chơi thì chỉ chặn (đã cancel event ở trên), không xử lý nút bấm GUI
+    if clicked inventory is not player's current inventory:
+        stop
+
+    set {_slot} to index of event-slot
+    set {_item} to slot {_slot} of player's current inventory
+
+    set {_activeUI} to {ui_active::%{_u}%}
+    set {_parentUI} to {ui_parent::%{_u}%}
+
+    # =================================================================
+    # A. XỬ LÝ TRỌN GÓI CHO CẤP 1 VÀ CẤP 2 (UI_ROOT, UI_G1..UI_G6)
+    # =================================================================
+    if {_activeUI} is "UI_ROOT" or "UI_G1" or "UI_G2" or "UI_G3" or "UI_G4" or "UI_G5" or "UI_G6":
+        # 1. Nút Quay Lại Menu Cha (Slot 27 hoặc 45)
+        if {_slot} is 27 or 45:
+            if {_item} is set:
+                if "%type of {_item}%" contains "arrow":
+                    if {_parentUI} is set:
+                        if {_parentUI} is not "NONE":
+                            play sound "UI_BUTTON_CLICK" with volume 1 and pitch 1 to player
+                            wait 1 tick
+                            openMenuById(player, {_parentUI})
+                            stop
+
+        # 2. Nút Về Menu Tổng
+        else if {_slot} is 28 or 46:
+            if {_item} is set:
+                if "%type of {_item}%" contains "compass":
+                    play sound "UI_BUTTON_CLICK" with volume 1 and pitch 1.2 to player
+                    wait 1 tick
+                    openMenuById(player, "UI_ROOT")
+                    stop
+
+        # 3. Nút Đóng Giao Diện
+        else if {_slot} is 35 or 53:
+            if {_item} is set:
+                if "%type of {_item}%" contains "barrier":
+                    play sound "BLOCK_NOTE_BASS" with volume 1 and pitch 1 to player
+                    delete {ui_active::%{_u}%}
+                    delete {ui_parent::%{_u}%}
+                    close player's inventory
+                    wait 1 tick
+                    close player's inventory
+                    stop
+
+        # 4. Điều hướng từng màn hình Cấp 1 & Cấp 2
+        if {_activeUI} is "UI_ROOT":
+            if {_slot} is 4:
+                play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to player
+            else if {_slot} is 20:
+                wait 1 tick
+                openMenuById(player, "UI_G1")
+            else if {_slot} is 22:
+                wait 1 tick
+                openMenuById(player, "UI_G2")
+            else if {_slot} is 24:
+                wait 1 tick
+                openMenuById(player, "UI_G3")
+            else if {_slot} is 29:
+                wait 1 tick
+                openMenuById(player, "UI_G4")
+            else if {_slot} is 31:
+                wait 1 tick
+                openMenuById(player, "UI_G5")
+            else if {_slot} is 33:
+                wait 1 tick
+                openMenuById(player, "UI_G6")
+            else if {_slot} is 47:
+                set {ui_bank_return::%{_u}%} to "UI_ROOT"
+                wait 1 tick
+                openMenuById(player, "UI_BANK")
+            else if {_slot} is 49:
+                wait 1 tick
+                close player's inventory
+                delete {ui_active::%{_u}%}
+                delete {ui_parent::%{_u}%}
+                wait 1 tick
+                make player execute command "bangdiem"
+
+        else if {_activeUI} is "UI_G1":
+            if {_slot} is 10:
+                wait 1 tick
+                openMenuById(player, "UI_G1_A")
+            else if {_slot} is 12:
+                wait 1 tick
+                openMenuById(player, "UI_G1_B")
+            else if {_slot} is 14:
+                wait 1 tick
+                openMenuById(player, "UI_G1_C")
+            else if {_slot} is 16:
+                wait 1 tick
+                openMenuById(player, "UI_G1_D")
+
+        else if {_activeUI} is "UI_G2":
+            if {_slot} is 11:
+                wait 1 tick
+                openMenuById(player, "UI_G2_A")
+            else if {_slot} is 13:
+                wait 1 tick
+                openMenuById(player, "UI_G2_B")
+            else if {_slot} is 15:
+                wait 1 tick
+                openMenuById(player, "UI_G2_C")
+
+        else if {_activeUI} is "UI_G3":
+            if {_slot} is 11:
+                wait 1 tick
+                openMenuById(player, "UI_G3_A")
+            else if {_slot} is 13:
+                wait 1 tick
+                openMenuById(player, "UI_G3_B")
+            else if {_slot} is 15:
+                wait 1 tick
+                openMenuById(player, "UI_G3_C")
+
+        else if {_activeUI} is "UI_G4":
+            if {_slot} is 11:
+                wait 1 tick
+                openMenuById(player, "UI_G4_A")
+            else if {_slot} is 13:
+                wait 1 tick
+                openMenuById(player, "UI_G4_B")
+            else if {_slot} is 15:
+                wait 1 tick
+                openMenuById(player, "UI_G4_C")
+
+        else if {_activeUI} is "UI_G5":
+            if {_slot} is 11:
+                wait 1 tick
+                openMenuById(player, "UI_G5_A")
+            else if {_slot} is 13:
+                wait 1 tick
+                openMenuById(player, "UI_G5_B")
+            else if {_slot} is 15:
+                wait 1 tick
+                openMenuById(player, "UI_G5_C")
+            else if {_slot} is 22:
+                if {disciple::%{_u}%::has} is true:
+                    sendSystemMsg(player, "warning", "Bạn đã sở hữu Đệ Tử Đồng Hành rồi!")
+                    play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+                    stop
+                if getCoinBalance(player) < 1000:
+                    sendSystemMsg(player, "error", "Bạn không đủ Coin! Cần 1,000 Coin để mở khóa Đệ Tử (Đổi tại /nganhang).")
+                    play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+                    stop
+                takeCoinBalance(player, 1000)
+                set {disciple::%{_u}%::has} to true
+                set {disciple::%{_u}%::power} to 2000
+                set {disciple::%{_u}%::stamina} to 1000
+                set {disciple::%{_u}%::mode} to "follow"
+                set {disciple::%{_u}%::ate_fruit} to false
+                set {_r} to random integer between 1 and 2
+                if {_r} is 1:
+                    set {disciple::%{_u}%::style} to "kiem_dao"
+                else:
+                    set {disciple::%{_u}%::style} to "luc_thuc"
+                spawnOrUpdateDisciple(player)
+                set {_pName} to name of player
+                broadcastDualCard("&6&l✦ ĐỆ TỬ ĐỒNG HÀNH", "%{_pName}% đã mở khóa thành công Đệ Tử Đồng Hành!", "Một trợ thủ đắc lực với 2,000 Sức Mạnh đã gia nhập chiến trường Hải Tặc! (-1,000 Coin)")
+                play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1.2 to player
+                wait 1 tick
+                openMenuById(player, "UI_G5")
+
+        else if {_activeUI} is "UI_G6":
+            if {_slot} is 11:
+                wait 1 tick
+                openMenuById(player, "UI_G6_A")
+            else if {_slot} is 13:
+                wait 1 tick
+                openMenuById(player, "UI_G6_B")
+            else if {_slot} is 15:
+                wait 1 tick
+                openMenuById(player, "UI_G6_C")
+
+    # =================================================================
+    # B. XỬ LÝ ĐIỀU HƯỚNG CỐT LÕI CHO CÁC MÀN HÌNH CẤP 3 (UI_G*_A..D & CÁC SUB-MENU)
+    # =================================================================
+    else:
+        # 1. Nút Quay Lại Menu Cha (Slot 27 hoặc 45)
+        if {_slot} is 27 or 45:
+            if {_item} is set:
+                if "%type of {_item}%" contains "arrow":
+                    if {_parentUI} is set:
+                        if {_parentUI} is not "NONE":
+                            play sound "UI_BUTTON_CLICK" with volume 1 and pitch 1 to player
+                            wait 1 tick
+                            openMenuById(player, {_parentUI})
+                            stop
+
+        # 2. Nút Về Menu Tổng
+        else if {_slot} is 28 or 46:
+            if {_item} is set:
+                if "%type of {_item}%" contains "compass":
+                    play sound "UI_BUTTON_CLICK" with volume 1 and pitch 1.2 to player
+                    wait 1 tick
+                    openMenuById(player, "UI_ROOT")
+                    stop
+
+        # 3. Nút Đóng Giao Diện
+        else if {_slot} is 35 or 53:
+            if {_item} is set:
+                if "%type of {_item}%" contains "barrier":
+                    play sound "BLOCK_NOTE_BASS" with volume 1 and pitch 1 to player
+                    delete {ui_active::%{_u}%}
+                    delete {ui_parent::%{_u}%}
+                    close player's inventory
+                    wait 1 tick
+                    close player's inventory
+                    stop
+
+# ---------------------------------------------------------------------
+# 12. HỆ THỐNG CÂU LỆNH ĐIỀU HƯỚNG (/menu, /nangluc, /chientruong...)
+# ---------------------------------------------------------------------
+
+command /menu:
+    aliases: /onepiece, /rpgmenu
+    trigger:
+        openMenuById(player, "UI_ROOT")
+
+command /nangluc:
+    trigger:
+        openMenuById(player, "UI_G1")
+
+command /chientruong:
+    trigger:
+        openMenuById(player, "UI_G2")
+
+command /sucmanh:
+    trigger:
+        openMenuById(player, "UI_G3")
+
+command /hamdoi:
+    trigger:
+        openMenuById(player, "UI_G6")
+
+command /chetao:
+    aliases: /forge
+    trigger:
+        openMenuById(player, "UI_G4")
+
+command /detu [<text>] [<text>]:
+    aliases: /pet, /disciple
+    trigger:
+        set {_sub} to lowercase (arg-1 ? "")
+        if {_sub} is "gear":
+            openMenuById(player, "UI_G5_A")
+        else if {_sub} is "porata":
+            openMenuById(player, "UI_G5_B")
+        else if {_sub} is "skill" or "skills":
+            openMenuById(player, "UI_G5_C")
+        else if {_sub} is "home" or "venha" or "thuhoi":
+            set {_u} to uuid of player
+            if {disciple::%{_u}%::has} is not true:
+                sendSystemMsg(player, "error", "Bạn chưa có Đệ Tử Đồng Hành!")
+                stop
+            set {disciple::%{_u}%::mode} to "home"
+            despawnDisciple(player)
+            sendSystemMsg(player, "info", "Đã thu hồi Đệ Tử về nhà nghỉ ngơi!")
+            play sound "BLOCK_WOODEN_DOOR_CLOSE" with volume 1 and pitch 1 to player
+        else if {_sub} is "call" or "follow" or "trieuhoi":
+            set {_u} to uuid of player
+            if {disciple::%{_u}%::has} is not true:
+                sendSystemMsg(player, "error", "Bạn chưa có Đệ Tử Đồng Hành!")
+                stop
+            set {disciple::%{_u}%::mode} to "follow"
+            spawnOrUpdateDisciple(player)
+            sendSystemMsg(player, "success", "Đã triệu hồi Đệ Tử xuất chiến (Đi Theo)!")
+            play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to player
+        else if {_sub} is "buy" or "unlock" or "modetu":
+            set {_u} to uuid of player
+            if {disciple::%{_u}%::has} is true:
+                sendSystemMsg(player, "warning", "Bạn đã sở hữu Đệ Tử Đồng Hành rồi!")
+                stop
+            if getCoinBalance(player) < 1000:
+                sendSystemMsg(player, "error", "Bạn không đủ Coin! Cần 1,000 Coin để mở khóa Đệ Tử (Đổi tại /nganhang).")
+                stop
+            takeCoinBalance(player, 1000)
+            set {disciple::%{_u}%::has} to true
+            set {disciple::%{_u}%::power} to 2000
+            set {disciple::%{_u}%::stamina} to 1000
+            set {disciple::%{_u}%::mode} to "follow"
+            set {disciple::%{_u}%::ate_fruit} to false
+            set {_r} to random integer between 1 and 2
+            if {_r} is 1:
+                set {disciple::%{_u}%::style} to "kiem_dao"
+            else:
+                set {disciple::%{_u}%::style} to "luc_thuc"
+            spawnOrUpdateDisciple(player)
+            set {_pName} to name of player
+            broadcastDualCard("&6&l✦ ĐỆ TỬ ĐỒNG HÀNH", "%{_pName}% đã mở khóa thành công Đệ Tử Đồng Hành!", "Một trợ thủ đắc lực với 2,000 Sức Mạnh đã gia nhập chiến trường Hải Tặc! (-1,000 Coin)")
+            play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1.2 to player
+        else if {_sub} is "name" or "doiten":
+            set {_u} to uuid of player
+            if {disciple::%{_u}%::has} is not true:
+                sendSystemMsg(player, "error", "Bạn chưa có Đệ Tử Đồng Hành!")
+                stop
+            if arg-2 is not set:
+                sendSystemMsg(player, "error", "Hãy nhập tên mới cho Đệ Tử: &e/detu name <tên>")
+                stop
+            set {_newName} to colored arg-2
+            set {disciple::%{_u}%::name} to {_newName}
+            spawnOrUpdateDisciple(player)
+            sendSystemMsg(player, "success", "Đã đổi tên Đệ Tử thành: %{_newName}%&a!")
+            play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1 to player
+        else:
+            openMenuById(player, "UI_G5")

@@ -1,0 +1,64 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+title: '&lLịch Sử Giao Dịch &r{0}'
+previous-menu: true
+
+pattern:
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ @ @ @ @ @ @ @ @'
+  - '$ $ $ ! $ - $ $ $'
+  - '# # % # * # ^ # #'
+
+slots: '@'
+previous-page: '%'
+current-page: '*'
+next-page: '^'
+
+time-sort: '!'
+money-sort: '-'
+
+items:
+  '@':
+    type: PAPER
+    name: '&eGiao dịch #{0}'
+    lore:
+      - '&7Người chơi: {1}'
+      - '&7Trạng thái: {2}'
+      - '&7Thời gian: {3}'
+      - '&7Số tiền: ${4}'
+      - ''
+      - '&7Nhấp để lọc giao dịch của người chơi này.'
+  '%':
+    type: PAPER
+    name: '{0}Trang Trước'
+  '*':
+    type: DOUBLE_PLANT
+    name: '&aTrang Hiện Tại'
+    lore:
+      - '&7Trang {0}'
+  '^':
+    type: PAPER
+    name: '{0}Trang Sau'
+  '$':
+    type: STAINED_GLASS_PANE
+    data: 15
+    name: '&f'
+  '!':
+    type: WATCH
+    name: '&6Sắp xếp theo thời gian tạo'
+  '-':
+    type: EMERALD
+    name: '&6Sắp xếp theo số tiền'
+
+sounds:
+  '@':
+    type: BLOCK_CHEST_OPEN
+    volume: 0.8
+    pitch: 1

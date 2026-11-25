@@ -1,0 +1,14 @@
+[
+  {
+    "uuid": "802fee9f-ad06-3aa0-8aaf-a2022270a671",
+    "name": "Played_Pvp",
+    "level": 4,
+    "bypassesPlayerLimit": false
+  },
+  {
+    "uuid": "edb5c849-088e-366f-983e-f7b226cb1ba1",
+    "name": "Played_Pvp1",
+    "level": 4,
+    "bypassesPlayerLimit": false
+  }
+]

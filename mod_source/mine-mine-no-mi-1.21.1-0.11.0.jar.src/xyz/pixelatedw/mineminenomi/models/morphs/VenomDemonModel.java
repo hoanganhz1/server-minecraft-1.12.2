@@ -1,0 +1,178 @@
+package xyz.pixelatedw.mineminenomi.models.morphs;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
+import org.joml.Quaternionf;
+import xyz.pixelatedw.mineminenomi.api.helpers.RendererHelper;
+import xyz.pixelatedw.mineminenomi.api.morph.HumanoidMorphModel;
+
+public class VenomDemonModel<T extends LivingEntity> extends HumanoidMorphModel<T> {
+	// Fields
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("mineminenomi","venom_demon"),"main");
+	private final ModelPart jaw;
+	private final ModelPart mouth;
+	private final ModelPart leftHorn;
+	private final ModelPart leftHorn2;
+	private final ModelPart leftHorn3;
+	private final ModelPart leftHorn3_r1;
+	private final ModelPart rightHorn;
+	private final ModelPart rightHorn2;
+	private final ModelPart rightHorn3;
+	private final ModelPart rightHorn3_r1;
+	private final ModelPart body2;
+	private final ModelPart body3;
+	private final ModelPart body4;
+	private final ModelPart body5;
+	private final ModelPart base;
+	private final ModelPart base2;
+	private final ModelPart base3;
+	private final ModelPart shoulders;
+	private final ModelPart spine;
+	private final ModelPart spineb;
+	private final ModelPart neck;
+	private final ModelPart spine2;
+	private final ModelPart spine2b;
+	private final ModelPart leftWing;
+	private final ModelPart rightWing;
+	private final ModelPart leftArm2;
+	private final ModelPart leftHand;
+	private final ModelPart leftHandFinger1;
+	private final ModelPart leftHandFinger1b;
+	private final ModelPart leftHandFinger2;
+	private final ModelPart leftHandFinger2b;
+	private final ModelPart leftHandFinger3;
+	private final ModelPart leftHandFinger3b;
+	private final ModelPart leftHandFinger4;
+	private final ModelPart leftHandFinger4b;
+	private final ModelPart leftHandFinger5;
+	private final ModelPart leftHandFinger5b;
+	private final ModelPart rightArm2;
+	private final ModelPart rightHand;
+	private final ModelPart rightHandFinger1;
+	private final ModelPart rightHandFinger1b;
+	private final ModelPart rightHandFinger2;
+	private final ModelPart rightHandFinger2b;
+	private final ModelPart rightHandFinger3;
+	private final ModelPart rightHandFinger3b;
+	private final ModelPart rightHandFinger4;
+	private final ModelPart rightHandFinger4b;
+	private final ModelPart rightHandFinger5;
+	private final ModelPart rightHandFinger5b;
+
+	public VenomDemonModel(ModelPart var1) {
+		super(var1);
+		this.jaw = this.head.getChild("jaw");
+		this.mouth = this.head.getChild("mouth");
+		this.leftHorn = this.head.getChild("leftHorn");
+		this.leftHorn2 = this.leftHorn.getChild("leftHorn2");
+		this.leftHorn3 = this.leftHorn2.getChild("leftHorn3");
+		this.leftHorn3_r1 = this.leftHorn3.getChild("leftHorn3_r1");
+		this.rightHorn = this.head.getChild("rightHorn");
+		this.rightHorn2 = this.rightHorn.getChild("rightHorn2");
+		this.rightHorn3 = this.rightHorn2.getChild("rightHorn3");
+		this.rightHorn3_r1 = this.rightHorn3.getChild("rightHorn3_r1");
+		this.body2 = this.body.getChild("body2");
+		this.body3 = this.body2.getChild("body3");
+		this.body4 = this.body3.getChild("body4");
+		this.body5 = this.body4.getChild("body5");
+		this.base = this.body5.getChild("base");
+		this.base2 = this.base.getChild("base2");
+		this.base3 = this.base2.getChild("base3");
+		this.shoulders = this.body.getChild("shoulders");
+		this.spine = this.shoulders.getChild("spine");
+		this.spineb = this.spine.getChild("spineb");
+		this.neck = this.shoulders.getChild("neck");
+		this.spine2 = this.body.getChild("spine2");
+		this.spine2b = this.spine2.getChild("spine2b");
+		this.leftWing = this.body.getChild("leftWing");
+		this.rightWing = this.body.getChild("rightWing");
+		this.leftArm2 = this.leftArm.getChild("leftArm2");
+		this.leftHand = this.leftArm2.getChild("leftHand");
+		this.leftHandFinger1 = this.leftHand.getChild("leftHandFinger1");
+		this.leftHandFinger1b = this.leftHandFinger1.getChild("leftHandFinger1b");
+		this.leftHandFinger2 = this.leftHand.getChild("leftHandFinger2");
+		this.leftHandFinger2b = this.leftHandFinger2.getChild("leftHandFinger2b");
+		this.leftHandFinger3 = this.leftHand.getChild("leftHandFinger3");
+		this.leftHandFinger3b = this.leftHandFinger3.getChild("leftHandFinger3b");
+		this.leftHandFinger4 = this.leftHand.getChild("leftHandFinger4");
+		this.leftHandFinger4b = this.leftHandFinger4.getChild("leftHandFinger4b");
+		this.leftHandFinger5 = this.leftHand.getChild("leftHandFinger5");
+		this.leftHandFinger5b = this.leftHandFinger5.getChild("leftHandFinger5b");
+		this.rightArm2 = this.rightArm.getChild("rightArm2");
+		this.rightHand = this.rightArm2.getChild("rightHand");
+		this.rightHandFinger1 = this.rightHand.getChild("rightHandFinger1");
+		this.rightHandFinger1b = this.rightHandFinger1.getChild("rightHandFinger1b");
+		this.rightHandFinger2 = this.rightHand.getChild("rightHandFinger2");
+		this.rightHandFinger2b = this.rightHandFinger2.getChild("rightHandFinger2b");
+		this.rightHandFinger3 = this.rightHand.getChild("rightHandFinger3");
+		this.rightHandFinger3b = this.rightHandFinger3.getChild("rightHandFinger3b");
+		this.rightHandFinger4 = this.rightHand.getChild("rightHandFinger4");
+		this.rightHandFinger4b = this.rightHandFinger4.getChild("rightHandFinger4b");
+		this.rightHandFinger5 = this.rightHand.getChild("rightHandFinger5");
+		this.rightHandFinger5b = this.rightHandFinger5.getChild("rightHandFinger5b");
+	}
+	public static LayerDefinition createBodyLayer() {
+		MeshDefinition var0 = HumanoidModel.createMesh(CubeDeformation.NONE,0F);
+		PartDefinition var1 = var0.getRoot();
+		PartDefinition var2 = var1.addOrReplaceChild("head",CubeListBuilder.create().texOffs(74,23).addBox(-3F,-3F,-6F,5F,4F,5F,new CubeDeformation(0F)),PartPose.offset(0.5F,-21F,-11.5F));
+		var2.addOrReplaceChild("jaw",CubeListBuilder.create().texOffs(112,26).addBox(-2F,-1F,-2F,4F,2F,4F,new CubeDeformation(0.01F)),PartPose.offsetAndRotation(-0.5F,3.9619F,-2.8224F,0.4363F,0F,0F));
+		var2.addOrReplaceChild("mouth",CubeListBuilder.create().texOffs(95,26).addBox(0.5F,3.9F,0.6F,4F,2F,4F,new CubeDeformation(0F)),PartPose.offset(-3F,-3F,-6F));
+		var2.addOrReplaceChild("leftHorn",CubeListBuilder.create().texOffs(44,61).addBox(-2F,0F,0F,2F,2F,3F,new CubeDeformation(0F)),PartPose.offsetAndRotation(1F,-2F,-2.5F,0.8727F,0.9599F,0.1222F)).addOrReplaceChild("leftHorn2",CubeListBuilder.create().texOffs(44,61).addBox(-2F,0F,0F,2F,2F,3F,new CubeDeformation(0F)),PartPose.offsetAndRotation(0F,0F,2.8F,-0.4363F,0.1222F,0F)).addOrReplaceChild("leftHorn3",CubeListBuilder.create(),PartPose.offsetAndRotation(-1.3145F,0.4024F,2.5599F,-0.2967F,-0.0524F,0F)).addOrReplaceChild("leftHorn3_r1",CubeListBuilder.create().texOffs(55,62).addBox(0.1012F,-2.3755F,-1.03F,1F,3F,1F,new CubeDeformation(0F)),PartPose.offsetAndRotation(-0.142F,0.2276F,-0.077F,0.0873F,0F,0F));
+		var2.addOrReplaceChild("rightHorn",CubeListBuilder.create().texOffs(44,61).mirror().addBox(0F,0F,0F,2F,2F,3F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(-2F,-2F,-2.5F,0.8727F,-0.9599F,-0.1222F)).addOrReplaceChild("rightHorn2",CubeListBuilder.create().texOffs(44,61).mirror().addBox(0F,0F,0F,2F,2F,3F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(0F,0F,2.8F,-0.4363F,-0.1222F,0F)).addOrReplaceChild("rightHorn3",CubeListBuilder.create(),PartPose.offsetAndRotation(1.3145F,0.4024F,2.5599F,-0.2967F,0.0524F,0F)).addOrReplaceChild("rightHorn3_r1",CubeListBuilder.create().texOffs(55,62).mirror().addBox(-1.1012F,-2.3755F,-1.03F,1F,3F,1F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(0.142F,0.2276F,-0.077F,0.0873F,0F,0F));
+		PartDefinition var3 = var1.addOrReplaceChild("body",CubeListBuilder.create().texOffs(52,100).addBox(0F,0F,-18F,20F,10F,18F,new CubeDeformation(0F)),PartPose.offsetAndRotation(-10F,-19.5F,6.5F,0.0524F,0F,0F));
+		var3.addOrReplaceChild("body2",CubeListBuilder.create().texOffs(54,62).addBox(0F,-0.0349F,-17.4988F,20F,8F,17F,new CubeDeformation(0F)),PartPose.offsetAndRotation(0F,9.5F,0F,0.0175F,0F,0F)).addOrReplaceChild("body3",CubeListBuilder.create().texOffs(0,94).addBox(0F,0F,-16F,18F,5F,16F,new CubeDeformation(0F)),PartPose.offset(1F,7.9477F,-0.7482F)).addOrReplaceChild("body4",CubeListBuilder.create().texOffs(0,73).addBox(0F,0F,-15F,16F,5F,15F,new CubeDeformation(0F)),PartPose.offset(1F,4.9651F,-0.4988F)).addOrReplaceChild("body5",CubeListBuilder.create().texOffs(0,55).addBox(0F,0F,-14F,14F,3F,14F,new CubeDeformation(0F)),PartPose.offset(1F,4.9651F,-0.4988F)).addOrReplaceChild("base",CubeListBuilder.create().texOffs(0,34).addBox(0F,0F,0F,12F,8F,12F,new CubeDeformation(0F)),PartPose.offsetAndRotation(1F,2.2344F,-12.6971F,-0.0524F,0F,0F)).addOrReplaceChild("base2",CubeListBuilder.create().texOffs(0,17).addBox(0F,0F,0F,13F,3F,13F,new CubeDeformation(0F)),PartPose.offset(-0.5F,8.1029F,-0.5438F)).addOrReplaceChild("base3",CubeListBuilder.create().texOffs(0,0).addBox(0F,0.0044F,0.25F,14F,2F,14F,new CubeDeformation(0F)),PartPose.offset(-0.5F,2.9956F,-0.75F));
+		PartDefinition var4 = var3.addOrReplaceChild("shoulders",CubeListBuilder.create().texOffs(56,36).addBox(0F,0F,-17F,19F,5F,17F,new CubeDeformation(0F)),PartPose.offsetAndRotation(0.5F,-2.4993F,-0.3738F,-0.1047F,0F,0F));
+		var4.addOrReplaceChild("spine",CubeListBuilder.create().texOffs(52,17).addBox(0F,-7.191F,1.0063F,1F,17F,1F,new CubeDeformation(0F)),PartPose.offsetAndRotation(9F,1.1399F,-8.8429F,1.5708F,0F,0F)).addOrReplaceChild("spineb",CubeListBuilder.create().texOffs(61,15).addBox(0F,0.9193F,0.0523F,0F,17F,3F,new CubeDeformation(0F)),PartPose.offset(0.5F,-8.1102F,1.1063F));
+		var4.addOrReplaceChild("neck",CubeListBuilder.create().texOffs(114,36).addBox(0F,0F,0F,4F,4F,2F,new CubeDeformation(0F)),PartPose.offset(7.5F,-0.0021F,-18.8738F));
+		var3.addOrReplaceChild("spine2",CubeListBuilder.create().texOffs(56,15).addBox(0F,0F,0F,1F,19F,1F,new CubeDeformation(0F)),PartPose.offsetAndRotation(9.5F,-2.7F,-0.5F,-0.0087F,0F,0F)).addOrReplaceChild("spine2b",CubeListBuilder.create().texOffs(68,14).addBox(0F,0F,0F,0F,18F,3F,new CubeDeformation(0F)),PartPose.offset(0.5F,0.2F,1F));
+		var3.addOrReplaceChild("leftWing",CubeListBuilder.create().texOffs(47,1).addBox(0F,0F,0F,14F,9F,0F,new CubeDeformation(0F)),PartPose.offsetAndRotation(16F,-0.5F,-0.5F,0.203F,-0.2261F,-0.5387F));
+		var3.addOrReplaceChild("rightWing",CubeListBuilder.create().texOffs(47,1).mirror().addBox(-14F,0F,0F,14F,9F,0F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(4F,-0.5F,-0.5F,0.203F,0.2261F,0.5387F));
+		PartDefinition var5 = var1.addOrReplaceChild("left_arm",CubeListBuilder.create().texOffs(79,0).addBox(0F,0F,-6F,6F,15F,6F,new CubeDeformation(0F)),PartPose.offsetAndRotation(8F,-17F,0F,-0.5236F,-0.5236F,0F)).addOrReplaceChild("leftArm2",CubeListBuilder.create().texOffs(104,0).addBox(-0.8613F,0.2473F,-6.5225F,6F,15F,6F,new CubeDeformation(0F)),PartPose.offsetAndRotation(1.2067F,13.3142F,0.4276F,-0.3665F,0.0436F,0.4363F)).addOrReplaceChild("leftHand",CubeListBuilder.create().texOffs(48,36).addBox(0F,0F,-6F,6F,2F,6F,new CubeDeformation(0F)),PartPose.offsetAndRotation(-0.9984F,14.6745F,-0.5989F,0.0262F,0F,0.0611F));
+		var5.addOrReplaceChild("leftHandFinger1",CubeListBuilder.create().texOffs(47,37).addBox(-1F,0F,-2F,1F,1F,2F,new CubeDeformation(0F)),PartPose.offsetAndRotation(1.4422F,0.743F,-6F,0.8552F,0.1309F,0.0087F)).addOrReplaceChild("leftHandFinger1b",CubeListBuilder.create().texOffs(47,37).addBox(-1F,0.0828F,-2F,1F,1F,2F,new CubeDeformation(0F)),PartPose.offsetAndRotation(0.0131F,-0.0528F,-1.9653F,0.3142F,0F,0.0524F));
+		var5.addOrReplaceChild("leftHandFinger2",CubeListBuilder.create().texOffs(47,37).addBox(-1F,0F,-2F,1F,1F,2F,new CubeDeformation(0F)),PartPose.offsetAndRotation(2.9283F,0.7596F,-6.203F,0.8552F,0.0873F,0.0087F)).addOrReplaceChild("leftHandFinger2b",CubeListBuilder.create().texOffs(47,37).addBox(-1F,0.0828F,-2F,1F,1F,2F,new CubeDeformation(0F)),PartPose.offsetAndRotation(0.0131F,-0.0528F,-1.9653F,0.3142F,0F,0.0524F));
+		var5.addOrReplaceChild("leftHandFinger3",CubeListBuilder.create().texOffs(47,37).addBox(-1F,0F,-2F,1F,1F,2F,new CubeDeformation(0F)),PartPose.offsetAndRotation(4.4405F,0.9206F,-6.2036F,0.8552F,-0.0436F,0.0087F)).addOrReplaceChild("leftHandFinger3b",CubeListBuilder.create().texOffs(47,37).addBox(-1F,0.0828F,-2F,1F,1F,2F,new CubeDeformation(0F)),PartPose.offsetAndRotation(0.0131F,-0.0528F,-1.9653F,0.3142F,0F,0.0524F));
+		var5.addOrReplaceChild("leftHandFinger4",CubeListBuilder.create().texOffs(47,37).addBox(-1F,0F,-2F,1F,1F,2F,new CubeDeformation(0F)),PartPose.offsetAndRotation(5.9266F,0.9372F,-6.4066F,0.9425F,-0.1309F,0.0087F)).addOrReplaceChild("leftHandFinger4b",CubeListBuilder.create().texOffs(47,37).addBox(-1F,0.0828F,-2F,1F,1F,2F,new CubeDeformation(0F)),PartPose.offsetAndRotation(0.0131F,-0.0528F,-1.9653F,0.3142F,0F,0.0524F));
+		var5.addOrReplaceChild("leftHandFinger5",CubeListBuilder.create().texOffs(47,37).addBox(-1F,0F,-2F,1F,1F,2F,new CubeDeformation(0F)),PartPose.offsetAndRotation(0.117F,0.3919F,-2.7991F,0.9425F,1.6581F,-0.2531F)).addOrReplaceChild("leftHandFinger5b",CubeListBuilder.create().texOffs(47,37).addBox(-1F,0.0828F,-2F,1F,1F,2F,new CubeDeformation(0F)),PartPose.offsetAndRotation(0.0131F,-0.0528F,-1.9653F,0.3142F,0F,0.0524F));
+		PartDefinition var6 = var1.addOrReplaceChild("right_arm",CubeListBuilder.create().texOffs(79,0).mirror().addBox(-6F,0F,-6F,6F,15F,6F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(-8F,-17F,0F,-0.5236F,0.5236F,0F)).addOrReplaceChild("rightArm2",CubeListBuilder.create().texOffs(104,0).mirror().addBox(-5.1387F,0.2473F,-6.5225F,6F,15F,6F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(-1.2067F,13.3142F,0.4276F,-0.3665F,-0.0436F,-0.4363F)).addOrReplaceChild("rightHand",CubeListBuilder.create().texOffs(48,36).mirror().addBox(-6F,0F,-6F,6F,2F,6F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(0.9984F,14.6745F,-0.5989F,0.0262F,0F,-0.0611F));
+		var6.addOrReplaceChild("rightHandFinger1",CubeListBuilder.create().texOffs(47,37).mirror().addBox(0F,0F,-2F,1F,1F,2F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(-1.4422F,0.743F,-6F,0.8552F,-0.1309F,-0.0087F)).addOrReplaceChild("rightHandFinger1b",CubeListBuilder.create().texOffs(47,37).mirror().addBox(0F,0.0828F,-2F,1F,1F,2F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(-0.0131F,-0.0528F,-1.9653F,0.3142F,0F,-0.0524F));
+		var6.addOrReplaceChild("rightHandFinger2",CubeListBuilder.create().texOffs(47,37).mirror().addBox(0F,0F,-2F,1F,1F,2F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(-2.9283F,0.7596F,-6.203F,0.8552F,-0.0873F,-0.0087F)).addOrReplaceChild("rightHandFinger2b",CubeListBuilder.create().texOffs(47,37).mirror().addBox(0F,0.0828F,-2F,1F,1F,2F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(-0.0131F,-0.0528F,-1.9653F,0.3142F,0F,-0.0524F));
+		var6.addOrReplaceChild("rightHandFinger3",CubeListBuilder.create().texOffs(47,37).mirror().addBox(0F,0F,-2F,1F,1F,2F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(-4.4405F,0.9206F,-6.2036F,0.8552F,0.0436F,-0.0087F)).addOrReplaceChild("rightHandFinger3b",CubeListBuilder.create().texOffs(47,37).mirror().addBox(0F,0.0828F,-2F,1F,1F,2F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(-0.0131F,-0.0528F,-1.9653F,0.3142F,0F,-0.0524F));
+		var6.addOrReplaceChild("rightHandFinger4",CubeListBuilder.create().texOffs(47,37).mirror().addBox(0F,0F,-2F,1F,1F,2F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(-5.9266F,0.9372F,-6.4066F,0.9425F,0.1309F,-0.0087F)).addOrReplaceChild("rightHandFinger4b",CubeListBuilder.create().texOffs(47,37).mirror().addBox(0F,0.0828F,-2F,1F,1F,2F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(-0.0131F,-0.0528F,-1.9653F,0.3142F,0F,-0.0524F));
+		var6.addOrReplaceChild("rightHandFinger5",CubeListBuilder.create().texOffs(47,37).mirror().addBox(0F,0F,-2F,1F,1F,2F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(-0.117F,0.3919F,-2.7991F,0.9425F,-1.6581F,0.2531F)).addOrReplaceChild("rightHandFinger5b",CubeListBuilder.create().texOffs(47,37).mirror().addBox(0F,0.0828F,-2F,1F,1F,2F,new CubeDeformation(0F)).mirror(false),PartPose.offsetAndRotation(-0.0131F,-0.0528F,-1.9653F,0.3142F,0F,-0.0524F));
+		return LayerDefinition.create(var0,128,128);
+	}
+	public void setupAnim(T var1, float var2, float var3, float var4, float var5, float var6) {
+		RendererHelper.resetModelToDefaultPivots(this);
+		this.setupHeadRotation(var1,var6,var5);
+		this.setupAttackAnimation(var1,var4);
+	}
+	public void renderToBuffer(PoseStack var1, VertexConsumer var2, int var3, int var4, int var5) {
+		this.head.render(var1,var2,var3,var4,var5);
+		this.body.render(var1,var2,var3,var4,var5);
+		this.leftArm.render(var1,var2,var3,var4,var5);
+		this.rightArm.render(var1,var2,var3,var4,var5);
+	}
+	public boolean renderFirstPersonArm(PoseStack var1, VertexConsumer var2, int var3, int var4, int var5, HumanoidArm var6, boolean var7) {
+		float var8 = ((var6) == (HumanoidArm.RIGHT)) ? (1F) : (-1F);
+		var1.translate(0D,0.2D,-0.2D);
+		var1.mulPose(Axis.YP.rotationDegrees((60F) * (var8)));
+		var1.mulPose(Axis.ZP.rotationDegrees((10F) * (var8)));
+		var1.mulPose(Axis.XP.rotationDegrees(40F));
+		return super.renderFirstPersonArm(var1,var2,var3,var4,var5,var6,var7);
+	}
+}

@@ -1,0 +1,48 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+title: '&lThống Kê Khối Đảo'
+previous-menu: true
+
+pattern:
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ @ @ @ @ @ @ @ @'
+  - '$ $ $ $ $ $ $ $ $'
+  - '# # % # * # ^ # #'
+
+slots: '@'
+previous-page: '%'
+current-page: '*'
+next-page: '^'
+
+items:
+  '@':
+    type: STONE
+    name: '&e{0}'
+    lore:
+      - '&6&l* &e&lSố lượng: &fx{1}'
+      - '&6&l* &e&lGiá trị: &f${2}'
+      - '&6&l* &e&lCấp độ: &f${3}'
+    flags:
+      - HIDE_ATTRIBUTES
+  '%':
+    type: PAPER
+    name: '{0}Trang Trước'
+  '*':
+    type: DOUBLE_PLANT
+    name: '&aTrang Hiện Tại'
+    lore:
+      - '&7Trang {0}'
+  '^':
+    type: PAPER
+    name: '{0}Trang Sau'
+  '$':
+    type: STAINED_GLASS_PANE
+    data: 15
+    name: '&f'

@@ -1,0 +1,50 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+title: '&lDanh Mục Điểm Dịch Chuyển'
+previous-menu: true
+
+pattern:
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ @ @ @ @ @ @ @ @'
+  - '$ $ $ $ $ $ $ $ $'
+  - '# # % # * # ^ # #'
+
+slots: '@'
+previous-page: '%'
+current-page: '*'
+next-page: '^'
+
+# This lore is added to category icons.
+edit-lore:
+  - '&f '
+  - '&f '
+  - '&7&o(( &f&oChuột trái &7&ođể xem các điểm dịch chuyển. ))'
+  - '&7&o(( &f&oChuột phải &7&ođể chỉnh sửa danh mục. ))'
+
+items:
+  '@':
+    type: STAINED_GLASS_PANE
+    data: 15
+    name: '&f'
+  '%':
+    type: PAPER
+    name: '&cTrang Trước'
+  '*':
+    type: DOUBLE_PLANT
+    name: '&aTrang Hiện Tại'
+    lore:
+      - '&7Trang 1'
+  '^':
+    type: PAPER
+    name: '&cTrang Sau'
+  '$':
+    type: STAINED_GLASS_PANE
+    data: 15
+    name: '&f'

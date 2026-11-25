@@ -1,0 +1,691 @@
+# =====================================================================
+# HỆ THỐNG BĂNG HẢI TẶC (SUPERIORSKYBLOCK2) & ĐẢO KHO BÁU LAUGH TALE KOTH
+# Tích hợp trực tiếp SuperiorSkyblockAPI để biến Đảo thành Băng Hải Tặc
+# Tính tổng Truy Nã Băng, chống Friendly-Fire, 3 Cờ Hải Tặc & Sự kiện KOTH
+# =====================================================================
+
+import:
+    java.lang.reflect.Array
+    java.util.Calendar
+    java.util.UUID
+    org.bukkit.Bukkit
+    org.bukkit.Location
+    org.bukkit.entity.Player
+    org.bukkit.inventory.ItemStack
+    org.bukkit.event.inventory.InventoryDragEvent
+    com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI
+    com.bgsoftware.superiorskyblock.api.wrappers.SuperiorPlayer
+    com.bgsoftware.superiorskyblock.api.island.Island
+
+# ---------------------------------------------------------------------
+# 1. HÀM TIỆN ÍCH SUPERIORSKYBLOCK2 & BĂNG HẢI TẶC
+# ---------------------------------------------------------------------
+
+function getCrewIsland(p: player) :: object:
+    set {_sp} to SuperiorSkyblockAPI.getPlayer({_p})
+    if {_sp} is set:
+        return {_sp}.getIsland()
+    return null
+
+function getCrewIslandUUID(p: player) :: text:
+    set {_sp} to SuperiorSkyblockAPI.getPlayer({_p})
+    if {_sp} is set:
+        set {_is} to {_sp}.getIsland()
+        if {_is} is set:
+            return "%{_is}.getUniqueId()%"
+    return ""
+
+function getCrewDisplayName(is: object) :: text:
+    if {_is} is not set:
+        return "&7Chưa có Băng"
+    set {_raw} to {_is}.getName()
+    if {_raw} is set:
+        if {_raw} is not "":
+            return "&e%{_raw}%"
+    set {_owner} to {_is}.getOwner()
+    if {_owner} is set:
+        return "&eBăng Hải Tặc %{_owner}.getName()%"
+    return "&eBăng Hải Tặc Vô Danh"
+
+function getCrewLeaderName(is: object) :: text:
+    if {_is} is not set:
+        return "Không có"
+    set {_owner} to {_is}.getOwner()
+    if {_owner} is set:
+        return "%{_owner}.getName()%"
+    return "Không rõ"
+
+function getCrewTotalBounty(is: object) :: number:
+    if {_is} is not set:
+        return 0
+    set {_total} to 0
+    set {_mems} to {_is}.getIslandMembers(true)
+    if {_mems} is set:
+        set {_it} to {_mems}.iterator()
+        while {_it}.hasNext() is true:
+            set {_sp} to {_it}.next()
+            set {_u} to "%{_sp}.getUniqueId()%"
+            add ({bounty::%{_u}%} ? 100000) to {_total}
+    return {_total}
+
+function getCrewRankText(bounty: number) :: text:
+    if {_bounty} < 15000000:
+        return "&7⚓ Băng Tân Binh Biển Đông"
+    else if {_bounty} < 50000000:
+        return "&e⚡ Băng Siêu Tân Tinh (Supernova)"
+    else if {_bounty} < 150000000:
+        return "&b✦ Băng Vương Hạ Thất Vũ Hải (Warlord)"
+    else:
+        return "&4&l☠ BĂNG TỨ HOÀNG ĐẠI HẢI TRÌNH (Yonko)"
+
+function isKothWinnerIsland(isUuid: text) :: boolean:
+    if {_isUuid} is "":
+        return false
+    if {koth_winner_island} is not set:
+        return false
+    if {koth_winner_island} is not {_isUuid}:
+        return false
+    if {koth_winner_time} is not set:
+        return false
+    if difference between {koth_winner_time} and now >= 24 hours:
+        return false
+    return true
+
+function hasCrewFlag(isUuid: text, flag: text) :: boolean:
+    if {_isUuid} is "":
+        return false
+    if isKothWinnerIsland({_isUuid}) is true:
+        return true
+    if {crew_flag::%{_isUuid}%} is {_flag}:
+        return true
+    return false
+
+function getCrewFlagName(isUuid: text) :: text:
+    if {_isUuid} is "":
+        return "&7Chưa có Băng"
+    if isKothWinnerIsland({_isUuid}) is true:
+        return "&6&l✦ BÁ CHỦ KHO BÁU (CẢ 3 CỜ) ✦"
+    set {_f} to {crew_flag::%{_isUuid}%}
+    if {_f} is "hoa_long":
+        return "&c✦ Cờ Hỏa Long"
+    else if {_f} is "hoang_kim":
+        return "&6❖ Cờ Hoàng Kim"
+    else if {_f} is "bat_tu_dieu":
+        return "&b✧ Cờ Bất Tử Điểu"
+    return "&7Chưa treo cờ"
+
+# ---------------------------------------------------------------------
+# 2. CHỐNG SÁT THƯƠNG ĐỒNG ĐỘI CÙNG BĂNG (CREW FRIENDLY-FIRE OFF)
+# ---------------------------------------------------------------------
+
+on damage:
+    if attacker is a player:
+        if victim is a player:
+            set {_attCrew} to getCrewIslandUUID(attacker)
+            set {_vicCrew} to getCrewIslandUUID(victim)
+            if {_attCrew} is not "":
+                if {_attCrew} is {_vicCrew}:
+                    cancel event
+                    send action bar "&a&l✔ Không thể tấn công đồng đội cùng Băng Hải Tặc!" to attacker
+                    stop
+
+# ---------------------------------------------------------------------
+# 3. HIỆU ỨNG CỜ HOÀNG KIM (8% NHẬN +$250 KHI ĐÀO ĐÁ TẠI ĐẢO)
+# ---------------------------------------------------------------------
+
+on block break:
+    if event-block is cobblestone or stone:
+        set {_isUuid} to getCrewIslandUUID(player)
+        if hasCrewFlag({_isUuid}, "hoang_kim") is true:
+            set {_roll} to random number between 0 and 100
+            if {_roll} <= 8:
+                add 500 to player's balance
+                send action bar "&6&l✪ [CỜ HOÀNG KIM] Khai thác nhận thêm +$500 Money!" to player
+                play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 0.7 and pitch 1.4 to player
+                set {_bloc} to location of event-block
+                add 0.5 to y-coordinate of {_bloc}
+                spawnVisualParticle("VILLAGER_HAPPY", {_bloc}, 6, 0.3, 0.3, 0.3, 0.05)
+
+# ---------------------------------------------------------------------
+# 4. QUẢN LÝ BÙ NHÌN TẬP LUYỆN CĂN CỨ (TỐI ĐA 1 CON / CĂN CỨ)
+# ---------------------------------------------------------------------
+
+# Đã gỡ bỏ tính năng Bù Nhìn Căn Cứ khỏi Băng Hải Tặc (dành riêng Admin)
+
+# ---------------------------------------------------------------------
+# 5. GIAO DIỆN BĂNG HẢI TẶC (/banghaitac, /crew, /gang) - 6 HÀNG (54 Ô)
+# ---------------------------------------------------------------------
+
+function openCrewGUI(p: player):
+    set {_u} to uuid of {_p}
+    set {_is} to getCrewIsland({_p})
+    set {_inv} to createStandardUI({_p}, "UI_G6_A", "&8✦ &4&lBĂNG HẢI TẶC SKYBLOCK &8✦", 6, gray stained glass pane named " ", "UI_G6", "Hạm Đội, Đảo & Kinh Tế")
+
+    if {_is} is not set:
+        set {_noCrewLore::1} to "&8&m--------------------------------"
+        set {_noCrewLore::2} to "&cBạn chưa gia nhập Căn Cứ Đảo nào!"
+        set {_noCrewLore::3} to "&7Hãy tạo hoặc tham gia một Căn Cứ Hải Tặc"
+        set {_noCrewLore::4} to "&7bằng lệnh &e/is create &7hoặc &e/is join"
+        set {_noCrewLore::5} to "&7để thành lập Băng Hải Tặc của riêng bạn."
+        set {_noCrewLore::6} to "&8&m--------------------------------"
+        set slot 22 of {_inv} to barrier named "&c&lCHƯA CÓ BĂNG HẢI TẶC" with lore {_noCrewLore::*}
+        set slot 40 of {_inv} to makeGlowingItem(compass, "&a&lTẠO CĂN CỨ HẢI TẶC", ("&7Gõ &a/is &7để bắt đầu hành trình!"))
+        openStandardUI({_p}, {_inv}, "UI_G6_A", "UI_G6")
+        stop
+
+    set {_isUuid} to "%{_is}.getUniqueId()%"
+    set {_crewName} to getCrewDisplayName({_is})
+    set {_leaderName} to getCrewLeaderName({_is})
+    set {_totalBounty} to getCrewTotalBounty({_is})
+    set {_bountyStr} to formatBeriComma({_totalBounty})
+    set {_rankStr} to getCrewRankText({_totalBounty})
+    set {_flagStr} to getCrewFlagName({_isUuid})
+    set {_isOwner} to false
+    if {_leaderName} is name of {_p}:
+        set {_isOwner} to true
+
+    # Slot 10: Thông tin Băng Hải Tặc
+    set {_lore10::1} to "&8&m----------------------------------------"
+    set {_lore10::2} to "&7Tên Băng: %{_crewName}%"
+    set {_lore10::3} to "&7Thuyền Trưởng: &e%{_leaderName}%"
+    set {_lore10::4} to "&7Phân Hạng: %{_rankStr}%"
+    set {_lore10::5} to "&7Tổng Tiền Truy Nã: &6%{_bountyStr}% Beri"
+    set {_lore10::6} to "&7Uy Danh Căn Cứ: &b%{_is}.getIslandLevel().longValue()%"
+    set {_lore10::7} to ""
+    set {_lore10::8} to "&b&l✦ THỦY THỦ ĐOÀN HẢI TẶC:"
+    set {_mems} to {_is}.getIslandMembers(true)
+    if {_mems} is set:
+        set {_it} to {_mems}.iterator()
+        set {_mIdx} to 8
+        while {_it}.hasNext() is true:
+            set {_sp} to {_it}.next()
+            set {_mU} to "%{_sp}.getUniqueId()%"
+            set {_mB} to formatBeriComma({bounty::%{_mU}%} ? 100000)
+            set {_onStr} to "&cOffline"
+            if {_sp}.isOnline() is true:
+                set {_onStr} to "&aOnline"
+            add 1 to {_mIdx}
+            set {_lore10::%{_mIdx}%} to "&f• &e%{_sp}.getName()% &7[%{_onStr}%&7] &8- &6%{_mB}% Beri"
+    add "" to {_lore10::*}
+    add "&a✔ Toàn bộ thành viên miễn nhiễm sát thương lẫn nhau!" to {_lore10::*}
+    add "&8&m----------------------------------------" to {_lore10::*}
+    set slot 10 of {_inv} to makePlayerProfileHead({_p}, {_leaderName}, {_lore10::*}, "&4&l✦ THÔNG TIN BĂNG HẢI TẶC ✦")
+
+    # Slot 12: Cờ Hải Tặc Hiện Tại
+    set {_lore12::1} to "&8&m----------------------------------------"
+    set {_lore12::2} to "&7Cờ Đang Treo: %{_flagStr}%"
+    set {_lore12::3} to ""
+    if isKothWinnerIsland({_isUuid}) is true:
+        set {_lore12::4} to "&6&l✦ ĐẶC QUYỀN BÁ CHỦ LAUGH TALE (24 Giờ):"
+        set {_lore12::5} to "&f• Đang kích hoạt đồng thời &eCẢ 3 CỜ HẢI TẶC&f!"
+        set {_lore12::6} to "&f• Còn hiệu lực trong vòng 24 giờ sau chiến thắng KOTH."
+    else:
+        set {_lore12::4} to "&7Chỉ Thuyền Trưởng mới có quyền chọn đổi cờ."
+        set {_lore12::5} to "&7Hãy chọn 1 trong 3 Cờ Hải Tặc ở hàng dưới để kích hoạt."
+    set {_lore12::6} to "&8&m----------------------------------------"
+    set slot 12 of {_inv} to makeGlowingItem(banner, "&e&l✦ CỜ HẢI TẶC CĂN CỨ ✦", {_lore12::*})
+
+    # Slot 14: Thông tin Laugh Tale KOTH
+    set {_kothStatus} to "&aĐang diễn ra!"
+    if {koth_active} is not true:
+        set {_kothStatus} to "&7Chờ sự kiện tiếp theo (20:30 mỗi tối)"
+    set {_kothWinName} to "&7Chưa có"
+    if {koth_winner_island} is set:
+        set {_kothWinName} to "&6%{koth_winner_name}%"
+    set {_lore14::1} to "&8&m----------------------------------------"
+    set {_lore14::2} to "&7Trạng thái: %{_kothStatus}%"
+    set {_lore14::3} to "&7Bá Chủ Hiện Tại: %{_kothWinName}%"
+    set {_lore14::4} to ""
+    set {_lore14::5} to "&6&l✦ PHẦN THƯỞNG CHIẾM ĐÓNG (180 Điểm):"
+    set {_lore14::6} to "&f• &a+$100,000 Money &fmỗi thủy thủ"
+    set {_lore14::7} to "&f• &6+15 Điểm Thiên Phú &fmỗi thủy thủ"
+    set {_lore14::8} to "&f• &e1x Rương Trang Bị Liên Quân Sử Thi 3D"
+    set {_lore14::9} to "&f• &d+10,000,000 Beri Truy Nã"
+    set {_lore14::10} to "&f• &bKích hoạt CẢ 3 CỜ HẢI TẶC trong 24 giờ!"
+    set {_lore14::11} to "&f• &6+200 Uy Danh &fvà &e+$250,000 &fvào Kho Bạc Băng!"
+    set {_lore14::12} to ""
+    set {_lore14::13} to "&e▶ Gõ &6/koth &eđể đến Đảo Kho Báu Laugh Tale!"
+    set {_lore14::14} to "&8&m----------------------------------------"
+    set slot 14 of {_inv} to makeGlowingItem(nether star, "&6&l✦ ĐẢO KHO BÁU LAUGH TALE (KOTH) ✦", {_lore14::*})
+
+    # Slot 16: Nhiệm Vụ Băng Hải Tặc (Grand Line Campaigns)
+    set {_lore16::1} to "&8&m----------------------------------------"
+    set {_lore16::2} to "&7Chiến Dịch: &6Hải Trình Vĩ Đại (Grand Line)"
+    set {_lore16::3} to "&7Cơ Chế: &aĐồng Lòng Toàn Băng (Co-op Missions)"
+    set {_lore16::4} to ""
+    set {_lore16::5} to "&6&l✦ 5 NHÁNH NHIỆM VỤ HẢI TẶC:"
+    set {_lore16::6} to "&f• &e⚒ Thợ Mỏ: &7Khai khoáng đá, than & quặng sắt"
+    set {_lore16::7} to "&f• &c⚔ Sát Thủ: &7Săn quái vật bảo vệ Căn Cứ"
+    set {_lore16::8} to "&f• &a❖ Nông Dân: &7Thu hoạch nông sản tiếp tế lương thực"
+    set {_lore16::9} to "&f• &b⚓ Ngư Dân: &7Đánh bắt kho báu từ biển khơi"
+    set {_lore16::10} to "&f• &d✦ Thám Hiểm: &7Mở rộng lãnh hải, chế tạo & du hành"
+    set {_lore16::11} to ""
+    set {_lore16::12} to "&6&l✦ PHẦN THƯỞNG HOÀN THÀNH:"
+    set {_lore16::13} to "&f• &a+$1,000 – $50,000 Money &fvào ví thành viên"
+    set {_lore16::14} to "&f• &b+2 – 10 Điểm Thiên Phú (TP) &ftăng sức mạnh RPG"
+    set {_lore16::15} to "&f• &eTự Động Nâng Cấp Lò Quặng &fnhanh hơn cho Đảo"
+    set {_lore16::16} to ""
+    set {_lore16::17} to "&e▶ Nhấp để mở Bảng Nhiệm Vụ: &f/is missions"
+    set {_lore16::18} to "&8&m----------------------------------------"
+    set slot 16 of {_inv} to makeGlowingItem(book and quill, "&6&l✦ NHIỆM VỤ BĂNG HẢI TẶC ✦", {_lore16::*})
+
+    # Slot 20: Cờ Hỏa Long
+    set {_hlActive} to "&7Nhấp để kích hoạt cờ này"
+    if hasCrewFlag({_isUuid}, "hoa_long") is true:
+        set {_hlActive} to "&a✔ ĐANG KÍCH HOẠT HIỆU LỰC"
+    set {_loreHl::1} to "&8&m----------------------------------------"
+    set {_loreHl::2} to "&7Linh hồn rồng lửa rực cháy ý chí chiến đấu."
+    set {_loreHl::3} to ""
+    set {_loreHl::4} to "&6&l✦ HIỆU ỨNG TOÀN CĂN CỨ:"
+    set {_loreHl::5} to "&f• &c+4 ATK Sát thương Cơ Bản &8(Toàn bộ thành viên)"
+    set {_loreHl::6} to "&f• &e+20%% EXP Thông thạo &8(Trái Ác Quỷ / Võ Học / Haki)"
+    set {_loreHl::7} to ""
+    set {_loreHl::8} to "%{_hlActive}%"
+    set {_loreHl::9} to "&8&m----------------------------------------"
+    set slot 20 of {_inv} to makeCustomRPItem("flag_dragon", "&c&l✦ CỜ HỎA LONG ✦", {_loreHl::*})
+
+    # Slot 22: Cờ Hoàng Kim
+    set {_hkActive} to "&7Nhấp để kích hoạt cờ này"
+    if hasCrewFlag({_isUuid}, "hoang_kim") is true:
+        set {_hkActive} to "&a✔ ĐANG KÍCH HOẠT HIỆU LỰC"
+    set {_loreHk::1} to "&8&m----------------------------------------"
+    set {_loreHk::2} to "&7Biểu tượng sự giàu sang phú quý của Đảo Hải Tặc."
+    set {_loreHk::3} to ""
+    set {_loreHk::4} to "&6&l✦ HIỆU ỨNG TOÀN CĂN CỨ:"
+    set {_loreHk::5} to "&f• &68%% cơ hội nhận trực tiếp +$500 Money"
+    set {_loreHk::6} to "  &7mỗi khi đào đá / quặng tại Máy Tạo Đá trên đảo."
+    set {_loreHk::7} to ""
+    set {_loreHk::8} to "%{_hkActive}%"
+    set {_loreHk::9} to "&8&m----------------------------------------"
+    set slot 22 of {_inv} to makeCustomRPItem("flag_gold", "&6&l✦ CỜ HOÀNG KIM ✦", {_loreHk::*})
+
+    # Slot 24: Cờ Bất Tử Điểu
+    set {_btActive} to "&7Nhấp để kích hoạt cờ này"
+    if hasCrewFlag({_isUuid}, "bat_tu_dieu") is true:
+        set {_btActive} to "&a✔ ĐANG KÍCH HOẠT HIỆU LỰC"
+    set {_loreBt::1} to "&8&m----------------------------------------"
+    set {_loreBt::2} to "&7Lông vũ hồi sinh của Phượng Hoàng Lửa bất diệt."
+    set {_loreBt::3} to ""
+    set {_loreBt::4} to "&6&l✦ HIỆU ỨNG TOÀN CĂN CỨ:"
+    set {_loreBt::5} to "&f• &a+20 Máu tối đa &8(+10 Tim)"
+    set {_loreBt::6} to "&f• &b+20 DEF &8và &e-20s hồi chiêu &7Giáp Hộ Mệnh"
+    set {_loreBt::7} to ""
+    set {_loreBt::8} to "%{_btActive}%"
+    set {_loreBt::9} to "&8&m----------------------------------------"
+    set slot 24 of {_inv} to makeCustomRPItem("flag_phoenix", "&b&l✦ CỜ BẤT TỬ ĐIỂU ✦", {_loreBt::*})
+
+    # Hàng 5 (Slots 36..44): Nút chuyển nhanh tiện ích SS2
+    set slot 37 of {_inv} to makeGlowingItem(compass, "&a&l⛵ VỀ CĂN CỨ HẢI TẶC", ("&7Dịch chuyển tức thời về Căn Cứ Đảo của bạn." and "" and "&a▶ Nhấp để thực thi: &f/is go"))
+    set slot 38 of {_inv} to makeGlowingItem(chest, "&c&l⚔ KHO VŨ KHÍ BĂNG", ("&7Mở kho chứa vũ khí, trang bị dùng chung của Băng." and "" and "&a▶ Nhấp để thực thi: &f/is chest"))
+    set slot 39 of {_inv} to makeGlowingItem(book and quill, "&6&l✦ NHIỆM VỤ HẢI TRÌNH", ("&7Mở bảng nhiệm vụ đồng lòng Băng Hải Tặc." and "" and "&a▶ Nhấp để thực thi: &f/is missions"))
+    set slot 40 of {_inv} to makeGlowingItem(gold ingot, "&6&l❖ KHO BẠC HẢI TẶC", ("&7Quản lý ngân quỹ Băng, gửi tiền và rút tiền thưởng." and "" and "&a▶ Nhấp để thực thi: &f/is bank"))
+    set slot 41 of {_inv} to makeGlowingItem(anvil, "&b&l⚒ NÂNG CẤP HẠM ĐỘI", ("&7Nâng cấp Lò Hải Lâu Thạch, mở rộng lãnh hải & quân số." and "" and "&a▶ Nhấp để thực thi: &f/is upgrades"))
+    set slot 42 of {_inv} to makeGlowingItem(beacon, "&e&l✦ BẢNG XẾP HẠNG TỨ HOÀNG", ("&7Xem bảng vinh danh Uy Danh Căn Cứ toàn máy chủ." and "" and "&a▶ Nhấp để thực thi: &f/is top"))
+
+    openStandardUI({_p}, {_inv}, "UI_G6_A", "UI_G6")
+
+on InventoryDragEvent:
+    set {_who} to event.getWhoClicked()
+    set {_u} to uuid of {_who}
+    if {ui_active::%{_u}%} is "UI_G6_A":
+        cancel event
+
+on inventory click:
+    set {_u} to uuid of player
+    if {ui_active::%{_u}%} is not "UI_G6_A":
+        stop
+    cancel event
+    if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+        player.updateInventory()
+        stop
+    if clicked inventory is not player's current inventory:
+        stop
+    set {_slot} to index of event-slot
+    if {_slot} is 45 or 46 or 53:
+        stop
+
+    set {_is} to getCrewIsland(player)
+    if {_is} is not set:
+        if {_slot} is 40:
+            wait 1 tick
+            close player's inventory
+            wait 1 tick
+            make player execute command "is"
+        stop
+
+    set {_isUuid} to "%{_is}.getUniqueId()%"
+    set {_leaderName} to getCrewLeaderName({_is})
+    set {_isOwner} to false
+    set {_owner} to {_is}.getOwner()
+    if {_owner} is set:
+        if "%{_owner}.getUniqueId()%" is uuid of player:
+            set {_isOwner} to true
+        else if {_owner}.getName() is name of player:
+            set {_isOwner} to true
+    if player is op:
+        set {_isOwner} to true
+
+    if {_slot} is 20:
+        # Chọn Cờ Hỏa Long
+        if {_isOwner} is false:
+            sendSystemMsg(player, "error", "Chỉ Thuyền Trưởng %{_leaderName}% mới có quyền đổi Cờ Hải Tặc!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+        set {crew_flag::%{_isUuid}%} to "hoa_long"
+        recalcPlayerMaxHealth(player)
+        sendSystemMsg(player, "crew", "Đã treo &c&lCờ Hỏa Long&f lên Căn Cứ (+4 Tấn Công, +10%% ST Chí Mạng & +20%% EXP Thông thạo)!")
+        play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1.2 to player
+        wait 1 tick
+        openCrewGUI(player)
+
+    else if {_slot} is 22:
+        # Chọn Cờ Hoàng Kim
+        if {_isOwner} is false:
+            sendSystemMsg(player, "error", "Chỉ Thuyền Trưởng %{_leaderName}% mới có quyền đổi Cờ Hải Tặc!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+        set {crew_flag::%{_isUuid}%} to "hoang_kim"
+        recalcPlayerMaxHealth(player)
+        sendSystemMsg(player, "crew", "Đã treo &6&lCờ Hoàng Kim&f lên Căn Cứ (8%% cơ hội nhận +$500 Money khi đào đá)!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.4 to player
+        wait 1 tick
+        openCrewGUI(player)
+
+    else if {_slot} is 24:
+        # Chọn Cờ Bất Tử Điểu
+        if {_isOwner} is false:
+            sendSystemMsg(player, "error", "Chỉ Thuyền Trưởng %{_leaderName}% mới có quyền đổi Cờ Hải Tặc!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+        set {crew_flag::%{_isUuid}%} to "bat_tu_dieu"
+        recalcPlayerMaxHealth(player)
+        sendSystemMsg(player, "crew", "Đã treo &b&lCờ Bất Tử Điểu&f lên Căn Cứ (+20 Máu, +20 Thủ & -20s hồi Giáp Hộ Mệnh)!")
+        play sound "ITEM_TOTEM_USE" with volume 0.8 and pitch 1.5 to player
+        wait 1 tick
+        openCrewGUI(player)
+
+    else if {_slot} is 14:
+        # Xem KOTH / Teleport
+        wait 1 tick
+        close player's inventory
+        wait 1 tick
+        make player execute command "koth"
+
+    else if {_slot} is 16 or 39:
+        # Nhiệm Vụ Băng Hải Tặc (/is missions)
+        wait 1 tick
+        close player's inventory
+        wait 1 tick
+        make player execute command "is missions"
+
+    # Nút tiện ích SS2
+    else if {_slot} is 37:
+        # Về Căn Cứ (/is go)
+        wait 1 tick
+        close player's inventory
+        wait 1 tick
+        make player execute command "is go"
+
+    else if {_slot} is 38:
+        # Kho Vũ Khí (/is chest)
+        wait 1 tick
+        close player's inventory
+        wait 1 tick
+        make player execute command "is chest"
+
+    else if {_slot} is 40:
+        # Kho Bạc (/is bank)
+        wait 1 tick
+        close player's inventory
+        wait 1 tick
+        make player execute command "is bank"
+
+    else if {_slot} is 41:
+        # Nâng Cấp (/is upgrades)
+        wait 1 tick
+        close player's inventory
+        wait 1 tick
+        make player execute command "is upgrades"
+
+    else if {_slot} is 42:
+        # Bảng Xếp Hạng (/is top)
+        wait 1 tick
+        close player's inventory
+        wait 1 tick
+        make player execute command "is top"
+
+command /banghaitac [<text>]:
+    aliases: /crew, /gang, /bht
+    trigger:
+        if arg-1 is "missions" or "mission" or "nhiemvu" or "quest" or "nv":
+            make player execute command "is missions"
+            stop
+        openCrewGUI(player)
+
+command /nhiemvu:
+    aliases: /quest, /missions, /mission
+    trigger:
+        make player execute command "is missions"
+
+# ---------------------------------------------------------------------
+# 6. SỰ KIỆN CHIẾM ĐÓNG ĐẢO KHO BÁU LAUGH TALE (KOTH)
+# ---------------------------------------------------------------------
+
+function startKothEvent(minutes: number = 15):
+    if {koth_loc} is not set:
+        broadcast "&c[Laugh Tale KOTH] &7Chưa thiết lập vị trí KOTH! Admin hãy dùng &e/opadmin setkoth &7trước."
+        stop
+    if {koth_active} is true:
+        stop
+
+    set {koth_active} to true
+    set {koth_time_left} to {_minutes} * 60
+    delete {koth_points::*}
+    set {koth_controlling_island} to ""
+
+    broadcastWorldEvent("koth", "ĐẠI CHIẾN CHIẾM ĐÓNG LAUGH TALE BẮT ĐẦU!", "KOTH diễn ra trong %{_minutes}% phút! Tích lũy 180 Điểm để chiến thắng.", "Toàn bộ Băng Hải Tặc hãy gõ /koth để tham chiến ngay!")
+    play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1.5 and pitch 1 to all players
+
+function stopKothEvent(reason: text = "Hết giờ"):
+    if {koth_active} is not true:
+        stop
+    set {koth_active} to false
+
+    # Tìm Băng có điểm cao nhất
+    set {_topCrew} to ""
+    set {_maxPts} to 0
+    loop {koth_points::*}:
+        if loop-value > {_maxPts}:
+            set {_maxPts} to loop-value
+            set {_topCrew} to loop-index
+
+    if {_maxPts} >= 60:
+        awardKothWinner({_topCrew}, {_maxPts})
+    else:
+        broadcastDualCard("&6&l⚔ LAUGH TALE", "Sự kiện Laugh Tale KOTH đã kết thúc!", "Không có Băng Hải Tặc nào tích lũy đủ 60 Điểm tối thiểu.")
+        play sound "ENTITY_WITHER_DEATH" with volume 1 and pitch 0.8 to all players
+
+function awardKothWinner(islandUuid: text, points: number):
+    set {koth_active} to false
+    set {koth_winner_island} to {_islandUuid}
+    set {koth_winner_time} to now
+
+    set {_cName} to "&eBăng Hải Tặc Vô Danh"
+    set {_leaderName} to ""
+    loop all players:
+        if getCrewIslandUUID(loop-player) is {_islandUuid}:
+            set {_is} to getCrewIsland(loop-player)
+            if {_is} is set:
+                set {_cName} to getCrewDisplayName({_is})
+                set {_leaderName} to getCrewLeaderName({_is})
+                exit loop
+    set {koth_winner_name} to {_cName}
+
+    # Thưởng Uy Danh Căn Cứ & Kho Bạc Băng Hải Tặc
+    if {_leaderName} is not "":
+        if {_leaderName} is not "Không rõ":
+            execute console command "is admin addbonus %{_leaderName}% level 200"
+            execute console command "is admin deposit %{_leaderName}% 250000"
+
+    broadcastDualCard("&6&l⚔ BÁ CHỦ KOTH", "Băng Hải Tặc %{_cName}% đã chiến thắng KOTH (%{_points}% Điểm)!", "Thưởng: &e+$100K &8┃ &6+15 TP &8┃ &bRương LQ &8┃ &e+10M Beri &8┃ &b+200 Uy Danh")
+    play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1.5 and pitch 1 to all players
+
+    # Trao thưởng cho toàn bộ thành viên online của Đảo
+    loop all players:
+        if getCrewIslandUUID(loop-player) is {_islandUuid}:
+            add 100000 to loop-player's balance
+            add 15 to {talent::%uuid of loop-player%::points}
+            give 1 of createAoVChest() to loop-player
+            addBounty(loop-player, 10000000)
+            send title "&6&lCHIẾN THẮNG KOTH!" with subtitle "&eBăng của bạn là Bá Chủ Kho Báu Laugh Tale!" to loop-player for 5 seconds
+            play sound "ENTITY_PLAYER_LEVELUP" with volume 1.5 and pitch 1.2 to loop-player
+
+# ---------------------------------------------------------------------
+# 7. VÒNG LẶP ĐO ĐẠC CHIẾM ĐÓNG KOTH (MỖI 1 GIÂY)
+# ---------------------------------------------------------------------
+
+every 1 second:
+    if {koth_active} is true:
+        if {koth_loc} is not set:
+            set {koth_active} to false
+            stop
+
+        remove 1 from {koth_time_left}
+        if {koth_time_left} <= 0:
+            stopKothEvent("Hết giờ thi đấu")
+            stop
+
+        # Vẽ vòng tròn hạt End Rod và Flame bán kính 6 block quanh KOTH
+        set {_ang} to 0
+        set {_flameToggle} to false
+        loop 16 times:
+            set {_rad} to ({_ang} * 3.14159) / 180
+            set {_rx} to 6.0 * (sin({_rad}))
+            set {_rz} to 6.0 * (cos({_rad}))
+            set {_pLoc} to {koth_loc}.clone().add({_rx}, 0.2, {_rz})
+            spawnVisualParticle("END_ROD", {_pLoc}, 1, 0, 0, 0, 0)
+            if {_flameToggle} is true:
+                spawnVisualParticle("FLAME", {_pLoc}, 1, 0, 0.1, 0, 0.02)
+                set {_flameToggle} to false
+            else:
+                set {_flameToggle} to true
+            add 22.5 to {_ang}
+
+        # Quét người chơi trong bán kính 6m
+        delete {_crewsInCircle::*}
+        delete {_playersInCircle::*}
+        set {_diffCrews} to 0
+
+        loop all players in radius 6 around {koth_loc}:
+            if loop-player is alive:
+                if loop-player's gamemode is survival or adventure:
+                    add loop-player to {_playersInCircle::*}
+                    set {_pCrew} to getCrewIslandUUID(loop-player)
+                    if {_pCrew} is not "":
+                        if {_crewsInCircle::%{_pCrew}%} is not set:
+                            set {_crewsInCircle::%{_pCrew}%} to 1
+                            add 1 to {_diffCrews}
+                            set {_lastCrewFound} to {_pCrew}
+                        else:
+                            add 1 to {_crewsInCircle::%{_pCrew}%}
+                    else:
+                        # Người chơi chưa có Băng tính là 1 bên độc lập
+                        add 1 to {_diffCrews}
+                        set {_lastCrewFound} to "none_%uuid of loop-player%"
+
+        # Xử lý trạng thái chiếm đóng
+        if {_diffCrews} is 0:
+            # Không có ai
+            loop all players in radius 20 around {koth_loc}:
+                send action bar "&e&l⚔ LAUGH TALE KOTH: Vòng chiếm đóng đang trống! &7(Còn %{koth_time_left}%s)" to loop-player
+
+        else if {_diffCrews} >= 2:
+            # Đang tranh chấp
+            loop all players in radius 25 around {koth_loc}:
+                send action bar "&c&l⚔ ĐANG TRANH CHẤP (CONTESTED)! &eTiêu diệt kẻ địch để chiếm giữ! ⚔" to loop-player
+            spawnVisualParticle("SMOKE_LARGE", {koth_loc}, 8, 1.5, 0.5, 1.5, 0.05)
+            play sound "BLOCK_ANVIL_LAND" with volume 0.5 and pitch 1.8 at {koth_loc}
+
+        else if {_diffCrews} is 1:
+            # Duy nhất 1 Băng đang kiểm soát vòng tròn!
+            if {_lastCrewFound} does not contain "none_":
+                add 1 to {koth_points::%{_lastCrewFound}%}
+                set {_curPts} to {koth_points::%{_lastCrewFound}%}
+
+                # Lấy tên Băng
+                set {_cName} to "&eBăng Hải Tặc"
+                loop {_playersInCircle::*}:
+                    set {_is} to getCrewIsland(loop-value)
+                    if {_is} is set:
+                        set {_cName} to getCrewDisplayName({_is})
+                        exit loop
+
+                loop all players in radius 25 around {koth_loc}:
+                    send action bar "&6&l⚓ ĐANG CHIẾM ĐÓNG: %{_cName}% &8[&a%{_curPts}%/180 Điểm&8] &7(Còn %{koth_time_left}%s)" to loop-player
+                play sound "BLOCK_NOTE_HAT" with volume 0.8 and pitch 1.2 at {koth_loc}
+
+                # Kiểm tra điều kiện thắng (180 điểm = 3 phút giữ vòng)
+                if {_curPts} >= 180:
+                    awardKothWinner({_lastCrewFound}, {_curPts})
+
+# ---------------------------------------------------------------------
+# 8. TỰ ĐỘNG BẮT ĐẦU KOTH LÚC 20:30 HÀNG NGÀY
+# ---------------------------------------------------------------------
+
+every 1 minute:
+    set {_cal} to Calendar.getInstance()
+    set {_hour} to {_cal}.get(11)
+    set {_min} to {_cal}.get(12)
+    if {_hour} is 20:
+        if {_min} is 30:
+            if {koth_active} is not true:
+                startKothEvent(15)
+
+# ---------------------------------------------------------------------
+# 9. LỆNH ĐIỀU KHIỂN SỰ KIỆN KOTH CHO ADMIN & NGƯỜI CHƠI
+# ---------------------------------------------------------------------
+
+command /koth:
+    aliases: /laughtale
+    trigger:
+        if {koth_loc} is set:
+            teleport player to {koth_loc}
+            sendSystemMsg(player, "crew", "Đã dịch chuyển bạn đến khu vực Đảo Kho Báu KOTH!")
+            play sound "ENTITY_ENDERMEN_TELEPORT" with volume 1 and pitch 1 to player
+        else:
+            sendSystemMsg(player, "error", "Khu vực KOTH chưa được thiết lập tọa độ!")
+
+command /kothadmin <text> [<text>] [<number>]:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        set {_sub} to arg-1
+
+        if {_sub} is "set" or "setkoth":
+            set {koth_loc} to location of player
+            sendSystemMsg(player, "success", "Đã lưu vị trí của bạn làm tâm vòng tròn &6Laugh Tale KOTH&7!")
+            sendSystemMsg(player, "info", "Tọa độ: &fX: %round(x-coordinate of {koth_loc})%, Y: %round(y-coordinate of {koth_loc})%, Z: %round(z-coordinate of {koth_loc})%")
+            play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1 to player
+
+        else if {_sub} is "start" or "startkoth":
+            set {_m} to 15
+            if arg-3 is set:
+                set {_m} to arg-3
+            else if arg-2 is set:
+                set {_parsed} to arg-2 parsed as number
+                if {_parsed} is set:
+                    set {_m} to {_parsed}
+            startKothEvent({_m})
+            sendSystemMsg(player, "success", "Đã bắt đầu sự kiện KOTH trong &e%{_m}% phút&7!")
+
+        else if {_sub} is "stop" or "stopkoth":
+            stopKothEvent("Admin dừng sự kiện")
+            sendSystemMsg(player, "info", "Đã dừng sự kiện KOTH!")
+
+        else:
+            send "&8&m------------------------" to player
+            send "&6&lLỆNH QUẢN TRỊ KOTH LAUGH TALE:" to player
+            send "&e• /kothadmin set &7- Đặt tâm vòng tròn KOTH" to player
+            send "&e• /kothadmin start [<phút>] &7- Bắt đầu KOTH" to player
+            send "&e• /kothadmin stop &7- Dừng sự kiện KOTH" to player
+            send "&8&m------------------------" to player

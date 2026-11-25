@@ -1,0 +1,1 @@
+{"type":"neoforge:add_spawns","biomes":"#mineminenomi:can_spawn/gorillas","spawners":[{"type":"mineminenomi:blugori","maxCount":2,"minCount":1,"weight":3},{"type":"mineminenomi:blagori","maxCount":1,"minCount":1,"weight":1}]}

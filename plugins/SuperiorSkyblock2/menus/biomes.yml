@@ -1,0 +1,356 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+title: '&lHệ Sinh Thái Đảo'
+previous-menu: true
+
+pattern:
+  - '# # # # # # # # #'
+  - '# @ @ @ @ @ @ @ #'
+  - '# @ @ @ @ @ @ @ #'
+  - '# @ @ @ @ @ @ @ #'
+  - '$ $ $ $ $ $ $ $ $'
+  - '# # % # * # ^ # #'
+
+slots: '@'
+previous-page: '%'
+current-page: '*'
+next-page: '^'
+
+# Should the current biome be glowing?
+current-biome-glow: false
+
+# How should the dimension in which the player changes biome be selected?
+# DEFAULT  - Always uses the default dimension.
+# ARGUMENT - Uses the dimension from the command argument, or the default if invalid.
+# LOCATION - Uses the player's current dimension, or the default if is not inside the island world.
+# AUTO     - Prioritizes ARGUMENT, then LOCATION or DEFAULT if the previous ones fail.
+dimension-selection-mode: DEFAULT
+
+items:
+  '$':
+    type: STAINED_GLASS_PANE
+    data: 15
+    name: '&f'
+  '%':
+    type: PAPER
+    name: '{0}Trang Trước'
+  '*':
+    type: DOUBLE_PLANT
+    name: '&aTrang Hiện Tại'
+    lore:
+      - '&7Trang {0}'
+  '^':
+    type: PAPER
+    name: '{0}Trang Sau'
+
+biomes:
+  BEACHES:
+    dimension: NORMAL
+    access:
+      type: SAND
+      name: '&eBãi Biển &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: SAND
+      name: '&eBãi Biển &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2
+
+  BIRCH_FOREST:
+    dimension: NORMAL
+    access:
+      type: SAPLING
+      data: 2
+      name: '&eRừng Bạch Dương &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: SAPLING
+      data: 2
+      name: '&eRừng Bạch Dương &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2
+
+  DESERT:
+    dimension: NORMAL
+    access:
+      type: CACTUS
+      name: '&eSa Mạc &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: CACTUS
+      name: '&eSa Mạc &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2
+
+  FOREST:
+    dimension: NORMAL
+    access:
+      type: SAPLING
+      name: '&eRừng Rậm &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: SAPLING
+      name: '&eRừng Rậm &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2
+
+  ICE_FLATS:
+    dimension: NORMAL
+    access:
+      type: PACKED_ICE
+      name: '&eĐồng Băng Tuyết &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: PACKED_ICE
+      name: '&eĐồng Băng Tuyết &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2
+
+  JUNGLE:
+    dimension: NORMAL
+    access:
+      type: SAPLING
+      data: 3
+      name: '&eRừng Nhiệt Đới &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: SAPLING
+      data: 3
+      name: '&eRừng Nhiệt Đới &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2
+
+  MESA:
+    dimension: NORMAL
+    access:
+      type: DEAD_BUSH
+      name: '&eVùng Đất Đỏ (Mesa) &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: DEAD_BUSH
+      name: '&eVùng Đất Đỏ (Mesa) &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2
+
+  MUSHROOM_ISLAND:
+    dimension: NORMAL
+    access:
+      type: MYCEL
+      name: '&eĐảo Nấm &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: MYCEL
+      name: '&eĐảo Nấm &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2
+
+  OCEAN:
+    dimension: NORMAL
+    access:
+      type: WATER_BUCKET
+      name: '&eĐại Dương &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: WATER_BUCKET
+      name: '&eĐại Dương &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2
+
+  PLAINS:
+    dimension: NORMAL
+    access:
+      type: LONG_GRASS
+      data: 1
+      name: '&eĐồng Bằng &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: LONG_GRASS
+      data: 1
+      name: '&eĐồng Bằng &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2
+
+  ROOFED_FOREST:
+    dimension: NORMAL
+    access:
+      type: SAPLING
+      data: 5
+      name: '&eRừng Tán Rậm &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: SAPLING
+      data: 5
+      name: '&eRừng Tán Rậm &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2
+
+  SAVANNA:
+    dimension: NORMAL
+    access:
+      type: SAPLING
+      data: 4
+      name: '&eThảo Nguyên (Savanna) &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: SAPLING
+      data: 4
+      name: '&eThảo Nguyên (Savanna) &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2
+
+  SWAMPLAND:
+    dimension: NORMAL
+    access:
+      type: WATER_LILY
+      name: '&eĐầm Lầy &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: WATER_LILY
+      name: '&eĐầm Lầy &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2
+
+  TAIGA:
+    dimension: NORMAL
+    access:
+      type: SAPLING
+      data: 1
+      name: '&eRừng Thông (Taiga) &a(Khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: ENTITY_ENDERMAN_TELEPORT
+        volume: 0.8
+        pitch: 0.2
+    no-access:
+      type: SAPLING
+      data: 1
+      name: '&eRừng Thông (Taiga) &c(Không khả dụng)'
+      lore:
+        - '&7Nhấp để đổi hệ sinh thái cho đảo.'
+      sound:
+        type: BLOCK_ANVIL_PLACE
+        volume: 0.8
+        pitch: 0.2

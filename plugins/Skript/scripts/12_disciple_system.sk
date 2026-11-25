@@ -1,0 +1,2857 @@
+# =====================================================================
+# HỆ THỐNG ĐỆ TỬ ĐỒNG HÀNH (NRO X ONE PIECE SKYBLOCK)
+# MODULE: 12_disciple_system.sk (MINECRAFT 1.12.2 - SKBEE + REFLECT)
+# - Tiến hóa 3 Cấp: Skeleton -> Wither Skeleton -> Kỵ Binh Xương
+# - Bông Tai Porata 5 Cấp Hợp Thể Chuột Phải
+# - Đậu Thần & 5 Loại Bùa 24h (Coin PlayerPoints)
+# - Khay 5 Trang Bị (String ID) & Buff Bộ Giáp [4/4]
+# - Võ Học Cơ Bản & Hấp Thu Trái Ác Quỷ Vĩnh Viễn
+# =====================================================================
+
+import:
+    net.minecraft.server.v1_12_R1.EnumHand
+    java.lang.System
+    java.util.UUID
+    org.bukkit.Bukkit
+    org.bukkit.Material
+    org.bukkit.entity.Player
+    org.bukkit.entity.Skeleton
+    org.bukkit.entity.WitherSkeleton
+    org.bukkit.entity.SkeletonHorse
+    org.bukkit.entity.LivingEntity
+    org.bukkit.event.entity.EntityTargetLivingEntityEvent
+    org.bukkit.event.inventory.InventoryDragEvent
+    org.bukkit.inventory.ItemStack
+    org.black_ixx.playerpoints.PlayerPoints
+
+# ---------------------------------------------------------------------
+# 1. HÀM ĐỊNH DẠNG SỨC MẠNH & TRA CỨU BẬC TIẾN HÓA
+# ---------------------------------------------------------------------
+
+function formatDisciplePower(n: number) :: text:
+    if {_n} is not set:
+        return "0"
+    if {_n} < 1000:
+        return "%round({_n})%"
+    if {_n} < 1000000:
+        return "%round({_n} / 1000)% K"
+    if {_n} < 1000000000:
+        return "%round({_n} / 1000000)% Tr"
+    set {_val} to (round({_n} / 10000000)) / 100
+    return "%{_val}% Tỷ"
+
+function getDiscipleTier(power: number) :: number:
+    if {_power} < 150000000:
+        return 1
+    else if {_power} < 1500000000:
+        return 2
+    return 3
+
+function getDiscipleTierName(tier: number) :: text:
+    if {_tier} is 1:
+        return "&fSkeleton Cấp 1"
+    else if {_tier} is 2:
+        return "&8Wither Skeleton Cấp 2"
+    return "&cKỵ Binh Xương Cấp 3"
+
+# ---------------------------------------------------------------------
+# 2. HÀM QUẢN LÝ BÙA ĐỆ TỬ & COIN (PLAYERPOINTS)
+# ---------------------------------------------------------------------
+
+function getPlayerPointsBal(p: player) :: number:
+    set {_pp} to PlayerPoints.getInstance()
+    if {_pp} is not set:
+        return 0
+    return {_pp}.getAPI().look({_p}.getUniqueId())
+
+function takePlayerPoints(p: player, amt: number) :: boolean:
+    set {_pp} to PlayerPoints.getInstance()
+    if {_pp} is not set:
+        return false
+    set {_api} to {_pp}.getAPI()
+    set {_uuid} to {_p}.getUniqueId()
+    set {_bal} to {_api}.look({_uuid})
+    if {_bal} < {_amt}:
+        return false
+    return {_api}.take({_uuid}, {_amt})
+
+function isCharmActive(u: text, charm: text) :: boolean:
+    set {_nowSec} to System.currentTimeMillis() / 1000
+    if {disciple_charm::%{_u}%::%{_charm}%} is set:
+        if {disciple_charm::%{_u}%::%{_charm}%} > {_nowSec}:
+            return true
+    return false
+
+function getCharmRemainingText(u: text, charm: text) :: text:
+    set {_nowSec} to System.currentTimeMillis() / 1000
+    set {_expSec} to {disciple_charm::%{_u}%::%{_charm}%} ? 0
+    if {_expSec} <= {_nowSec}:
+        return "&cChưa kích hoạt"
+    set {_rem} to round({_expSec} - {_nowSec})
+    set {_hours} to floor({_rem} / 3600)
+    set {_mVal} to {_rem} - ({_hours} * 3600)
+    set {_mins} to floor({_mVal} / 60)
+    return "&aCòn %{_hours}%h %{_mins}%m"
+
+function createCharmGUIItem(name: text, desc: text, timeRem: text) :: item:
+    set {_it} to ("paper" parsed as item)
+    set name of {_it} to colored {_name}
+    delete {_lore::*}
+    set {_lore::1} to "&8&m--------------------------------"
+    set {_lore::2} to "&7Tác dụng: &f%{_desc}%"
+    set {_lore::3} to "&7Thời hạn: %{_timeRem}%"
+    set {_lore::4} to ""
+    set {_lore::5} to "&e▶ Nhấp để gia hạn thêm 24 Giờ"
+    set {_lore::6} to "&8&m--------------------------------"
+    set lore of {_it} to {_lore::*}
+    return {_it}
+
+function addDiscipleCharmDuration(u: text, charm: text, sec: number):
+    set {_nowSec} to System.currentTimeMillis() / 1000
+    set {_cur} to {disciple_charm::%{_u}%::%{_charm}%} ? 0
+    if {_cur} < {_nowSec}:
+        set {_cur} to {_nowSec}
+    set {disciple_charm::%{_u}%::%{_charm}%} to {_cur} + {_sec}
+
+# ---------------------------------------------------------------------
+# 3. HỆ THỐNG TRANG BỊ & CHỈ SỐ ĐỆ TỬ (STRING ID ONLY)
+# ---------------------------------------------------------------------
+
+function countDiscipleSetPieces(p: player, setId: text) :: number:
+    set {_u} to uuid of {_p}
+    set {_cnt} to 0
+    if {disciple_equip::%{_u}%::helmet} is "%{_setId}%_helmet":
+        add 1 to {_cnt}
+    if {disciple_equip::%{_u}%::chest} is "%{_setId}%_chest":
+        add 1 to {_cnt}
+    if {disciple_equip::%{_u}%::legs} is "%{_setId}%_legs":
+        add 1 to {_cnt}
+    if {disciple_equip::%{_u}%::boots} is "%{_setId}%_boots":
+        add 1 to {_cnt}
+    return {_cnt}
+
+function getDiscipleSetBonus(p: player) :: text:
+    set {_u} to uuid of {_p}
+    set {_h} to {disciple_equip::%{_u}%::helmet} ? ""
+    set {_c} to {disciple_equip::%{_u}%::chest} ? ""
+    set {_l} to {disciple_equip::%{_u}%::legs} ? ""
+    set {_b} to {disciple_equip::%{_u}%::boots} ? ""
+    if {_h} is "set1_helmet":
+        if {_c} is "set1_chest":
+            if {_l} is "set1_legs":
+                if {_b} is "set1_boots":
+                    return "set1"
+    if {_h} is "set2_helmet":
+        if {_c} is "set2_chest":
+            if {_l} is "set2_legs":
+                if {_b} is "set2_boots":
+                    return "set2"
+    if {_h} is "set3_helmet":
+        if {_c} is "set3_chest":
+            if {_l} is "set3_legs":
+                if {_b} is "set3_boots":
+                    return "set3"
+    return "none"
+
+function getDiscipleEquipName(id: text) :: text:
+    if {_id} is "set1_helmet":
+        return "&fMũ Hộ Vệ Đại Địa"
+    if {_id} is "set1_chest":
+        return "&fÁo Hộ Vệ Đại Địa"
+    if {_id} is "set1_legs":
+        return "&fQuần Hộ Vệ Đại Địa"
+    if {_id} is "set1_boots":
+        return "&fGiày Hộ Vệ Đại Địa"
+    if {_id} is "set1_sword":
+        return "&fKiếm Hộ Vệ"
+    if {_id} is "set2_helmet":
+        return "&bMũ Huyết Chiến Sĩ"
+    if {_id} is "set2_chest":
+        return "&bÁo Huyết Chiến Sĩ"
+    if {_id} is "set2_legs":
+        return "&bQuần Huyết Chiến Sĩ"
+    if {_id} is "set2_boots":
+        return "&bGiày Huyết Chiến Sĩ"
+    if {_id} is "set2_sword":
+        return "&cKiếm Huyết Chiến"
+    if {_id} is "set3_helmet":
+        return "&6Mũ Bất Diệt Thánh Quang"
+    if {_id} is "set3_chest":
+        return "&6Áo Bất Diệt Thánh Quang"
+    if {_id} is "set3_legs":
+        return "&6Quần Bất Diệt Thánh Quang"
+    if {_id} is "set3_boots":
+        return "&6Giày Bất Diệt Thánh Quang"
+    if {_id} is "set3_sword":
+        return "&6Thánh Kiếm Quang Minh"
+    if {_id} is "thanh_kiem":
+        return "&6Thánh Kiếm"
+    if {_id} is "muramasa":
+        return "&bKiếm Muramasa"
+    if {_id} is "nanh_fenrir":
+        return "&cNanh Fenrir"
+    if {_id} is "song_dao":
+        return "&aSong Đao Bão Táp"
+    if {_id} is "quy_kiem":
+        return "&4Quỷ Kiếm"
+    if {_id} is "thuong_xuyen_pha":
+        return "&eThương Xuyên Phá"
+    if {_id} is "meito_katana":
+        return "&f&lThái Đao Hải Tặc"
+    if {_id} is "meito_sandai_kitetsu":
+        return "&c&lTam Đại Quỷ Triệt"
+    if {_id} is "meito_wado_ichimonji":
+        return "&b&lHòa Đạo Nhất Văn Tự"
+    if {_id} is "meito_nidai_kitetsu":
+        return "&5&lNhị Đại Quỷ Triệt"
+    if {_id} is "meito_shusui":
+        return "&d&lHắc Bảo Kiếm Thu Thủy"
+    if {_id} is "meito_gryphon":
+        return "&6&lThánh Kiếm Gryphon"
+    if {_id} is "meito_kikoku":
+        return "&e&lQuỷ Khốc Kikoku"
+    if {_id} is "meito_soul_solid":
+        return "&3&lHồn Kiếm Soul Solid"
+    if {_id} is "meito_enma":
+        return "&5&l✦ Diêm Ma Enma ✦"
+    if {_id} is "meito_ame_no_habakiri":
+        return "&b&l✦ Thiên Vũ Vũ Trảm ✦"
+    if {_id} is "meito_yoru":
+        return "&2&l✦ Hắc Kiếm Yoru ✦"
+    if {_id} is "meito_bisento":
+        return "&6&l✦ Đại Đao Bisento ✦"
+    if {_id} is "meito_murakumogiri":
+        return "&c&l✦ Thiên Tùng Vân Thiết ✦"
+    if {_id} is "vanilla_diamond_helmet":
+        return "&bMũ Kim Cương"
+    if {_id} is "vanilla_iron_helmet":
+        return "&fMũ Sắt"
+    if {_id} is "vanilla_chainmail_helmet":
+        return "&7Mũ Xích"
+    if {_id} is "vanilla_gold_helmet":
+        return "&eMũ Vàng"
+    if {_id} is "vanilla_leather_helmet":
+        return "&6Mũ Da"
+    if {_id} is "vanilla_diamond_chest":
+        return "&bÁo Giáp Kim Cương"
+    if {_id} is "vanilla_iron_chest":
+        return "&fÁo Giáp Sắt"
+    if {_id} is "vanilla_chainmail_chest":
+        return "&7Áo Giáp Xích"
+    if {_id} is "vanilla_gold_chest":
+        return "&eÁo Giáp Vàng"
+    if {_id} is "vanilla_leather_chest":
+        return "&6Áo Da"
+    if {_id} is "vanilla_diamond_legs":
+        return "&bQuần Kim Cương"
+    if {_id} is "vanilla_iron_legs":
+        return "&fQuần Sắt"
+    if {_id} is "vanilla_chainmail_legs":
+        return "&7Quần Xích"
+    if {_id} is "vanilla_gold_legs":
+        return "&eQuần Vàng"
+    if {_id} is "vanilla_leather_legs":
+        return "&6Quần Da"
+    if {_id} is "vanilla_diamond_boots":
+        return "&bGiày Kim Cương"
+    if {_id} is "vanilla_iron_boots":
+        return "&fGiày Sắt"
+    if {_id} is "vanilla_chainmail_boots":
+        return "&7Giày Xích"
+    if {_id} is "vanilla_gold_boots":
+        return "&eGiày Vàng"
+    if {_id} is "vanilla_leather_boots":
+        return "&6Giày Da"
+    if {_id} is "vanilla_diamond_sword":
+        return "&bKiếm Kim Cương"
+    if {_id} is "vanilla_iron_sword":
+        return "&fKiếm Sắt"
+    if {_id} is "vanilla_stone_sword":
+        return "&7Kiếm Đá"
+    if {_id} is "vanilla_gold_sword":
+        return "&eKiếm Vàng"
+    if {_id} is "vanilla_wood_sword":
+        return "&6Kiếm Gỗ"
+    if {_id} is "vanilla_diamond_axe":
+        return "&bRìu Kim Cương"
+    if {_id} is "vanilla_iron_axe":
+        return "&fRìu Sắt"
+    if {_id} is "vanilla_stone_axe":
+        return "&7Rìu Đá"
+    if {_id} is "vanilla_gold_axe":
+        return "&eRìu Vàng"
+    if {_id} is "vanilla_wood_axe":
+        return "&6Rìu Gỗ"
+    if {_id} is "vanilla_bow":
+        return "&aCung Tên"
+    return "&7%{_id}%"
+
+function createDiscipleItemFromId(id: text) :: item:
+    if {_id} is "set1_helmet":
+        return createArmorPiece("set1", "helmet")
+    if {_id} is "set1_chest":
+        return createArmorPiece("set1", "chestplate")
+    if {_id} is "set1_legs":
+        return createArmorPiece("set1", "leggings")
+    if {_id} is "set1_boots":
+        return createArmorPiece("set1", "boots")
+    if {_id} is "set1_sword":
+        set {_it} to 1 of iron sword with nbt "{SkyblockGear:""set1_sword"",Unbreakable:1b,HideFlags:63}"
+        set name of {_it} to colored "&f&l✦ Kiếm Hộ Vệ ✦"
+        return {_it}
+    if {_id} is "set2_helmet":
+        return createArmorPiece("set2", "helmet")
+    if {_id} is "set2_chest":
+        return createArmorPiece("set2", "chestplate")
+    if {_id} is "set2_legs":
+        return createArmorPiece("set2", "leggings")
+    if {_id} is "set2_boots":
+        return createArmorPiece("set2", "boots")
+    if {_id} is "set2_sword":
+        return createGearItem("sword")
+    if {_id} is "set3_helmet":
+        return createArmorPiece("set3", "helmet")
+    if {_id} is "set3_chest":
+        return createArmorPiece("set3", "chestplate")
+    if {_id} is "set3_legs":
+        return createArmorPiece("set3", "leggings")
+    if {_id} is "set3_boots":
+        return createArmorPiece("set3", "boots")
+    if {_id} is "set3_sword":
+        set {_it} to 1 of diamond sword with nbt "{SkyblockGear:""set3_sword"",Unbreakable:1b,HideFlags:63}"
+        set name of {_it} to colored "&6&l✦ Thánh Kiếm Quang Minh ✦"
+        return {_it}
+    if {_id} is "thanh_kiem" or "muramasa" or "nanh_fenrir" or "song_dao" or "quy_kiem" or "thuong_xuyen_pha":
+        return createAoVItem({_id})
+    if {_id} starts with "meito_":
+        set {_wid} to {_id}
+        replace all "meito_" with "" in {_wid}
+        set {_name} to getDiscipleEquipName({_id})
+        set {_it} to makeCustomRPItem({_wid}, {_name}, ("&7Danh Kiếm Tuyệt Phẩm"))
+        set {_nbt} to nbt compound of {_it}
+        set string tag "SigWeaponId" of {_nbt} to {_wid}
+        set string tag "SkyblockItem" of {_nbt} to {_id}
+        return {_it}
+    if {_id} is "vanilla_diamond_helmet":
+        return 1 of diamond helmet
+    if {_id} is "vanilla_iron_helmet":
+        return 1 of iron helmet
+    if {_id} is "vanilla_chainmail_helmet":
+        return 1 of chainmail helmet
+    if {_id} is "vanilla_gold_helmet":
+        return 1 of gold helmet
+    if {_id} is "vanilla_leather_helmet":
+        return 1 of leather helmet
+    if {_id} is "vanilla_diamond_chest":
+        return 1 of diamond chestplate
+    if {_id} is "vanilla_iron_chest":
+        return 1 of iron chestplate
+    if {_id} is "vanilla_chainmail_chest":
+        return 1 of chainmail chestplate
+    if {_id} is "vanilla_gold_chest":
+        return 1 of gold chestplate
+    if {_id} is "vanilla_leather_chest":
+        return 1 of leather chestplate
+    if {_id} is "vanilla_diamond_legs":
+        return 1 of diamond leggings
+    if {_id} is "vanilla_iron_legs":
+        return 1 of iron leggings
+    if {_id} is "vanilla_chainmail_legs":
+        return 1 of chainmail leggings
+    if {_id} is "vanilla_gold_legs":
+        return 1 of gold leggings
+    if {_id} is "vanilla_leather_legs":
+        return 1 of leather leggings
+    if {_id} is "vanilla_diamond_boots":
+        return 1 of diamond boots
+    if {_id} is "vanilla_iron_boots":
+        return 1 of iron boots
+    if {_id} is "vanilla_chainmail_boots":
+        return 1 of chainmail boots
+    if {_id} is "vanilla_gold_boots":
+        return 1 of gold boots
+    if {_id} is "vanilla_leather_boots":
+        return 1 of leather boots
+    if {_id} is "vanilla_diamond_sword":
+        return 1 of diamond sword
+    if {_id} is "vanilla_iron_sword":
+        return 1 of iron sword
+    if {_id} is "vanilla_stone_sword":
+        return 1 of stone sword
+    if {_id} is "vanilla_gold_sword":
+        return 1 of gold sword
+    if {_id} is "vanilla_wood_sword":
+        return 1 of wood sword
+    if {_id} is "vanilla_diamond_axe":
+        return 1 of diamond axe
+    if {_id} is "vanilla_iron_axe":
+        return 1 of iron axe
+    if {_id} is "vanilla_stone_axe":
+        return 1 of stone axe
+    if {_id} is "vanilla_gold_axe":
+        return 1 of gold axe
+    if {_id} is "vanilla_wood_axe":
+        return 1 of wood axe
+    if {_id} is "vanilla_bow":
+        return 1 of bow
+    return air
+
+function restoreDiscipleItem(id: text, nbtStr: text) :: item:
+    set {_base} to createDiscipleItemFromId({_id})
+    if {_base} is air:
+        return air
+    if {_nbtStr} is set:
+        if {_nbtStr} is not "":
+            if {_nbtStr} is not "<none>":
+                add {_nbtStr} to nbt of {_base}
+    return {_base}
+
+function giveDiscipleItemSafely(p: player, item: item):
+    if isValidItem({_item}) is false:
+        stop
+    if {_p} can hold {_item}:
+        give {_item} to {_p}
+    else:
+        drop {_item} at location of {_p}
+        sendSystemMsg({_p}, "warning", "Túi đồ của bạn đã đầy! Trang bị đã rơi xuống đất chân bạn.")
+
+function getDiscipleItemId(i: item) :: text:
+    if isValidItem({_i}) is false:
+        return ""
+    set {_nbt} to nbt compound of {_i}
+    set {_set} to string tag "ArmorSet" of {_nbt}
+    if {_set} is set:
+        set {_part} to string tag "ArmorPart" of {_nbt}
+        if {_part} is "helmet":
+            return "%{_set}%_helmet"
+        if {_part} is "chestplate":
+            return "%{_set}%_chest"
+        if {_part} is "leggings":
+            return "%{_set}%_legs"
+        if {_part} is "boots":
+            return "%{_set}%_boots"
+    set {_gear} to string tag "SkyblockGear" of {_nbt}
+    if {_gear} is set:
+        if {_gear} is "sword":
+            return "set2_sword"
+        if {_gear} is "set1_sword":
+            return "set1_sword"
+        if {_gear} is "set3_sword":
+            return "set3_sword"
+    set {_aov} to string tag "AoVItem" of {_nbt}
+    if {_aov} is set:
+        if {_aov} is "thanh_kiem" or "muramasa" or "nanh_fenrir" or "song_dao" or "quy_kiem" or "thuong_xuyen_pha":
+            return {_aov}
+
+    # 13 Danh Kiếm One Piece
+    set {_meito} to string tag "SigWeaponId" of {_nbt}
+    if {_meito} is set:
+        if {_meito} is not "":
+            return "meito_%{_meito}%"
+    set {_sbItem} to string tag "SkyblockItem" of {_nbt}
+    if {_sbItem} is set:
+        if {_sbItem} starts with "meito_":
+            return {_sbItem}
+
+    # Vanilla Helmets
+    if {_i} is diamond helmet:
+        return "vanilla_diamond_helmet"
+    if {_i} is iron helmet:
+        return "vanilla_iron_helmet"
+    if {_i} is chainmail helmet:
+        return "vanilla_chainmail_helmet"
+    if {_i} is gold helmet:
+        return "vanilla_gold_helmet"
+    if {_i} is leather helmet:
+        return "vanilla_leather_helmet"
+
+    # Vanilla Chestplates
+    if {_i} is diamond chestplate:
+        return "vanilla_diamond_chest"
+    if {_i} is iron chestplate:
+        return "vanilla_iron_chest"
+    if {_i} is chainmail chestplate:
+        return "vanilla_chainmail_chest"
+    if {_i} is gold chestplate:
+        return "vanilla_gold_chest"
+    if {_i} is leather chestplate:
+        return "vanilla_leather_chest"
+
+    # Vanilla Leggings
+    if {_i} is diamond leggings:
+        return "vanilla_diamond_legs"
+    if {_i} is iron leggings:
+        return "vanilla_iron_legs"
+    if {_i} is chainmail leggings:
+        return "vanilla_chainmail_legs"
+    if {_i} is gold leggings:
+        return "vanilla_gold_legs"
+    if {_i} is leather leggings:
+        return "vanilla_leather_legs"
+
+    # Vanilla Boots
+    if {_i} is diamond boots:
+        return "vanilla_diamond_boots"
+    if {_i} is iron boots:
+        return "vanilla_iron_boots"
+    if {_i} is chainmail boots:
+        return "vanilla_chainmail_boots"
+    if {_i} is gold boots:
+        return "vanilla_gold_boots"
+    if {_i} is leather boots:
+        return "vanilla_leather_boots"
+
+    # Vanilla Weapons
+    if {_i} is diamond sword:
+        return "vanilla_diamond_sword"
+    if {_i} is iron sword:
+        return "vanilla_iron_sword"
+    if {_i} is stone sword:
+        return "vanilla_stone_sword"
+    if {_i} is gold sword:
+        return "vanilla_gold_sword"
+    if {_i} is wood sword:
+        return "vanilla_wood_sword"
+
+    if {_i} is diamond axe:
+        return "vanilla_diamond_axe"
+    if {_i} is iron axe:
+        return "vanilla_iron_axe"
+    if {_i} is stone axe:
+        return "vanilla_stone_axe"
+    if {_i} is gold axe:
+        return "vanilla_gold_axe"
+    if {_i} is wood axe:
+        return "vanilla_wood_axe"
+
+    if {_i} is bow:
+        return "vanilla_bow"
+
+    return ""
+
+function getDiscipleSlotForId(id: text) :: text:
+    if {_id} contains "_helmet":
+        return "helmet"
+    if {_id} contains "_chest":
+        return "chest"
+    if {_id} contains "_legs":
+        return "legs"
+    if {_id} contains "_boots":
+        return "boots"
+    if {_id} contains "_sword" or "thanh_kiem" or "muramasa" or "nanh_fenrir" or "song_dao" or "quy_kiem" or "thuong_xuyen_pha":
+        return "weapon"
+    if {_id} contains "_axe" or "vanilla_bow":
+        return "weapon"
+    if {_id} starts with "meito_":
+        return "weapon"
+    return ""
+
+function getDiscipleBaseHP(p: player) :: number:
+    set {_u} to uuid of {_p}
+    set {_sm} to {disciple::%{_u}%::power} ? 2000
+    set {_tier} to getDiscipleTier({_sm})
+    if {_tier} is 1:
+        return 45
+    else if {_tier} is 2:
+        return 75
+    return 110
+
+function getDiscipleBaseATK(p: player) :: number:
+    set {_u} to uuid of {_p}
+    set {_sm} to {disciple::%{_u}%::power} ? 2000
+    set {_tier} to getDiscipleTier({_sm})
+    if {_tier} is 1:
+        return 6
+    else if {_tier} is 2:
+        return 12
+    return 18
+
+function getDiscipleBaseDEF(p: player) :: number:
+    set {_u} to uuid of {_p}
+    set {_sm} to {disciple::%{_u}%::power} ? 2000
+    set {_tier} to getDiscipleTier({_sm})
+    if {_tier} is 1:
+        return 40
+    else if {_tier} is 2:
+        return 75
+    return 110
+
+function getDiscipleEquipHP(p: player) :: number:
+    set {_bonusHP} to 0
+    set {_s1} to countDiscipleSetPieces({_p}, "set1")
+    if {_s1} >= 1:
+        add 4 to {_bonusHP}
+    if {_s1} >= 2:
+        add 4 to {_bonusHP}
+    set {_s2} to countDiscipleSetPieces({_p}, "set2")
+    if {_s2} >= 1:
+        add 6 to {_bonusHP}
+    if {_s2} >= 2:
+        add 6 to {_bonusHP}
+    set {_s3} to countDiscipleSetPieces({_p}, "set3")
+    if {_s3} >= 1:
+        add 10 to {_bonusHP}
+    if {_s3} >= 2:
+        add 10 to {_bonusHP}
+    return {_bonusHP}
+
+function getDiscipleTotalHP(p: player) :: number:
+    set {_baseHP} to getDiscipleBaseHP({_p})
+    set {_equipHP} to getDiscipleEquipHP({_p})
+    return round({_baseHP} + {_equipHP})
+
+function getDiscipleEquipDEF(p: player) :: number:
+    set {_u} to uuid of {_p}
+    set {_equipDEF} to 0
+
+    # 1. Giáp từ Mũ
+    set {_h} to {disciple_equip::%{_u}%::helmet} ? ""
+    if {_h} is not "":
+        if {_h} is "set3_helmet":
+            add 5 to {_equipDEF}
+        else if {_h} is "set2_helmet":
+            add 4 to {_equipDEF}
+        else if {_h} is "set1_helmet" or "vanilla_diamond_helmet":
+            add 3 to {_equipDEF}
+        else if {_h} is "vanilla_iron_helmet" or "vanilla_chainmail_helmet" or "vanilla_gold_helmet":
+            add 2 to {_equipDEF}
+        else if {_h} is "vanilla_leather_helmet":
+            add 1 to {_equipDEF}
+        else if {_h} contains "diamond":
+            add 3 to {_equipDEF}
+        else if {_h} contains "iron" or "chainmail" or "gold":
+            add 2 to {_equipDEF}
+        else:
+            add 1 to {_equipDEF}
+
+    # 2. Giáp từ Áo
+    set {_c} to {disciple_equip::%{_u}%::chest} ? ""
+    if {_c} is not "":
+        if {_c} is "set3_chest":
+            add 11 to {_equipDEF}
+        else if {_c} is "set2_chest":
+            add 9 to {_equipDEF}
+        else if {_c} is "vanilla_diamond_chest":
+            add 8 to {_equipDEF}
+        else if {_c} is "set1_chest":
+            add 7 to {_equipDEF}
+        else if {_c} is "vanilla_iron_chest":
+            add 6 to {_equipDEF}
+        else if {_c} is "vanilla_chainmail_chest" or "vanilla_gold_chest":
+            add 5 to {_equipDEF}
+        else if {_c} is "vanilla_leather_chest":
+            add 3 to {_equipDEF}
+        else if {_c} contains "diamond":
+            add 8 to {_equipDEF}
+        else if {_c} contains "iron":
+            add 6 to {_equipDEF}
+        else if {_c} contains "chainmail" or "gold":
+            add 5 to {_equipDEF}
+        else:
+            add 3 to {_equipDEF}
+
+    # 3. Giáp từ Quần
+    set {_l} to {disciple_equip::%{_u}%::legs} ? ""
+    if {_l} is not "":
+        if {_l} is "set3_legs":
+            add 8 to {_equipDEF}
+        else if {_l} is "set2_legs":
+            add 7 to {_equipDEF}
+        else if {_l} is "vanilla_diamond_legs":
+            add 6 to {_equipDEF}
+        else if {_l} is "set1_legs" or "vanilla_iron_legs":
+            add 5 to {_equipDEF}
+        else if {_l} is "vanilla_chainmail_legs":
+            add 4 to {_equipDEF}
+        else if {_l} is "vanilla_gold_legs":
+            add 3 to {_equipDEF}
+        else if {_l} is "vanilla_leather_legs":
+            add 2 to {_equipDEF}
+        else if {_l} contains "diamond":
+            add 6 to {_equipDEF}
+        else if {_l} contains "iron":
+            add 5 to {_equipDEF}
+        else if {_l} contains "chainmail":
+            add 4 to {_equipDEF}
+        else if {_l} contains "gold":
+            add 3 to {_equipDEF}
+        else:
+            add 2 to {_equipDEF}
+
+    # 4. Giáp từ Giày
+    set {_b} to {disciple_equip::%{_u}%::boots} ? ""
+    if {_b} is not "":
+        if {_b} is "set3_boots":
+            add 5 to {_equipDEF}
+        else if {_b} is "set2_boots":
+            add 4 to {_equipDEF}
+        else if {_b} is "set1_boots" or "vanilla_diamond_boots":
+            add 3 to {_equipDEF}
+        else if {_b} is "vanilla_iron_boots":
+            add 2 to {_equipDEF}
+        else if {_b} is "vanilla_chainmail_boots" or "vanilla_gold_boots" or "vanilla_leather_boots":
+            add 1 to {_equipDEF}
+        else if {_b} contains "diamond":
+            add 3 to {_equipDEF}
+        else if {_b} contains "iron":
+            add 2 to {_equipDEF}
+        else:
+            add 1 to {_equipDEF}
+
+    # 5. Thưởng Giáp Set
+    set {_sb} to getDiscipleSetBonus({_p})
+    if {_sb} is "set1":
+        add 5 to {_equipDEF}
+    else if {_sb} is "set2":
+        add 8 to {_equipDEF}
+    else if {_sb} is "set3":
+        add 12 to {_equipDEF}
+
+    # 6. Thưởng Bảo Vệ (Protection)
+    set {_protH} to {disciple_equip_prot::%{_u}%::helmet} ? 0
+    set {_protC} to {disciple_equip_prot::%{_u}%::chest} ? 0
+    set {_protL} to {disciple_equip_prot::%{_u}%::legs} ? 0
+    set {_protB} to {disciple_equip_prot::%{_u}%::boots} ? 0
+    add ({_protH} + {_protC} + {_protL} + {_protB}) to {_equipDEF}
+
+    # 7. Danh Kiếm Shusui (+20 DEF khi trang bị)
+    set {_w} to {disciple_equip::%{_u}%::weapon} ? ""
+    if {_w} is "meito_shusui":
+        add 20 to {_equipDEF}
+
+    return {_equipDEF}
+
+function getDiscipleTotalArmor(p: player) :: number:
+    set {_u} to uuid of {_p}
+    set {_baseDEF} to getDiscipleBaseDEF({_p})
+    set {_equipDEF} to getDiscipleEquipDEF({_p})
+    set {_total} to {_baseDEF} + {_equipDEF}
+
+    # Bùa Bất Tử (+60 DEF - chỉ áp lên thực thể Đệ Tử, không cộng dồn vào Sư Phụ khi Hợp Thể)
+    if isCharmActive({_u}, "da_trau") is true:
+        add 60 to {_total}
+    else if isCharmActive({_u}, "bat_tu") is true:
+        add 60 to {_total}
+
+    return round({_total})
+
+function getDiscipleEquipATK(p: player) :: number:
+    set {_u} to uuid of {_p}
+    set {_equipATK} to 0
+    set {_w} to {disciple_equip::%{_u}%::weapon} ? ""
+    if {_w} is "vanilla_diamond_sword":
+        add 7 to {_equipATK}
+    else if {_w} is "vanilla_iron_sword":
+        add 6 to {_equipATK}
+    else if {_w} is "vanilla_stone_sword":
+        add 5 to {_equipATK}
+    else if {_w} is "vanilla_gold_sword":
+        add 4 to {_equipATK}
+    else if {_w} is "vanilla_wood_sword":
+        add 4 to {_equipATK}
+    else if {_w} is "vanilla_diamond_axe":
+        add 9 to {_equipATK}
+    else if {_w} is "vanilla_iron_axe":
+        add 9 to {_equipATK}
+    else if {_w} is "vanilla_stone_axe":
+        add 9 to {_equipATK}
+    else if {_w} is "vanilla_gold_axe":
+        add 7 to {_equipATK}
+    else if {_w} is "vanilla_wood_axe":
+        add 7 to {_equipATK}
+    else if {_w} is "vanilla_bow":
+        add 6 to {_equipATK}
+    else if {_w} is "set1_sword":
+        add 6 to {_equipATK}
+    else if {_w} is "set2_sword":
+        add 7 to {_equipATK}
+    else if {_w} is "set3_sword":
+        add 8 to {_equipATK}
+    else if {_w} is "thanh_kiem":
+        add 8 to {_equipATK}
+    else if {_w} is "muramasa":
+        add 7 to {_equipATK}
+    else if {_w} is "nanh_fenrir":
+        add 9 to {_equipATK}
+    else if {_w} is "song_dao":
+        add 6 to {_equipATK}
+    else if {_w} is "quy_kiem":
+        add 7 to {_equipATK}
+    else if {_w} is "thuong_xuyen_pha":
+        add 8 to {_equipATK}
+    else if {_w} starts with "meito_":
+        set {_mAtk} to {disciple_equip_meito_atk::%{_u}%} ? 0
+        if {_mAtk} <= 0:
+            if {_w} is "meito_katana":
+                set {_mAtk} to 14
+            else if {_w} is "meito_sandai_kitetsu" or "meito_wado_ichimonji":
+                set {_mAtk} to 17
+            else if {_w} is "meito_nidai_kitetsu" or "meito_kikoku" or "meito_soul_solid":
+                set {_mAtk} to 21
+            else if {_w} is "meito_shusui" or "meito_gryphon":
+                set {_mAtk} to 22
+            else if {_w} is "meito_enma" or "meito_ame_no_habakiri":
+                set {_mAtk} to 26
+            else if {_w} is "meito_bisento" or "meito_murakumogiri":
+                set {_mAtk} to 27
+            else if {_w} is "meito_yoru":
+                set {_mAtk} to 28
+            else:
+                set {_mAtk} to 14
+        add {_mAtk} to {_equipATK}
+
+    set {_fullSet} to getDiscipleSetBonus({_p})
+    if {_fullSet} is "set2":
+        add 2 to {_equipATK}
+    else if {_fullSet} is "set3":
+        add 3 to {_equipATK}
+
+    set {_sharpLvl} to {disciple_equip_sharp::%{_u}%} ? 0
+    if {_sharpLvl} > 0:
+        set {_sharpBonus} to ceil(1 + (({_sharpLvl} - 1) * 0.5))
+        add {_sharpBonus} to {_equipATK}
+
+    return {_equipATK}
+
+function getDiscipleTotalATK(p: player) :: number:
+    set {_u} to uuid of {_p}
+    set {_baseATK} to getDiscipleBaseATK({_p})
+    set {_equipATK} to getDiscipleEquipATK({_p})
+    set {_totalATK} to {_baseATK} + {_equipATK}
+
+    # Bùa Oai Hùng (+30% Sát thương - chỉ áp lên thực thể Đệ Tử)
+    if isCharmActive({_u}, "manh_me") is true:
+        set {_totalATK} to {_totalATK} * 1.3
+    else if isCharmActive({_u}, "thu_hut") is true:
+        set {_totalATK} to {_totalATK} * 1.3
+
+    return round({_totalATK})
+
+# ---------------------------------------------------------------------
+# 4. BÔNG TAI PORATA (5 CẤP HỢP THỂ)
+# ---------------------------------------------------------------------
+
+function getPorataMult(p: player) :: number:
+    set {_u} to uuid of {_p}
+    set {_lv} to {disciple::%{_u}%::porata_lv} ? 0
+    if {_lv} is 1:
+        return 0.20
+    if {_lv} is 2:
+        return 0.30
+    if {_lv} is 3:
+        return 0.40
+    if {_lv} is 4:
+        return 0.50
+    if {_lv} is 5:
+        return 0.60
+    return 0.0
+
+function getPorataBonusHP(p: player) :: number:
+    set {_u} to uuid of {_p}
+    if {disciple::%{_u}%::mode} is "fusion":
+        set {_mult} to getPorataMult({_p})
+        set {_base} to getDiscipleBaseHP({_p})
+        set {_equip} to getDiscipleEquipHP({_p})
+        return round(({_base} * {_mult}) + ({_equip} * 0.30))
+    return 0
+
+function getPorataBonusHearts(p: player) :: number:
+    return (getPorataBonusHP({_p}) / 2)
+
+function getPorataBonusATK(p: player) :: number:
+    set {_u} to uuid of {_p}
+    if {disciple::%{_u}%::mode} is "fusion":
+        set {_mult} to getPorataMult({_p})
+        set {_base} to getDiscipleBaseATK({_p})
+        set {_equip} to getDiscipleEquipATK({_p})
+        return round(({_base} * {_mult}) + ({_equip} * 0.30))
+    return 0
+
+function getPorataBonusDEF(p: player) :: number:
+    set {_u} to uuid of {_p}
+    if {disciple::%{_u}%::mode} is "fusion":
+        set {_mult} to getPorataMult({_p})
+        set {_base} to getDiscipleBaseDEF({_p})
+        set {_equip} to getDiscipleEquipDEF({_p})
+        return round(({_base} * {_mult}) + ({_equip} * 0.30))
+    return 0
+
+function createPorataEarringItem(lv: number) :: item:
+    set {_pct} to {_lv} * 10 + 10
+    set {_item} to 1 of ghast tear named "&b&l✦ BÔNG TAI PORATA CẤP %{_lv}% &b&l✦" with lore ("&8&m----------------------------------------" and "&7Loại: &bBảo Vật Hợp Thể Porata &8(Tối Thượng)" and "&7Cấp độ: &e&lCẤP %{_lv}% &8/ 5" and "" and "&6&l✦ HIỆU QUẢ HỢP THỂ:" and "&f• &cHấp thu %{_pct}%%% Chỉ Số Gốc &f+ &e30%% Trang Bị &7của Đệ Tử vào Sư Phụ." and "&f• &aCộng dồn Máu (HP), Tấn Công (ATK) & Giáp (DEF)." and "&f• &aĐệ Tử nhập thể, miễn nhiễm mọi sát thương ngoài đời." and "" and "&e▶ Cầm trên tay &bNhấp Chuột Phải &eđể Hợp Thể / Tách ra!" and "&8&m----------------------------------------")
+    enchant {_item} with unbreaking 1
+    set {_nbt} to nbt compound of {_item}
+    set int tag "HideFlags" of {_nbt} to 63
+    set string tag "SkyblockItem" of {_nbt} to "porata_earring"
+    set int tag "PorataLevel" of {_nbt} to {_lv}
+    return {_item}
+
+# ---------------------------------------------------------------------
+# 5. KỸ NĂNG & PHÁI CHIẾN ĐẤU ĐỆ TỬ
+# ---------------------------------------------------------------------
+
+function getDiscipleStyleDisplayName(style: text) :: text:
+    if {_style} is "kiem_dao":
+        return "&aKiếm Đạo Đại Tông Sư"
+    if {_style} is "luc_thuc":
+        return "&eLục Thức Hải Quân"
+    if {_style} is "mera":
+        return "&6Trái Mera Mera (Hệ Lửa)"
+    if {_style} is "gomu":
+        return "&dTrái Gomu Gomu (Hệ Co Giãn)"
+    if {_style} is "ope":
+        return "&bTrái Ope Ope (Hệ Phẫu Thuật)"
+    if {_style} is "seiryu":
+        return "&9Trái Uouo: Seiryu (Thanh Long)"
+    if {_style} is "gura":
+        return "&fTrái Gura Gura (Hệ Chấn Động)"
+    if {_style} is "pika":
+        return "&eTrái Pika Pika (Hệ Ánh Sáng)"
+    if {_style} is "goro":
+        return "&9Trái Goro Goro (Hệ Sấm Sét)"
+    if {_style} is "phoenix":
+        return "&3Trái Tori Tori: Phoenix (Phượng Hoàng)"
+    return "&7Võ Học Cơ Bản"
+
+function getDiscipleSkillName(style: text, slot: number) :: text:
+    if {_style} is "kiem_dao":
+        if {_slot} is 1:
+            return "Trảm Kích Kiếm Khí"
+        if {_slot} is 2:
+            return "Phi Thiên Ngự Kiếm"
+        return "Vạn Kiếm Quy Tông"
+    else if {_style} is "luc_thuc":
+        if {_slot} is 1:
+            return "Chỉ Thương (Shigan)"
+        if {_slot} is 2:
+            return "Lam Cước (Rankyaku)"
+        return "Lục Thức Lục Kỹ (Rokuogan)"
+    else if {_style} is "mera":
+        if {_slot} is 1:
+            return "Hỏa Quyền (Hiken)"
+        if {_slot} is 2:
+            return "Hỏa Giới (Dai Enkai)"
+        return "Đại Hỏa Đế (Entei)"
+    else if {_style} is "gomu":
+        if {_slot} is 1:
+            return "Gomu Gomu no Pistol"
+        if {_slot} is 2:
+            return "Gomu Gomu no Gatling"
+        return "Gear Fourth: King Kong Gun"
+    else if {_style} is "ope":
+        if {_slot} is 1:
+            return "Không Gian ROOM"
+        if {_slot} is 2:
+            return "Hoán Đổi Shambles"
+        return "Gamma Knife"
+    else if {_style} is "seiryu":
+        if {_slot} is 1:
+            return "Nhiệt Tức (Bolo Breath)"
+        if {_slot} is 2:
+            return "Hoại Phong (Kaifu)"
+        return "Long Thần Giáng Thế"
+    else if {_style} is "gura":
+        if {_slot} is 1:
+            return "Chấn Quyền (Air Crack)"
+        if {_slot} is 2:
+            return "Trảm Chấn (Tremor Strike)"
+        return "Sóng Thần Địa Chấn"
+    else if {_style} is "pika":
+        if {_slot} is 1:
+            return "Tia Sáng Laser (Pika Ray)"
+        if {_slot} is 2:
+            return "Tốc Độ Ánh Sáng (Yata Mirror)"
+        return "Bát Khúc Kính (Magatama)"
+    else if {_style} is "goro":
+        if {_slot} is 1:
+            return "Lôi Thương (Lightning Lance)"
+        if {_slot} is 2:
+            return "Lôi Điểu Hino (30M Volt)"
+        return "Lôi Thần Giáng Lâm (Amaru)"
+    else if {_style} is "phoenix":
+        if {_slot} is 1:
+            return "Thương Thao Tường (Blue Slash)"
+        if {_slot} is 2:
+            return "Dực Hoang Hỏa (Phoenix Flap)"
+        return "Phượng Hoàng Luân Hồi"
+    if {_slot} is 1:
+        return "Đòn Đánh Cơ Bản"
+    if {_slot} is 2:
+        return "Kỹ Năng Tầm Xa"
+    return "Tuyệt Chiêu Tối Thượng"
+
+function getDiscipleSkillDesc(style: text, slot: number) :: text:
+    if {_style} is "kiem_dao":
+        if {_slot} is 1:
+            return "Phóng kiếm khí chém xuyên mục tiêu."
+        if {_slot} is 2:
+            return "Phi thân chém quét diện rộng."
+        return "Mưa kiếm khí nổ tung 6 block."
+    else if {_style} is "luc_thuc":
+        if {_slot} is 1:
+            return "Đâm thủng cực nhanh sát thương chí mạng."
+        if {_slot} is 2:
+            return "Đá vung lưỡi khí chân đẩy lùi quái."
+        return "Chưởng xung kích siêu cấp cực đại nổ tung."
+    else if {_style} is "mera":
+        if {_slot} is 1:
+            return "Bắn tia Hỏa Quyền thiêu đốt và đẩy lùi."
+        if {_slot} is 2:
+            return "Bão lửa Hỏa Giới hất tung quái xung quanh."
+        return "Quả cầu Đại Hỏa Đế nổ 7 block, thiêu đốt 5s."
+    else if {_style} is "gomu":
+        if {_slot} is 1:
+            return "Bắn tia đấm cao su kéo mục tiêu lại gần."
+        if {_slot} is 2:
+            return "Liên hoàn đấm Gatling đẩy lùi quái liên tục."
+        return "King Kong Gun giáng cú đấm nổ chấn động cực lớn."
+    else if {_style} is "ope":
+        if {_slot} is 1:
+            return "Khai mở không gian ROOM làm chậm mục tiêu."
+        if {_slot} is 2:
+            return "Hoán đổi vị trí Shambles gây mù và điện giật."
+        return "Gamma Knife áp sát sau lưng chém Sát Thương Chuẩn."
+    else if {_style} is "seiryu":
+        if {_slot} is 1:
+            return "Khạc luồng nhiệt tức Bolo Breath thiêu đốt quái."
+        if {_slot} is 2:
+            return "Lưỡi đao gió Hoại Phong hất văng quái ra xa."
+        return "Long Thần Giáng Thế: Hồi 15%% HP & Giáng sấm sét."
+    else if {_style} is "gura":
+        if {_slot} is 1:
+            return "Đấm nứt không gian đẩy lùi và gây choáng."
+        if {_slot} is 2:
+            return "Chém xung kích chấn động diện rộng trước mặt."
+        return "Nghiêng trời lệch đất nổ 7 block, phá giáp cực mạnh."
+    else if {_style} is "pika":
+        if {_slot} is 1:
+            return "Bắn chùm laser ánh sáng tốc độ cao xuyên thấu."
+        if {_slot} is 2:
+            return "Lướt ánh sáng cực nhanh gây mù và sát thương."
+        return "Mưa đạn ánh sáng huỷ diệt nổ liên hoàn diện rộng."
+    else if {_style} is "goro":
+        if {_slot} is 1:
+            return "Phóng ngọn giáo sấm sét tê liệt mục tiêu."
+        if {_slot} is 2:
+            return "Triệu hồi sấm sét chim ưng hất văng quái ra xa."
+        return "Hóa thân Lôi Thần giáng sấm sét kinh hoàng nổ 7 block."
+    else if {_style} is "phoenix":
+        if {_slot} is 1:
+            return "Chém cánh lửa lam thiêu đốt và làm chậm quái."
+        if {_slot} is 2:
+            return "Vỗ cánh bão lửa hồi 10%% HP Đệ Tử & đẩy lùi xung quanh."
+        return "Phượng Hoàng Niết Bàn: Hồi phục 20%% HP & bão lửa hủy diệt."
+    return "Tuyệt kỹ võ học."
+
+function isDiscipleTargetValid(master: player, pet: entity, ent: entity) :: boolean:
+    if {_ent} is not set:
+        return false
+    if {_ent} is not alive:
+        return false
+    if {_ent} is {_pet}:
+        return false
+    if {_ent} is {_master}:
+        return false
+    set {_u} to uuid of {_master}
+    set {_eUid} to uuid of {_ent}
+    if {dummy_type::%{_eUid}%} is set:
+        return true
+    if {_ent} is not an instance of LivingEntity:
+        return false
+    if {_ent} is an armor stand:
+        return false
+    if {_ent} is {disciple_mount::%{_u}%}:
+        return false
+    if {_ent} is a player:
+        set {_mCrew} to getCrewIslandUUID({_master})
+        set {_tCrew} to getCrewIslandUUID({_ent})
+        if {_mCrew} is not "":
+            if {_mCrew} is {_tCrew}:
+                return false
+        return true
+    if metadata value "disciple_owner" of {_ent} is set:
+        return false
+    if {_ent} is a cow or a sheep or a pig or a chicken or a villager or a horse or a ocelot or a bat:
+        return false
+    return true
+
+function dealDiscipleDamage(master: player, pet: entity, target: entity, dmg: number, isCrit: boolean = false, isPen: boolean = false):
+    if isDiscipleTargetValid({_master}, {_pet}, {_target}) is false:
+        stop
+    if {_target} is a player:
+        set {_dmg} to {_dmg} * 0.5
+
+    # Hiệu ứng nội tại & On-hit 13 Danh Kiếm One Piece
+    set {_u} to uuid of {_master}
+    set {_w} to {disciple_equip::%{_u}%::weapon} ? ""
+    if {_w} starts with "meito_":
+        set {_tLoc} to location of {_target}
+        add 1.0 to y-coordinate of {_tLoc}
+        if {_w} is "meito_katana":
+            add 2 to {disciple::%{_u}%::power}
+            spawnVisualParticle("CRIT", {_tLoc}, 6, 0.3, 0.5, 0.3, 0.05)
+        else if {_w} is "meito_sandai_kitetsu":
+            apply potion of wither 1 to {_target} for 2 seconds
+            spawnVisualParticle("REDSTONE", {_tLoc}, 10, 0.4, 0.6, 0.4, 0.01)
+        else if {_w} is "meito_wado_ichimonji":
+            add 3 to {disciple::%{_u}%::stamina}
+            if {disciple::%{_u}%::stamina} > 1000:
+                set {disciple::%{_u}%::stamina} to 1000
+            spawnVisualParticle("FIREWORKS_SPARK", {_tLoc}, 8, 0.3, 0.5, 0.3, 0.05)
+        else if {_w} is "meito_nidai_kitetsu":
+            apply potion of wither 2 to {_target} for 3 seconds
+            spawnVisualParticle("SPELL_WITCH", {_tLoc}, 12, 0.4, 0.6, 0.4, 0.05)
+        else if {_w} is "meito_shusui":
+            spawnVisualParticle("DRAGON_BREATH", {_tLoc}, 12, 0.5, 0.5, 0.5, 0.05)
+        else if {_w} is "meito_gryphon":
+            spawnVisualParticle("EXPLOSION_NORMAL", {_tLoc}, 4, 0.4, 0.4, 0.4, 0.05)
+        else if {_w} is "meito_kikoku":
+            spawnVisualParticle("PORTAL", {_tLoc}, 15, 0.5, 0.5, 0.5, 0.1)
+        else if {_w} is "meito_soul_solid":
+            apply potion of slowness 2 to {_target} for 2 seconds
+            spawnVisualParticle("SNOWBALL", {_tLoc}, 10, 0.4, 0.4, 0.4, 0.05)
+        else if {_w} is "meito_enma":
+            ignite {_target} for 3 seconds
+            spawnVisualParticle("FLAME", {_tLoc}, 15, 0.5, 0.7, 0.5, 0.05)
+        else if {_w} is "meito_ame_no_habakiri":
+            set {_eType} to "%type of {_target}%"
+            if {_eType} contains "wither" or "ender_dragon" or "boss":
+                set {_dmg} to {_dmg} * 1.20
+            spawnVisualParticle("CRIT_MAGIC", {_tLoc}, 15, 0.5, 0.6, 0.5, 0.08)
+        else if {_w} is "meito_yoru":
+            spawnVisualParticle("VILLAGER_HAPPY", {_tLoc}, 15, 0.6, 0.6, 0.6, 0.1)
+            spawnVisualParticle("SWEEP_ATTACK", {_tLoc}, 3, 0.6, 0.4, 0.6, 0.05)
+        else if {_w} is "meito_bisento":
+            spawnVisualParticle("EXPLOSION_NORMAL", {_tLoc}, 6, 0.6, 0.5, 0.6, 0.08)
+        else if {_w} is "meito_murakumogiri":
+            spawnVisualParticle("CRIT_MAGIC", {_tLoc}, 15, 0.5, 0.6, 0.5, 0.08)
+
+    set {_tUid} to uuid of {_target}
+    if {dummy_type::%{_tUid}%} is set:
+        handleCombatDummyDirectDamage({_master}, {_target}, {_dmg}, {_isCrit}, {_isPen})
+    else:
+        if {_isCrit} is true:
+            setDamageVisualTag({_target}, "crit")
+        else if {_isPen} is true:
+            setDamageVisualTag({_target}, "true")
+        else:
+            setDamageVisualTag({_target}, "normal")
+        {_target}.damage({_dmg}, {_pet})
+
+function castDiscipleSkill(p: player, pet: entity, target: entity, skillNum: number):
+    set {_u} to uuid of {_p}
+    if {_pet} is not set:
+        stop
+    if {_pet} is not alive:
+        stop
+    if {_target} is not set:
+        stop
+    if {_target} is not alive:
+        stop
+
+    # Vung vũ khí khi tung chiêu
+    {_pet}.getHandle().a(EnumHand.MAIN_HAND)
+
+    # Quay mặt chuẩn xác về phía mục tiêu
+    set {_v} to vector between {_pet} and {_target}
+    set yaw of {_pet} to yaw of {_v}
+    set pitch of {_pet} to pitch of {_v}
+
+    set {_style} to {disciple::%{_u}%::style} ? "kiem_dao"
+    set {_totAtk} to getDiscipleTotalATK({_p})
+
+    set {_tLoc} to location of {_target}
+    add 1.0 to y-coordinate of {_tLoc}
+
+    set {_eye} to location of {_pet}
+    add 1.5 to y-coordinate of {_eye}
+
+    set {_dir} to {_tLoc}.toVector().subtract({_eye}.toVector()).normalize()
+
+    # --- CHIÊU 1 (COOLDOWN 1s - SÁT THƯƠNG: 130% ATK) ---
+    if {_skillNum} is 1:
+        set {_dmg} to roundOneDecimal({_totAtk} * 1.2)
+        if {_style} is "mera":
+            play sound "ENTITY_BLAZE_SHOOT" with volume 1 and pitch 1.0 at {_eye}
+            set {_hitMap::*} to ""
+            delete {_hitMap::*}
+            loop 12 times:
+                set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+                if block at {_stepLoc} is solid:
+                    spawnVisualParticle("LAVA", {_stepLoc}, 5, 0.2, 0.2, 0.2, 0.05)
+                    exit loop
+                spawnVisualParticle("FLAME", {_stepLoc}, 8, 0.2, 0.2, 0.2, 0.03)
+                spawnVisualParticle("SMOKE_LARGE", {_stepLoc}, 3, 0.1, 0.1, 0.1, 0.01)
+                loop all entities in radius 1.8 of {_stepLoc}:
+                    if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                        set {_eId} to "%loop-entity.getEntityId()%"
+                        if {_hitMap::%{_eId}%} is not set:
+                            set {_hitMap::%{_eId}%} to true
+                            ignite loop-entity for 3 seconds
+                            if loop-entity is not a player:
+                                push loop-entity {_dir} at speed 0.4
+                            dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, false, false)
+
+        else if {_style} is "gomu":
+            play sound "ENTITY_PLAYER_ATTACK_STRONG" with volume 1 and pitch 1.2 at {_eye}
+            loop 10 times:
+                set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+                if block at {_stepLoc} is solid:
+                    exit loop
+                spawnVisualParticle("CLOUD", {_stepLoc}, 6, 0.15, 0.15, 0.15, 0.02)
+                spawnVisualParticle("CRIT", {_stepLoc}, 3, 0.1, 0.1, 0.1, 0.01)
+                loop all entities in radius 1.6 of {_stepLoc}:
+                    if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                        set {_pullVec} to {_pet}.getLocation().toVector().subtract(loop-entity.getLocation().toVector()).normalize()
+                        if loop-entity is not a player:
+                            push loop-entity {_pullVec} at speed 1.1
+                        play sound "ENTITY_IRONGOLEM_ATTACK" with volume 1 and pitch 1 at {_eye}
+                        dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, false, false)
+                        exit 2 loops
+
+        else if {_style} is "ope":
+            play sound "ENTITY_WITHER_SHOOT" with volume 1 and pitch 1.4 at {_tLoc}
+            spawnVisualParticle("SPELL_WITCH", {_tLoc}, 30, 3.5, 0.3, 3.5, 0.05)
+            spawnVisualParticle("PORTAL", {_tLoc}, 20, 3.0, 0.3, 3.0, 0.05)
+            loop all entities in radius 4.0 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    apply potion of slowness 2 to loop-entity for 2 seconds
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, false, false)
+
+        else if {_style} is "seiryu":
+            play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1 and pitch 1.3 at {_eye}
+            play sound "ENTITY_GHAST_SHOOT" with volume 1 and pitch 0.7 at {_eye}
+            set {_hitMap::*} to ""
+            delete {_hitMap::*}
+            loop 14 times:
+                set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+                if block at {_stepLoc} is solid:
+                    spawnVisualParticle("EXPLOSION_NORMAL", {_stepLoc}, 6, 0.3, 0.3, 0.3, 0.05)
+                    exit loop
+                spawnVisualParticle("DRAGON_BREATH", {_stepLoc}, 8, 0.25, 0.25, 0.25, 0.02)
+                spawnVisualParticle("FLAME", {_stepLoc}, 6, 0.2, 0.2, 0.2, 0.03)
+                loop all entities in radius 2.0 of {_stepLoc}:
+                    if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                        set {_eId} to "%loop-entity.getEntityId()%"
+                        if {_hitMap::%{_eId}%} is not set:
+                            set {_hitMap::%{_eId}%} to true
+                            ignite loop-entity for 4 seconds
+                            dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, false, false)
+
+        else if {_style} is "gura":
+            play sound "ENTITY_GENERIC_EXPLODE" with volume 1 and pitch 1.2 at {_eye}
+            set {_hitMap::*} to ""
+            delete {_hitMap::*}
+            loop 10 times:
+                set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+                if block at {_stepLoc} is solid:
+                    exit loop
+                spawnVisualParticle("EXPLOSION_NORMAL", {_stepLoc}, 4, 0.2, 0.2, 0.2, 0.05)
+                spawnVisualParticle("CRIT", {_stepLoc}, 4, 0.2, 0.2, 0.2, 0.03)
+                loop all entities in radius 2.0 of {_stepLoc}:
+                    if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                        set {_eId} to "%loop-entity.getEntityId()%"
+                        if {_hitMap::%{_eId}%} is not set:
+                            set {_hitMap::%{_eId}%} to true
+                            if loop-entity is not a player:
+                                push loop-entity {_dir} at speed 0.6
+                            apply potion of slowness 1 to loop-entity for 2 seconds
+                            dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, false, false)
+
+        else if {_style} is "pika":
+            play sound "ENTITY_GUARDIAN_ATTACK" with volume 1 and pitch 1.8 at {_eye}
+            set {_hitMap::*} to ""
+            delete {_hitMap::*}
+            loop 14 times:
+                set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+                if block at {_stepLoc} is solid:
+                    exit loop
+                spawnVisualParticle("FIREWORKS_SPARK", {_stepLoc}, 6, 0.15, 0.15, 0.15, 0.02)
+                spawnVisualParticle("END_ROD", {_stepLoc}, 2, 0.1, 0.1, 0.1, 0.01)
+                loop all entities in radius 1.8 of {_stepLoc}:
+                    if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                        set {_eId} to "%loop-entity.getEntityId()%"
+                        if {_hitMap::%{_eId}%} is not set:
+                            set {_hitMap::%{_eId}%} to true
+                            if loop-entity is not a player:
+                                push loop-entity {_dir} at speed 0.4
+                            dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, false, false)
+
+        else if {_style} is "goro":
+            play sound "ENTITY_LIGHTNING_IMPACT" with volume 1 and pitch 1.5 at {_eye}
+            set {_hitMap::*} to ""
+            delete {_hitMap::*}
+            loop 12 times:
+                set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+                if block at {_stepLoc} is solid:
+                    exit loop
+                spawnVisualParticle("CRIT_MAGIC", {_stepLoc}, 6, 0.2, 0.2, 0.2, 0.03)
+                spawnVisualParticle("SPELL_INSTANT", {_stepLoc}, 4, 0.15, 0.15, 0.15, 0.02)
+                loop all entities in radius 1.8 of {_stepLoc}:
+                    if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                        set {_eId} to "%loop-entity.getEntityId()%"
+                        if {_hitMap::%{_eId}%} is not set:
+                            set {_hitMap::%{_eId}%} to true
+                            strike lightning effect at location of loop-entity
+                            dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, false, false)
+
+        else if {_style} is "phoenix":
+            play sound "ENTITY_ENDERDRAGON_FLAP" with volume 1 and pitch 1.2 at {_eye}
+            set {_hitMap::*} to ""
+            delete {_hitMap::*}
+            loop 10 times:
+                set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+                if block at {_stepLoc} is solid:
+                    exit loop
+                spawnVisualParticle("DRAGON_BREATH", {_stepLoc}, 5, 0.2, 0.2, 0.2, 0.03)
+                spawnVisualParticle("FIREWORKS_SPARK", {_stepLoc}, 4, 0.15, 0.15, 0.15, 0.02)
+                loop all entities in radius 1.8 of {_stepLoc}:
+                    if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                        set {_eId} to "%loop-entity.getEntityId()%"
+                        if {_hitMap::%{_eId}%} is not set:
+                            set {_hitMap::%{_eId}%} to true
+                            apply potion of slowness 1 to loop-entity for 2 seconds
+                            dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, false, false)
+
+        else if {_style} is "kiem_dao":
+            play sound "ENTITY_PLAYER_ATTACK_SWEEP" with volume 1 and pitch 1.2 at {_eye}
+            set {_hitMap::*} to ""
+            delete {_hitMap::*}
+            loop 8 times:
+                set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+                if block at {_stepLoc} is solid:
+                    exit loop
+                spawnVisualParticle("SWEEP_ATTACK", {_stepLoc}, 2, 0.2, 0.2, 0.2, 0.05)
+                spawnVisualParticle("CRIT", {_stepLoc}, 2, 0.1, 0.1, 0.1, 0.02)
+                loop all entities in radius 1.5 of {_stepLoc}:
+                    if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                        set {_eId} to "%loop-entity.getEntityId()%"
+                        if {_hitMap::%{_eId}%} is not set:
+                            set {_hitMap::%{_eId}%} to true
+                            if loop-entity is not a player:
+                                push loop-entity {_dir} at speed 0.3
+                            dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, false, false)
+
+        else: # luc_thuc
+            play sound "ENTITY_ARROW_HIT_PLAYER" with volume 1 and pitch 1.4 at {_eye}
+            spawnVisualParticle("CRIT", {_tLoc}, 15, 0.3, 0.5, 0.3, 0.08)
+            spawnVisualParticle("REDSTONE", {_tLoc}, 10, 0.3, 0.5, 0.3, 0.05)
+            dealDiscipleDamage({_p}, {_pet}, {_target}, {_dmg}, true, false)
+
+    # --- CHIÊU 2 (COOLDOWN 2s - SÁT THƯƠNG: 185% ATK) ---
+    else if {_skillNum} is 2:
+        set {_dmg} to roundOneDecimal({_totAtk} * 1.7)
+        if {_style} is "mera":
+            play sound "ENTITY_GHAST_SHOOT" with volume 1 and pitch 1.1 at {_tLoc}
+            spawnVisualParticle("FLAME", {_tLoc}, 40, 3.5, 0.3, 3.5, 0.05)
+            spawnVisualParticle("LAVA", {_tLoc}, 15, 3.0, 0.2, 3.0, 0.02)
+            loop all entities in radius 4.5 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    ignite loop-entity for 4 seconds
+                    if loop-entity is not a player:
+                        push loop-entity upwards at speed 0.8
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, false)
+
+        else if {_style} is "gomu":
+            play sound "ENTITY_PLAYER_ATTACK_SWEEP" with volume 1 and pitch 1.4 at {_eye}
+            spawnVisualParticle("SWEEP_ATTACK", {_tLoc}, 8, 0.4, 0.4, 0.4, 0.08)
+            spawnVisualParticle("CLOUD", {_tLoc}, 15, 0.5, 0.5, 0.5, 0.05)
+            loop all entities in radius 3.5 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    if loop-entity is not a player:
+                        push loop-entity {_dir} at speed 0.4
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, false, false)
+
+        else if {_style} is "ope":
+            play sound "ENTITY_ENDERMEN_TELEPORT" with volume 1 and pitch 1.2 at location of {_pet}
+            play sound "ENTITY_ENDERMEN_TELEPORT" with volume 1 and pitch 1.2 at location of {_target}
+            spawnVisualParticle("PORTAL", location of {_pet}, 25, 0.5, 1.0, 0.5, 0.1)
+            spawnVisualParticle("PORTAL", location of {_target}, 25, 0.5, 1.0, 0.5, 0.1)
+            spawnVisualParticle("CRIT_MAGIC", location of {_target}, 20, 0.4, 0.8, 0.4, 0.08)
+            set {_tUid} to uuid of {_target}
+            if {dummy_type::%{_tUid}%} is not set:
+                set {_pLoc} to location of {_pet}
+                teleport {_pet} to location of {_target}
+                teleport {_target} to {_pLoc}
+            apply potion of blindness 1 to {_target} for 2 seconds
+            dealDiscipleDamage({_p}, {_pet}, {_target}, {_dmg}, true, false)
+
+        else if {_style} is "seiryu":
+            play sound "ENTITY_PLAYER_ATTACK_SWEEP" with volume 1 and pitch 0.8 at location of {_pet}
+            play sound "ENTITY_GENERIC_EXPLODE" with volume 1 and pitch 1.5 at location of {_pet}
+            spawnVisualParticle("SWEEP_ATTACK", location of {_pet}, 25, 3.5, 0.3, 3.5, 0.08)
+            spawnVisualParticle("EXPLOSION_NORMAL", location of {_pet}, 15, 3.0, 0.2, 3.0, 0.03)
+            loop all entities in radius 6.0 of {_pet}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    set {_pushVec} to loop-entity.getLocation().toVector().subtract(location of {_pet}.toVector()).normalize()
+                    if loop-entity is not a player:
+                        push loop-entity {_pushVec} at speed 1.3
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, false)
+
+        else if {_style} is "gura":
+            play sound "ENTITY_ZOMBIE_BREAK_DOOR_WOOD" with volume 1.5 and pitch 0.8 at {_tLoc}
+            spawnVisualParticle("EXPLOSION_LARGE", {_tLoc}, 8, 1.5, 0.5, 1.5, 0.08)
+            spawnVisualParticle("CRIT", {_tLoc}, 25, 2.0, 0.5, 2.0, 0.1)
+            loop all entities in radius 4.5 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    if loop-entity is not a player:
+                        push loop-entity upwards at speed 0.7
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, false)
+
+        else if {_style} is "pika":
+            play sound "ENTITY_BLAZE_SHOOT" with volume 1 and pitch 2.0 at {_eye}
+            spawnVisualParticle("FIREWORKS_SPARK", location of {_pet}, 25, 0.5, 1.0, 0.5, 0.1)
+            spawnVisualParticle("END_ROD", {_tLoc}, 30, 1.0, 1.0, 1.0, 0.08)
+            set {_tUid} to uuid of {_target}
+            if {dummy_type::%{_tUid}%} is not set:
+                teleport {_pet} to location of {_target}
+            apply potion of blindness 1 to {_target} for 2 seconds
+            dealDiscipleDamage({_p}, {_pet}, {_target}, {_dmg}, true, false)
+
+        else if {_style} is "goro":
+            play sound "ENTITY_LIGHTNING_THUNDER" with volume 1.2 and pitch 1.2 at {_tLoc}
+            spawnVisualParticle("CRIT_MAGIC", {_tLoc}, 35, 2.5, 0.5, 2.5, 0.1)
+            spawnVisualParticle("FIREWORKS_SPARK", {_tLoc}, 20, 2.0, 0.5, 2.0, 0.05)
+            strike lightning effect at {_tLoc}
+            loop all entities in radius 4.5 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    set {_pushVec} to loop-entity.getLocation().toVector().subtract({_tLoc}.toVector()).normalize()
+                    if loop-entity is not a player:
+                        push loop-entity {_pushVec} at speed 0.9
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, false)
+
+        else if {_style} is "phoenix":
+            play sound "ENTITY_ENDERDRAGON_GROWL" with volume 0.8 and pitch 1.5 at location of {_pet}
+            set {_maxHp} to max health of {_pet}
+            set {_curHp} to health of {_pet}
+            set {_heal} to {_maxHp} * 0.10
+            set {_newHp} to {_curHp} + {_heal}
+            if {_newHp} > {_maxHp}:
+                set {_newHp} to {_maxHp}
+            set health of {_pet} to {_newHp}
+            spawnVisualParticle("FIREWORKS_SPARK", location of {_pet}, 30, 2.0, 0.5, 2.0, 0.08)
+            spawnVisualParticle("DRAGON_BREATH", location of {_pet}, 20, 1.5, 0.5, 1.5, 0.05)
+            loop all entities in radius 4.5 of {_pet}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    set {_pushVec} to loop-entity.getLocation().toVector().subtract(location of {_pet}.toVector()).normalize()
+                    if loop-entity is not a player:
+                        push loop-entity {_pushVec} at speed 0.8
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, false)
+
+        else if {_style} is "kiem_dao":
+            play sound "ENTITY_BLAZE_SHOOT" with volume 1 and pitch 1.5 at location of {_pet}
+            spawnVisualParticle("FIREWORKS_SPARK", {_tLoc}, 20, 0.5, 0.5, 0.5, 0.08)
+            spawnVisualParticle("SWEEP_ATTACK", {_tLoc}, 8, 0.4, 0.4, 0.4, 0.05)
+            loop all entities in radius 4.0 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, false)
+
+        else: # luc_thuc
+            play sound "ENTITY_PLAYER_ATTACK_SWEEP" with volume 1 and pitch 1.3 at location of {_pet}
+            spawnVisualParticle("SWEEP_ATTACK", {_tLoc}, 15, 0.4, 0.4, 0.4, 0.08)
+            spawnVisualParticle("CLOUD", {_tLoc}, 15, 0.5, 0.5, 0.5, 0.05)
+            loop all entities in radius 3.5 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    if loop-entity is not a player:
+                        push loop-entity {_dir} at speed 0.7
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, false)
+
+    # --- CHIÊU 3 (COOLDOWN 5s - SÁT THƯƠNG: 260% ATK - AOE) ---
+    else if {_skillNum} is 3:
+        set {_dmg} to roundOneDecimal({_totAtk} * 2.3)
+        if {_style} is "mera":
+            play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1 and pitch 0.8 at {_tLoc}
+            play sound "ENTITY_GENERIC_EXPLODE" with volume 2 and pitch 0.7 at {_tLoc}
+            spawnVisualParticle("EXPLOSION_HUGE", {_tLoc}, 2, 0.5, 0.5, 0.5, 0.1)
+            spawnVisualParticle("FLAME", {_tLoc}, 60, 2.5, 1.5, 2.5, 0.15)
+            spawnVisualParticle("LAVA", {_tLoc}, 25, 2.0, 1.2, 2.0, 0.08)
+            loop all entities in radius 6.5 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    ignite loop-entity for 5 seconds
+                    set {_pushVec} to loop-entity.getLocation().toVector().subtract({_tLoc}.toVector()).normalize()
+                    if loop-entity is not a player:
+                        push loop-entity {_pushVec} at speed 1.1
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, true)
+
+        else if {_style} is "gomu":
+            play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1 and pitch 1.2 at {_tLoc}
+            play sound "ENTITY_GENERIC_EXPLODE" with volume 2 and pitch 0.8 at {_tLoc}
+            spawnVisualParticle("EXPLOSION_HUGE", {_tLoc}, 2, 0.5, 0.5, 0.5, 0.1)
+            spawnVisualParticle("CRIT", {_tLoc}, 35, 1.5, 1.2, 1.5, 0.2)
+            spawnVisualParticle("CLOUD", {_tLoc}, 30, 2.0, 1.0, 2.0, 0.1)
+            loop all entities in radius 6.0 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    if loop-entity is not a player:
+                        push loop-entity upwards at speed 0.9
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, true)
+
+        else if {_style} is "ope":
+            play sound "ENTITY_WITHER_HURT" with volume 1 and pitch 0.8 at location of {_target}
+            play sound "ENTITY_PLAYER_ATTACK_CRIT" with volume 1 and pitch 0.6 at location of {_target}
+            spawnVisualParticle("CRIT_MAGIC", location of {_target}, 35, 0.5, 1.0, 0.5, 0.1)
+            spawnVisualParticle("SPELL_INSTANT", location of {_target}, 20, 0.4, 0.8, 0.4, 0.05)
+            apply potion of wither 2 to {_target} for 4 seconds
+            set {_tUid} to uuid of {_target}
+            if {dummy_type::%{_tUid}%} is not set:
+                set {_tEye} to {_target}.getEyeLocation()
+                set {_tDir} to {_tEye}.getDirection().normalize().multiply(-1.5)
+                set {_behindLoc} to {_target}.getLocation().add({_tDir}.getX(), 0, {_tDir}.getZ())
+                teleport {_pet} to {_behindLoc}
+            dealDiscipleDamage({_p}, {_pet}, {_target}, {_dmg}, true, true)
+
+        else if {_style} is "seiryu":
+            play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1 and pitch 0.8 at location of {_pet}
+            set {_maxHp} to max health of {_pet}
+            set {_curHp} to health of {_pet}
+            set {_heal} to {_maxHp} * 0.15
+            set {_newHp} to {_curHp} + {_heal}
+            if {_newHp} > {_maxHp}:
+                set {_newHp} to {_maxHp}
+            set health of {_pet} to {_newHp}
+            play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.5 to {_p}
+            spawnVisualParticle("DRAGON_BREATH", location of {_pet}, 25, 1.0, 1.2, 1.0, 0.05)
+            spawnVisualParticle("END_ROD", location of {_pet}, 15, 0.8, 1.0, 0.8, 0.05)
+            loop all entities in radius 7.5 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    strike lightning effect at location of loop-entity
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, true)
+
+        else if {_style} is "gura":
+            play sound "ENTITY_GENERIC_EXPLODE" with volume 2 and pitch 0.5 at {_tLoc}
+            play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1.5 and pitch 0.7 at {_tLoc}
+            spawnVisualParticle("EXPLOSION_HUGE", {_tLoc}, 3, 1.0, 0.5, 1.0, 0.1)
+            spawnVisualParticle("CRIT", {_tLoc}, 50, 3.0, 1.5, 3.0, 0.2)
+            spawnVisualParticle("SWEEP_ATTACK", {_tLoc}, 25, 2.5, 1.0, 2.5, 0.1)
+            loop all entities in radius 7.0 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    if loop-entity is not a player:
+                        push loop-entity upwards at speed 1.1
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, true)
+
+        else if {_style} is "pika":
+            play sound "ENTITY_FIREWORK_TWINKLE_FAR" with volume 2 and pitch 1.5 at {_tLoc}
+            play sound "ENTITY_GENERIC_EXPLODE" with volume 1.5 and pitch 1.8 at {_tLoc}
+            spawnVisualParticle("FIREWORKS_SPARK", {_tLoc}, 60, 3.0, 1.5, 3.0, 0.15)
+            spawnVisualParticle("END_ROD", {_tLoc}, 30, 2.5, 1.0, 2.5, 0.1)
+            spawnVisualParticle("EXPLOSION_LARGE", {_tLoc}, 4, 1.0, 0.5, 1.0, 0.05)
+            loop all entities in radius 6.5 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    set {_pushVec} to loop-entity.getLocation().toVector().subtract({_tLoc}.toVector()).normalize()
+                    if loop-entity is not a player:
+                        push loop-entity {_pushVec} at speed 1.0
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, true)
+
+        else if {_style} is "goro":
+            play sound "ENTITY_LIGHTNING_THUNDER" with volume 2 and pitch 0.8 at {_tLoc}
+            play sound "ENTITY_GENERIC_EXPLODE" with volume 1.5 and pitch 0.9 at {_tLoc}
+            spawnVisualParticle("EXPLOSION_HUGE", {_tLoc}, 2, 0.8, 0.5, 0.8, 0.1)
+            spawnVisualParticle("CRIT_MAGIC", {_tLoc}, 50, 3.0, 1.5, 3.0, 0.2)
+            strike lightning effect at {_tLoc}
+            loop all entities in radius 7.0 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    strike lightning effect at location of loop-entity
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, true)
+
+        else if {_style} is "phoenix":
+            play sound "ENTITY_ENDERDRAGON_DEATH" with volume 1.5 and pitch 1.2 at location of {_pet}
+            set {_maxHp} to max health of {_pet}
+            set {_curHp} to health of {_pet}
+            set {_heal} to {_maxHp} * 0.20
+            set {_newHp} to {_curHp} + {_heal}
+            if {_newHp} > {_maxHp}:
+                set {_newHp} to {_maxHp}
+            set health of {_pet} to {_newHp}
+            play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.5 to {_p}
+            spawnVisualParticle("DRAGON_BREATH", location of {_pet}, 40, 2.5, 1.5, 2.5, 0.1)
+            spawnVisualParticle("FIREWORKS_SPARK", location of {_pet}, 40, 2.5, 1.5, 2.5, 0.1)
+            spawnVisualParticle("EXPLOSION_LARGE", location of {_pet}, 4, 1.0, 0.5, 1.0, 0.05)
+            loop all entities in radius 7.0 of {_pet}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    set {_pushVec} to loop-entity.getLocation().toVector().subtract(location of {_pet}.toVector()).normalize()
+                    if loop-entity is not a player:
+                        push loop-entity {_pushVec} at speed 1.2
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, true)
+
+        else if {_style} is "kiem_dao":
+            play sound "ENTITY_GENERIC_EXPLODE" with volume 1.5 and pitch 0.9 at {_tLoc}
+            spawnVisualParticle("SWEEP_ATTACK", {_tLoc}, 30, 1.5, 0.5, 1.5, 0.1)
+            spawnVisualParticle("CRIT", {_tLoc}, 30, 1.5, 0.5, 1.5, 0.1)
+            spawnVisualParticle("EXPLOSION_LARGE", {_tLoc}, 3, 0.5, 0.5, 0.5, 0.05)
+            loop all entities in radius 6.0 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, true)
+
+        else: # luc_thuc
+            play sound "ENTITY_GENERIC_EXPLODE" with volume 2 and pitch 0.6 at {_tLoc}
+            play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1 and pitch 1.4 at {_tLoc}
+            spawnVisualParticle("EXPLOSION_HUGE", {_tLoc}, 2, 0.5, 0.5, 0.5, 0.1)
+            spawnVisualParticle("CRIT_MAGIC", {_tLoc}, 30, 1.5, 1.0, 1.5, 0.1)
+            loop all entities in radius 5.5 of {_tLoc}:
+                if isDiscipleTargetValid({_p}, {_pet}, loop-entity) is true:
+                    if loop-entity is not a player:
+                        push loop-entity upwards at speed 0.7
+                    dealDiscipleDamage({_p}, {_pet}, loop-entity, {_dmg}, true, true)
+
+function getDiscipleTarget(pet: entity, master: player) :: object:
+    set {_closest} to null
+    set {_minDist} to 999
+
+    # Tìm kiếm mọi mục tiêu hợp lệ trong bán kính 12 block xung quanh đệ tử
+    loop entities in radius 12 around {_pet}:
+        if isDiscipleTargetValid({_master}, {_pet}, loop-entity) is true:
+            set {_dist} to distance between {_pet} and loop-entity
+            if {_dist} < {_minDist}:
+                set {_minDist} to {_dist}
+                set {_closest} to loop-entity
+    return {_closest}
+
+
+# ---------------------------------------------------------------------
+# 6. VÒNG ĐỜI THỰC THỂ & TRIỆU HỒI TIẾN HÓA
+# ---------------------------------------------------------------------
+
+function despawnDisciple(p: player):
+    set {_u} to uuid of {_p}
+    set {_mount} to {disciple_mount::%{_u}%}
+    if {_mount} is set:
+        {_mount}.remove()
+        delete {disciple_mount::%{_u}%}
+    set {_pet} to {disciple_entity::%{_u}%}
+    if {_pet} is set:
+        {_pet}.remove()
+        delete {disciple_entity::%{_u}%}
+
+function syncDiscipleEquipmentVisual(p: player):
+    set {_u} to uuid of {_p}
+    set {_pet} to {disciple_entity::%{_u}%}
+    if {_pet} is not set:
+        stop
+    if {_pet} is not alive:
+        stop
+
+    set {_h} to {disciple_equip::%{_u}%::helmet} ? ""
+    if {_h} is not "":
+        set helmet of {_pet} to restoreDiscipleItem({_h}, {disciple_equip_nbt::%{_u}%::helmet})
+    else:
+        set helmet of {_pet} to air
+
+    set {_c} to {disciple_equip::%{_u}%::chest} ? ""
+    if {_c} is not "":
+        set chestplate of {_pet} to restoreDiscipleItem({_c}, {disciple_equip_nbt::%{_u}%::chest})
+    else:
+        set chestplate of {_pet} to air
+
+    set {_l} to {disciple_equip::%{_u}%::legs} ? ""
+    if {_l} is not "":
+        set leggings of {_pet} to restoreDiscipleItem({_l}, {disciple_equip_nbt::%{_u}%::legs})
+    else:
+        set leggings of {_pet} to air
+
+    set {_b} to {disciple_equip::%{_u}%::boots} ? ""
+    if {_b} is not "":
+        set boots of {_pet} to restoreDiscipleItem({_b}, {disciple_equip_nbt::%{_u}%::boots})
+    else:
+        set boots of {_pet} to air
+
+    set {_w} to {disciple_equip::%{_u}%::weapon} ? ""
+    if {_w} is not "":
+        set tool of {_pet} to restoreDiscipleItem({_w}, {disciple_equip_nbt::%{_u}%::weapon})
+    else:
+        set tool of {_pet} to 1 of stone sword with nbt "{Unbreakable:1b}"
+
+    set {_totHp} to getDiscipleTotalHP({_p})
+    set {_hearts} to {_totHp} / 2
+    if {_hearts} < 10:
+        set {_hearts} to 10
+    set max health of {_pet} to {_hearts}
+    set health of {_pet} to {_hearts}
+
+function spawnOrUpdateDisciple(p: player):
+    set {_u} to uuid of {_p}
+    despawnDisciple({_p})
+
+    if {disciple::%{_u}%::has} is not true:
+        stop
+    set {_mode} to {disciple::%{_u}%::mode} ? "follow"
+    if {_mode} is "home" or "fusion":
+        stop
+
+    # Kiểm tra Cooldown 30s hồi sinh khi tử trận
+    set {_nowMs} to System.currentTimeMillis()
+    set {_respawnMs} to {disciple_respawn_cd::%{_u}%} ? 0
+    if {_nowMs} < {_respawnMs}:
+        set {_remSec} to ceil(({_respawnMs} - {_nowMs}) / 1000)
+        send action bar "&cĐệ Tử đang trọng thương! Hồi sinh sau: &e%{_remSec}%s" to {_p}
+        stop
+
+    set {_loc} to location of {_p}
+    set {_power} to {disciple::%{_u}%::power} ? 2000
+    set {_tier} to getDiscipleTier({_power})
+
+    if {_tier} is 1:
+        spawn 1 skeleton at {_loc}
+        set {_pet} to spawned entity
+    else if {_tier} is 2:
+        spawn 1 wither skeleton at {_loc}
+        set {_pet} to spawned entity
+    else:
+        spawn 1 skeleton horse at {_loc}
+        set {_horse} to spawned entity
+        set {_horseNbt} to nbt compound of {_horse}
+        set byte tag "Tame" of {_horseNbt} to 1
+        set byte tag "Invulnerable" of {_horseNbt} to 1
+        set byte tag "Silent" of {_horseNbt} to 1
+        set byte tag "PersistenceRequired" of {_horseNbt} to 1
+        {_horse}.getInventory().setSaddle(new ItemStack(Material.SADDLE))
+        set metadata value "disciple_owner" of {_horse} to {_u}
+        set {disciple_mount::%{_u}%} to {_horse}
+
+        spawn 1 wither skeleton at {_loc}
+        set {_pet} to spawned entity
+        make {_pet} ride {_horse}
+
+    set {_petNbt} to nbt compound of {_pet}
+    set byte tag "CanPickUpLoot" of {_petNbt} to 0
+    set byte tag "PersistenceRequired" of {_petNbt} to 1
+    set byte tag "Silent" of {_petNbt} to 1
+    set metadata value "disciple_owner" of {_pet} to {_u}
+    set {disciple_entity::%{_u}%} to {_pet}
+
+    set {_smStr} to formatDisciplePower({_power})
+    set name of {_pet} to colored "&e&l✦ Đệ Tử của %name of {_p}% &8[&b%{_smStr}%&8]"
+
+    syncDiscipleEquipmentVisual({_p})
+
+    set {_totHp} to getDiscipleTotalHP({_p})
+    set {_hearts} to {_totHp} / 2
+    if {_hearts} < 10:
+        set {_hearts} to 10
+    set max health of {_pet} to {_hearts}
+    set health of {_pet} to {_hearts}
+
+# ---------------------------------------------------------------------
+# 7. GIAO DIỆN QUẢN LÝ ĐỆ TỬ (/detu) — 54 SLOTS
+# ---------------------------------------------------------------------
+
+function openDiscipleGUI(p: player):
+    openDiscipleGearGUI({_p})
+
+# =====================================================================
+# UI_G5_A: TRANG BỊ, CHỈ SỐ & AI ĐỆ TỬ (36 Ô)
+# =====================================================================
+function openDiscipleGearGUI(p: player):
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G5_A", "&8✦ &3&lTRANG BỊ & CHỈ SỐ ĐỆ TỬ &8✦", 4, cyan stained glass pane named " ", "UI_G5", "Đệ Tử Đồng Hành")
+
+    # Slot 4: Thẻ Thông Tin Tóm Tắt
+    set {_sm} to {disciple::%{_u}%::power} ? 2000
+    set {_tier} to getDiscipleTier({_sm})
+    set {_tierName} to getDiscipleTierName({_tier})
+    set {_style} to {disciple::%{_u}%::style} ? "kiem_dao"
+    set {_styleName} to getDiscipleStyleDisplayName({_style})
+
+    set {_dName} to {disciple::%{_u}%::name}
+    if {_dName} is not set:
+        set {_dName} to "Tiểu Tử"
+
+    set {_hLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_hLore::2} to "&8▪ &7Tên Đệ Tử: &e%{_dName}%"
+    set {_hLore::3} to "&8▪ &7Bậc: %{_tierName}% &7(Cấp %{_tier}% / 3)"
+    set {_hLore::4} to "&8▪ &7Sức Mạnh: &b%formatDisciplePower({_sm})%"
+    set {_hLore::5} to "&8▪ &7Võ Học: %{_styleName}%"
+    set {_hLore::6} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_pName} to name of {_p}
+    set slot 4 of {_inv} to makePlayerProfileHead({_p}, {_pName}, {_hLore::*}, "&e&l✦ HỒ SƠ ĐỆ TỬ ĐỒNG HÀNH ✦")
+
+    # 5 Ô Trang Bị: Slots 10, 11, 12, 13, 14
+    set {_hId} to {disciple_equip::%{_u}%::helmet} ? ""
+    if {_hId} is not "":
+        set {_hIt} to restoreDiscipleItem({_hId}, {disciple_equip_nbt::%{_u}%::helmet})
+        add "" and "&c▸ Nhấn để tháo Mũ về túi đồ!" to lore of {_hIt}
+        set slot 10 of {_inv} to {_hIt}
+    else:
+        set slot 10 of {_inv} to yellow stained glass pane named "&e&l[Ô MŨ - TRỐNG]" with lore ("&7Chưa trang bị Mũ." and "" and "&e▸ Nhấp vào Mũ trong túi để mặc!")
+
+    set {_cId} to {disciple_equip::%{_u}%::chest} ? ""
+    if {_cId} is not "":
+        set {_cIt} to restoreDiscipleItem({_cId}, {disciple_equip_nbt::%{_u}%::chest})
+        add "" and "&c▸ Nhấn để tháo Áo về túi đồ!" to lore of {_cIt}
+        set slot 11 of {_inv} to {_cIt}
+    else:
+        set slot 11 of {_inv} to orange stained glass pane named "&6&l[Ô ÁO GIÁP - TRỐNG]" with lore ("&7Chưa trang bị Áo Giáp." and "" and "&e▸ Nhấp vào Áo trong túi để mặc!")
+
+    set {_lId} to {disciple_equip::%{_u}%::legs} ? ""
+    if {_lId} is not "":
+        set {_lIt} to restoreDiscipleItem({_lId}, {disciple_equip_nbt::%{_u}%::legs})
+        add "" and "&c▸ Nhấn để tháo Quần về túi đồ!" to lore of {_lIt}
+        set slot 12 of {_inv} to {_lIt}
+    else:
+        set slot 12 of {_inv} to light blue stained glass pane named "&b&l[Ô QUẦN - TRỐNG]" with lore ("&7Chưa trang bị Quần." and "" and "&e▸ Nhấp vào Quần trong túi để mặc!")
+
+    set {_bId} to {disciple_equip::%{_u}%::boots} ? ""
+    if {_bId} is not "":
+        set {_bIt} to restoreDiscipleItem({_bId}, {disciple_equip_nbt::%{_u}%::boots})
+        add "" and "&c▸ Nhấn để tháo Giày về túi đồ!" to lore of {_bIt}
+        set slot 13 of {_inv} to {_bIt}
+    else:
+        set slot 13 of {_inv} to blue stained glass pane named "&9&l[Ô GIÀY - TRỐNG]" with lore ("&7Chưa trang bị Giày." and "" and "&e▸ Nhấp vào Giày trong túi để mặc!")
+
+    set {_wId} to {disciple_equip::%{_u}%::weapon} ? ""
+    if {_wId} is not "":
+        set {_wIt} to restoreDiscipleItem({_wId}, {disciple_equip_nbt::%{_u}%::weapon})
+        add "" and "&c▸ Nhấn để tháo Vũ Khí về túi đồ!" to lore of {_wIt}
+        set slot 14 of {_inv} to {_wIt}
+    else:
+        set slot 14 of {_inv} to red stained glass pane named "&c&l[Ô VŨ KHÍ - TRỐNG]" with lore ("&7Chưa trang bị Vũ Khí &8(Mặc định: Kiếm Đá)." and "&7Hỗ trợ: Kiếm Set, AoV & &613 Danh Kiếm&7!" and "" and "&e▸ Nhấp vào Vũ Khí trong túi để lắp!")
+
+    # Slot 16: Thẻ Chỉ Số Chi Tiết
+    set {_totHp} to getDiscipleTotalHP({_p})
+    set {_totAtk} to getDiscipleTotalATK({_p})
+    set {_totArmor} to getDiscipleTotalArmor({_p})
+    set {_dr} to {_totArmor} / ({_totArmor} + 100)
+    set {_redPct} to round({_dr} * 100)
+    if {_redPct} > 80:
+        set {_redPct} to 80
+    set {_statLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_statLore::2} to "&6✦ BẢNG CHỈ SỐ ĐỆ TỬ ĐỒNG HÀNH ✦"
+    set {_statLore::3} to "&f❤ Sinh Lực: &c%{_totHp}% HP &7(%{_totHp} / 2% Tim)"
+    set {_statLore::4} to "&f⚔ Sát Thương: &6%{_totAtk}% ATK"
+    set {_statLore::5} to "&f❖ Giáp Phòng Thủ: &9%{_totArmor}% DEF &8[-&b%{_redPct}%%%&8 ST]"
+    set {_statLore::6} to "&f⚡ Thể Lực: &a%{disciple::%{_u}%::stamina}% / 1000"
+    set {_statLore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 16 of {_inv} to makeGlowingItem(book, "&6&l✦ THẺ CHỈ SỐ THỰC CHIẾN ✦", {_statLore::*})
+
+    # Slot 20: Đổi Tên Đệ Tử
+    set {_nameLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_nameLore::2} to "&7Tên hiện tại: &e%{_dName}%"
+    set {_nameLore::3} to ""
+    set {_nameLore::4} to "&e▸ Nhấn để nhập lệnh đổi tên:"
+    set {_nameLore::5} to "&b  /detu name <tên mới>"
+    set {_nameLore::6} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 20 of {_inv} to makeGlowingItem(name tag, "&e&l✦ ĐỔI TÊN ĐỆ TỬ ✦", {_nameLore::*})
+
+    # Slot 21: Nút Thu Hồi / Cho Đệ Tử Về Nhà
+    set {_curMode} to {disciple::%{_u}%::mode} ? "follow"
+    delete {_homeBtnLore::*}
+    set {_homeBtnLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    if {_curMode} is "home":
+        set {_homeBtnLore::2} to "&8▪ &7Trạng thái: &d&lĐANG NGHỈ NGƠI Ở NHÀ"
+        set {_homeBtnLore::3} to "&fĐệ tử đã được thu hồi an toàn về nhà."
+        set {_homeBtnLore::4} to "&fKhông gây cản trở và chống lag cho đảo."
+        set {_homeBtnLore::5} to ""
+        set {_homeBtnLore::6} to "&a▸ Click: &fTriệu hồi Đệ Tử xuất chiến!"
+        set {_homeBtnLore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set slot 21 of {_inv} to makeGlowingItem(bed, "&d&l✦ ĐỆ TỬ: ĐANG Ở NHÀ ✦", {_homeBtnLore::*})
+    else:
+        set {_homeBtnLore::2} to "&8▪ &7Trạng thái: &a&lĐANG XUẤT CHIẾN"
+        set {_homeBtnLore::3} to "&fThu hồi Đệ Tử về nhà để tránh vướng víu,"
+        set {_homeBtnLore::4} to "&ftránh nhận sát thương và giảm tải cho đảo."
+        set {_homeBtnLore::5} to ""
+        set {_homeBtnLore::6} to "&e▸ Click: &fThu hồi Đệ Tử Về Nhà ngay!"
+        set {_homeBtnLore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set slot 21 of {_inv} to bed named colored "&e&l✦ THU HỒI / VỀ NHÀ ✦" with lore {_homeBtnLore::*}
+
+    # Slot 22: Đổi Trạng Thái AI (4 Chế độ)
+    set {_modeVN} to "&aĐi Theo"
+    if {_curMode} is "protect":
+        set {_modeVN} to "&eBảo Vệ"
+    else if {_curMode} is "attack":
+        set {_modeVN} to "&cChiến Đấu"
+    else if {_curMode} is "home":
+        set {_modeVN} to "&dVề Nhà (Nghỉ ngơi)"
+    delete {_aiLore::*}
+    set {_aiLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_aiLore::2} to "&7Chế độ AI hiện tại: %{_modeVN}% &8(&e%{_curMode}%&8)"
+    set {_aiLore::3} to ""
+    set {_aiLore::4} to "&f• &aĐi Theo (follow): &7Luôn bám sát Sư Phụ"
+    set {_aiLore::5} to "&f• &eBảo Vệ (protect): &7Đánh trả kẻ tấn công"
+    set {_aiLore::6} to "&f• &cChiến Đấu (attack): &7Tự động đánh quái"
+    set {_aiLore::7} to "&f• &dVề Nhà (home): &7Thu hồi nghỉ ngơi (chống vướng/lag)"
+    set {_aiLore::8} to ""
+    set {_aiLore::9} to "&e▸ Nhấn để chuyển luân phiên 4 chế độ AI!"
+    set {_aiLore::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 22 of {_inv} to makeGlowingItem(compass, "&b&l✦ CHẾ ĐỘ HÀNH VI AI ✦", {_aiLore::*})
+
+    # Slot 24: Tẩy Điểm Tiềm Năng (Thẻ Đổi Đệ Tử)
+    set {_resLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_resLore::2} to "&8▪ &7Chi phí: &6100 Coin"
+    set {_resLore::3} to "&f❖ Reset Sức Mạnh về &b2,000&f, xóa Trái Ác Quỷ."
+    set {_resLore::4} to "&f❖ Chọn lại ngẫu nhiên &aKiếm Đạo / Lục Thức&f."
+    set {_resLore::5} to "&a✔ Giữ nguyên Trang Bị, Đậu Thần & Cấp Porata!"
+    set {_resLore::6} to ""
+    set {_resLore::7} to "&e▸ Nhấn để Tẩy Đệ Tử!"
+    set {_resLore::8} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 24 of {_inv} to makeGlowingItem(magma cream, "&c&l✦ TẨY ĐIỂM TIỀM NĂNG (100 COIN) ✦", {_resLore::*})
+
+    openStandardUI({_p}, {_inv}, "UI_G5_A", "UI_G5")
+
+# =====================================================================
+# UI_G5_B: BẢO VẬT PORATA & KHO ĐẬU THẦN (36 Ô)
+# =====================================================================
+function openDisciplePorataGUI(p: player):
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G5_B", "&8✦ &5&lBẢO VẬT PORATA & ĐẬU THẦN &8✦", 4, purple stained glass pane named " ", "UI_G5", "Đệ Tử Đồng Hành")
+
+    set {_pLv} to {disciple::%{_u}%::porata_lv} ? 0
+    set {_pPct} to {_pLv} * 10 + 10
+
+    set {_fusionState} to "CHƯA HỢP THỂ"
+    if {disciple::%{_u}%::mode} is "fusion":
+        set {_fusionState} to "ĐANG HỢP THỂ"
+
+    # Slot 4: Thông Tin Porata
+    set {_pLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_pLore::2} to "&8▪ &7Trạng Thái Hợp Thể: &e%{_fusionState}%"
+    set {_pLore::3} to "&8▪ &7Cấp Bông Tai: &bCấp %{_pLv}% / 5"
+    set {_pLore::4} to "&8▪ &7Chỉ Số Cộng Thêm: &a+%{_pPct}%%% Gốc &f+ &e30%% Đồ &7Đệ Tử"
+    set {_pLore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_pName} to name of {_p}
+    set slot 4 of {_inv} to makePlayerProfileHead({_p}, {_pName}, {_pLore::*}, "&d&l✦ THÔNG TIN HỢP THỂ PORATA ✦")
+
+    # Slot 11: Kích Hoạt / Hủy Hợp Thể Porata
+    set {_actLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    if {disciple::%{_u}%::mode} is "fusion":
+        set {_actLore::2} to "&a✦ ĐANG TRONG TRẠNG THÁI HỢP THỂ"
+        set {_actLore::3} to "&7Sư Phụ đang kế thừa sức mạnh Đệ Tử."
+        set {_actLore::4} to ""
+        set {_actLore::5} to "&c▸ Nhấn để Tách Hợp Thể (Triệu hồi Đệ Tử)!"
+        set slot 11 of {_inv} to makeGlowingItem(nether star, "&a&l✦ TÁCH HỢP THỂ PORATA ✦", {_actLore::*})
+    else:
+        set {_actLore::2} to "&e✦ SẴN SÀNG HỢP THỂ"
+        set {_actLore::3} to "&7Lập tức hồi đầy &c100%% Max HP &7cho Sư Phụ"
+        set {_actLore::4} to "&7và cộng &e+%{_pPct}%%% HP, ATK & DEF &7Đệ Tử."
+        set {_actLore::5} to ""
+        set {_actLore::6} to "&e▸ Nhấn để Kích Hoạt Hợp Thể!"
+        set slot 11 of {_inv} to makeGlowingItem(ghast tear, "&b&l✦ HỢP THỂ PORATA ✦", {_actLore::*})
+
+    # Slot 13: Nâng Cấp Bông Tai Porata
+    set {_nextCost} to "&aĐã Đạt Cực Hạn (Cấp 5)"
+    set {_costVal} to 0
+    if {_pLv} is 0:
+        set {_nextCost} to "&6200 Coin &7(Mở Cấp 1)"
+        set {_costVal} to 200
+    else if {_pLv} is 1:
+        set {_nextCost} to "&6300 Coin &7(Lên Cấp 2)"
+        set {_costVal} to 300
+    else if {_pLv} is 2:
+        set {_nextCost} to "&6500 Coin &7(Lên Cấp 3)"
+        set {_costVal} to 500
+    else if {_pLv} is 3:
+        set {_nextCost} to "&6800 Coin &7(Lên Cấp 4)"
+        set {_costVal} to 800
+    else if {_pLv} is 4:
+        set {_nextCost} to "&61200 Coin &7(Lên Cấp 5)"
+        set {_costVal} to 1200
+
+    set {_upLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_upLore::2} to "&7Cấp độ hiện tại: &eCấp %{_pLv}% / 5"
+    set {_upLore::3} to "&7Tỷ lệ cộng: &a+%{_pPct}%%% Gốc &f+ &e30%% Đồ"
+    set {_upLore::4} to ""
+    set {_upLore::5} to "&6✦ CHI PHÍ NÂNG CẤP ✦"
+    set {_upLore::6} to "&f• &e%{_nextCost}%"
+    set {_upLore::7} to ""
+    set {_upLore::8} to "&e▸ Click Trái: Nâng cấp Bông Tai"
+    set {_upLore::9} to "&b▸ Click Phải: Nhận lại Bông Tai vào túi"
+    set {_upLore::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 13 of {_inv} to makeGlowingItem(gold nugget, "&6&l✦ NÂNG CẤP BÔNG TAI PORATA ✦", {_upLore::*})
+
+    # Slot 15: Trạm Đậu Thần Senzu
+    set {_beans} to {disciple::%{_u}%::beans} ? 0
+    set {_sLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_sLore::2} to "&8▪ &7Kho dự trữ: &e%{_beans}% Viên Đậu Thần"
+    set {_sLore::3} to "&f❖ Công dụng: Hồi &a100%% Thể Lực &fvà &c100%% Máu&f."
+    set {_sLore::4} to ""
+    set {_sLore::5} to "&6✦ BẢNG GIÁ ĐẬU THẦN ✦"
+    set {_sLore::6} to "&f• Gói 10 viên: &e$50,000 Money"
+    set {_sLore::7} to "&f• Gói 50 viên: &e$200,000 Money"
+    set {_sLore::8} to ""
+    set {_sLore::9} to "&e▸ Click Trái: Cho Đệ Tử ăn 1 viên"
+    set {_sLore::10} to "&b▸ Click Phải: Mua 10 viên ($50,000)"
+    set {_sLore::11} to "&6▸ Shift + Phải: Mua 50 viên ($200,000)"
+    set {_sLore::12} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 15 of {_inv} to makeGlowingItem(lime dye, "&a&l✦ TRẠM ĐẬU THẦN SENZU ✦", {_sLore::*})
+
+    openStandardUI({_p}, {_inv}, "UI_G5_B", "UI_G5")
+
+# =====================================================================
+# UI_G5_C: BÙA 24 GIỜ & 6 HỆ KỸ NĂNG ĐỆ TỬ (54 Ô)
+# =====================================================================
+function openDiscipleSkillGUI(p: player):
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G5_C", "&8✦ &2&lBÙA 24H & 6 HỆ KỸ NĂNG ĐỆ TỬ &8✦", 6, green stained glass pane named " ", "UI_G5", "Đệ Tử Đồng Hành")
+
+    # Slot 4: Thông Tin Sức Mạnh Võ Học
+    set {_style} to {disciple::%{_u}%::style} ? "kiem_dao"
+    set {_styleName} to getDiscipleStyleDisplayName({_style})
+    set {_skLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_skLore::2} to "&8▪ &7Hệ Võ Học Đang Dùng: %{_styleName}%"
+    set {_skLore::3} to "&f❖ Đệ Tử tự động tung chiêu với Cooldown siêu tốc:"
+    set {_skLore::4} to "&f• Chiêu 1: &bMỗi 1.5s &7(120%% ATK)"
+    set {_skLore::5} to "&f• Chiêu 2: &bMỗi 3.0s &7(170%% ATK)"
+    set {_skLore::6} to "&f• Chiêu 3: &bMỗi 6.0s &7(230%% ATK AoE)"
+    set {_skLore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 4 of {_inv} to makeGlowingItem(enchanted book, "&a&l✦ VÕ HỌC & KỸ NĂNG ĐỆ TỬ ✦", {_skLore::*})
+
+    # Hàng 2 (Slot 11..15): 5 Loại Bùa 24h
+    set {_rem1} to getCharmRemainingText({_u}, "de_tu")
+    set slot 11 of {_inv} to createCharmGUIItem("&e&l✦ BÙA ĐỆ TỬ (20 COIN)", "Tự ăn đậu khi kiệt sức, đánh liên tục khi AFK.", {_rem1})
+
+    set {_rem2} to getCharmRemainingText({_u}, "tri_tue")
+    set slot 12 of {_inv} to createCharmGUIItem("&b&l✦ BÙA TRÍ TUỆ (30 COIN)", "Nhân X2 Sức Mạnh nhận được mỗi đòn đánh.", {_rem2})
+
+    set {_rem3} to getCharmRemainingText({_u}, "manh_me")
+    set slot 13 of {_inv} to createCharmGUIItem("&c&l✦ BÙA OAI HÙNG (25 COIN)", "Tăng +30%% Sát Thương của Đệ Tử.", {_rem3})
+
+    set {_rem4} to getCharmRemainingText({_u}, "da_trau")
+    set slot 14 of {_inv} to createCharmGUIItem("&a&l✦ BÙA BẤT TỬ (25 COIN)", "Tăng +60 DEF cho Đệ Tử.", {_rem4})
+
+    set {_rem5} to getCharmRemainingText({_u}, "deo_dai")
+    if {_rem5} is "&cChưa kích hoạt":
+        set {_rem5} to getCharmRemainingText({_u}, "thu_hut")
+    set slot 15 of {_inv} to createCharmGUIItem("&d&l✦ BÙA DẺO DAI (40 COIN)", "Hồi 3%% HP/s cho Đệ Tử & hút item 8m.", {_rem5})
+
+    # Hàng 4 (Slot 28, 29, 30, 32, 33, 34): 6 Hệ Kỹ Năng
+    set slot 28 of {_inv} to makeCustomRPItem("fruit_mera", "&c&l✦ HỆ MERA MERA ✦", ("&7Lửa thiêu đốt đối thủ" and "&f• Cầm Trái Mera nhấp vào đây để cho ăn!"))
+    set slot 29 of {_inv} to makeCustomRPItem("fruit_gomu", "&e&l✦ HỆ GOMU GOMU ✦", ("&7Cao su co giãn phản kích" and "&f• Cầm Trái Gomu nhấp vào đây để cho ăn!"))
+    set slot 30 of {_inv} to makeCustomRPItem("fruit_ope", "&b&l✦ HỆ OPE OPE ✦", ("&7Phẫu thuật không gian ROOM" and "&f• Cầm Trái Ope nhấp vào đây để cho ăn!"))
+    set slot 32 of {_inv} to makeCustomRPItem("fruit_seiryu", "&9&l✦ HỆ SEIRYU (RỒNG) ✦", ("&7Hóa Lôi Long cuồng bạo" and "&f• Cầm Trái Seiryu nhấp vào đây để cho ăn!"))
+    set slot 33 of {_inv} to makeGlowingItem(iron sword, "&a&l✦ HỆ KIẾM ĐẠO ✦", ("&7Trảm kích kiếm khí cực hạn" and "&aHệ võ học khởi đầu"))
+    set slot 34 of {_inv} to makeGlowingItem(leather boots, "&6&l✦ HỆ LỤC THỨC ✦", ("&7Thể thuật Hải Quân tinh anh" and "&aHệ võ học khởi đầu"))
+
+    openStandardUI({_p}, {_inv}, "UI_G5_C", "UI_G5")
+
+# ---------------------------------------------------------------------
+# 8. SỰ KIỆN PORATA & CLICK GUI
+# ---------------------------------------------------------------------
+
+function handlePorataRightClick(p: player):
+    set {_u} to uuid of {_p}
+    set {_nowMs} to System.currentTimeMillis()
+    set {_lastMs} to {disciple_porata_cd::%{_u}%} ? 0
+    if ({_nowMs} - {_lastMs}) < 3000:
+        stop
+    set {disciple_porata_cd::%{_u}%} to {_nowMs}
+
+    if {disciple::%{_u}%::has} is not true:
+        sendSystemMsg({_p}, "warning", "Bạn chưa có Đệ Tử! Hãy mở &b/detu &eđể chiêu mộ.")
+        stop
+    set {_lv} to {disciple::%{_u}%::porata_lv} ? 0
+    if {_lv} < 1:
+        sendSystemMsg({_p}, "warning", "Bạn chưa mở khóa Bông Tai Porata! Hãy mở &b/detu &eđể nâng cấp.")
+        stop
+
+    set {_respawnMs} to {disciple_respawn_cd::%{_u}%} ? 0
+    if System.currentTimeMillis() < {_respawnMs}:
+        set {_remSec} to ceil(({_respawnMs} - System.currentTimeMillis()) / 1000)
+        sendSystemMsg({_p}, "warning", "Đệ Tử đang trọng thương! Không thể Hợp Thể Porata lúc này (&c%{_remSec}%s&e).")
+        stop
+
+    if {disciple::%{_u}%::mode} is not "fusion":
+        despawnDisciple({_p})
+        set {disciple::%{_u}%::mode} to "fusion"
+        spawnVisualParticle("SPELL_WITCH", location of {_p}, 35, 0.6, 1.2, 0.6, 0.1)
+        play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1 and pitch 1.2 to {_p}
+        recalcPlayerMaxHealth({_p})
+        set health of {_p} to max health of {_p}
+        spawnVisualParticle("HEART", location of {_p}, 25, 0.6, 1.0, 0.6, 0.1)
+        set {_bHp} to getPorataBonusHP({_p})
+        set {_bAtk} to getPorataBonusATK({_p})
+        set {_bDef} to getPorataBonusDEF({_p})
+        set {porata_bonus_def::%{_u}%} to {_bDef}
+        sendSystemMsg({_p}, "combat", "Đã &b&lHỢP THỂ PORATA CẤP %{_lv}%&f! Hồi phục đầy đủ &cHP &fvà nhận &c+%{_bHp}% HP&f, &6+%{_bAtk}% ATK&f, &9+%{_bDef}% DEF&f!")
+    else:
+        set {disciple::%{_u}%::mode} to "follow"
+        delete {porata_bonus_def::%{_u}%}
+        recalcPlayerMaxHealth({_p})
+        spawnOrUpdateDisciple({_p})
+        spawnVisualParticle("EXPLOSION_NORMAL", location of {_p}, 20, 0.5, 0.8, 0.5, 0.05)
+        play sound "ENTITY_GENERIC_EXPLODE" with volume 0.8 and pitch 1.4 to {_p}
+        sendSystemMsg({_p}, "combat", "Đã tách Hợp Thể! Đệ Tử quay lại chế độ &aĐi Theo&f.")
+
+on rightclick:
+    if isValidItem(player's tool) is true:
+        set {_tag} to string tag "SkyblockItem" of nbt compound of player's tool
+        if {_tag} is "porata_earring":
+            cancel event
+            handlePorataRightClick(player)
+
+on inventory click:
+    set {_u} to uuid of player
+
+    # ===== UI_G5_A: TRANG BỊ & CHỈ SỐ =====
+    if {ui_active::%{_u}%} is "UI_G5_A":
+        cancel event
+
+        # 1. Click túi đồ cá nhân -> MẶC NHANH
+        if clicked inventory is player's inventory:
+            set {_rawItem} to event.getCurrentItem()
+            if isValidItem({_rawItem}) is false:
+                stop
+            set {_id} to getDiscipleItemId({_rawItem})
+            if {_id} is "":
+                sendSystemMsg(player, "error", "Vật phẩm này không phải là Trang Bị hợp lệ cho Đệ Tử!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+                stop
+
+            set {_slotType} to getDiscipleSlotForId({_id})
+            if {_slotType} is "":
+                stop
+
+            set {_nbtStr} to "%nbt compound of {_rawItem}%"
+            set {_sharpLvl} to level of sharpness of {_rawItem}
+            set {_protLvl} to level of protection of {_rawItem}
+
+            set {_oldId} to {disciple_equip::%{_u}%::%{_slotType}%} ? ""
+            set {_oldNbt} to {disciple_equip_nbt::%{_u}%::%{_slotType}%}
+
+            if item amount of {_rawItem} <= 1:
+                set event-slot to air
+            else:
+                set item amount of {_rawItem} to (item amount of {_rawItem} - 1)
+                set event-slot to {_rawItem}
+
+            if {_oldId} is not "":
+                set {_oldItem} to restoreDiscipleItem({_oldId}, {_oldNbt})
+                giveDiscipleItemSafely(player, {_oldItem})
+
+            set {disciple_equip::%{_u}%::%{_slotType}%} to {_id}
+            set {disciple_equip_nbt::%{_u}%::%{_slotType}%} to {_nbtStr}
+            if {_slotType} is "weapon":
+                set {disciple_equip_sharp::%{_u}%} to {_sharpLvl}
+                set {_meitoAtk} to int tag "SigBaseAtk" of nbt compound of {_rawItem}
+                if {_meitoAtk} is set:
+                    if {_meitoAtk} > 0:
+                        set {disciple_equip_meito_atk::%{_u}%} to {_meitoAtk}
+            else:
+                set {disciple_equip_prot::%{_u}%::%{_slotType}%} to {_protLvl}
+
+            syncDiscipleEquipmentVisual(player)
+            openDiscipleGearGUI(player)
+            set {_itemName} to getDiscipleEquipName({_id})
+            sendSystemMsg(player, "info", "Đã trang bị %{_itemName}% &fcho Đệ Tử!")
+            play sound "ITEM_ARMOR_EQUIP_DIAMOND" with volume 1 and pitch 1.2 to player
+            stop
+
+        if clicked inventory is not player's current inventory:
+            stop
+
+        set {_slot} to index of event-slot
+        if {_slot} is 27 or 28 or 35:
+            stop
+        # Tháo trang bị (10: Mũ, 11: Áo, 12: Quần, 13: Giày, 14: Vũ Khí)
+        if {_slot} is 10:
+            set {_oldId} to {disciple_equip::%{_u}%::helmet} ? ""
+            if {_oldId} is not "":
+                set {_oldNbt} to {disciple_equip_nbt::%{_u}%::helmet}
+                delete {disciple_equip::%{_u}%::helmet}
+                delete {disciple_equip_nbt::%{_u}%::helmet}
+                delete {disciple_equip_prot::%{_u}%::helmet}
+                set {_oldItem} to restoreDiscipleItem({_oldId}, {_oldNbt})
+                giveDiscipleItemSafely(player, {_oldItem})
+                syncDiscipleEquipmentVisual(player)
+                openDiscipleGearGUI(player)
+                set {_itemName} to getDiscipleEquipName({_oldId})
+                sendSystemMsg(player, "info", "Đã tháo %{_itemName}% &fvề túi đồ!")
+                play sound "ITEM_ARMOR_EQUIP_GENERIC" with volume 1 and pitch 1 to player
+        else if {_slot} is 11:
+            set {_oldId} to {disciple_equip::%{_u}%::chest} ? ""
+            if {_oldId} is not "":
+                set {_oldNbt} to {disciple_equip_nbt::%{_u}%::chest}
+                delete {disciple_equip::%{_u}%::chest}
+                delete {disciple_equip_nbt::%{_u}%::chest}
+                delete {disciple_equip_prot::%{_u}%::chest}
+                set {_oldItem} to restoreDiscipleItem({_oldId}, {_oldNbt})
+                giveDiscipleItemSafely(player, {_oldItem})
+                syncDiscipleEquipmentVisual(player)
+                openDiscipleGearGUI(player)
+                set {_itemName} to getDiscipleEquipName({_oldId})
+                sendSystemMsg(player, "info", "Đã tháo %{_itemName}% &fvề túi đồ!")
+                play sound "ITEM_ARMOR_EQUIP_GENERIC" with volume 1 and pitch 1 to player
+        else if {_slot} is 12:
+            set {_oldId} to {disciple_equip::%{_u}%::legs} ? ""
+            if {_oldId} is not "":
+                set {_oldNbt} to {disciple_equip_nbt::%{_u}%::legs}
+                delete {disciple_equip::%{_u}%::legs}
+                delete {disciple_equip_nbt::%{_u}%::legs}
+                delete {disciple_equip_prot::%{_u}%::legs}
+                set {_oldItem} to restoreDiscipleItem({_oldId}, {_oldNbt})
+                giveDiscipleItemSafely(player, {_oldItem})
+                syncDiscipleEquipmentVisual(player)
+                openDiscipleGearGUI(player)
+                set {_itemName} to getDiscipleEquipName({_oldId})
+                sendSystemMsg(player, "info", "Đã tháo %{_itemName}% &fvề túi đồ!")
+                play sound "ITEM_ARMOR_EQUIP_GENERIC" with volume 1 and pitch 1 to player
+        else if {_slot} is 13:
+            if {disciple::%{_u}%::has} is not true:
+                sendSystemMsg(player, "error", "Bạn chưa sở hữu Đệ Tử Đồng Hành!")
+                stop
+            set {_oldId} to {disciple_equip::%{_u}%::boots} ? ""
+            if {_oldId} is not "":
+                set {_oldNbt} to {disciple_equip_nbt::%{_u}%::boots}
+                delete {disciple_equip::%{_u}%::boots}
+                delete {disciple_equip_nbt::%{_u}%::boots}
+                delete {disciple_equip_prot::%{_u}%::boots}
+                set {_oldItem} to restoreDiscipleItem({_oldId}, {_oldNbt})
+                giveDiscipleItemSafely(player, {_oldItem})
+                syncDiscipleEquipmentVisual(player)
+                openDiscipleGearGUI(player)
+                set {_itemName} to getDiscipleEquipName({_oldId})
+                sendSystemMsg(player, "info", "Đã tháo %{_itemName}% &fvề túi đồ!")
+                play sound "ITEM_ARMOR_EQUIP_GENERIC" with volume 1 and pitch 1 to player
+        else if {_slot} is 14:
+            set {_oldId} to {disciple_equip::%{_u}%::weapon} ? ""
+            if {_oldId} is not "":
+                set {_oldNbt} to {disciple_equip_nbt::%{_u}%::weapon}
+                delete {disciple_equip::%{_u}%::weapon}
+                delete {disciple_equip_nbt::%{_u}%::weapon}
+                delete {disciple_equip_sharp::%{_u}%}
+                delete {disciple_equip_meito_atk::%{_u}%}
+                set {_oldItem} to restoreDiscipleItem({_oldId}, {_oldNbt})
+                giveDiscipleItemSafely(player, {_oldItem})
+                syncDiscipleEquipmentVisual(player)
+                openDiscipleGearGUI(player)
+                set {_itemName} to getDiscipleEquipName({_oldId})
+                sendSystemMsg(player, "info", "Đã tháo %{_itemName}% &fvề túi đồ!")
+                play sound "ITEM_ARMOR_EQUIP_GENERIC" with volume 1 and pitch 1 to player
+        else if {_slot} is 20:
+            sendSystemMsg(player, "info", "Để đổi tên Đệ Tử, hãy gõ: &e/detu name <tên mới>")
+            wait 1 tick
+            close player's inventory
+        else if {_slot} is 21:
+            if {disciple::%{_u}%::has} is not true:
+                sendSystemMsg(player, "error", "Bạn chưa sở hữu Đệ Tử Đồng Hành!")
+                stop
+            set {_curMode} to {disciple::%{_u}%::mode} ? "follow"
+            if {_curMode} is "home":
+                set {disciple::%{_u}%::mode} to "follow"
+                spawnOrUpdateDisciple(player)
+                sendSystemMsg(player, "success", "Đã triệu hồi Đệ Tử xuất chiến (Đi Theo)!")
+                play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to player
+            else:
+                set {disciple::%{_u}%::mode} to "home"
+                despawnDisciple(player)
+                sendSystemMsg(player, "info", "Đã thu hồi Đệ Tử về nhà nghỉ ngơi!")
+                play sound "BLOCK_WOODEN_DOOR_CLOSE" with volume 1 and pitch 1 to player
+            openDiscipleGearGUI(player)
+        else if {_slot} is 22:
+            if {disciple::%{_u}%::has} is not true:
+                sendSystemMsg(player, "error", "Bạn chưa sở hữu Đệ Tử Đồng Hành!")
+                stop
+            set {_curMode} to {disciple::%{_u}%::mode} ? "follow"
+            if {_curMode} is "follow":
+                set {disciple::%{_u}%::mode} to "protect"
+                spawnOrUpdateDisciple(player)
+                sendSystemMsg(player, "info", "Đã chuyển AI Đệ Tử sang: &eBảo Vệ (protect)")
+            else if {_curMode} is "protect":
+                set {disciple::%{_u}%::mode} to "attack"
+                spawnOrUpdateDisciple(player)
+                sendSystemMsg(player, "info", "Đã chuyển AI Đệ Tử sang: &cChiến Đấu (attack)")
+            else if {_curMode} is "attack":
+                set {disciple::%{_u}%::mode} to "home"
+                despawnDisciple(player)
+                sendSystemMsg(player, "info", "Đã cho Đệ Tử: &dVề Nhà nghỉ ngơi (home)")
+            else:
+                set {disciple::%{_u}%::mode} to "follow"
+                spawnOrUpdateDisciple(player)
+                sendSystemMsg(player, "info", "Đã chuyển AI Đệ Tử sang: &aĐi Theo (follow)")
+            play sound "UI_BUTTON_CLICK" with volume 1 and pitch 1 to player
+            openDiscipleGearGUI(player)
+        else if {_slot} is 24:
+            if {disciple::%{_u}%::has} is not true:
+                sendSystemMsg(player, "error", "Bạn chưa sở hữu Đệ Tử Đồng Hành!")
+                stop
+            if takePlayerPoints(player, 100) is true:
+                set {disciple::%{_u}%::power} to 2000
+                set {disciple::%{_u}%::stamina} to 1000
+                set {disciple::%{_u}%::ate_fruit} to false
+                set {_r} to random integer between 1 and 2
+                if {_r} is 1:
+                    set {disciple::%{_u}%::style} to "kiem_dao"
+                else:
+                    set {disciple::%{_u}%::style} to "luc_thuc"
+                spawnOrUpdateDisciple(player)
+                set {_stName} to getDiscipleStyleDisplayName({disciple::%{_u}%::style})
+                sendSystemMsg(player, "success", "Đã tẩy Đệ Tử về ban đầu! Nhận phái %{_stName}%&a.")
+                play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to player
+                openDiscipleGearGUI(player)
+            else:
+                sendSystemMsg(player, "error", "Bạn cần 100 Coin để tẩy Đệ Tử!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+        stop
+
+    # ===== UI_G5_B: PORATA & ĐẬU THẦN =====
+    if {ui_active::%{_u}%} is "UI_G5_B":
+        cancel event
+        if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+            player.updateInventory()
+        if clicked inventory is not player's current inventory:
+            stop
+        set {_slot} to index of event-slot
+        if {_slot} is 27 or 28 or 35:
+            stop
+
+        if {_slot} is 11:
+            if {disciple::%{_u}%::has} is not true:
+                sendSystemMsg(player, "error", "Bạn chưa sở hữu Đệ Tử Đồng Hành!")
+                stop
+            handlePorataRightClick(player)
+            openDisciplePorataGUI(player)
+        else if {_slot} is 13:
+            set {_curLv} to {disciple::%{_u}%::porata_lv} ? 0
+            if event.isRightClick() is true:
+                if {_curLv} >= 1:
+                    giveDiscipleItemSafely(player, createPorataEarringItem({_curLv}))
+                    sendSystemMsg(player, "success", "Đã nhận lại Bông Tai Porata Cấp %{_curLv}% vào túi đồ!")
+                    play sound "ITEM_ARMOR_EQUIP_DIAMOND" with volume 1 and pitch 1.2 to player
+                else:
+                    sendSystemMsg(player, "warning", "Bạn chưa mở khóa Bông Tai Porata! Hãy Click Trái để nâng cấp.")
+                    play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            else:
+                if {_curLv} >= 5:
+                    sendSystemMsg(player, "info", "Bông Tai Porata đã đạt cấp tối đa (Cấp 5)!")
+                    stop
+                set {_nextLv} to {_curLv} + 1
+                set {_cost} to 200
+                if {_nextLv} is 2:
+                    set {_cost} to 300
+                else if {_nextLv} is 3:
+                    set {_cost} to 500
+                else if {_nextLv} is 4:
+                    set {_cost} to 800
+                else if {_nextLv} is 5:
+                    set {_cost} to 1200
+                if takePlayerPoints(player, {_cost}) is true:
+                    set {disciple::%{_u}%::porata_lv} to {_nextLv}
+                    giveDiscipleItemSafely(player, createPorataEarringItem({_nextLv}))
+                    set {_pct} to {_nextLv} * 25 + 25
+                    broadcastDualCard("&b&l✦ BÔNG TAI PORATA", "&e%name of player% &7đã nâng cấp &b&lBông Tai Porata Cấp %{_nextLv}%&7!", "&7Gia tăng sức mạnh hợp thể lên &e+%{_pct}%%%&7.")
+                    play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to player
+                    openDisciplePorataGUI(player)
+                else:
+                    sendSystemMsg(player, "error", "Bạn cần %{_cost}% Coin để nâng cấp Bông Tai lên Cấp %{_nextLv}%!")
+                    play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+        else if {_slot} is 15:
+            if {disciple::%{_u}%::has} is not true:
+                sendSystemMsg(player, "error", "Bạn chưa sở hữu Đệ Tử Đồng Hành!")
+                stop
+            if event.isLeftClick() is true:
+                if ({disciple::%{_u}%::beans} ? 0) > 0:
+                    subtract 1 from {disciple::%{_u}%::beans}
+                    set {disciple::%{_u}%::stamina} to 1000
+                    set {_pet} to {disciple_entity::%{_u}%}
+                    if {_pet} is set:
+                        if {_pet} is alive:
+                            set health of {_pet} to max health of {_pet}
+                    sendSystemMsg(player, "info", "Đã cho Đệ Tử ăn 1 Đậu Thần! Hồi phục 100%% Thể Lực & Máu.")
+                    play sound "ENTITY_PLAYER_BURP" with volume 1 and pitch 1.2 to player
+                    openDisciplePorataGUI(player)
+                else:
+                    sendSystemMsg(player, "error", "Bạn đã hết Đậu Thần! Chuột Phải để mua thêm ($50,000/10 viên).")
+                    play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            else if event.isShiftClick() is true:
+                if player's balance >= 200000:
+                    remove 200000 from player's balance
+                    add 50 to {disciple::%{_u}%::beans}
+                    sendSystemMsg(player, "success", "Đã mua thành công 50 Đậu Thần ($200,000)!")
+                    play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to player
+                    openDisciplePorataGUI(player)
+                else:
+                    sendSystemMsg(player, "error", "Bạn thiếu tiền! Cần $200,000 cho 50 Đậu Thần.")
+                    play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            else if event.isRightClick() is true:
+                if player's balance >= 50000:
+                    remove 50000 from player's balance
+                    add 10 to {disciple::%{_u}%::beans}
+                    sendSystemMsg(player, "success", "Đã mua thành công 10 Đậu Thần ($50,000)!")
+                    play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 1 and pitch 1.2 to player
+                    openDisciplePorataGUI(player)
+                else:
+                    sendSystemMsg(player, "error", "Bạn thiếu tiền! Cần $50,000 cho 10 Đậu Thần.")
+                    play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+        stop
+
+    # ===== UI_G5_C: BÙA & KỸ NĂNG =====
+    if {ui_active::%{_u}%} is "UI_G5_C":
+        cancel event
+        if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+            player.updateInventory()
+        if clicked inventory is not player's current inventory:
+            stop
+        set {_slot} to index of event-slot
+        if {_slot} is 45 or 46 or 53:
+            stop
+
+        if {_slot} is 11:
+            if takePlayerPoints(player, 20) is true:
+                addDiscipleCharmDuration({_u}, "de_tu", 86400)
+                sendSystemMsg(player, "economy", "Đã gia hạn &e&lBùa Đệ Tử &fthêm &e24 Giờ&f!")
+                play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.5 to player
+                openDiscipleSkillGUI(player)
+            else:
+                sendSystemMsg(player, "error", "Bạn cần 20 Coin để gia hạn Bùa Đệ Tử (24h)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+        else if {_slot} is 12:
+            if takePlayerPoints(player, 30) is true:
+                addDiscipleCharmDuration({_u}, "tri_tue", 86400)
+                sendSystemMsg(player, "economy", "Đã gia hạn &b&lBùa Trí Tuệ &fthêm &e24 Giờ&f!")
+                play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.5 to player
+                openDiscipleSkillGUI(player)
+            else:
+                sendSystemMsg(player, "error", "Bạn cần 30 Coin để gia hạn Bùa Trí Tuệ (24h)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+        else if {_slot} is 13:
+            if takePlayerPoints(player, 25) is true:
+                addDiscipleCharmDuration({_u}, "manh_me", 86400)
+                sendSystemMsg(player, "economy", "Đã gia hạn &c&lBùa Oai Hùng &fthêm &e24 Giờ&f!")
+                play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.5 to player
+                openDiscipleSkillGUI(player)
+            else:
+                sendSystemMsg(player, "error", "Bạn cần 25 Coin để gia hạn Bùa Oai Hùng (24h)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+        else if {_slot} is 14:
+            if takePlayerPoints(player, 25) is true:
+                addDiscipleCharmDuration({_u}, "da_trau", 86400)
+                sendSystemMsg(player, "economy", "Đã gia hạn &a&lBùa Bất Tử &fthêm &e24 Giờ&f!")
+                play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.5 to player
+                openDiscipleSkillGUI(player)
+            else:
+                sendSystemMsg(player, "error", "Bạn cần 25 Coin để gia hạn Bùa Bất Tử (24h)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+        else if {_slot} is 15:
+            if takePlayerPoints(player, 40) is true:
+                addDiscipleCharmDuration({_u}, "deo_dai", 86400)
+                addDiscipleCharmDuration({_u}, "thu_hut", 86400)
+                sendSystemMsg(player, "economy", "Đã gia hạn &d&lBùa Dẻo Dai &fthêm &e24 Giờ&f!")
+                play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.5 to player
+                openDiscipleSkillGUI(player)
+            else:
+                sendSystemMsg(player, "error", "Bạn cần 40 Coin để gia hạn Bùa Dẻo Dai (24h)!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+        else if {_slot} is 28 or 29 or 30 or 32:
+            set {_targetFruit} to ""
+            if {_slot} is 28:
+                set {_targetFruit} to "mera"
+            else if {_slot} is 29:
+                set {_targetFruit} to "gomu"
+            else if {_slot} is 30:
+                set {_targetFruit} to "ope"
+            else if {_slot} is 32:
+                set {_targetFruit} to "seiryu"
+
+            if {disciple::%{_u}%::ate_fruit} is true:
+                sendSystemMsg(player, "error", "Đệ Tử đã ăn Trái Ác Quỷ rồi! Hãy dùng Thẻ Đổi Đệ Tử tại Tab Trang Bị.")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+                stop
+
+            set {_tool} to player's tool
+            if isValidItem({_tool}) is true:
+                set {_df} to string tag "DevilFruit" of nbt compound of {_tool}
+                if {_df} is {_targetFruit}:
+                    if item amount of {_tool} <= 1:
+                        set player's tool to air
+                    else:
+                        set item amount of {_tool} to (item amount of {_tool} - 1)
+                        set player's tool to {_tool}
+                    set {disciple::%{_u}%::style} to {_df}
+                    set {disciple::%{_u}%::ate_fruit} to true
+                    set {_dfName} to getDevilFruitDisplayName({_df})
+                    broadcastDualCard("&5&l✦ ĐỆ TỬ NUỐT TRÁI ÁC QUỶ", "&eĐệ Tử của %name of player% &7đã nuốt &e&l%{_dfName}%&7!", "&7Khai mở toàn bộ năng lực &c&l%{_dfName}%&7.")
+                    spawnVisualParticle("EXPLOSION_LARGE", location of player, 10, 0.5, 0.5, 0.5, 0.05)
+                    play sound "ENTITY_GENERIC_EXPLODE" with volume 1 and pitch 1.2 to player
+                    openDiscipleSkillGUI(player)
+                else:
+                    sendSystemMsg(player, "warning", "Cần cầm đúng Trái %{_targetFruit}% trên tay chính để cho ăn!")
+                    play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            else:
+                sendSystemMsg(player, "warning", "Cần cầm đúng Trái Ác Quỷ trên tay chính để cho ăn!")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+        stop
+
+command /detuadmin [<text>] [<player>] [<text>] [<number>]:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        if arg-1 is not set:
+            send "&8&m----------------------------------------" to sender
+            send "&6&l✦ HỆ THỐNG QUẢN TRỊ ĐỆ TỬ (/detuadmin) ✦" to sender
+            send "&e• /detuadmin give <player> &7- Cấp Đệ Tử miễn phí" to sender
+            send "&e• /detuadmin setsm <player> <số_sm> &7- Đặt mốc Sức Mạnh Đệ Tử" to sender
+            send "&e• /detuadmin addsm <player> <số_sm> &7- Buff/Cộng thêm Sức Mạnh Đệ Tử" to sender
+            send "&e• /detuadmin addbeans <player> <số_lượng> &7- Cộng Đậu Thần" to sender
+            send "&e• /detuadmin setporata <player> <1..5> &7- Đặt cấp Bông Tai" to sender
+            send "&e• /detuadmin giveearring <player> &7- Cấp lại Bông Tai Porata" to sender
+            send "&e• /detuadmin reset <player> &7- Reset Đệ Tử về ban đầu" to sender
+            send "&8&m----------------------------------------" to sender
+            stop
+
+        set {_sub} to lowercase arg-1
+        set {_t} to arg-2
+        if {_t} is not set:
+            send "&cHãy chỉ định người chơi mục tiêu!" to sender
+            stop
+        set {_tu} to uuid of {_t}
+
+        if {_sub} is "give":
+            set {disciple::%{_tu}%::has} to true
+            set {disciple::%{_tu}%::power} to 2000
+            set {disciple::%{_tu}%::stamina} to 1000
+            set {disciple::%{_tu}%::mode} to "follow"
+            set {disciple::%{_tu}%::ate_fruit} to false
+            set {_r} to random integer between 1 and 2
+            if {_r} is 1:
+                set {disciple::%{_tu}%::style} to "kiem_dao"
+            else:
+                set {disciple::%{_tu}%::style} to "luc_thuc"
+            spawnOrUpdateDisciple({_t})
+            sendSystemMsg(sender, "info", "Đã cấp Đệ Tử thành công cho &e%name of {_t}%&f!")
+            sendSystemMsg({_t}, "info", "Bạn đã được Quản trị viên cấp Đệ Tử!")
+
+        else if {_sub} is "setsm":
+            set {_val} to arg-3 parsed as number
+            if {_val} is not set:
+                set {_val} to arg-4
+            if {_val} is not set:
+                send "&cHãy nhập số Sức Mạnh hợp lệ!" to sender
+                stop
+            set {disciple::%{_tu}%::has} to true
+            set {disciple::%{_tu}%::power} to {_val}
+            spawnOrUpdateDisciple({_t})
+            set {_smStr} to formatDisciplePower({_val})
+            sendSystemMsg(sender, "info", "Đã đặt Sức Mạnh Đệ Tử của &e%name of {_t}% &fthành &b%{_smStr}%&f!")
+
+        else if {_sub} is "addsm" or "buff" or "buffsm":
+            set {_val} to arg-3 parsed as number
+            if {_val} is not set:
+                set {_val} to arg-4
+            if {_val} is not set:
+                send "&cHãy nhập số Sức Mạnh cần buff thêm!" to sender
+                stop
+            set {disciple::%{_tu}%::has} to true
+            add {_val} to {disciple::%{_tu}%::power}
+            spawnOrUpdateDisciple({_t})
+            set {_newSM} to {disciple::%{_tu}%::power}
+            set {_smStr} to formatDisciplePower({_newSM})
+            sendSystemMsg(sender, "info", "Đã buff thêm &b%formatDisciplePower({_val})% &fSức Mạnh cho Đệ Tử của &e%name of {_t}%&f! Tổng: &b%{_smStr}%&f.")
+
+        else if {_sub} is "addbeans":
+            set {_amt} to arg-3 parsed as number
+            if {_amt} is not set:
+                set {_amt} to arg-4
+            if {_amt} is not set:
+                set {_amt} to 50
+            add {_amt} to {disciple::%{_tu}%::beans}
+            sendSystemMsg(sender, "info", "Đã cộng &a%{_amt}% Đậu Thần &fcho &e%name of {_t}%&f!")
+
+        else if {_sub} is "setporata":
+            set {_lv} to arg-3 parsed as number
+            if {_lv} is not set:
+                set {_lv} to arg-4
+            if {_lv} is not set:
+                set {_lv} to 1
+            if {_lv} < 1:
+                set {_lv} to 1
+            if {_lv} > 5:
+                set {_lv} to 5
+            set {disciple::%{_tu}%::porata_lv} to {_lv}
+            give createPorataEarringItem({_lv}) to {_t}
+            sendSystemMsg(sender, "info", "Đã đặt Bông Tai Porata Cấp %{_lv}% cho &e%name of {_t}% &fvà trao item vào túi!")
+
+        else if {_sub} is "giveearring":
+            set {_lv} to {disciple::%{_tu}%::porata_lv} ? 1
+            give createPorataEarringItem({_lv}) to {_t}
+            sendSystemMsg(sender, "info", "Đã trao Bông Tai Porata Cấp %{_lv}% cho &e%name of {_t}%&f!")
+
+        else if {_sub} is "reset":
+            set {disciple::%{_tu}%::power} to 2000
+            set {disciple::%{_tu}%::stamina} to 1000
+            set {disciple::%{_tu}%::ate_fruit} to false
+            set {_r} to random integer between 1 and 2
+            if {_r} is 1:
+                set {disciple::%{_tu}%::style} to "kiem_dao"
+            else:
+                set {disciple::%{_tu}%::style} to "luc_thuc"
+            spawnOrUpdateDisciple({_t})
+            sendSystemMsg(sender, "info", "Đã reset Đệ Tử của &e%name of {_t}% &fvề ban đầu!")
+
+
+# ---------------------------------------------------------------------
+# 9. VÒNG LẶP AI TỐI ƯU (EVERY 10 TICKS)
+# ---------------------------------------------------------------------
+
+every 10 ticks:
+    loop all players:
+        if loop-player is not alive:
+            continue
+        if health of loop-player <= 0:
+            continue
+        set {_u} to uuid of loop-player
+        if {disciple::%{_u}%::has} is true:
+            set {_pet} to {disciple_entity::%{_u}%}
+
+            # 1. Tự động Hồi Sinh sau khi hết 30 giây Cooldown
+            if {_pet} is not set:
+                set {_mode} to {disciple::%{_u}%::mode} ? "follow"
+                if {_mode} is not "home" or "fusion":
+                    set {_nowMs} to System.currentTimeMillis()
+                    set {_respawnMs} to {disciple_respawn_cd::%{_u}%} ? 0
+                    if {_respawnMs} > 0:
+                        if {_nowMs} >= {_respawnMs}:
+                            delete {disciple_respawn_cd::%{_u}%}
+                            set {disciple::%{_u}%::stamina} to 1000
+                            spawnOrUpdateDisciple(loop-player)
+                            sendSystemMsg(loop-player, "success", "Đệ Tử đã bình phục trọng thương và xuất chiến trở lại!")
+                            play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to loop-player
+
+            else if {_pet} is alive:
+                # 1. Bảo vệ chống rơi Void & Lạc đường (> 20 blocks)
+                set {_pLoc} to location of loop-player
+                set {_needTp} to false
+                if world of {_pet} is not world of loop-player:
+                    set {_needTp} to true
+                else if y-coordinate of {_pet} < 10:
+                    set {_needTp} to true
+                else if distance between {_pet} and loop-player > 20:
+                    set {_needTp} to true
+
+                if {_needTp} is true:
+                    teleport {_pet} to {_pLoc}
+                    set {_mount} to {disciple_mount::%{_u}%}
+                    if {_mount} is set:
+                        if {_mount} is alive:
+                            teleport {_mount} to {_pLoc}
+                            make {_pet} ride {_mount}
+
+                # 2. Bùa Dẻo Dai: Hồi phục 3% HP mỗi giây cho Đệ Tử
+                if isCharmActive({_u}, "deo_dai") is true:
+                    set {_heal3pct} to ceil((max health of {_pet}) * 0.03)
+                    set {_newHp} to (health of {_pet}) + {_heal3pct}
+                    if {_newHp} > (max health of {_pet}):
+                        set {_newHp} to max health of {_pet}
+                    set health of {_pet} to {_newHp}
+
+                # Bùa Thu Hút: Tự động nhặt đồ rơi trong bán kính 8 block
+                set {_canPickup} to false
+                if isCharmActive({_u}, "thu_hut") is true:
+                    set {_canPickup} to true
+                else if isCharmActive({_u}, "deo_dai") is true:
+                    set {_canPickup} to true
+                if {_canPickup} is true:
+                    loop dropped items in radius 8 around {_pet}:
+                        if loop-player can hold (item of loop-dropped item):
+                            give (item of loop-dropped item) to loop-player
+                            delete loop-dropped item
+                            play sound "ENTITY_ITEM_PICKUP" with volume 0.5 and pitch 1.5 to loop-player
+
+                # 3. Kiểm tra Thể Lực & Tự Động Ăn Đậu (Bùa Đệ Tử)
+                set {_stam} to {disciple::%{_u}%::stamina} ? 1000
+                set {_curHP} to health of {_pet}
+                set {_maxHP} to max health of {_pet}
+
+                set {_needBean} to false
+                if {_stam} < 200:
+                    set {_needBean} to true
+                else if {_curHP} < ({_maxHP} * 0.3):
+                    set {_needBean} to true
+
+                if {_needBean} is true:
+                    if isCharmActive({_u}, "de_tu") is true:
+                        if ({disciple::%{_u}%::beans} ? 0) > 0:
+                            subtract 1 from {disciple::%{_u}%::beans}
+                            set {disciple::%{_u}%::stamina} to 1000
+                            set health of {_pet} to {_maxHP}
+                            spawnVisualParticle("VILLAGER_HAPPY", location of {_pet}, 15, 0.5, 0.8, 0.5, 0.05)
+                            play sound "ENTITY_PLAYER_BURP" with volume 1 and pitch 1.2 to loop-player
+
+                # 4. Kiểm tra kiệt sức
+                if {disciple::%{_u}%::stamina} <= 0:
+                    {_pet}.setTarget(null)
+                    set {_nowMs} to System.currentTimeMillis()
+                    set {_lastHMsg} to {disciple_hungry_msg_cd::%{_u}%} ? 0
+                    if ({_nowMs} - {_lastHMsg}) > 15000:
+                        set {disciple_hungry_msg_cd::%{_u}%} to {_nowMs}
+                        sendSystemMsg(loop-player, "warning", "Đệ Tử đã &c&lcạn kiệt Thể Lực&e! Hãy cho ăn Đậu Thần tại &b/detu&e.")
+                        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to loop-player
+
+                # 5. Chế độ Tấn Công / Bảo Vệ
+                else:
+                    set {_curMode} to {disciple::%{_u}%::mode} ? "follow"
+                    if {_curMode} is "attack" or "protect":
+                        set {_target} to getDiscipleTarget({_pet}, loop-player)
+                        if {_target} is set:
+                            set {_dist} to distance between {_pet} and {_target}
+                            # Triệt tiêu nhấp kiếm ở cự ly gần:
+                            if {_dist} <= 3.2:
+                                {_pet}.setTarget(null)
+                            else:
+                                {_pet}.setTarget({_target})
+
+                            subtract 1 from {disciple::%{_u}%::stamina}
+                            if {disciple::%{_u}%::stamina} < 0:
+                                set {disciple::%{_u}%::stamina} to 0
+
+                            # Cộng Sức Mạnh
+                            set {_gainSM} to 25000
+                            if isCharmActive({_u}, "thu_hut") is true:
+                                set {_gainSM} to {_gainSM} * 3
+                            else if isCharmActive({_u}, "tri_tue") is true:
+                                set {_gainSM} to {_gainSM} * 2
+
+                            set {_prevPower} to {disciple::%{_u}%::power} ? 2000
+                            set {_prevTier} to getDiscipleTier({_prevPower})
+                            add {_gainSM} to {disciple::%{_u}%::power}
+                            set {_newPower} to {disciple::%{_u}%::power}
+                            set {_newTier} to getDiscipleTier({_newPower})
+
+                            if {_newTier} > {_prevTier}:
+                                spawnOrUpdateDisciple(loop-player)
+                                set {_tierName} to getDiscipleTierName({_newTier})
+                                broadcastDualCard("&6&l✦ ĐỆ TỬ TIẾN HÓA", "&eĐệ Tử của %name of loop-player% &7đã đột phá lên &6&l%{_tierName}%&7!", "&7Sức Mạnh đạt mốc &b%formatDisciplePower({_newPower})%&7.")
+                                play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to loop-player
+                            else:
+                                set {_smStr} to formatDisciplePower({_newPower})
+                                set name of {_pet} to colored "&e&l✦ Đệ Tử của %name of loop-player% &8[&b%{_smStr}%&8]"
+
+                            # Thi triển kỹ năng (100% Skill, không đánh tay)
+                            set {_nowMs} to System.currentTimeMillis()
+
+                            # Chiêu 3: Cấp 3 (CD 6.0s, tầm 6 block)
+                            if {_newTier} is 3:
+                                set {_lastS3} to {disciple_cd_s3::%{_u}%} ? 0
+                                if ({_nowMs} - {_lastS3}) >= 6000:
+                                    if {_dist} <= 6.0:
+                                        set {disciple_cd_s3::%{_u}%} to {_nowMs}
+                                        castDiscipleSkill(loop-player, {_pet}, {_target}, 3)
+
+                            # Chiêu 2: Cấp 2 (CD 3.0s, tầm 8 block)
+                            if {_newTier} >= 2:
+                                set {_lastS2} to {disciple_cd_s2::%{_u}%} ? 0
+                                if ({_nowMs} - {_lastS2}) >= 3000:
+                                    if {_dist} <= 8.0:
+                                        set {disciple_cd_s2::%{_u}%} to {_nowMs}
+                                        castDiscipleSkill(loop-player, {_pet}, {_target}, 2)
+
+                            # Chiêu 1: Mọi cấp (CD 1.5s, tầm 4.5 block)
+                            set {_lastS1} to {disciple_cd_s1::%{_u}%} ? 0
+                            if ({_nowMs} - {_lastS1}) >= 1500:
+                                if {_dist} <= 4.5:
+                                    set {disciple_cd_s1::%{_u}%} to {_nowMs}
+                                    castDiscipleSkill(loop-player, {_pet}, {_target}, 1)
+                        else:
+                            {_pet}.setTarget(null)
+
+# ---------------------------------------------------------------------
+# 10. SỰ KIỆN HỆ THỐNG & BẢO VỆ AN TOÀN
+# ---------------------------------------------------------------------
+
+on combust:
+    if metadata value "disciple_owner" of event-entity is set:
+        cancel event
+
+on death of skeleton or wither skeleton or skeleton horse:
+    if metadata value "disciple_owner" of victim is set:
+        clear drops
+        set {_u} to metadata value "disciple_owner" of victim
+        set {disciple_respawn_cd::%{_u}%} to System.currentTimeMillis() + 30000
+        set {_ownerP} to Bukkit.getPlayer(UUID.fromString({_u}))
+        if {_ownerP} is set:
+            sendSystemMsg({_ownerP}, "warning", "Đệ Tử đã tử trận! Tự động hồi sinh sau 30 giây.")
+            play sound "ENTITY_SKELETON_DEATH" with volume 1 and pitch 0.8 to {_ownerP}
+
+on quit:
+    despawnDisciple(player)
+
+on death of player:
+    despawnDisciple(victim)
+
+on join:
+    wait 20 ticks
+    if player is online:
+        set {_u} to uuid of player
+        if {disciple::%{_u}%::has} is true:
+            set {_mode} to {disciple::%{_u}%::mode} ? "follow"
+            if {_mode} is not "home" or "fusion":
+                spawnOrUpdateDisciple(player)
+
+on unload:
+    loop all players:
+        despawnDisciple(loop-player)
+
+on EntityTargetLivingEntityEvent:
+    set {_ent} to event.getEntity()
+    set {_target} to event.getTarget()
+    if {_ent} is set:
+        set {_ownerUuid} to metadata value "disciple_owner" of {_ent}
+        if {_ownerUuid} is set:
+            if {_target} is set:
+                set {_ownerP} to Bukkit.getPlayer(UUID.fromString({_ownerUuid}))
+                if {_ownerP} is set:
+                    if isDiscipleTargetValid({_ownerP}, {_ent}, {_target}) is false:
+                        event.setCancelled(true)
+                        stop
+
+on damage:
+    # 1. Đệ Tử nhận sát thương
+    if metadata value "disciple_owner" of victim is set:
+        set {_u} to metadata value "disciple_owner" of victim
+        set {_ownerP} to Bukkit.getPlayer(UUID.fromString({_u}))
+
+        # Chống đồng đội / Sư phụ đánh đệ tử
+        if attacker is a player:
+            if uuid of attacker is {_u}:
+                cancel event
+                stop
+            if {_ownerP} is set:
+                set {_oIs} to getCrewIslandUUID({_ownerP})
+                set {_aIs} to getCrewIslandUUID(attacker)
+                if {_oIs} is set:
+                    if {_oIs} is not "":
+                        if {_oIs} is {_aIs}:
+                            cancel event
+                            stop
+
+        if {_ownerP} is set:
+            # Set 3 [4/4] Miễn tử (Hồi 40% HP khi chịu đòn chí tử, CD 60s)
+            if damage >= health of victim:
+                if getDiscipleSetBonus({_ownerP}) is "set3":
+                    set {_nowMs} to System.currentTimeMillis()
+                    set {_lastImm} to {disciple_set3_cd::%{_u}%} ? 0
+                    if ({_nowMs} - {_lastImm}) >= 60000:
+                        set {disciple_set3_cd::%{_u}%} to {_nowMs}
+                        cancel event
+                        set health of victim to (max health of victim * 0.4)
+                        spawnVisualParticle("TOTEM", location of victim, 25, 0.6, 1.0, 0.6, 0.1)
+                        play sound "ITEM_TOTEM_USE" with volume 1 and pitch 1 to {_ownerP}
+                        sendSystemMsg({_ownerP}, "combat", "Nội tại &6&l[4/4] Bất Diệt Thánh Quang &fcứu Đệ Tử khỏi đòn chí tử!")
+                        stop
+
+            # Tính Giáp phòng thủ của Đệ Tử: giảm sát thương theo DEF chuẩn
+            set {_totArmor} to getDiscipleTotalArmor({_ownerP})
+            set {_dr} to {_totArmor} / ({_totArmor} + 100)
+            if {_dr} > 0.8:
+                set {_dr} to 0.8
+            if {_dr} > 0:
+                set damage to damage * (1 - {_dr})
+
+            # Set 1 [4/4] Giảm thêm 25% sát thương nhận vào
+            if getDiscipleSetBonus({_ownerP}) is "set1":
+                set damage to damage * 0.75
+
+    # 2. Đệ Tử gây sát thương
+    if metadata value "disciple_owner" of attacker is set:
+        set {_u} to metadata value "disciple_owner" of attacker
+        set {_ownerP} to Bukkit.getPlayer(UUID.fromString({_u}))
+        if {_ownerP} is set:
+            # Set 2 [4/4] Hút 15% Máu
+            if getDiscipleSetBonus({_ownerP}) is "set2":
+                set {_heal} to damage * 0.15
+                set {_newHp} to health of attacker + {_heal}
+                if {_newHp} > max health of attacker:
+                    set {_newHp} to max health of attacker
+                set health of attacker to {_newHp}
+
+on InventoryDragEvent:
+    set {_who} to event.getWhoClicked()
+    if {_who} is set:
+        set {_active} to {ui_active::%uuid of {_who}%}
+        if {_active} is "UI_G5_A" or "UI_G5_B" or "UI_G5_C":
+            cancel event

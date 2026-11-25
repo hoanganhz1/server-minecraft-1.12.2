@@ -1,0 +1,11 @@
+Items:
+  '1':
+    Owner: Played_Pvp1:edb5c849-088e-366f-983e-f7b226cb1ba1
+    Price: 1000000.0
+    ShopType: SELL
+    Time-Till-Expire: 1795551737976
+    Full-Time: 1795551737976
+    UID: 1
+    Item:
+      ==: org.bukkit.inventory.ItemStack
+      type: SAPLING

@@ -1,0 +1,144 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+title: '&6&lKho Bạc Băng Hải Tặc'
+previous-menu: true
+
+pattern:
+  - '= - @ @ @ @ @ - ='
+  - '- @ ! @ @ @ % @ -'
+  - '@ # @ @ * @ @ ^ @'
+  - '- @ $ @ @ @ & @ -'
+  - '= - @ @ ~ @ @ - ='
+
+balance: '*'
+logs: '~'
+
+items:
+  '!':
+    type: STAINED_GLASS_PANE
+    data: 5
+    name: '&aGửi Một Nửa Tiền'
+    lore:
+      - '&7Gửi 50% số tiền của bạn vào Kho Bạc Căn Cứ.'
+    bank-action:
+      deposit: 50.0
+  '#':
+    type: STAINED_GLASS_PANE
+    data: 5
+    name: '&aGửi Tiền Tùy Chọn'
+    lore:
+      - '&7Nhập số tiền muốn gửi vào Kho Bạc Căn Cứ.'
+    bank-action:
+      deposit: 0.0
+  '$':
+    type: STAINED_GLASS_PANE
+    data: 5
+    name: '&aGửi Toàn Bộ Tiền'
+    lore:
+      - '&7Gửi toàn bộ số tiền bạn có vào Kho Bạc Căn Cứ.'
+    bank-action:
+      deposit: 100.0
+  '%':
+    type: STAINED_GLASS_PANE
+    data: 14
+    name: '&cRút Một Nửa Tiền'
+    lore:
+      - '&7Rút 50% số tiền từ Kho Bạc Căn Cứ.'
+    bank-action:
+      withdraw: 50.0
+  '^':
+    type: STAINED_GLASS_PANE
+    data: 14
+    name: '&cRút Tiền Tùy Chọn'
+    lore:
+      - '&7Nhập số tiền muốn rút từ Kho Bạc Căn Cứ.'
+    bank-action:
+      withdraw: 0.0
+  '&':
+    type: STAINED_GLASS_PANE
+    data: 14
+    name: '&cRút Toàn Bộ Tiền'
+    lore:
+      - '&7Rút toàn bộ số tiền từ Kho Bạc Căn Cứ.'
+    bank-action:
+      withdraw: 100.0
+  '*':
+    type: PAPER
+    name: '&6Số Dư Kho Bạc Băng'
+    lore:
+      - '&7Số dư hiện tại: &a${2}'
+      - '&7Nhận lãi kế tiếp sau: &e{7}'
+  '=':
+    type: EMERALD_BLOCK
+    name: '&f '
+  '-':
+    type: EMERALD
+    name: '&f '
+  '~':
+    type: EXP_BOTTLE
+    name: '&6Nhật Ký Giao Dịch'
+
+sounds:
+  '!':
+    success-sound:
+      type: ENTITY_EXPERIENCE_ORB_PICKUP
+      volume: 0.2
+      pitch: 0.2
+    fail-sound:
+      type: BLOCK_ANVIL_PLACE
+      volume: 0.2
+      pitch: 0.2
+  '#':
+    success-sound:
+      type: ENTITY_EXPERIENCE_ORB_PICKUP
+      volume: 0.2
+      pitch: 0.2
+    fail-sound:
+      type: BLOCK_ANVIL_PLACE
+      volume: 0.2
+      pitch: 0.2
+  '$':
+    success-sound:
+      type: ENTITY_EXPERIENCE_ORB_PICKUP
+      volume: 0.2
+      pitch: 0.2
+    fail-sound:
+      type: BLOCK_ANVIL_PLACE
+      volume: 0.2
+      pitch: 0.2
+  '%':
+    success-sound:
+      type: ENTITY_EXPERIENCE_ORB_PICKUP
+      volume: 0.2
+      pitch: 0.2
+    fail-sound:
+      type: BLOCK_ANVIL_PLACE
+      volume: 0.2
+      pitch: 0.2
+  '^':
+    success-sound:
+      type: ENTITY_EXPERIENCE_ORB_PICKUP
+      volume: 0.2
+      pitch: 0.2
+    fail-sound:
+      type: BLOCK_ANVIL_PLACE
+      volume: 0.2
+      pitch: 0.2
+  '&':
+    success-sound:
+      type: ENTITY_EXPERIENCE_ORB_PICKUP
+      volume: 0.2
+      pitch: 0.2
+    fail-sound:
+      type: BLOCK_ANVIL_PLACE
+      volume: 0.2
+      pitch: 0.2
+  '~':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2

@@ -1,0 +1,97 @@
+package xyz.pixelatedw.mineminenomi.init;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.AbilityComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.AbilityComponentKey;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.AltModeComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.AnimationComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.AnimeScreamComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.BlockTrackerComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.BowTriggerComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.ChangeStatsComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.ChargeComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.ColaUsageComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.ConsumptionComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.ContinuousComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.CooldownComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.DamageSourceComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.DamageTakenComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.DashComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.DealDamageComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.DisableComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.ExplosionComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.GaugeComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.GrabEntityComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.HealComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.HitTrackerComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.HitTriggerComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.ItemSpawnComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.MobEffectComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.MorphComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.PauseTickComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.PoolComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.ProjectileComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.RangeComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.RepeaterComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.SkinOverlayComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.SlotDecorationComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.StackComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.SwingTriggerComponent;
+import xyz.pixelatedw.mineminenomi.api.abilities.components.TeleportComponent;
+
+public class ModAbilityComponents {
+	// Fields
+	public static final Map<ResourceLocation, Integer> TOOLTIP_ORDER = new HashMap();
+	public static final Supplier<AbilityComponentKey<CooldownComponent>> COOLDOWN = ModRegistry.registerAbilityComponent("cooldown");
+	public static final Supplier<AbilityComponentKey<DisableComponent>> DISABLE = ModRegistry.registerAbilityComponent("disable");
+	public static final Supplier<AbilityComponentKey<ContinuousComponent>> CONTINUOUS = ModRegistry.registerAbilityComponent("continuous");
+	public static final Supplier<AbilityComponentKey<ChargeComponent>> CHARGE = ModRegistry.registerAbilityComponent("charge");
+	public static final Supplier<AbilityComponentKey<RepeaterComponent>> REPEATER = ModRegistry.registerAbilityComponent("repeater");
+	public static final Supplier<AbilityComponentKey<AnimationComponent>> ANIMATION = ModRegistry.registerAbilityComponent("animation");
+	public static final Supplier<AbilityComponentKey<HitTrackerComponent>> HIT_TRACKER = ModRegistry.registerAbilityComponent("hit_tracker");
+	public static final Supplier<AbilityComponentKey<GaugeComponent>> GAUGE = ModRegistry.registerAbilityComponent("gauge");
+	public static final Supplier<AbilityComponentKey<SkinOverlayComponent>> SKIN_OVERLAY = ModRegistry.registerAbilityComponent("skin_overlay");
+	public static final Supplier<AbilityComponentKey<ChangeStatsComponent>> CHANGE_STATS = ModRegistry.registerAbilityComponent("change_stats");
+	public static final Supplier<AbilityComponentKey<SlotDecorationComponent>> SLOT_DECORATION = ModRegistry.registerAbilityComponent("slot_decoration");
+	public static final Supplier<AbilityComponentKey<PoolComponent>> POOL = ModRegistry.registerAbilityComponent("pool_component");
+	public static final Supplier<AbilityComponentKey<BowTriggerComponent>> BOW_TRIGGER = ModRegistry.registerAbilityComponent("bow_trigger");
+	public static final Supplier<AbilityComponentKey<DamageTakenComponent>> DAMAGE_TAKEN = ModRegistry.registerAbilityComponent("damage_taken");
+	public static final Supplier<AbilityComponentKey<ItemSpawnComponent>> ITEM_SPAWN = ModRegistry.registerAbilityComponent("item_spawn");
+	public static final Supplier<AbilityComponentKey<StackComponent>> STACK = ModRegistry.registerAbilityComponent("stack");
+	public static final Supplier<AbilityComponentKey<AltModeComponent<?>>> ALT_MODE = ModRegistry.registerAbilityComponent("alt_mode");
+	public static final Supplier<AbilityComponentKey<DealDamageComponent>> DAMAGE = ModRegistry.registerAbilityComponent("damage");
+	public static final Supplier<AbilityComponentKey<PauseTickComponent>> PAUSE_TICK = ModRegistry.registerAbilityComponent("pause_tick");
+	public static final Supplier<AbilityComponentKey<HitTriggerComponent>> HIT_TRIGGER = ModRegistry.registerAbilityComponent("hit_trigger");
+	public static final Supplier<AbilityComponentKey<AnimeScreamComponent>> ANIME_SCREAM = ModRegistry.registerAbilityComponent("anime_scream");
+	public static final Supplier<AbilityComponentKey<SwingTriggerComponent>> SWING_TRIGGER = ModRegistry.registerAbilityComponent("swing_trigger");
+	public static final Supplier<AbilityComponentKey<RangeComponent>> RANGE = ModRegistry.registerAbilityComponent("range");
+	public static final Supplier<AbilityComponentKey<MorphComponent>> MORPH = ModRegistry.registerAbilityComponent("morph");
+	public static final Supplier<AbilityComponentKey<GrabEntityComponent>> GRAB = ModRegistry.registerAbilityComponent("grab");
+	public static final Supplier<AbilityComponentKey<ProjectileComponent>> PROJECTILE = ModRegistry.registerAbilityComponent("projectile");
+	public static final Supplier<AbilityComponentKey<HealComponent>> HEAL = ModRegistry.registerAbilityComponent("heal");
+	public static final Supplier<AbilityComponentKey<ConsumptionComponent>> CONSUMPTION = ModRegistry.registerAbilityComponent("consumption");
+	public static final Supplier<AbilityComponentKey<ExplosionComponent>> EXPLOSION = ModRegistry.registerAbilityComponent("explosion");
+	public static final Supplier<AbilityComponentKey<BlockTrackerComponent>> BLOCK_TRACKER = ModRegistry.registerAbilityComponent("block_tracker");
+	public static final Supplier<AbilityComponentKey<MobEffectComponent>> MOB_EFFECT = ModRegistry.registerAbilityComponent("mob_effect");
+	public static final Supplier<AbilityComponentKey<DashComponent>> DASH = ModRegistry.registerAbilityComponent("dash");
+	public static final Supplier<AbilityComponentKey<TeleportComponent>> TELEPORT = ModRegistry.registerAbilityComponent("teleport");
+	public static final Supplier<AbilityComponentKey<ColaUsageComponent>> COLA_USAGE = ModRegistry.registerAbilityComponent("cola_usage");
+	public static final Supplier<AbilityComponentKey<DamageSourceComponent>> DAMAGE_SOURCE = ModRegistry.registerAbilityComponent("damage_source");
+
+	public static void init() {
+		TOOLTIP_ORDER.put(ResourceLocation.fromNamespaceAndPath("mineminenomi","stack"),Integer.valueOf(1010));
+		TOOLTIP_ORDER.put(ResourceLocation.fromNamespaceAndPath("mineminenomi","cooldown"),Integer.valueOf(1000));
+		TOOLTIP_ORDER.put(ResourceLocation.fromNamespaceAndPath("mineminenomi","continuous"),Integer.valueOf(990));
+		TOOLTIP_ORDER.put(ResourceLocation.fromNamespaceAndPath("mineminenomi","charge"),Integer.valueOf(980));
+		TOOLTIP_ORDER.put(ResourceLocation.fromNamespaceAndPath("mineminenomi","damage"),Integer.valueOf(500));
+		TOOLTIP_ORDER.put(ResourceLocation.fromNamespaceAndPath("mineminenomi","projectile"),Integer.valueOf(490));
+		TOOLTIP_ORDER.put(ResourceLocation.fromNamespaceAndPath("mineminenomi","repeater"),Integer.valueOf(480));
+		TOOLTIP_ORDER.put(ResourceLocation.fromNamespaceAndPath("mineminenomi","change_stats"),Integer.valueOf(80));
+		TOOLTIP_ORDER.put(ResourceLocation.fromNamespaceAndPath("mineminenomi","mob_effect"),Integer.valueOf(70));
+		TOOLTIP_ORDER.put(ResourceLocation.fromNamespaceAndPath("mineminenomi","cola_usage"),Integer.valueOf(50));
+	}
+}

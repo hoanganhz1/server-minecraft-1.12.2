@@ -1,0 +1,17 @@
+enable: true
+slot: 12
+title: '&a&lNông Sản & Hạt Giống'
+hidden: false
+sub-section: false
+display-item: false
+fill-item:
+  material: AIR
+nav-bar:
+  mode: INHERIT
+item:
+  material: WHEAT
+  displayname: '&a&lNông Sản & Hạt Giống'
+  name: '&a&lNông Sản & Hạt Giống'
+  lore:
+  - '&7Nguồn kiếm Money chính: Mía, Bí ngô,'
+  - '&7Dưa hấu, Xương rồng, Bướu địa ngục...'

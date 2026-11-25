@@ -1,0 +1,119 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+# The mission file to use
+mission-file: FishingMissions
+
+# Whether the mission should be given when completing all requirements.
+auto-reward: true
+
+# Rewards given when completing the mission.
+rewards:
+  commands:
+    - 'eco give %player% 15000'
+    - 'talentadmin addpoints %player% 5'
+    - 'is admin msg %player% &e&lNgư Dân | &7Hoàn thành xuất sắc nhiệm vụ Ngư Dân II!'
+    - 'is admin msg %player% &e&lNgư Dân | &7Thử vận may câu kho báu xem sao nhé?'
+    - 'is admin msg %player% &e&lNgư Dân | &7&oXem nhiệm vụ tiếp theo tại lệnh /is missions'
+
+# List of required missions that must be completed before completing this one.
+required-missions:
+  - 'fisherman_1'
+
+# List of all required caughts must be gathered in order to complete the mission.
+required-caughts:
+  '1':
+    types:
+      - 'BOW'
+      - 'ENCHANTED_BOOK'
+      - 'FISHING_ROD'
+      - 'NAME_TAG'
+      - 'SADDLE'
+      - 'WATER_LILY'
+      - 'BOWL'
+      - 'LEATHER'
+      - 'LEATHER_BOOTS'
+      - 'ROTTEN_FLESH'
+      - 'STICK'
+      - 'STRING'
+      - 'GLASS_BOTTLE'
+      - 'BONE'
+      - 'INK_SACK'
+      - 'TRIPWIRE_HOOK'
+    amount: 5
+
+# Icons used in the menus.
+icons:
+  locked:
+    type: PAPER
+    name: '&aNgư Dân II'
+    lore:
+      - '&7Dọn rác ngoài đại dương tuy vất vả nhưng rất vui!'
+      - '&7Câu được 5 vật phẩm bất kỳ.'
+      - ''
+      - '&6Yêu Cầu Câu Cá:'
+      - '&8 - &7x5 Vật Phẩm'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7$15,000'
+      - ''
+      - '&6Vật phẩm: &7{1}/5'
+      - '&c&l ✘ &7Chưa Mở Khóa'
+    amount: 2
+  not-completed:
+    type: PAPER
+    name: '&aNgư Dân II'
+    lore:
+      - '&7Dọn rác ngoài đại dương tuy vất vả nhưng rất vui!'
+      - '&7Câu được 5 vật phẩm bất kỳ.'
+      - ''
+      - '&6Yêu Cầu Câu Cá:'
+      - '&8 - &7x5 Vật Phẩm'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7$15,000'
+      - ''
+      - '&6Vật phẩm: &7{1}/5'
+      - '&6Tiến độ: &7{0}%'
+      - '&c&l ✘ &7Chưa Hoàn Thành'
+    amount: 2
+  can-complete:
+    type: PAPER
+    name: '&aNgư Dân II'
+    lore:
+      - '&7Dọn rác ngoài đại dương tuy vất vả nhưng rất vui!'
+      - '&7Câu được 5 vật phẩm bất kỳ.'
+      - ''
+      - '&6Yêu Cầu Câu Cá:'
+      - '&8 - &7x5 Vật Phẩm'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7$15,000'
+      - ''
+      - '&6Vật phẩm: &75/5'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Nhấp để nhận phần thưởng.'
+    amount: 2
+    glow: true
+  completed:
+    type: MAP
+    name: '&aNgư Dân II'
+    lore:
+      - '&7Dọn rác ngoài đại dương tuy vất vả nhưng rất vui!'
+      - '&7Câu được 5 vật phẩm bất kỳ.'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7$15,000'
+      - ''
+      - '&6Vật phẩm: &75/5'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Đã Nhận Thưởng.'
+    amount: 2

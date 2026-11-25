@@ -1,0 +1,248 @@
+# =====================================================================
+# ĐỒNG BỘ QUYỀN MÁY TẠO ĐÁ (ORE.JAR) <-> NÂNG CẤP ĐẢO (SUPERIORSKYBLOCK2)
+# - Plugin Ore kiểm tra quyền ore.level2 .. ore.level5 (mặc định là default = Cấp 1)
+# - Script tự động đồng bộ quyền LuckPerms cho TẤT CẢ thành viên đảo khớp với
+#   cấp độ "generator-rates" của đảo trong /is upgrades (Cấp 1 -> Cấp 5).
+# =====================================================================
+
+import:
+    com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI
+    com.bgsoftware.superiorskyblock.api.events.IslandCreateEvent
+    com.bgsoftware.superiorskyblock.api.events.IslandDisbandEvent
+    com.bgsoftware.superiorskyblock.api.events.IslandJoinEvent
+    com.bgsoftware.superiorskyblock.api.events.IslandKickEvent
+    com.bgsoftware.superiorskyblock.api.events.IslandLeaveEvent
+    com.bgsoftware.superiorskyblock.api.events.IslandUpgradeEvent
+    org.bukkit.event.inventory.InventoryDragEvent
+
+function syncSinglePlayerOrePerm(p: player):
+    if {_p} is not online:
+        stop
+    set {_sp} to SuperiorSkyblockAPI.getPlayer({_p})
+    set {_targetLevel} to 1
+    if {_sp} is set:
+        set {_island} to {_sp}.getIsland()
+        if {_island} is set:
+            set {_upg} to SuperiorSkyblockAPI.getUpgrades().getUpgrade("generator-rates")
+            if {_upg} is set:
+                set {_lvlObj} to {_island}.getUpgradeLevel({_upg})
+                if {_lvlObj} is set:
+                    set {_targetLevel} to {_lvlObj}.getLevel()
+    if {_targetLevel} < 1:
+        set {_targetLevel} to 1
+    if {_targetLevel} > 5:
+        set {_targetLevel} to 5
+
+    set {_name} to name of {_p}
+    set {_lvls::*} to 2, 3, 4 and 5
+    loop {_lvls::*}:
+        set {_lv} to loop-value
+        set {_perm} to "ore.level%{_lv}%"
+        if {_lv} = {_targetLevel}:
+            if {_p} does not have permission {_perm}:
+                execute console command "lp user %{_name}% permission set %{_perm}% true"
+        else:
+            if {_p} has permission {_perm}:
+                execute console command "lp user %{_name}% permission set %{_perm}% false"
+
+function syncIslandOrePerms(island: object):
+    if {_island} is not set:
+        stop
+    set {_members} to {_island}.getIslandMembers(true)
+    if {_members} is not set:
+        stop
+    loop ...{_members}:
+        set {_sp} to loop-value
+        if {_sp}.isOnline() is true:
+            set {_bp} to {_sp}.asPlayer()
+            if {_bp} is set:
+                syncSinglePlayerOrePerm({_bp})
+
+command /oresync [<offline player>]:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        if arg-1 is set:
+            if arg-1 is online:
+                set {_p} to (name of arg-1 parsed as player)
+                set {_sp} to SuperiorSkyblockAPI.getPlayer({_p})
+                if {_sp} is set:
+                    set {_island} to {_sp}.getIsland()
+                    if {_island} is set:
+                        syncIslandOrePerms({_island})
+                        stop
+                syncSinglePlayerOrePerm({_p})
+            stop
+        loop all players:
+            syncSinglePlayerOrePerm(loop-player)
+
+on join:
+    wait 10 ticks
+    syncSinglePlayerOrePerm(player)
+
+on IslandCreateEvent:
+    set {_sp} to event.getPlayer()
+    wait 5 ticks
+    if {_sp} is set:
+        if {_sp}.isOnline() is true:
+            syncSinglePlayerOrePerm({_sp}.asPlayer())
+
+on IslandJoinEvent:
+    set {_sp} to event.getPlayer()
+    wait 5 ticks
+    if {_sp} is set:
+        if {_sp}.isOnline() is true:
+            syncSinglePlayerOrePerm({_sp}.asPlayer())
+
+on IslandLeaveEvent:
+    set {_sp} to event.getPlayer()
+    wait 5 ticks
+    if {_sp} is set:
+        if {_sp}.isOnline() is true:
+            syncSinglePlayerOrePerm({_sp}.asPlayer())
+
+on IslandKickEvent:
+    set {_sp} to event.getTarget()
+    wait 5 ticks
+    if {_sp} is set:
+        if {_sp}.isOnline() is true:
+            syncSinglePlayerOrePerm({_sp}.asPlayer())
+
+on IslandDisbandEvent:
+    set {_island} to event.getIsland()
+    if {_island} is not set:
+        stop
+    set {_members} to {_island}.getIslandMembers(true)
+    loop ...{_members}:
+        set {_sp} to loop-value
+        if {_sp}.isOnline() is true:
+            add {_sp}.asPlayer() to {_affected::*}
+    wait 5 ticks
+    loop {_affected::*}:
+        syncSinglePlayerOrePerm(loop-value)
+
+on IslandUpgradeEvent:
+    if event.getUpgradeName() is "generator-rates":
+        set {_island} to event.getIsland()
+        wait 3 ticks
+        syncIslandOrePerms({_island})
+
+# ---------------------------------------------------------------------
+# ĐÀO QUẶNG CẤP 5: CƠ HỘI 0.05% TÌM THẤY TRÁI ÁC QUỶ CHƯA GIÁM ĐỊNH
+# ---------------------------------------------------------------------
+on break:
+    if player has permission "ore.level5":
+        if event-block is diamond ore or emerald ore or gold ore or iron ore or redstone ore or lit redstone ore or lapis ore or coal ore:
+            set {_r} to random number between 0 and 100
+            if {_r} <= 0.05:
+                giveUnidentifiedFruit(player)
+                sendSystemMsg(player, "training", "Vận may xuất thần! Bạn đã đào trúng &dTrái Ác Quỷ Bí Ẩn&f từ quặng cổ đại!")
+                play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to player
+                spawnVisualParticle("FIREWORKS_SPARK", location of event-block, 30, 0.5, 0.5, 0.5, 0.1)
+
+
+# ---------------------------------------------------------------------
+# UI_G6_B: CĂN CỨ SKYBLOCK & LÒ QUẶNG 5 CẤP (36 Ô)
+# ---------------------------------------------------------------------
+
+function openIslandBaseGUI(p: player):
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G6_B", "&8✦ &2&lCĂN CỨ SKYBLOCK & LÒ QUẶNG &8✦", 4, green stained glass pane named " ", "UI_G6", "Hạm Đội, Đảo & Kinh Tế")
+
+    # Slot 10: Bảng Điều Khiển Đảo (/is)
+    set {_isLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_isLore::2} to "&8▪ &7Hệ thống: &aSuperiorSkyblock2"
+    set {_isLore::3} to "&f❖ Mở giao diện quản lý Căn Cứ Đảo chính thức."
+    set {_isLore::4} to "&f❖ Quản lý thành viên, cài đặt lãnh địa & nhiệm vụ."
+    set {_isLore::5} to ""
+    set {_isLore::6} to "&e▸ Nhấn để mở Bảng Điều Khiển (/is)!"
+    set {_isLore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 10 of {_inv} to makeGlowingItem(grass, "&a&l✦ BẢNG ĐIỀU KHIỂN CĂN CỨ (/is) ✦", {_isLore::*})
+
+    # Slot 12: Trạng thái Lò Khai Khoáng
+    set {_curGen} to 1
+    if {_p} has permission "ore.level5":
+        set {_curGen} to 5
+    else if {_p} has permission "ore.level4":
+        set {_curGen} to 4
+    else if {_p} has permission "ore.level3":
+        set {_curGen} to 3
+    else if {_p} has permission "ore.level2":
+        set {_curGen} to 2
+
+    set {_oreLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_oreLore::2} to "&8▪ &7Cấp Lò Khai Khoáng: &eCấp %{_curGen}% / 5"
+    set {_oreLore::3} to "&f❖ Nâng cấp cấp độ tại &b/is upgrades &7(Mục Máy Tạo Đá)."
+    set {_oreLore::4} to "&f❖ Cấp 5: Cơ hội &d0.05%% &fđào trúng &dTrái Ác Quỷ&f!"
+    set {_oreLore::5} to ""
+    set {_oreLore::6} to "&e▸ Nhấp để Đồng Bộ Lại Quyền Lò Quặng (/oresync)!"
+    set {_oreLore::7} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 12 of {_inv} to makeGlowingItem(diamond pickaxe, "&b&l✦ LÒ QUẶNG 5 CẤP (ORESYNC) ✦", {_oreLore::*})
+
+    # Slot 14: Bảng Điểm Uy Danh Đảo
+    set {_topLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_topLore::2} to "&6✦ QUY ĐỔI ĐIỂM UY DANH CĂN CỨ ✦"
+    set {_topLore::3} to "&f• &eLỒNG SPAWN IRON GOLEM: &a5,000 Điểm / Khối"
+    set {_topLore::4} to "&f• &dTRỨNG RỒNG ENDER: &a1,000 Điểm / Khối"
+    set {_topLore::5} to "&f• &bĐÈN HIỆU BEACON: &a500 Điểm / Khối"
+    set {_topLore::6} to "&f• &9KHỐI KIM CƯƠNG: &a150 Điểm / Khối"
+    set {_topLore::7} to "&7(Block đất/đá rác = 0 điểm chống spam cày ảo)"
+    set {_topLore::8} to ""
+    set {_topLore::9} to "&e▸ Nhấn để xem Xếp Hạng Đảo (/is top)!"
+    set {_topLore::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 14 of {_inv} to makeGlowingItem(beacon, "&e&l✦ BẢNG ĐIỂM UY DANH ĐẢO ✦", {_topLore::*})
+
+    # Slot 16: Bay Trên Đảo (Fly)
+    set {_flyLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_flyLore::2} to "&8▪ &7Quyền Lợi: &bĐặc Quyền Rank VIP trở lên"
+    set {_flyLore::3} to "&f❖ Tự do bay lượn xây dựng và giám sát Căn Cứ."
+    set {_flyLore::4} to ""
+    set {_flyLore::5} to "&e▸ Nhấn để Bật / Tắt chế độ Bay (/is fly)!"
+    set {_flyLore::6} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 16 of {_inv} to makeGlowingItem(feather, "&f&l✦ CHẾ ĐỘ BAY CĂN CỨ (/is fly) ✦", {_flyLore::*})
+
+    openStandardUI({_p}, {_inv}, "UI_G6_B", "UI_G6")
+
+on inventory click:
+    set {_u} to uuid of player
+    if {ui_active::%{_u}%} is not "UI_G6_B":
+        stop
+    cancel event
+    if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+        player.updateInventory()
+        stop
+    if clicked inventory is not player's current inventory:
+        stop
+
+    set {_slot} to index of event-slot
+    if {_slot} is 27 or 28 or 35:
+        stop
+
+    if {_slot} is 10:
+        wait 1 tick
+        close player's inventory
+        wait 1 tick
+        make player execute command "is"
+    else if {_slot} is 12:
+        syncSinglePlayerOrePerm(player)
+        sendSystemMsg(player, "training", "Đã đồng bộ thành công cấp độ Lò Quặng cho tài khoản của bạn!")
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to player
+        wait 1 tick
+        openIslandBaseGUI(player)
+    else if {_slot} is 14:
+        wait 1 tick
+        close player's inventory
+        wait 1 tick
+        make player execute command "is top"
+    else if {_slot} is 16:
+        wait 1 tick
+        close player's inventory
+        wait 1 tick
+        make player execute command "is fly"
+
+on InventoryDragEvent:
+    set {_who} to event.getWhoClicked()
+    set {_u} to uuid of {_who}
+    if {ui_active::%{_u}%} is "UI_G6_B":
+        cancel event
+

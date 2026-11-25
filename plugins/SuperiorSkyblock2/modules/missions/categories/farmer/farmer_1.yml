@@ -1,0 +1,115 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+# The mission file to use
+mission-file: FarmingMissions
+
+# Whether the mission should be given when completing all requirements.
+auto-reward: true
+
+# Should plant counts of players get reset when completing the mission?
+reset-after-finish: true
+
+# Rewards given when completing the mission.
+rewards:
+  items:
+    '1':
+      type: BEETROOT_SEEDS
+      amount: 1
+    '2':
+      type: PUMPKIN_SEEDS
+      amount: 1
+    '3':
+      type: MELON_SEEDS
+      amount: 1
+  commands:
+    - 'eco give %player% 2500'
+    - 'talentadmin addpoints %player% 2'
+    - 'is admin msg %player% &e&lNông Dân | &7Hoàn thành xuất sắc nhiệm vụ Nông Dân I!'
+
+# List of all required plants must be gathered in order to complete the mission.
+required-plants:
+  '1':
+    types:
+      - 'CARROT'
+    amount: 10
+  '2':
+    types:
+      - 'POTATO'
+    amount: 10
+  '3':
+    types:
+      - 'WHEAT'
+    amount: 10
+
+# Icons used in the menus.
+icons:
+  not-completed:
+    type: PAPER
+    name: '&aNông Dân I'
+    lore:
+      - '&7Trồng một nông trại nhỏ.'
+      - ''
+      - '&6Yêu Cầu Cây Trồng:'
+      - '&8 - &7x10 Cà Rốt'
+      - '&8 - &7x10 Khoai Tây'
+      - '&8 - &7x10 Lúa Mì'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+2 Điểm Thiên Phú'
+      - '&8 - &7x1 Hạt Giống Củ Dền'
+      - '&8 - &7x1 Hạt Giống Bí Ngô'
+      - '&8 - &7x1 Hạt Giống Dưa Hấu'
+      - '&8 - &7$2,500'
+      - ''
+      - '&6Cà Rốt đã trồng: &7{value_carrot}/10'
+      - '&6Khoai Tây đã trồng: &7{value_potato}/10'
+      - '&6Lúa Mì đã trồng: &7{value_wheat}/10'
+      - '&6Tiến độ: &7{0}%'
+      - '&c&l ✘ &7Chưa Hoàn Thành'
+  can-complete:
+    type: PAPER
+    name: '&aNông Dân I'
+    lore:
+      - '&7Trồng một nông trại nhỏ.'
+      - ''
+      - '&6Yêu Cầu Cây Trồng:'
+      - '&8 - &7x10 Cà Rốt'
+      - '&8 - &7x10 Khoai Tây'
+      - '&8 - &7x10 Lúa Mì'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+2 Điểm Thiên Phú'
+      - '&8 - &7x1 Hạt Giống Củ Dền'
+      - '&8 - &7x1 Hạt Giống Bí Ngô'
+      - '&8 - &7x1 Hạt Giống Dưa Hấu'
+      - '&8 - &7$2,500'
+      - ''
+      - '&6Cà Rốt đã trồng: &710/10'
+      - '&6Khoai Tây đã trồng: &710/10'
+      - '&6Lúa Mì đã trồng: &710/10'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Nhấp để nhận phần thưởng.'
+    glow: true
+  completed:
+    type: MAP
+    name: '&aNông Dân I'
+    lore:
+      - '&7Trồng một nông trại nhỏ.'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+2 Điểm Thiên Phú'
+      - '&8 - &7x1 Hạt Giống Củ Dền'
+      - '&8 - &7x1 Hạt Giống Bí Ngô'
+      - '&8 - &7x1 Hạt Giống Dưa Hấu'
+      - '&8 - &7$2,500'
+      - ''
+      - '&6Cà Rốt đã trồng: &710/10'
+      - '&6Khoai Tây đã trồng: &710/10'
+      - '&6Lúa Mì đã trồng: &710/10'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Đã Nhận Thưởng.'

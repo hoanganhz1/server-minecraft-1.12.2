@@ -1,0 +1,99 @@
+pages:
+  page1:
+    items:
+      '1':
+        material: SUGAR_CANE
+        buy: 12
+        sell: 4
+      '2':
+        material: PUMPKIN
+        buy: 20
+        sell: 6
+      '3':
+        material: MELON
+        buy: 24
+        sell: 8
+      '4':
+        material: MELON_SLICE
+        buy: 6
+        sell: 1.5
+      '5':
+        material: CACTUS
+        buy: 15
+        sell: 4.5
+      '6':
+        material: NETHER_WART
+        buy: 24
+        sell: 7
+      '7':
+        material: WHEAT
+        buy: 16
+        sell: 4
+      '8':
+        material: CARROT
+        buy: 16
+        sell: 4
+      '9':
+        material: POTATO
+        buy: 16
+        sell: 4
+      '10':
+        material: BEETROOT
+        buy: 18
+        sell: 4.5
+      '11':
+        material: COCOA_BEANS
+        buy: 18
+        sell: 4.5
+      '12':
+        material: BROWN_MUSHROOM
+        buy: 12
+        sell: 3
+      '13':
+        material: RED_MUSHROOM
+        buy: 12
+        sell: 3
+      '14':
+        material: CHORUS_FRUIT
+        buy: 32
+        sell: 8
+      '15':
+        material: WHEAT_SEEDS
+        buy: 4
+        sell: 0.5
+      '16':
+        material: PUMPKIN_SEEDS
+        buy: 8
+        sell: 1
+      '17':
+        material: MELON_SEEDS
+        buy: 8
+        sell: 1
+      '18':
+        material: BEETROOT_SEEDS
+        buy: 6
+        sell: 0.5
+      '19':
+        material: OAK_SAPLING
+        buy: 16
+        sell: 2
+      '20':
+        material: SPRUCE_SAPLING
+        buy: 16
+        sell: 2
+      '21':
+        material: BIRCH_SAPLING
+        buy: 16
+        sell: 2
+      '22':
+        material: JUNGLE_SAPLING
+        buy: 16
+        sell: 2
+      '23':
+        material: ACACIA_SAPLING
+        buy: 16
+        sell: 2
+      '24':
+        material: DARK_OAK_SAPLING
+        buy: 16
+        sell: 2

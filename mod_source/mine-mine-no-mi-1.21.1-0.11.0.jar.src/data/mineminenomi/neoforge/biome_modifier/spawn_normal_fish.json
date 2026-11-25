@@ -1,0 +1,1 @@
+{"type":"neoforge:add_spawns","biomes":"#mineminenomi:can_spawn/fish","spawners":[{"type":"mineminenomi:yagara_bull","maxCount":2,"minCount":1,"weight":4},{"type":"mineminenomi:panda_shark","maxCount":1,"minCount":1,"weight":4},{"type":"mineminenomi:sea_cow","maxCount":3,"minCount":1,"weight":3}]}

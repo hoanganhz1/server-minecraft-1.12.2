@@ -1,0 +1,59 @@
+pages:
+  page1:
+    items:
+      '1':
+        material: ROTTEN_FLESH
+        buy: -1
+        sell: 3
+      '2':
+        material: BONE
+        buy: -1
+        sell: 4
+      '3':
+        material: STRING
+        buy: -1
+        sell: 4
+      '4':
+        material: ARROW
+        buy: -1
+        sell: 2
+      '5':
+        material: FEATHER
+        buy: -1
+        sell: 3
+      '6':
+        material: SPIDER_EYE
+        buy: -1
+        sell: 5
+      '7':
+        material: GUNPOWDER
+        buy: -1
+        sell: 7
+      '8':
+        material: SLIME_BALL
+        buy: -1
+        sell: 8
+      '9':
+        material: ENDER_PEARL
+        buy: -1
+        sell: 15
+      '10':
+        material: BLAZE_ROD
+        buy: -1
+        sell: 18
+      '11':
+        material: MAGMA_CREAM
+        buy: -1
+        sell: 12
+      '12':
+        material: GHAST_TEAR
+        buy: -1
+        sell: 45
+      '13':
+        material: PRISMARINE_SHARD
+        buy: -1
+        sell: 10
+      '14':
+        material: PRISMARINE_CRYSTALS
+        buy: -1
+        sell: 14

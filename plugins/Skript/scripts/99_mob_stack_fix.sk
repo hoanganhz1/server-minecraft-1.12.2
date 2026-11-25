@@ -1,0 +1,38 @@
+# Tự động gỡ bỏ hook chặn stack mob của SuperiorSkyblock khi khởi động máy chủ
+import:
+    com.bgsoftware.wildstacker.api.events.EntityStackEvent
+    com.bgsoftware.wildstacker.api.events.SpawnerStackedEntitySpawnEvent
+    java.util.Arrays
+
+on load:
+    wait 2 seconds
+
+    set {_handlers} to EntityStackEvent.getHandlerList()
+    set {_arr} to {_handlers}.getRegisteredListeners()
+    if {_arr} is set:
+        set {_list} to Arrays.asList({_arr})
+        set {_size} to {_list}.size()
+        if {_size} > 0:
+            loop {_size} times:
+                set {_idx} to loop-number - 1
+                set {_reg} to {_list}.get({_idx})
+                if {_reg} is set:
+                    set {_listener} to {_reg}.getListener()
+                    if {_listener} is set:
+                        if "%{_listener}.getClass().getName()%" contains "SuperiorSkyblock":
+                            {_handlers}.unregister({_listener})
+
+    set {_handlers2} to SpawnerStackedEntitySpawnEvent.getHandlerList()
+    set {_arr2} to {_handlers2}.getRegisteredListeners()
+    if {_arr2} is set:
+        set {_list2} to Arrays.asList({_arr2})
+        set {_size2} to {_list2}.size()
+        if {_size2} > 0:
+            loop {_size2} times:
+                set {_idx2} to loop-number - 1
+                set {_reg2} to {_list2}.get({_idx2})
+                if {_reg2} is set:
+                    set {_listener2} to {_reg2}.getListener()
+                    if {_listener2} is set:
+                        if "%{_listener2}.getClass().getName()%" contains "SuperiorSkyblock":
+                            {_handlers2}.unregister({_listener2})

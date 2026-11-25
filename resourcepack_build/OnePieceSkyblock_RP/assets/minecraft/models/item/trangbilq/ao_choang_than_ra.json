@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "items/trangbilq/ao_choang_than_ra"
+  }
+}

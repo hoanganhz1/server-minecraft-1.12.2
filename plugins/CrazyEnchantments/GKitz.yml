@@ -1,0 +1,113 @@
+Settings:
+  GUI-Size: 27 #Must be a factor of 9.
+  Inventory-Name: '&8Danh Sách Bộ Trang Bị GKitz'
+  GUI-Customization: #This allows you to customize unclickable items into your GUI.
+    - 'Slot:1, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:2, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:3, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:4, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:5, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:6, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:7, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:8, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:9, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:10, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:11, Item:STAINED_GLASS_PANE:7, Name: '
+    - 'Slot:13, Item:STAINED_GLASS_PANE:7, Name: '
+    - 'Slot:15, Item:STAINED_GLASS_PANE:7, Name: '
+    - 'Slot:17, Item:STAINED_GLASS_PANE:7, Name: '
+    - 'Slot:18, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:19, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:20, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:21, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:22, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:23, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:24, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:25, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:26, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:27, Item:STAINED_GLASS_PANE:15, Name: '
+###################################
+#             Items: Options
+# Item:<Item Name> - The item that it will be. You can use meta data for the items. List of names: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+# Amount: <Number> - Choose how many of the item you get.
+# Name: <Name> - The display name that goes on the item.
+# Lore: <Line 1>,<Line 2>,<Line 3>,<Line 4> - The lore that will go under the enchantments. Split lines with a ','
+# <Enchantment>:<Level> - Choose vanilla enchantments here.
+# <Custom Enchantment>:<Level> - Choose a custom enchantments here.
+# To chose a random level for the custom or vanilla enchantments use like this '<Custom/Enchantment>:<Min Level>-<Max Level>'
+# Example of this is shows here.
+# Overload:1-5, Hulk:1-5 << this will add Hulk and Overload and pick a random level from 1-5 and set it as the power.
+###################################
+GKitz: #GKit options.
+  Hero: #Name of the GKit.
+    Display: #All the display option in the GUI.
+      Slot: 12 #Slot the item is located at in the GUI.
+      Item: 'STAINED_GLASS_PANE:1' #The item that is displayed for the GKit.
+      Glowing: true #If it has a glowing effect.
+      Name: '&6&lBộ Trang Bị Anh Hùng' #Display name of the GKit.
+      Lore: #The lore that goes on the display item.
+        - '&7Bộ giáp huyền thoại từng được'
+        - '&7các đại anh hùng khoác ra trận.'
+        - ''
+        - '&7Hồi chiêu: &624 Giờ'
+        - '&7Nhận lại sau: &6%day%d, %hour%h, %minute%m, %second%s'
+        - '&7&l(&6&l!&7&l) &7Chuột phải để xem trước'
+    Auto-Equip: false #If armor is auto equipped onto the player if the slots are available.
+    Cooldown: '24h' #Cooldown for the GKit. Available options d - Day, h - Hour, m - Minute, s - Second
+    Items: #The items that are given the players.
+      - 'Item:DIAMOND_HELMET, Amount:1, Name:&6&lMũ Anh Hùng, Protection:4, Respiration:3, Thorns:3, Aqua_Affinity:1, Overload:1-5, Hulk:2-5, Glowing:0-1, Implants:0-5, Lore:&aChiếc mũ báu vật của vị anh hùng.,&aHãy bảo quản thật cẩn thận.'
+      - 'Item:DIAMOND_CHESTPLATE, Amount:1, Name:&6&lÁo Giáp Anh Hùng, Protection:4, Thorns:3, Overload:0-5, Hulk:2-5, Lore:&aChiếc áo giáp báu vật của vị anh hùng.,&aHãy bảo quản thật cẩn thận.'
+      - 'Item:DIAMOND_LEGGINGS, Amount:1, Name:&6&lQuần Giáp Anh Hùng, Protection:4, Thorns:3, Overload:0-5, Hulk:2-5, Lore:&aChiếc quần giáp báu vật của vị anh hùng.,&aHãy bảo quản thật cẩn thận.'
+      - 'Item:DIAMOND_BOOTS, Amount:1, Name:&6&lGiày Anh Hùng, Protection:4, Thorns:3, Overload:0-5, Hulk:2-5, Gears:0-3, Rocket:1, Anti-Gravity:0-5, Lore:&aĐôi giày báu vật của vị anh hùng.,&aHãy bảo quản thật cẩn thận.'
+    Fake-Items: #Items the user doesn't accrual get but can be used to show an item you get from a command.
+      - 'Item:BOOK, Amount:1, Name:&b&lCường Hóa Sinh Lực V, Lore:&7Tăng giới hạn máu tối đa,&7khi mặc trang bị.'
+    Commands: #Is used if you wish to use commands to give other things to players.
+      - 'ce book overload 5 1 %player%'
+  PeaceKeeper:
+    Display:
+      Slot: 14
+      Item: 'STAINED_GLASS_PANE:11'
+      Glowing: true
+      Name: '&9&lBộ Trang Bị Hộ Vệ Hòa Bình'
+      Lore:
+        - '&7Bộ giáp tinh nhuệ từng được'
+        - '&7các vệ binh gìn giữ hòa bình sử dụng.'
+        - ''
+        - '&7Hồi chiêu: &624 Giờ'
+        - '&7Nhận lại sau: &6%day%d, %hour%h, %minute%m, %second%s'
+        - '&7&l(&9&l!&7&l) &7Chuột phải để xem trước'
+    Auto-Equip: false
+    Cooldown: '24h'
+    Items:
+      - 'Item:DIAMOND_HELMET, Amount:1, Name:&9&lMũ Hộ Vệ, Protection:4, Respiration:3, Thorns:3, Aqua_Affinity:1, Overload:1-5, Hulk:2-5, Glowing:0-1, Implants:0-5, Lore:&9Mũ đặc chế của Hộ Vệ Hòa Bình.,&9Hãy bảo quản thật cẩn thận.'
+      - 'Item:DIAMOND_CHESTPLATE, Amount:1, Name:&9&lÁo Giáp Hộ Vệ, Protection:4, Thorns:3, Overload:0-5, Hulk:2-5, Lore:&9Áo giáp đặc chế của Hộ Vệ Hòa Bình.,&9Hãy bảo quản thật cẩn thận.'
+      - 'Item:DIAMOND_LEGGINGS, Amount:1, Name:&9&lQuần Giáp Hộ Vệ, Protection:4, Thorns:3, Overload:0-5, Hulk:2-5, Lore:&9Quần giáp đặc chế của Hộ Vệ Hòa Bình.,&9Hãy bảo quản thật cẩn thận.'
+      - 'Item:DIAMOND_BOOTS, Amount:1, Name:&9&lGiày Hộ Vệ, Protection:4, Thorns:3, Overload:0-5, Hulk:2-5, Gears:0-3, Rocket:1, Anti-Gravity:0-5, Lore:&9Giày đặc chế của Hộ Vệ Hòa Bình.,&9Hãy bảo quản thật cẩn thận.'
+    Fake-Items:
+      - 'Item:BOOK, Amount:1, Name:&b&lCường Hóa Sinh Lực V, Lore:&7Tăng giới hạn máu tối đa,&7khi mặc trang bị.'
+    Commands:
+      - 'ce book overload 5 1 %player%'
+  Villain:
+    Display:
+      Slot: 16
+      Item: 'STAINED_GLASS_PANE:14'
+      Glowing: true
+      Name: '&4&lBộ Trang Bị Ác Nhân'
+      Lore:
+        - '&7Bộ giáp tà ác từng thuộc về'
+        - '&7một tên trùm phản diện khét tiếng.'
+        - ''
+        - '&7Hồi chiêu: &624 Giờ'
+        - '&7Nhận lại sau: &6%day%d, %hour%h, %minute%m, %second%s'
+        - '&7&l(&4&l!&7&l) &7Chuột phải để xem trước'
+    Auto-Equip: false
+    Cooldown: '24h'
+    Items:
+      - 'Item:DIAMOND_HELMET, Amount:1, Name:&4&lMũ Ác Nhân, Protection:4, Respiration:3, Thorns:3, Aqua_Affinity:1, Overload:1-5, Hulk:2-5, Glowing:0-1, Implants:0-5, Lore:&cChiếc mũ nguyền rủa của Ác Nhân.,&cHãy bảo quản thật cẩn thận.'
+      - 'Item:DIAMOND_CHESTPLATE, Amount:1, Name:&4&lÁo Giáp Ác Nhân, Protection:4, Thorns:3, Overload:0-5, Hulk:2-5, Lore:&cÁo giáp nguyền rủa của Ác Nhân.,&cHãy bảo quản thật cẩn thận.'
+      - 'Item:DIAMOND_LEGGINGS, Amount:1, Name:&4&lQuần Giáp Ác Nhân, Protection:4, Thorns:3, Overload:0-5, Hulk:2-5, Lore:&cQuần giáp nguyền rủa của Ác Nhân.,&cHãy bảo quản thật cẩn thận.'
+      - 'Item:DIAMOND_BOOTS, Amount:1, Name:&4&lGiày Ác Nhân, Protection:4, Thorns:3, Overload:0-5, Hulk:2-5, Gears:0-3, Rocket:1, Anti-Gravity:0-5, Lore:&cGiày nguyền rủa của Ác Nhân.,&cHãy bảo quản thật cẩn thận.'
+    Fake-Items:
+      - 'Item:BOOK, Amount:1, Name:&b&lCường Hóa Sinh Lực V, Lore:&7Tăng giới hạn máu tối đa,&7khi mặc trang bị.'
+    Commands:
+      - 'ce book overload 5 1 %player%'

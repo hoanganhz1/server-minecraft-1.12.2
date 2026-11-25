@@ -1,0 +1,260 @@
+Info-GUI-Settings:
+  Inventory:
+    Name: '&c&lThông Tin Phù Phép'
+    Size: 18
+  Back-Item:
+    Right:
+      Item: 'NETHER_STAR'
+      Name: '&7&l<<&b&lQuay Lại'
+      Lore: [ ]
+    Left:
+      Item: 'NETHER_STAR'
+      Name: '&b&lQuay Lại&7&l>>'
+      Lore: [ ]
+Types:
+  Helmet:
+    Display-Item:
+      Item: 'GOLD_HELMET'
+      Slot: 1
+      Name: '&e&lPhù Phép Mũ'
+      Lore:
+        - '&7Trang bị áp dụng:'
+        - '&a- Mũ Da'
+        - '&a- Mũ Xích'
+        - '&a- Mũ Vàng'
+        - '&a- Mũ Sắt'
+        - '&a- Mũ Kim Cương'
+    Enchantable-Items:
+      - 'LEATHER_HELMET'
+      - 'CHAINMAIL_HELMET'
+      - 'GOLD_HELMET'
+      - 'IRON_HELMET'
+      - 'DIAMOND_HELMET'
+  Boots:
+    Display-Item:
+      Item: 'GOLD_BOOTS'
+      Slot: 2
+      Name: '&e&lPhù Phép Giày'
+      Lore:
+        - '&7Trang bị áp dụng:'
+        - '&a- Giày Da'
+        - '&a- Giày Xích'
+        - '&a- Giày Vàng'
+        - '&a- Giày Sắt'
+        - '&a- Giày Kim Cương'
+    Enchantable-Items:
+      - 'LEATHER_BOOTS'
+      - 'CHAINMAIL_BOOTS'
+      - 'GOLD_BOOTS'
+      - 'IRON_BOOTS'
+      - 'DIAMOND_BOOTS'
+  Armor:
+    Display-Item:
+      Item: 'GOLD_CHESTPLATE'
+      Slot: 3
+      Name: '&e&lPhù Phép Giáp'
+      Lore:
+        - '&7Trang bị áp dụng:'
+        - '&a- Giáp Da'
+        - '&a- Giáp Xích'
+        - '&a- Giáp Vàng'
+        - '&a- Giáp Sắt'
+        - '&a- Giáp Kim Cương'
+    Enchantable-Items:
+      - 'LEATHER_HELMET'
+      - 'CHAINMAIL_HELMET'
+      - 'GOLD_HELMET'
+      - 'IRON_HELMET'
+      - 'DIAMOND_HELMET'
+      - 'LEATHER_CHESTPLATE'
+      - 'CHAINMAIL_CHESTPLATE'
+      - 'GOLD_CHESTPLATE'
+      - 'IRON_CHESTPLATE'
+      - 'DIAMOND_CHESTPLATE'
+      - 'LEATHER_LEGGINGS'
+      - 'CHAINMAIL_LEGGINGS'
+      - 'GOLD_LEGGINGS'
+      - 'IRON_LEGGINGS'
+      - 'DIAMOND_LEGGINGS'
+      - 'LEATHER_BOOTS'
+      - 'CHAINMAIL_BOOTS'
+      - 'GOLD_BOOTS'
+      - 'IRON_BOOTS'
+      - 'DIAMOND_BOOTS'
+  Bow:
+    Display-Item:
+      Item: 'BOW'
+      Slot: 4
+      Name: '&e&lPhù Phép Cung'
+      Lore:
+        - '&7Trang bị áp dụng:'
+        - '&a- Cung'
+    Enchantable-Items:
+      - 'BOW'
+  Sword:
+    Display-Item:
+      Item: 'GOLD_SWORD'
+      Slot: 5
+      Name: '&e&lPhù Phép Kiếm'
+      Lore:
+        - '&7Trang bị áp dụng:'
+        - '&a- Kiếm Gỗ'
+        - '&a- Kiếm Đá'
+        - '&a- Kiếm Vàng'
+        - '&a- Kiếm Sắt'
+        - '&a- Kiếm Kim Cương'
+    Enchantable-Items:
+      - 'WOOD_SWORD'
+      - 'STONE_SWORD'
+      - 'IRON_SWORD'
+      - 'GOLD_SWORD'
+      - 'DIAMOND_SWORD'
+  Axe:
+    Display-Item:
+      Slot: 6
+      Item: 'GOLD_AXE'
+      Name: '&e&lPhù Phép Rìu'
+      Lore:
+        - '&7Trang bị áp dụng:'
+        - '&a- Rìu Gỗ'
+        - '&a- Rìu Đá'
+        - '&a- Rìu Sắt'
+        - '&a- Rìu Vàng'
+        - '&a- Rìu Kim Cương'
+    Enchantable-Items:
+      - 'WOOD_AXE'
+      - 'STONE_AXE'
+      - 'IRON_AXE'
+      - 'GOLD_AXE'
+      - 'DIAMOND_AXE'
+  Hoe:
+    Display-Item:
+      Item: 'GOLD_HOE'
+      Slot: 7
+      Name: '&e&lPhù Phép Cuốc'
+      Lore:
+        - '&7Trang bị áp dụng:'
+        - '&a- Cuốc Gỗ'
+        - '&a- Cuốc Đá'
+        - '&a- Cuốc Vàng'
+        - '&a- Cuốc Sắt'
+        - '&a- Cuốc Kim Cương'
+    Enchantable-Items:
+      - 'WOOD_HOE'
+      - 'STONE_HOE'
+      - 'IRON_HOE'
+      - 'GOLD_HOE'
+      - 'DIAMOND_HOE'
+  Pickaxe:
+    Display-Item:
+      Item: 'GOLD_PICKAXE'
+      Slot: 8
+      Name: '&e&lPhù Phép Cúp'
+      Lore:
+        - '&7Trang bị áp dụng:'
+        - '&a- Cúp Gỗ'
+        - '&a- Cúp Đá'
+        - '&a- Cúp Vàng'
+        - '&a- Cúp Sắt'
+        - '&a- Cúp Kim Cương'
+    Enchantable-Items:
+      - 'WOOD_PICKAXE'
+      - 'STONE_PICKAXE'
+      - 'IRON_PICKAXE'
+      - 'GOLD_PICKAXE'
+      - 'DIAMOND_PICKAXE'
+  Tool:
+    Display-Item:
+      Item: 'GOLD_SPADE'
+      Slot: 9
+      Name: '&e&lPhù Phép Công Cụ'
+      Lore:
+        - '&7Trang bị áp dụng:'
+        - '&a- Mọi loại Cúp'
+        - '&a- Mọi loại Rìu'
+        - '&a- Mọi loại Xẻng'
+        - '&a- Mọi loại Cuốc'
+        - '&a- Kéo cắt lông cừu'
+    Enchantable-Items:
+      - 'WOOD_PICKAXE'
+      - 'STONE_PICKAXE'
+      - 'IRON_PICKAXE'
+      - 'GOLD_PICKAXE'
+      - 'DIAMOND_PICKAXE'
+      - 'WOOD_AXE'
+      - 'STONE_AXE'
+      - 'IRON_AXE'
+      - 'GOLD_AXE'
+      - 'DIAMOND_AXE'
+      - 'WOOD_SPADE'
+      - 'STONE_SPADE'
+      - 'IRON_SPADE'
+      - 'GOLD_SPADE'
+      - 'DIAMOND_SPADE'
+      - 'WOOD_HOE'
+      - 'STONE_HOE'
+      - 'IRON_HOE'
+      - 'GOLD_HOE'
+      - 'DIAMOND_HOE'
+      - 'SHEARS'
+  Damaged-Items:
+    Display-Item:
+      Item: 'ANVIL:2'
+      Slot: 14
+      Name: '&e&lPhù Phép Hư Hại / Bền Bỉ'
+      Lore:
+        - '&7Trang bị áp dụng:'
+        - '&a- Cần câu cá'
+        - '&a- Kéo cắt lông cừu'
+        - '&a- Mọi Công cụ'
+        - '&a- Mọi Giáp'
+        - '&a- Mọi Vũ khí'
+    Enchantable-Items:
+      - 'WOOD_PICKAXE'
+      - 'STONE_PICKAXE'
+      - 'IRON_PICKAXE'
+      - 'GOLD_PICKAXE'
+      - 'DIAMOND_PICKAXE'
+      - 'WOOD_AXE'
+      - 'STONE_AXE'
+      - 'IRON_AXE'
+      - 'GOLD_AXE'
+      - 'DIAMOND_AXE'
+      - 'WOOD_SPADE'
+      - 'STONE_SPADE'
+      - 'IRON_SPADE'
+      - 'GOLD_SPADE'
+      - 'DIAMOND_SPADE'
+      - 'WOOD_HOE'
+      - 'STONE_HOE'
+      - 'IRON_HOE'
+      - 'GOLD_HOE'
+      - 'DIAMOND_HOE'
+      - 'SHEARS'
+      - 'LEATHER_HELMET'
+      - 'CHAINMAIL_HELMET'
+      - 'GOLD_HELMET'
+      - 'IRON_HELMET'
+      - 'DIAMOND_HELMET'
+      - 'LEATHER_CHESTPLATE'
+      - 'CHAINMAIL_CHESTPLATE'
+      - 'GOLD_CHESTPLATE'
+      - 'IRON_CHESTPLATE'
+      - 'DIAMOND_CHESTPLATE'
+      - 'LEATHER_LEGGINGS'
+      - 'CHAINMAIL_LEGGINGS'
+      - 'GOLD_LEGGINGS'
+      - 'IRON_LEGGINGS'
+      - 'DIAMOND_LEGGINGS'
+      - 'LEATHER_BOOTS'
+      - 'CHAINMAIL_BOOTS'
+      - 'GOLD_BOOTS'
+      - 'IRON_BOOTS'
+      - 'DIAMOND_BOOTS'
+      - 'WOOD_SWORD'
+      - 'STONE_SWORD'
+      - 'IRON_SWORD'
+      - 'GOLD_SWORD'
+      - 'DIAMOND_SWORD'
+      - 'BOW'
+      - 'FISHING_ROD'

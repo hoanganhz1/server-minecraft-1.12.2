@@ -1,0 +1,80 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+# The mission file to use
+mission-file: FishingMissions
+
+# Whether the mission should be given when completing all requirements.
+auto-reward: true
+
+# Rewards given when completing the mission.
+rewards:
+  commands:
+    - 'eco give %player% 2500'
+    - 'talentadmin addpoints %player% 2'
+    - 'is admin msg %player% &e&lNgư Dân | &7Hoàn thành xuất sắc nhiệm vụ Ngư Dân I!'
+    - 'is admin msg %player% &e&lNgư Dân | &7Nghe nói dưới biển còn câu được nhiều món hay lắm...'
+    - 'is admin msg %player% &e&lNgư Dân | &7&oXem nhiệm vụ tiếp theo tại lệnh /is missions'
+
+# List of all required caughts must be gathered in order to complete the mission.
+required-caughts:
+  '1':
+    types:
+      - 'RAW_FISH'
+    amount: 5
+
+# Icons used in the menus.
+icons:
+  not-completed:
+    type: PAPER
+    name: '&aNgư Dân I'
+    lore:
+      - '&7Hãy cùng nấu một nồi súp cá nào.'
+      - '&7Câu đủ 5 con cá.'
+      - ''
+      - '&6Yêu Cầu Câu Cá:'
+      - '&8 - &7x5 Cá'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+2 Điểm Thiên Phú'
+      - '&8 - &7$2,500'
+      - ''
+      - '&6Cá đã câu: &7{1}/5'
+      - '&6Tiến độ: &7{0}%'
+      - '&c&l ✘ &7Chưa Hoàn Thành'
+  can-complete:
+    type: PAPER
+    name: '&aNgư Dân I'
+    lore:
+      - '&7Hãy cùng nấu một nồi súp cá nào.'
+      - '&7Câu đủ 5 con cá.'
+      - ''
+      - '&6Yêu Cầu Câu Cá:'
+      - '&8 - &7x5 Cá'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+2 Điểm Thiên Phú'
+      - '&8 - &7$2,500'
+      - ''
+      - '&6Cá đã câu: &75/5'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Nhấp để nhận phần thưởng.'
+    glow: true
+  completed:
+    type: MAP
+    name: '&aNgư Dân I'
+    lore:
+      - '&7Hãy cùng nấu một nồi súp cá nào.'
+      - '&7Câu đủ 5 con cá.'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+2 Điểm Thiên Phú'
+      - '&8 - &7$2,500'
+      - ''
+      - '&6Cá đã câu: &75/5'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Đã Nhận Thưởng.'

@@ -1,0 +1,72 @@
+###############################################
+##                                           ##
+##         WildStacker Configuration         ##
+##            Developed by Ome_R             ##
+##                                           ##
+###############################################
+
+# The title of the menu.
+title: '&8Thông tin Lồng Spawner'
+
+# The pattern of the menu.
+pattern:
+  - '@ # & $ $ $ $ $ $'
+  - '# & $ $ $ $ $ $ $'
+  - '& $ % $ ^ $ ! $ &'
+  - '$ $ $ $ $ $ $ & #'
+  - '$ $ $ $ $ $ & # @'
+
+# The slots of the amounts menu.
+amounts-menu: '^'
+# The slots for statistic items
+statistics: '%'
+# The slots of the upgrade menu.
+upgrade-menu: '!'
+
+# The items of the menu
+items:
+  '@':
+    type: STAINED_GLASS_PANE
+    data: 15
+    name: '&f'
+  '#':
+    type: STAINED_GLASS_PANE
+    data: 4
+    name: '&f'
+  '&':
+    type: STAINED_GLASS_PANE
+    data: 1
+    name: '&f'
+  '%':
+    type: BOOK
+    name: '&eThống kê'
+    lore:
+      - '&7Thời gian sinh kế tiếp&e: &f%ticks-left%s'
+      - '&c%failure-reason%'
+      - '&7 '
+      - '&7Khoảng trễ sinh&e: &f%min-spawn-delay%-%max-spawn-delay%'
+      - '&7Số lượng mỗi lần sinh&e: &f%spawn-count%'
+      - '&7Số quái tối đa gần đó&e: &f%max-nearby-entities%'
+      - '&7Phạm vi kích hoạt&e: &f%required-player-range%'
+      - '&7Bán kính sinh sản&e: &f%spawn-range%'
+  '^':
+    type: EMERALD
+    name: '&eChỉnh Số Lượng'
+  '!':
+    type: GOLD_INGOT
+    name: '&eNâng Cấp Spawner'
+
+# Sounds for items
+sounds:
+  '%':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '^':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '!':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2

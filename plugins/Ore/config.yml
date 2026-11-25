@@ -1,0 +1,60 @@
+# để sử dụng, add perm ore.<group> vd dùng vip thì add ore.vip
+# group default không cần perm, group default là bắt buộc
+Perm:
+  level5:
+    Block:
+      COBBLESTONE: 30
+      STONE: 10
+      COAL_ORE: 12
+      IRON_ORE: 16
+      REDSTONE_ORE: 7
+      LAPIS_ORE: 7
+      GOLD_ORE: 9
+      DIAMOND_ORE: 6
+      EMERALD_ORE: 3
+    Require:
+    - LAVA
+    - STATIONARY_LAVA
+  level4:
+    Block:
+      COBBLESTONE: 42
+      STONE: 10
+      COAL_ORE: 11
+      IRON_ORE: 13
+      REDSTONE_ORE: 7
+      LAPIS_ORE: 6
+      GOLD_ORE: 7
+      DIAMOND_ORE: 4
+    Require:
+    - LAVA
+    - STATIONARY_LAVA
+  level3:
+    Block:
+      COBBLESTONE: 55
+      STONE: 10
+      COAL_ORE: 10
+      IRON_ORE: 10
+      REDSTONE_ORE: 6
+      LAPIS_ORE: 5
+      GOLD_ORE: 4
+    Require:
+    - LAVA
+    - STATIONARY_LAVA
+  level2:
+    Block:
+      COBBLESTONE: 65
+      STONE: 12
+      COAL_ORE: 10
+      IRON_ORE: 8
+      REDSTONE_ORE: 5
+    Require:
+    - LAVA
+    - STATIONARY_LAVA
+  default:
+    Block:
+      COBBLESTONE: 75
+      STONE: 15
+      COAL_ORE: 10
+    Require:
+    - LAVA
+    - STATIONARY_LAVA

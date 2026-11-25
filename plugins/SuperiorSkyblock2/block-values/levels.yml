@@ -1,0 +1,42 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+# Here you can set all the level values for your blocks.
+# To set specific spawner types, use 'MOB_SPAWNER:<ENTITY>': <AMOUNT>
+# If no level is found, the formula from config will be used.
+
+# Khối Kho Báu & Quân Sự Căn Cứ Hải Tặc (Tăng mạnh Uy Danh)
+BEACON: 500
+DRAGON_EGG: 1000
+MOB_SPAWNER: 250
+'MOB_SPAWNER:IRON_GOLEM': 5000
+EMERALD_BLOCK: 100
+DIAMOND_BLOCK: 150
+GOLD_BLOCK: 80
+IRON_BLOCK: 30
+
+# Khối Xây Dựng Cơ Bản (Giảm về 0 để diệt tận gốc spam rác lấy cấp)
+COBBLESTONE: 0
+STONE: 0
+DIRT: 0
+GRASS: 0
+WOOD: 0
+LOG: 0
+LOG_2: 0
+GLASS: 0
+STAINED_GLASS: 0
+THIN_GLASS: 0
+STAINED_GLASS_PANE: 0
+SAND: 0
+GRAVEL: 0
+NETHERRACK: 0
+SOUL_SAND: 0
+COBBLE_WALL: 0
+COBBLESTONE_STAIRS: 0
+MOSSY_COBBLESTONE: 0
+WOOD_STAIRS: 0
+WOOD_STEP: 0

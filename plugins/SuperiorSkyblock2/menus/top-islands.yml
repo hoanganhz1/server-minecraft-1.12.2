@@ -1,0 +1,127 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+title: '&6&lBảng Xếp Hạng Căn Cứ Tứ Hoàng'
+previous-menu: true
+
+pattern:
+  - '@ @ @ @ @ @ @ @ @'
+  - '@ @ @ @ @ # @ @ @'
+  - '@ $ @ @ # # # @ @'
+  - '@ @ @ # # # # # @'
+  - '~ ~ ~ ~ % ~ ~ ~ ~'
+  - '@ @ ! @ - @ + @ @'
+
+slots: '#'
+previous-page: '!'
+current-page: '-'
+next-page: '+'
+
+player-island: '$'
+sort-islands: '%'
+
+messages:
+  selected-sorting-type: '&8 - &a{0}'
+  unselected-sorting-type: '&8 - &7{0}'
+
+items:
+  '#':
+    island:
+      type: SKULL_ITEM
+      data: 3
+      name: '&c&l[!] Căn Cứ Thuyền Trưởng: &6&n{0}&7 (Hạng #{1})'
+      lore:
+        - '&7'
+        - '&6&l* &e&lThứ hạng: &7#{1}'
+        - '&7'
+        - '&6&l* &e&lUy Danh Căn Cứ: &b{2}'
+        - '&6&l* &e&lKho Báu & Khối Căn Cứ: &7'
+        - '&6&l* &e&lĐánh giá: &7{8} ({9})'
+        - '&6&l* &e&lThủy Thủ Đoàn: &7{10} hải tặc'
+        - '&6&l* &e&lKho Bạc Băng: &7'
+        - '&7'
+        - '&6&l* &e&lDanh sách Thủy Thủ Đoàn:'
+        - '{4}:&f  - &7{}'
+        - '&7'
+        - '&7&o(( &f&oChuột Trái &7&ođể xem khối tại Căn Cứ. ))'
+        - '&7&o(( &f&oChuột Phải &7&ođể dịch chuyển tới điểm dịch chuyển Căn Cứ. ))'
+    no-island:
+      type: SKULL_ITEM
+      data: 3
+      name: '&cKhông có dữ liệu Căn Cứ'
+  '%':
+    WORTH:
+      display-name: 'Giá trị'
+      type: DIAMOND
+      name: '&6Đổi Kiểu Xếp Hạng'
+      lore:
+        - '&7Chuyển kiểu sắp xếp bảng xếp hạng Căn Cứ Tứ Hoàng.'
+        - '&7Đang xếp theo: &e{1}&7.'
+        - ''
+        - '{0}'
+    LEVEL:
+      display-name: 'Cấp độ'
+      type: GOLD_INGOT
+      name: '&6Đổi Kiểu Xếp Hạng'
+      lore:
+        - '&7Chuyển kiểu sắp xếp bảng xếp hạng Căn Cứ Tứ Hoàng.'
+        - '&7Đang xếp theo: &e{1}&7.'
+        - ''
+        - '{0}'
+    RATING:
+      display-name: 'Đánh giá'
+      type: NETHER_STAR
+      name: '&6Đổi Kiểu Xếp Hạng'
+      lore:
+        - '&7Chuyển kiểu sắp xếp bảng xếp hạng Căn Cứ Tứ Hoàng.'
+        - '&7Đang xếp theo: &e{1}&7.'
+        - ''
+        - '{0}'
+    PLAYERS:
+      display-name: 'Số người'
+      type: SKULL_ITEM
+      data: 3
+      name: '&6Đổi Kiểu Xếp Hạng'
+      lore:
+        - '&7Chuyển kiểu sắp xếp bảng xếp hạng Căn Cứ Tứ Hoàng.'
+        - '&7Đang xếp theo: &e{1}&7.'
+        - ''
+        - '{0}'
+    BANK:
+      display-name: 'Ngân hàng'
+      type: EMERALD
+      name: '&6Đổi Kiểu Xếp Hạng'
+      lore:
+        - '&7Chuyển kiểu sắp xếp bảng xếp hạng Căn Cứ Tứ Hoàng.'
+        - '&7Đang xếp theo: &e{1}&7.'
+        - ''
+        - '{0}'
+  '!':
+    type: PAPER
+    name: '{0}Trang Trước'
+  '-':
+    type: DOUBLE_PLANT
+    name: '&aTrang Hiện Tại'
+    lore:
+      - '&7Trang {0}'
+  '+':
+    type: PAPER
+    name: '{0}Trang Sau'
+  '~':
+    type: STAINED_GLASS_PANE
+    data: 15
+    name: '&f'
+
+sounds:
+  '@':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '%':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2

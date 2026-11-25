@@ -1,0 +1,189 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+title: '&c&lBảng Điều Khiển Căn Cứ Hải Tặc'
+previous-menu: true
+
+pattern:
+  - '2 2 2 2 2 2 2 2 2'
+  - '# ! # @ # $ # % #'
+  - '_ # ^ # & # * # 1'
+  - '- # ~ # P # = # +'
+  - '2 2 2 2 2 2 2 2 2'
+
+members: '+'
+settings: '@'
+visitors: '-'
+
+items:
+  '!':
+    type: SIGN
+    name: '&eDịch Chuyển Về Căn Cứ'
+    lore:
+      - '&7Dịch chuyển ngay về Căn Cứ Hải Tặc của bạn.'
+      - '&7Lệnh nhanh: &a/is go'
+  '@':
+    type: DIODE
+    name: '&eCài Đặt Căn Cứ'
+    lore:
+      - '&7Quản lý các thiết lập an ninh và cơ chế Căn Cứ.'
+  '$':
+    type: ENDER_PEARL
+    name: '&ePhân Quyền Thủy Thủ Đoàn'
+    lore:
+      - '&7Thiết lập quyền hạn cho từng cấp bậc Hải Tặc.'
+  '%':
+    type: GRASS
+    name: '&eVùng Biển & Quần Xã (Biome)'
+    lore:
+      - '&7Thay đổi hệ sinh thái lãnh hải của Căn Cứ.'
+  '_':
+    type: EMERALD
+    name: '&6&lKho Bạc Băng Hải Tặc'
+    lore:
+      - '&7Mở ngân quỹ và kho báu chung của Băng Hải Tặc.'
+      - '&7Lệnh nhanh: &e/is bank'
+  '^':
+    type: GOLD_INGOT
+    name: '&b&lNâng Cấp Căn Cứ & Hạm Đội'
+    lore:
+      - '&7Nâng cấp Lò Hải Lâu Thạch, Lãnh hải và Thủy thủ đoàn!'
+      - '&7Lệnh nhanh: &e/is upgrades'
+  '&':
+    type: BEACON
+    name: '&eBảng Xếp Hạng Tứ Hoàng'
+    lore:
+      - '&7Vinh danh các Băng Hải Tặc hùng mạnh nhất máy chủ!'
+      - '&7Lệnh nhanh: &e/is top'
+  '*':
+    type: PAPER
+    name: '&eHải Trình Vĩ Đại (Chiến Dịch Co-op)'
+    lore:
+      - '&7Cùng Thủy Thủ Đoàn hoàn thành chiến dịch nhận điểm Thiên Phú!'
+      - '&7Lệnh nhanh: &e/is missions'
+  '1':
+    type: SMOOTH_BRICK
+    name: '&eThống Kê Khối Căn Cứ'
+    lore:
+      - '&7Xem toàn bộ số lượng khối Kho Báu & Quân Sự trên Căn Cứ!'
+  '~':
+    type: BARRIER
+    name: '&c&lGiải Tán Căn Cứ & Hạm Đội'
+    lore:
+      - '&7Xóa bỏ hoàn toàn Căn Cứ Hải Tặc của bạn.'
+      - '&cHành động này không thể hoàn tác!'
+  '=':
+    type: CHEST
+    name: '&c&lKho Vũ Khí Băng Hải Tặc'
+    lore:
+      - '&7Mở kho vũ khí & trang bị dùng chung của Băng Hải Tặc.'
+      - '&7Lệnh nhanh: &e/is chest'
+  '-':
+    type: SKULL_ITEM
+    name: '&eKẻ Xâm Nhập & Khách Tham Quan'
+    lore:
+      - '&7Kiểm tra những người chơi đang có mặt tại lãnh hải Căn Cứ.'
+  '+':
+    type: SKULL_ITEM
+    data: 3
+    name: '&a&lThủy Thủ Đoàn Căn Cứ'
+    lore:
+      - '&7Quản lý danh sách Thủy Thủ và chức vụ trong Băng.'
+  'P':
+    type: BANNER
+    name: '&6&l🏴 CỜ HẢI TẶC & KOTH LAUGH TALE'
+    lore:
+      - '&7Quản lý 3 Cờ Hải Tặc (Hỏa Long, Hoàng Kim, Bất Tử Điểu)'
+      - '&7và thông tin Đại Chiến Chiếm Đóng KOTH Laugh Tale!'
+      - ''
+      - '&eNhấp để mở giao diện Băng Hải Tặc (/banghaitac).'
+  '2':
+    type: STAINED_GLASS_PANE
+    data: 15
+    name: '&f'
+
+sounds:
+  '!':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '@':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '$':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '%':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '_':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '^':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '&':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '*':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '1':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '~':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '-':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '=':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  '+':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+  'P':
+    type: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 0.2
+    pitch: 0.2
+
+commands:
+  '!':
+    - '[player] is tp'
+  '$':
+    - '[player] is permissions'
+  '%':
+    - '[player] is biome'
+  '_':
+    - '[player] is bank'
+  '^':
+    - '[player] is upgrade'
+  '&':
+    - '[player] is top'
+  '*':
+    - '[player] is missions'
+  '1':
+    - '[player] is counts'
+  '~':
+    - '[player] is disband'
+  '=':
+    - '[player] is chest'
+  'P':
+    - '[player] banghaitac'

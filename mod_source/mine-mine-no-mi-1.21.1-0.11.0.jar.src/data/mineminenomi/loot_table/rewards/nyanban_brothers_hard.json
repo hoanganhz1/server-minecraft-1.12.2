@@ -1,0 +1,1 @@
+{"type":"minecraft:challenge","pools":[{"bonus_rolls":0.0,"conditions":[{"chance":0.1,"condition":"minecraft:random_chance"}],"entries":[{"type":"minecraft:item","functions":[{"function":"mineminenomi:ancient_manual"}],"name":"minecraft:book"}],"name":"mineminenomi:ancient_manual","rolls":1.0}],"random_sequence":"mineminenomi:rewards/nyanban_brothers_hard"}

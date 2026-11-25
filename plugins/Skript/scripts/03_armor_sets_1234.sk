@@ -1,0 +1,688 @@
+# =====================================================================
+# HỆ THỐNG GIÁP THEO BỘ MỐC [1/4], [2/4], [3/4], [4/4] & GUI /chetao
+# Bộ 1: Hộ Vệ Đại Địa (Đầu game)
+# Bộ 2: Huyết Chiến Sĩ (Giữa game)
+# Bộ 3: Bất Diệt Thánh Quang (Cuối game)
+# Lưu ý: Trang bị KHÔNG cộng chỉ số Thiên Phú (Crit/Né/Chính xác).
+# =====================================================================
+
+import:
+    java.lang.System
+    org.bukkit.inventory.ItemStack
+    org.bukkit.attribute.Attribute
+    org.bukkit.event.inventory.InventoryDragEvent
+
+function getArmorSetId(i: object) :: text:
+    if {_i} is not set:
+        return ""
+    if {_i} is air:
+        return ""
+    if type of {_i} is air:
+        return ""
+    if {_i} is an instance of ItemStack:
+        if {_i}.getAmount() <= 0:
+            return ""
+    else:
+        if item amount of {_i} <= 0:
+            return ""
+    set {_tag} to string tag "ArmorSet" of nbt compound of {_i}
+    if {_tag} is "set1" or "set2" or "set3":
+        return {_tag}
+    set {_n} to uncolored name of {_i}
+    if {_n} contains "Hộ Vệ Đại Địa":
+        return "set1"
+    if {_n} contains "Huyết Chiến":
+        return "set2"
+    if {_n} contains "Bất Diệt Thánh Quang":
+        return "set3"
+    return ""
+
+function checkArmorSet(p: player):
+    if {_p} is not online:
+        stop
+    if {_p} is not alive:
+        stop
+    if health of {_p} <= 0:
+        stop
+    set {_u} to uuid of {_p}
+    set {_s1} to 0
+    set {_s2} to 0
+    set {_s3} to 0
+
+    set {_pieces::1} to helmet of {_p}
+    set {_pieces::2} to chestplate of {_p}
+    set {_pieces::3} to leggings of {_p}
+    set {_pieces::4} to boots of {_p}
+
+    loop {_pieces::*}:
+        set {_sid} to getArmorSetId(loop-value)
+        if {_sid} is "set1":
+            add 1 to {_s1}
+        else if {_sid} is "set2":
+            add 1 to {_s2}
+        else if {_sid} is "set3":
+            add 1 to {_s3}
+
+    set {set_hovedaidia::%{_u}%} to {_s1}
+    set {set_huyetchien::%{_u}%} to {_s2}
+    set {set_batdiet::%{_u}%} to {_s3}
+
+    # Chia đều 25% HP và DEF cho từng mảnh [1/4] -> [4/4]
+    # Set 1 (Hộ Vệ Đại Địa): Tổng +28 HP, +70 DEF | [3/4]: +15 DEF
+    # Set 2 (Huyết Chiến Sĩ): Tổng +54 HP, +125 DEF
+    # Set 3 (Bất Diệt Thánh Quang): Tổng +84 HP, +185 DEF | [3/4]: +25 DEF
+    set {_set_hp} to 0.0
+    set {_set_def} to 0.0
+
+    if {_s1} > 0:
+        add ({_s1} * 7.0) to {_set_hp}
+        add ({_s1} * 17.5) to {_set_def}
+        if {_s1} >= 3:
+            add 15.0 to {_set_def}
+
+    if {_s2} > 0:
+        add ({_s2} * 13.5) to {_set_hp}
+        add ({_s2} * 31.25) to {_set_def}
+
+    if {_s3} > 0:
+        add ({_s3} * 21.0) to {_set_hp}
+        add ({_s3} * 46.25) to {_set_def}
+        if {_s3} >= 3:
+            add 25.0 to {_set_def}
+
+    set {set_bonus_hp::%{_u}%} to {_set_hp}
+    set {set_bonus_def::%{_u}%} to {_set_def}
+    set {set_bonus_hearts::%{_u}%} to ({_set_hp} / 2)
+    recalcPlayerMaxHealth({_p})
+
+    # Bộ 1 [2/4]: Kháng đẩy lùi 100% (Vanilla 1.12.2 Knockback Resistance Attribute)
+    set {_kb_attr} to {_p}.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE)
+    if {_kb_attr} is set:
+        if {_s1} >= 2:
+            if {_kb_attr}.getBaseValue() < 0.99:
+                {_kb_attr}.setBaseValue(1.0)
+        else:
+            if {_kb_attr}.getBaseValue() > 0.01:
+                {_kb_attr}.setBaseValue(0.0)
+
+    # Bộ 2 [2/4]: Speed I
+    if {_s2} >= 2:
+        apply speed 1 without particles to {_p} for 5 seconds replacing existing effect
+
+    # Bộ 3 [2/4]: Miễn Lửa/Dung nham/Độc
+    if {_s3} >= 2:
+        apply fire resistance 1 without particles to {_p} for 5 seconds replacing existing effect
+
+    # Gỡ bỏ potion Resistance cố định khỏi giáp (toàn bộ độ chống chịu qua biến DEF)
+    remove resistance from {_p}
+
+every 3 seconds:
+    loop all players:
+        checkArmorSet(loop-player)
+
+on join:
+    checkArmorSet(player)
+
+on inventory click:
+    wait 1 tick
+    if player is online:
+        checkArmorSet(player)
+
+on rightclick:
+    if player's tool is helmet or chestplate or leggings or boots:
+        wait 1 tick
+        if player is online:
+            checkArmorSet(player)
+
+on quit:
+    set {_u} to uuid of player
+    delete {set_bonus_hearts::%{_u}%}
+    delete {set_bonus_hp::%{_u}%}
+    delete {set_bonus_def::%{_u}%}
+    delete {set_hovedaidia::%{_u}%}
+    delete {set_huyetchien::%{_u}%}
+    delete {set_batdiet::%{_u}%}
+    delete {hitcount_batdiet::%{_u}%}
+
+# =====================================================================
+# XỬ LÝ NỘI TẠI CÁC BỘ GIÁP TRONG CHIẾN ĐẤU & HỒI PHỤC
+# =====================================================================
+
+# Bộ 2 [3/4]: Tăng 15% hiệu quả hồi máu & Khắc chế Hỏa Ngục Mera (Cấm mọi hồi phục)
+on heal:
+    event-entity is a player
+    set {_u} to uuid of event-entity
+    # Khắc chế Trái Mera: Cấm 100% mọi hồi phục trong 10s
+    if {mera_curse_until::%{_u}%} is set:
+        if System.currentTimeMillis() < {mera_curse_until::%{_u}%}:
+            cancel event
+            stop
+        else:
+            delete {mera_curse_until::%{_u}%}
+    if {set_huyetchien::%{_u}%} >= 3:
+        set heal amount to heal amount * 1.15
+
+on damage of player:
+    # Nếu đòn đánh đã bị Né Tránh ở 01_talent_core.sk thì không kích hoạt nội tại nhận đòn
+    if event is cancelled:
+        stop
+    set {_u} to uuid of victim
+
+    # Bộ 3 [2/4]: Miễn nhiễm sát thương Lửa / Dung nham / Độc
+    if {set_batdiet::%{_u}%} >= 2:
+        if damage cause is fire or burning or lava or poison or magma:
+            cancel event
+            extinguish victim
+            remove poison from victim
+            stop
+
+    # Các nội tại khi bị tấn công bởi thực thể (PvP / PvE)
+    attacker is set
+    damage > 0
+
+    # Bộ 1 [4/4] - Giáp Gai Đất Đá: 25% tạo Khiên 18 HP (5s) & phản 10% sát thương
+    if {set_hovedaidia::%{_u}%} >= 4:
+        if damage cause is not thorns or custom:
+            set {_roll} to random number between 0 and 100
+            if {_roll} <= 25:
+                apply absorption 4 to victim for 5 seconds replacing existing effect
+                if attacker is a living entity:
+                    if attacker is not victim:
+                        set {_ref} to damage * 0.10
+                        if {_ref} > 0:
+                            damage attacker by {_ref}
+                send action bar "&a&l[Hộ Vệ Đại Địa 4/4] &eKhiên Hấp Thụ 18 HP &7+ &cPhản 10%% ST!" to victim
+                set {_vloc} to location of victim
+                add 1 to y-coordinate of {_vloc}
+                spawnVisualParticle("VILLAGER_HAPPY", {_vloc}, 15, 0.4, 0.5, 0.4, 0.08)
+                spawnVisualParticle("CRIT_MAGIC", {_vloc}, 10, 0.3, 0.3, 0.3, 0.05)
+
+    # Bộ 2 [4/4] - Huyết Thệ: Máu dưới 30% -> Regen II (5s) + Khiên 38 HP (10s), CD 45s (Chỉ kích hoạt khi còn sống)
+    if {set_huyetchien::%{_u}%} >= 4:
+        if (health of victim - final damage) > 0:
+            if (health of victim - final damage) <= (max health of victim * 0.3):
+                set {_ready} to true
+                if {cd_huyetthe::%{_u}%} is set:
+                    if difference between {cd_huyetthe::%{_u}%} and now < 45 seconds:
+                        set {_ready} to false
+                if {_ready} is true:
+                    set {cd_huyetthe::%{_u}%} to now
+                    # Khắc chế Trái Mera: Không nhận Regen nếu đang bị cấm hồi phục
+                    set {_can_regen_set2} to true
+                    if {mera_curse_until::%{_u}%} is set:
+                        if System.currentTimeMillis() < {mera_curse_until::%{_u}%}:
+                            set {_can_regen_set2} to false
+                        else:
+                            delete {mera_curse_until::%{_u}%}
+                    if {_can_regen_set2} is true:
+                        apply regeneration 2 to victim for 5 seconds replacing existing effect
+                    apply absorption 9 to victim for 10 seconds replacing existing effect
+                    if {_can_regen_set2} is true:
+                        send "&c&l[Huyết Thệ 4/4] &7Sinh lực sục sôi! Kích hoạt &aHồi Phục II (5s) &7& &eKhiên Hấp Thụ 38 HP (10s)&7!" to victim
+                    else:
+                        send "&c&l[Huyết Thệ 4/4] &7Kích hoạt &eKhiên Hấp Thụ 38 HP (10s)&7! &4(Bị cấm hồi phục từ Hỏa Ngục Mera!)" to victim
+                    play sound "ITEM_TOTEM_USE" with volume 0.7 and pitch 1.2 to victim
+                    set {_vloc} to location of victim
+                    add 1 to y-coordinate of {_vloc}
+                    spawnVisualParticle("HEART", {_vloc}, 8, 0.5, 0.5, 0.5, 0.1)
+                    spawnVisualParticle("REDSTONE", {_vloc}, 25, 0.4, 0.6, 0.4, 0.1)
+
+    # Bộ 3 [4/4] - Cứu Rỗi: Mỗi 5 đòn nhận vào -> Hồi 8% Máu tối đa & Xóa hiệu ứng xấu (Chỉ hồi khi không phải đòn kết liễu)
+    if {set_batdiet::%{_u}%} >= 4:
+        add 1 to {hitcount_batdiet::%{_u}%}
+        if {hitcount_batdiet::%{_u}%} >= 5:
+            set {hitcount_batdiet::%{_u}%} to 0
+            if (health of victim - final damage) > 0:
+                # Khắc chế Trái Mera: Cấm hồi phục 8% Máu từ nội tại giáp
+                set {_can_heal_set3} to true
+                if {mera_curse_until::%{_u}%} is set:
+                    if System.currentTimeMillis() < {mera_curse_until::%{_u}%}:
+                        set {_can_heal_set3} to false
+                    else:
+                        delete {mera_curse_until::%{_u}%}
+                if {_can_heal_set3} is true:
+                    set {_heal} to max health of victim * 0.08
+                    heal victim by {_heal}
+                    send action bar "&6&l[Cứu Rỗi 4/4] &a+8%% Máu tối đa &7và thanh tẩy mọi hiệu ứng xấu!" to victim
+                else:
+                    send action bar "&6&l[Cứu Rỗi 4/4] &7Thanh tẩy hiệu ứng xấu! &4(Bị cấm hồi phục từ Hỏa Ngục Mera!)" to victim
+                remove wither effect from victim
+                remove poison from victim
+                remove slowness from victim
+                remove blindness from victim
+                play sound "ITEM_TOTEM_USE" with volume 0.7 and pitch 1.5 to victim
+                set {_vloc} to location of victim
+                add 1 to y-coordinate of {_vloc}
+                spawnVisualParticle("END_ROD", {_vloc}, 15, 0.4, 0.6, 0.4, 0.05)
+                spawnVisualParticle("FIREWORKS_SPARK", {_vloc}, 15, 0.4, 0.5, 0.4, 0.1)
+
+# =====================================================================
+# TẠO VẬT PHẨM 3 BỘ GIÁP (1.12.2 MATERIAL & NBT)
+# =====================================================================
+function createArmorPiece(setId: text, part: text) :: item:
+    if {_setId} is "set1":
+        if {_part} is "helmet":
+            set {_item} to iron helmet with nbt "{ArmorSet:""set1"",ArmorPart:""helmet"",HideFlags:63,Unbreakable:1b}"
+            set {_part_name} to "Mũ"
+        else if {_part} is "chestplate":
+            set {_item} to iron chestplate with nbt "{ArmorSet:""set1"",ArmorPart:""chestplate"",HideFlags:63,Unbreakable:1b}"
+            set {_part_name} to "Áo Giáp"
+        else if {_part} is "leggings":
+            set {_item} to iron leggings with nbt "{ArmorSet:""set1"",ArmorPart:""leggings"",HideFlags:63,Unbreakable:1b}"
+            set {_part_name} to "Quần"
+        else:
+            set {_item} to iron boots with nbt "{ArmorSet:""set1"",ArmorPart:""boots"",HideFlags:63,Unbreakable:1b}"
+            set {_part_name} to "Giày"
+        enchant {_item} with protection 2
+        enchant {_item} with unbreaking 2
+        set name of {_item} to "&a&l✦ %{_part_name}% Hộ Vệ Đại Địa ✦"
+        set lore of {_item} to ("&8&m--------------------------------" and "&7Bộ Trang Bị: &a&lHộ Vệ Đại Địa &8(Đầu Game)" and "" and "&eMốc Kích Hoạt Bộ:" and "&7 • &f[1/4]: &a+7.0 HP &7(+3.5 Tim) & &9+17.5 DEF" and "&7 • &f[2/4]: &a+14.0 HP &7& &fKháng đẩy lùi 100%%" and "&7 • &f[3/4]: &a+21.0 HP &7& &9+15.0 DEF nội tại" and "&7 • &f[4/4] &e(Giáp Gai Đất Đá)&f: Tổng &a+28 HP&f, &9+70 DEF&f;" and "&7         &f25%% tạo Khiên 18 HP (5s) & phản 10%% ST." and "&8&m--------------------------------")
+        return {_item}
+
+    else if {_setId} is "set2":
+        if {_part} is "helmet":
+            set {_item} to diamond helmet with nbt "{ArmorSet:""set2"",ArmorPart:""helmet"",HideFlags:63,Unbreakable:1b}"
+            set {_part_name} to "Mũ"
+        else if {_part} is "chestplate":
+            set {_item} to diamond chestplate with nbt "{ArmorSet:""set2"",ArmorPart:""chestplate"",HideFlags:63,Unbreakable:1b}"
+            set {_part_name} to "Áo Giáp"
+        else if {_part} is "leggings":
+            set {_item} to diamond leggings with nbt "{ArmorSet:""set2"",ArmorPart:""leggings"",HideFlags:63,Unbreakable:1b}"
+            set {_part_name} to "Quần"
+        else:
+            set {_item} to diamond boots with nbt "{ArmorSet:""set2"",ArmorPart:""boots"",HideFlags:63,Unbreakable:1b}"
+            set {_part_name} to "Giày"
+        enchant {_item} with protection 3
+        enchant {_item} with unbreaking 3
+        set name of {_item} to "&c&l✦ %{_part_name}% Huyết Chiến Sĩ ✦"
+        set lore of {_item} to ("&8&m--------------------------------" and "&7Bộ Trang Bị: &c&lHuyết Chiến Sĩ &8(Giữa Game)" and "" and "&eMốc Kích Hoạt Bộ:" and "&7 • &f[1/4]: &c+13.5 HP &7(+6.75 Tim) & &9+31.25 DEF" and "&7 • &f[2/4]: &c+27.0 HP &7& &fNhận &bSpeed I" and "&7 • &f[3/4]: &c+40.5 HP &7& &a+15%% Hiệu quả hồi máu" and "&7 • &f[4/4] &c(Huyết Thệ)&f: Tổng &c+54 HP&f, &9+125 DEF&f; Máu < 30%%" and "&7         &fnhận Khiên 38 HP + Regen II 5s (CD 45s)." and "&8&m--------------------------------")
+        return {_item}
+
+    else:
+        if {_part} is "helmet":
+            set {_item} to diamond helmet with nbt "{ArmorSet:""set3"",ArmorPart:""helmet"",HideFlags:63,Unbreakable:1b}"
+            set {_part_name} to "Mũ"
+        else if {_part} is "chestplate":
+            set {_item} to diamond chestplate with nbt "{ArmorSet:""set3"",ArmorPart:""chestplate"",HideFlags:63,Unbreakable:1b}"
+            set {_part_name} to "Áo Giáp"
+        else if {_part} is "leggings":
+            set {_item} to diamond leggings with nbt "{ArmorSet:""set3"",ArmorPart:""leggings"",HideFlags:63,Unbreakable:1b}"
+            set {_part_name} to "Quần"
+        else:
+            set {_item} to diamond boots with nbt "{ArmorSet:""set3"",ArmorPart:""boots"",HideFlags:63,Unbreakable:1b}"
+            set {_part_name} to "Giày"
+        enchant {_item} with protection 4
+        enchant {_item} with unbreaking 3
+        set name of {_item} to "&6&l✦ %{_part_name}% Bất Diệt Thánh Quang ✦"
+        set lore of {_item} to ("&8&m--------------------------------" and "&7Bộ Trang Bị: &6&lBất Diệt Thánh Quang &8(Cuối Game)" and "" and "&eMốc Kích Hoạt Bộ:" and "&7 • &f[1/4]: &6+21.0 HP &7(+10.5 Tim) & &9+46.25 DEF" and "&7 • &f[2/4]: &6+42.0 HP &7& &fMiễn &cLửa / Dung nham / Độc" and "&7 • &f[3/4]: &6+63.0 HP &7& &9+25.0 DEF nội tại" and "&7 • &f[4/4] &6(Cứu Rỗi)&f: Tổng &6+84 HP&f, &9+185 DEF&f; Mỗi 5 đòn" and "&7         &fnhận vào hồi 8%% Max HP & xóa debuff." and "&8&m--------------------------------")
+        return {_item}
+
+# =====================================================================
+# TẠO VŨ KHÍ (KIẾM, CUNG) & CÔNG CỤ FARM (CÚP, RÌU)
+# Lưu ý: Không cộng chỉ số Thiên Phú; dùng để ép Custom Enchants tại /ce
+# =====================================================================
+function createGearItem(gearType: text) :: item:
+    if {_gearType} is "sword":
+        set {_item} to diamond sword with nbt "{SkyblockGear:""sword"",HideFlags:63,Unbreakable:1b}"
+        enchant {_item} with sharpness 4
+        enchant {_item} with unbreaking 3
+        set name of {_item} to "&c&l✦ Kiếm Huyết Chiến ✦"
+        set lore of {_item} to ("&8&m--------------------------------" and "&7Loại: &cVũ Khí Cận Chiến" and "&7Thuộc tính: &fSát thương gốc & Bền bỉ" and "&8(Không cộng chỉ số Thiên Phú)" and "" and "&ePhù phép đề xuất (/ce):" and "&7 • &cVampire &8(Hút máu trụ giao tranh)" and "&7 • &4Rage &8(Đánh liên tiếp tăng sát thương)" and "&7 • &bTrap / SlowMo &8(Làm chậm đối thủ)" and "&8&m--------------------------------")
+        return {_item}
+    else if {_gearType} is "bow":
+        set {_item} to bow with nbt "{SkyblockGear:""bow"",HideFlags:63,Unbreakable:1b}"
+        enchant {_item} with power 4
+        enchant {_item} with infinity 1
+        enchant {_item} with unbreaking 3
+        set name of {_item} to "&b&l✦ Cung Băng Giá ✦"
+        set lore of {_item} to ("&8&m--------------------------------" and "&7Loại: &bVũ Khí Tầm Xa" and "&7Thuộc tính: &fSát thương cung & Vô hạn tên" and "&8(Không cộng chỉ số Thiên Phú)" and "" and "&ePhù phép đề xuất (/ce):" and "&7 • &bIceFreeze &8(Làm chậm để thả diều)" and "&7 • &eMultiArrow &8(Bắn đa tiễn dọn quái)" and "&7 • &aDoctor &8(Hồi phục khi giao tranh)" and "&8&m--------------------------------")
+        return {_item}
+    else if {_gearType} is "pickaxe":
+        set {_item} to diamond pickaxe with nbt "{SkyblockGear:""pickaxe"",HideFlags:63,Unbreakable:1b}"
+        enchant {_item} with efficiency 5
+        enchant {_item} with fortune 3
+        enchant {_item} with unbreaking 3
+        set name of {_item} to "&6&l✦ Cúp Địa Chấn ✦"
+        set lore of {_item} to ("&8&m--------------------------------" and "&7Loại: &6Công Cụ Đào Đá / Khoáng Sản" and "&7Thuộc tính: &fTốc độ đào & Gia tăng sản lượng" and "" and "&ePhù phép đề xuất (/ce):" and "&7 • &6Blast &8(Đào 3x3)" and "&7 • &eFurnace &8(Tự nung chảy quặng)" and "&7 • &aTelepathy &8(Hút đồ vào túi)" and "&7 • &bExperience &8(Tăng EXP khi đào)" and "&8&m--------------------------------")
+        return {_item}
+    else:
+        set {_item} to diamond axe with nbt "{SkyblockGear:""axe"",HideFlags:63,Unbreakable:1b}"
+        enchant {_item} with efficiency 5
+        enchant {_item} with sharpness 3
+        enchant {_item} with unbreaking 3
+        set name of {_item} to "&a&l✦ Rìu Thu Hoạch ✦"
+        set lore of {_item} to ("&8&m--------------------------------" and "&7Loại: &aCông Cụ Farm Gỗ & Nông Sản" and "&7Thuộc tính: &fTốc độ chặt & Thu hoạch nhanh" and "" and "&ePhù phép đề xuất (/ce):" and "&7 • &aTelepathy &8(Tự hút đồ vào túi)" and "&7 • &bExperience &8(Tăng EXP)" and "&7 • &6Blast &8(Phá nhanh vùng rộng)" and "&8&m--------------------------------")
+        return {_item}
+
+# =====================================================================
+# GUI CHẾ TẠO GIÁP SET & VŨ KHÍ / CÔNG CỤ (/chetao)
+# =====================================================================
+command /rengiap:
+    trigger:
+        openArmorForgeMainGUI(player)
+
+command /rencongcu:
+    trigger:
+        openGearForgeGUI(player)
+
+function openArmorForgeMainGUI(p: player):
+    checkArmorSet({_p})
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G4_A", "&8✦ &7&lLÒ RÈN 3 BỘ GIÁP TIER 1-2-3 &8✦", 6, gray stained glass pane named " ", "UI_G4", "Đại Xưởng Rèn")
+
+    # --- HÀNG 2: BỘ 1 - HỘ VỆ ĐẠI ĐỊA ---
+    set {_s1_count} to ({set_hovedaidia::%{_u}%} ? 0)
+    set {_m1::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_m1::2} to "&8▪ &7Bậc: &aTIER 1 &8(Đầu Game)"
+    set {_m1::3} to "&f❖ Đang mặc: &e[%{_s1_count}%/4 Món]"
+    set {_m1::4} to ""
+    set {_m1::5} to "&6✦ NỘI TẠI BỘ TRANG BỊ ✦"
+    set {_m1::6} to "&f• &7Tổng bộ [4/4]: &a+28 HP &7(+14 Tim) & &9+70 DEF"
+    set {_m1::7} to "&f• &7[2/4]: &bKháng Bật Lùi 100%%"
+    set {_m1::8} to "&f• &7[3/4]: &9+15 DEF Nội Tại"
+    set {_m1::9} to "&f• &7[4/4]: &6Giáp Gai Đất Đá &7(25%% tạo Khiên 18 HP 5s & phản 10%% ST)"
+    set {_m1::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 10 of {_inv} to makeGlowingItem(iron chestplate, "&a&l✦ BỘ 1: HỘ VỆ ĐẠI ĐỊA ✦", {_m1::*})
+
+    set {_parts::1} to "helmet"
+    set {_parts::2} to "chestplate"
+    set {_parts::3} to "leggings"
+    set {_parts::4} to "boots"
+    set {_slots1::1} to 12
+    set {_slots1::2} to 13
+    set {_slots1::3} to 14
+    set {_slots1::4} to 15
+
+    loop 4 times:
+        set {_pt} to {_parts::%loop-number%}
+        set {_sl} to {_slots1::%loop-number%}
+        set {_item} to createArmorPiece("set1", {_pt})
+        set {_req} to getPieceRecipeDesc("set1", {_pt})
+        add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and {_req} and "" and "&a▸ Nhấn để Rèn mảnh giáp này!" to lore of {_item}
+        set slot {_sl} of {_inv} to {_item}
+
+    # --- HÀNG 3: BỘ 2 - HUYẾT CHIẾN SĨ ---
+    set {_s2_count} to ({set_huyetchien::%{_u}%} ? 0)
+    set {_m2::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_m2::2} to "&8▪ &7Bậc: &cTIER 2 &8(Giữa Game)"
+    set {_m2::3} to "&f❖ Đang mặc: &e[%{_s2_count}%/4 Món]"
+    set {_m2::4} to ""
+    set {_m2::5} to "&6✦ NỘI TẠI BỘ TRANG BỊ ✦"
+    set {_m2::6} to "&f• &7Tổng bộ [4/4]: &c+54 HP &7(+27 Tim) & &9+125 DEF"
+    set {_m2::7} to "&f• &7[2/4]: &eSpeed I"
+    set {_m2::8} to "&f• &7[3/4]: &d+15%% Hiệu quả hồi máu"
+    set {_m2::9} to "&f• &7[4/4]: &4Huyết Thệ &7(Máu dưới 30%% nhận Khiên 38 HP + Regen II 5s, CD 45s)"
+    set {_m2::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 19 of {_inv} to makeGlowingItem(diamond chestplate, "&c&l✦ BỘ 2: HUYẾT CHIẾN SĨ ✦", {_m2::*})
+
+    set {_slots2::1} to 21
+    set {_slots2::2} to 22
+    set {_slots2::3} to 23
+    set {_slots2::4} to 24
+
+    loop 4 times:
+        set {_pt} to {_parts::%loop-number%}
+        set {_sl} to {_slots2::%loop-number%}
+        set {_item} to createArmorPiece("set2", {_pt})
+        set {_req} to getPieceRecipeDesc("set2", {_pt})
+        add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and {_req} and "" and "&a▸ Nhấn để Rèn mảnh giáp này!" to lore of {_item}
+        set slot {_sl} of {_inv} to {_item}
+
+    # --- HÀNG 4: BỘ 3 - BẤT DIỆT THÁNH QUANG ---
+    set {_s3_count} to ({set_batdiet::%{_u}%} ? 0)
+    set {_m3::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_m3::2} to "&8▪ &7Bậc: &6TIER 3 &8(Cuối Game)"
+    set {_m3::3} to "&f❖ Đang mặc: &e[%{_s3_count}%/4 Món]"
+    set {_m3::4} to ""
+    set {_m3::5} to "&6✦ NỘI TẠI BỘ TRANG BỊ ✦"
+    set {_m3::6} to "&f• &7Tổng bộ [4/4]: &6+84 HP &7(+42 Tim) & &9+185 DEF"
+    set {_m3::7} to "&f• &7[2/4]: &eMiễn Lửa / Dung Nham / Độc"
+    set {_m3::8} to "&f• &7[3/4]: &9+25 DEF Nội Tại"
+    set {_m3::9} to "&f• &7[4/4]: &eCứu Rỗi &7(Mỗi 5 đòn nhận vào hồi 8%% Máu tối đa & xóa debuff)"
+    set {_m3::10} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 28 of {_inv} to makeGlowingItem(golden chestplate, "&6&l✦ BỘ 3: BẤT DIỆT THÁNH QUANG ✦", {_m3::*})
+
+    set {_slots3::1} to 30
+    set {_slots3::2} to 31
+    set {_slots3::3} to 32
+    set {_slots3::4} to 33
+
+    loop 4 times:
+        set {_pt} to {_parts::%loop-number%}
+        set {_sl} to {_slots3::%loop-number%}
+        set {_item} to createArmorPiece("set3", {_pt})
+        set {_req} to getPieceRecipeDesc("set3", {_pt})
+        add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and {_req} and "" and "&a▸ Nhấn để Rèn mảnh giáp này!" to lore of {_item}
+        set slot {_sl} of {_inv} to {_item}
+
+    # Slot 49: Hiển thị Số Dư Coin & Lối Tắt Ngân Hàng
+    delete {_balLore::*}
+    set {_balLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_balLore::2} to "&7Số dư Coin: &6%routerFormatNumber(getCoinBalance({_p}))% ⛁"
+    set {_balLore::3} to "&7Dùng Coin để rèn 3 bộ giáp thần thoại!"
+    set {_balLore::4} to "&e▸ Đổi Money thành Coin tại &a/nganhang&e!"
+    set {_balLore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 49 of {_inv} to makeGlowingItem(sunflower, "&e&l✦ SỐ DƯ COIN & RÈN GIÁP ✦", {_balLore::*})
+
+    openStandardUI({_p}, {_inv}, "UI_G4_A", "UI_G4")
+
+function getArmorPieceCoinPrice(setId: text, part: text) :: number:
+    if {_setId} is "set1":
+        if {_part} is "helmet" or "boots":
+            return 20
+        else if {_part} is "chestplate":
+            return 35
+        else if {_part} is "leggings":
+            return 25
+    else if {_setId} is "set2":
+        if {_part} is "helmet" or "boots":
+            return 65
+        else if {_part} is "chestplate":
+            return 100
+        else if {_part} is "leggings":
+            return 80
+    else if {_setId} is "set3":
+        if {_part} is "helmet" or "boots":
+            return 180
+        else if {_part} is "chestplate":
+            return 260
+        else if {_part} is "leggings":
+            return 220
+    return 0
+
+function getGearCoinPrice(gearType: text) :: number:
+    if {_gearType} is "sword" or "axe":
+        return 90
+    else if {_gearType} is "bow":
+        return 70
+    else if {_gearType} is "pickaxe":
+        return 120
+    return 0
+
+function openGearForgeGUI(p: player):
+    set {_inv} to createStandardUI({_p}, "UI_G4_B", "&8✦ &d&lRÈN VŨ KHÍ & CÔNG CỤ FARM &8✦", 4, gray stained glass pane named " ", "UI_G4", "Đại Xưởng Rèn")
+
+    set {_i1} to createGearItem("sword")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f • Giá: &690 Coin" and "" and "&a▸ Nhấn để Rèn Kiếm!" to lore of {_i1}
+    set slot 10 of {_inv} to {_i1}
+
+    set {_i2} to createGearItem("bow")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f • Giá: &670 Coin" and "" and "&a▸ Nhấn để Rèn Cung!" to lore of {_i2}
+    set slot 12 of {_inv} to {_i2}
+
+    set {_i3} to createGearItem("pickaxe")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f • Giá: &6120 Coin" and "" and "&a▸ Nhấn để Rèn Cúp!" to lore of {_i3}
+    set slot 14 of {_inv} to {_i3}
+
+    set {_i4} to createGearItem("axe")
+    add "" and "&6✦ CHI PHÍ CHẾ TẠO ✦" and "&f • Giá: &690 Coin" and "" and "&a▸ Nhấn để Rèn Rìu!" to lore of {_i4}
+    set slot 16 of {_inv} to {_i4}
+
+    set slot 31 of {_inv} to sunflower named "&fSố dư Coin: &6%routerFormatNumber(getCoinBalance({_p}))% ⛁" with lore ("&7Dùng Coin để rèn vũ khí & công cụ farm!" and "&e▸ Đổi Money thành Coin tại &a/nganhang&e!")
+
+    openStandardUI({_p}, {_inv}, "UI_G4_B", "UI_G4")
+
+function craftGearItem(p: player, gearType: text):
+    set {_reward} to createGearItem({_gearType})
+    if {_p} cannot hold {_reward}:
+        sendSystemMsg({_p}, "error", "Túi đồ của bạn đã đầy! Hãy dọn ít nhất 1 ô trống.")
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+
+    set {_cost} to getGearCoinPrice({_gearType})
+    if {_cost} <= 0:
+        stop
+
+    if getCoinBalance({_p}) < {_cost}:
+        sendSystemMsg({_p}, "error", "Bạn thiếu Coin! Cần %{_cost}% Coin để rèn công cụ này (Đổi tại /nganhang).")
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+
+    takeCoinBalance({_p}, {_cost})
+    giveItemSafely({_p}, {_reward})
+    set {_rwName} to name of {_reward}
+    sendSystemMsg({_p}, "economy", "Chế tạo thành công %{_rwName}%&f! (-%{_cost}% Coin)")
+    play sound "BLOCK_ANVIL_USE" with volume 1 and pitch 1 to {_p}
+    play sound "ENTITY_PLAYER_LEVELUP" with volume 0.7 and pitch 1.3 to {_p}
+    openGearForgeGUI({_p})
+
+function getPieceRecipeDesc(setId: text, part: text) :: text:
+    set {_cost} to getArmorPieceCoinPrice({_setId}, {_part})
+    return "&f • Giá: &6%{_cost}% Coin"
+
+function craftArmorPiece(p: player, setId: text, part: text):
+    set {_reward} to createArmorPiece({_setId}, {_part})
+    if {_p} cannot hold {_reward}:
+        sendSystemMsg({_p}, "error", "Túi đồ của bạn đã đầy! Hãy dọn ít nhất 1 ô trống.")
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+
+    set {_cost} to getArmorPieceCoinPrice({_setId}, {_part})
+    if {_cost} <= 0:
+        stop
+
+    if getCoinBalance({_p}) < {_cost}:
+        sendSystemMsg({_p}, "error", "Bạn thiếu Coin! Cần %{_cost}% Coin để rèn mảnh giáp này (Đổi tại /nganhang).")
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+
+    takeCoinBalance({_p}, {_cost})
+    giveItemSafely({_p}, {_reward})
+    set {_rwName} to name of {_reward}
+    sendSystemMsg({_p}, "economy", "Chế tạo thành công %{_rwName}%&f! (-%{_cost}% Coin)")
+    play sound "BLOCK_ANVIL_USE" with volume 1 and pitch 1 to {_p}
+    play sound "ENTITY_PLAYER_LEVELUP" with volume 0.7 and pitch 1.3 to {_p}
+    openArmorForgeMainGUI({_p})
+
+on inventory click:
+    set {_u} to uuid of player
+    if {ui_active::%{_u}%} is "UI_G4_A":
+        cancel event
+        if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+            player.updateInventory()
+            stop
+        if clicked inventory is not player's current inventory:
+            stop
+        set {_slot} to index of event-slot
+        if {_slot} is 45 or 46 or 53:
+            stop
+        # Set 1
+        if {_slot} is 12:
+            craftArmorPiece(player, "set1", "helmet")
+        else if {_slot} is 13:
+            craftArmorPiece(player, "set1", "chestplate")
+        else if {_slot} is 14:
+            craftArmorPiece(player, "set1", "leggings")
+        else if {_slot} is 15:
+            craftArmorPiece(player, "set1", "boots")
+        # Set 2
+        else if {_slot} is 21:
+            craftArmorPiece(player, "set2", "helmet")
+        else if {_slot} is 22:
+            craftArmorPiece(player, "set2", "chestplate")
+        else if {_slot} is 23:
+            craftArmorPiece(player, "set2", "leggings")
+        else if {_slot} is 24:
+            craftArmorPiece(player, "set2", "boots")
+        # Set 3
+        else if {_slot} is 30:
+            craftArmorPiece(player, "set3", "helmet")
+        else if {_slot} is 31:
+            craftArmorPiece(player, "set3", "chestplate")
+        else if {_slot} is 32:
+            craftArmorPiece(player, "set3", "leggings")
+        else if {_slot} is 33:
+            craftArmorPiece(player, "set3", "boots")
+        stop
+
+    if {ui_active::%{_u}%} is "UI_G4_B":
+        cancel event
+        if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+            player.updateInventory()
+            stop
+        if clicked inventory is not player's current inventory:
+            stop
+        set {_slot} to index of event-slot
+        if {_slot} is 27 or 28 or 35:
+            stop
+        if {_slot} is 10:
+            craftGearItem(player, "sword")
+        else if {_slot} is 12:
+            craftGearItem(player, "bow")
+        else if {_slot} is 14:
+            craftGearItem(player, "pickaxe")
+        else if {_slot} is 16:
+            craftGearItem(player, "axe")
+        stop
+
+on InventoryDragEvent:
+    set {_who} to event.getWhoClicked()
+    set {_u} to uuid of {_who}
+    if {ui_active::%{_u}%} is "UI_G4_A" or "UI_G4_B":
+        cancel event
+
+# =====================================================================
+# LỆNH ADMIN PHÁT GIÁP SET & VŨ KHÍ (/armorset)
+# =====================================================================
+command /armorset <text> [<player>] [<text>] [<text>]:
+    aliases: /trangbi
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        if arg-1 is "give":
+            if arg-2 is not set:
+                send "&cCú pháp: /armorset give <player> <set1|set2|set3|gear> <món|all>" to sender
+                stop
+            if arg-3 is "gear":
+                if arg-4 is "all":
+                    give createGearItem("sword") to arg-2
+                    give createGearItem("bow") to arg-2
+                    give createGearItem("pickaxe") to arg-2
+                    give createGearItem("axe") to arg-2
+                    send "&a[Trang Bị] &7Đã trao trọn bộ Vũ Khí & Công Cụ cho &f%name of arg-2%&7." to sender
+                    send "&a[Trang Bị] &7Bạn đã nhận được trọn bộ &dVũ Khí & Công Cụ Farm&7!" to arg-2
+                else if arg-4 is "sword" or "bow" or "pickaxe" or "axe":
+                    set {_g} to createGearItem(arg-4)
+                    give {_g} to arg-2
+                    send "&a[Trang Bị] &7Đã trao &f%name of {_g}% &7cho &f%name of arg-2%&7." to sender
+                else:
+                    send "&cMón hợp lệ cho gear: sword, bow, pickaxe, axe, all" to sender
+                stop
+            if arg-3 is not "set1" or "set2" or "set3":
+                send "&cLoại hợp lệ: set1, set2, set3, gear" to sender
+                stop
+            if arg-4 is "all":
+                give createArmorPiece(arg-3, "helmet") to arg-2
+                give createArmorPiece(arg-3, "chestplate") to arg-2
+                give createArmorPiece(arg-3, "leggings") to arg-2
+                give createArmorPiece(arg-3, "boots") to arg-2
+                send "&a[ArmorSet] &7Đã trao trọn bộ &e%arg-3% &7cho &f%name of arg-2%&7." to sender
+                send "&a[Trang Bị] &7Bạn đã nhận được trọn bộ giáp &e%arg-3%&7!" to arg-2
+            else if arg-4 is "helmet" or "chestplate" or "leggings" or "boots":
+                set {_piece} to createArmorPiece(arg-3, arg-4)
+                give {_piece} to arg-2
+                send "&a[ArmorSet] &7Đã trao &f%name of {_piece}% &7cho &f%name of arg-2%&7." to sender
+            else:
+                send "&cMảnh hợp lệ: helmet, chestplate, leggings, boots, all" to sender
+        else:
+            send "&cCú pháp: /armorset give <player> <set1|set2|set3|gear> <món|all>" to sender

@@ -1,0 +1,1275 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+title: '&6&lNâng Cấp Căn Cứ & Hạm Đội Hải Tặc'
+previous-menu: true
+
+pattern:
+  - '$ $ $ $ $ $ $ $ $'
+  - '# # @ # % # ^ # #'
+  - '# # # ! # + # # #'
+  - '# # * # ~ # & # #'
+  - '$ $ $ $ $ $ $ $ $'
+
+items:
+  '$':
+    type: STAINED_GLASS_PANE
+    data: 15
+    name: '&f'
+
+upgrades:
+  hoppers-limit:
+    item: '@'
+    '1':
+      has-next-level:
+        type: HOPPER
+        name: '&d&l📦 Hệ Thống Phễu Tiếp Vận &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&dCấp tiếp theo: &e2'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng giới hạn'
+          - '&7số lượng tối đa cho phép'
+          - '&7phễu (Hopper) tại Căn Cứ.'
+          - '&7'
+          - '&dSố lượng: &f16x Phễu'
+          - '&dGiá nâng cấp: &f$1,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: HOPPER
+        name: '&d&l📦 Hệ Thống Phễu Tiếp Vận &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&dCấp tiếp theo: &e2'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng giới hạn'
+          - '&7số lượng tối đa cho phép'
+          - '&7phễu (Hopper) tại Căn Cứ.'
+          - '&7'
+          - '&dSố lượng: &f16x Phễu'
+          - '&dGiá nâng cấp: &f$1,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '2':
+      has-next-level:
+        type: HOPPER
+        name: '&d&l📦 Hệ Thống Phễu Tiếp Vận &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&dCấp tiếp theo: &e3'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng giới hạn'
+          - '&7số lượng tối đa cho phép'
+          - '&7phễu (Hopper) tại Căn Cứ.'
+          - '&7'
+          - '&dSố lượng: &f32x Phễu'
+          - '&dGiá nâng cấp: &f$3,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: HOPPER
+        name: '&d&l📦 Hệ Thống Phễu Tiếp Vận &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&dCấp tiếp theo: &e3'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng giới hạn'
+          - '&7số lượng tối đa cho phép'
+          - '&7phễu (Hopper) tại Căn Cứ.'
+          - '&7'
+          - '&dSố lượng: &f32x Phễu'
+          - '&dGiá nâng cấp: &f$3,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '3':
+      has-next-level:
+        type: HOPPER
+        name: '&d&l📦 Hệ Thống Phễu Tiếp Vận &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&dCấp tiếp theo: &e4'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng giới hạn'
+          - '&7số lượng tối đa cho phép'
+          - '&7phễu (Hopper) tại Căn Cứ.'
+          - '&7'
+          - '&dSố lượng: &f64x Phễu'
+          - '&dGiá nâng cấp: &f$9,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: HOPPER
+        name: '&d&l📦 Hệ Thống Phễu Tiếp Vận &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&dCấp tiếp theo: &e2'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng giới hạn'
+          - '&7số lượng tối đa cho phép'
+          - '&7phễu (Hopper) tại Căn Cứ.'
+          - '&7'
+          - '&dSố lượng: &f64x Phễu'
+          - '&dGiá nâng cấp: &f$9,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '4':
+      has-next-level:
+        type: HOPPER
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của giới hạn phễu!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: HOPPER
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của giới hạn phễu!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+  crop-growth:
+    item: '%'
+    '1':
+      has-next-level:
+        type: DIAMOND_HOE
+        name: '&e&l🍖 Hậu Cần Lương Thực Viễn Chinh &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&eCấp tiếp theo: 2'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7cây trồng tại Căn Cứ của bạn'
+          - '&7phát triển nhanh hơn.'
+          - '&7'
+          - '&eTốc độ: &fx2 Nhanh Hơn'
+          - '&eGiá nâng cấp: &f$100,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: DIAMOND_HOE
+        name: '&e&l🍖 Hậu Cần Lương Thực Viễn Chinh &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&eCấp tiếp theo: 2'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7cây trồng tại Căn Cứ của bạn'
+          - '&7phát triển nhanh hơn.'
+          - '&7'
+          - '&eTốc độ: &fx2 Nhanh Hơn'
+          - '&eGiá nâng cấp: &f$100,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '2':
+      has-next-level:
+        type: DIAMOND_HOE
+        name: '&e&l🍖 Hậu Cần Lương Thực Viễn Chinh &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&eCấp tiếp theo: 3'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7cây trồng tại Căn Cứ của bạn'
+          - '&7phát triển nhanh hơn.'
+          - '&7'
+          - '&eTốc độ: &fx3 Nhanh Hơn'
+          - '&eGiá nâng cấp: &f$500,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: DIAMOND_HOE
+        name: '&e&l🍖 Hậu Cần Lương Thực Viễn Chinh &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&eCấp tiếp theo: 3'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7cây trồng tại Căn Cứ của bạn'
+          - '&7phát triển nhanh hơn.'
+          - '&7'
+          - '&eTốc độ: &fx3 Nhanh Hơn'
+          - '&eGiá nâng cấp: &f$500,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '3':
+      has-next-level:
+        type: DIAMOND_HOE
+        name: '&e&l🍖 Hậu Cần Lương Thực Viễn Chinh &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&eCấp tiếp theo: 4'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7cây trồng tại Căn Cứ của bạn'
+          - '&7phát triển nhanh hơn.'
+          - '&7'
+          - '&eTốc độ: &fx4 Nhanh Hơn'
+          - '&eGiá nâng cấp: &f$1,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: DIAMOND_HOE
+        name: '&e&l🍖 Hậu Cần Lương Thực Viễn Chinh &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&eCấp tiếp theo: 4'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7cây trồng tại Căn Cứ của bạn'
+          - '&7phát triển nhanh hơn.'
+          - '&7'
+          - '&eTốc độ: &fx4 Nhanh Hơn'
+          - '&eGiá nâng cấp: &f$1,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '4':
+      has-next-level:
+        type: DIAMOND_HOE
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của tốc độ cây trồng!'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: DIAMOND_HOE
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của tốc độ cây trồng!'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+  spawner-rates:
+    item: '^'
+    '1':
+      has-next-level:
+        type: MOB_SPAWNER
+        name: '&b&l⚔ Doanh Trại Huấn Luyện Binh Sĩ &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&bCấp tiếp theo: &e2'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7lồng Spawner tại Căn Cứ của bạn'
+          - '&7sinh quái vật nhanh hơn.'
+          - '&7'
+          - '&bTốc độ: &fx2 Nhanh Hơn'
+          - '&bGiá nâng cấp: &f$500,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: MOB_SPAWNER
+        name: '&b&l⚔ Doanh Trại Huấn Luyện Binh Sĩ &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&bCấp tiếp theo: &e2'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7lồng Spawner tại Căn Cứ của bạn'
+          - '&7sinh quái vật nhanh hơn.'
+          - '&7'
+          - '&bTốc độ: &fx2 Nhanh Hơn'
+          - '&bGiá nâng cấp: &f$500,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '2':
+      has-next-level:
+        type: MOB_SPAWNER
+        name: '&b&l⚔ Doanh Trại Huấn Luyện Binh Sĩ &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&bCấp tiếp theo: &e3'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7lồng Spawner tại Căn Cứ của bạn'
+          - '&7sinh quái vật nhanh hơn.'
+          - '&7'
+          - '&bTốc độ: &fx3 Nhanh Hơn'
+          - '&bGiá nâng cấp: &f$1,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: MOB_SPAWNER
+        name: '&b&l⚔ Doanh Trại Huấn Luyện Binh Sĩ &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&bCấp tiếp theo: &e3'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7lồng Spawner tại Căn Cứ của bạn'
+          - '&7sinh quái vật nhanh hơn.'
+          - '&7'
+          - '&bTốc độ: &fx3 Nhanh Hơn'
+          - '&bGiá nâng cấp: &f$1,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '3':
+      has-next-level:
+        type: MOB_SPAWNER
+        name: '&b&l⚔ Doanh Trại Huấn Luyện Binh Sĩ &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&bCấp tiếp theo: &e4'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7lồng Spawner tại Căn Cứ của bạn'
+          - '&7sinh quái vật nhanh hơn.'
+          - '&7'
+          - '&bTốc độ: &fx4 Nhanh Hơn'
+          - '&bGiá nâng cấp: &f$2,500,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: MOB_SPAWNER
+        name: '&b&l⚔ Doanh Trại Huấn Luyện Binh Sĩ &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&bCấp tiếp theo: &e4'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7lồng Spawner tại Căn Cứ của bạn'
+          - '&7sinh quái vật nhanh hơn.'
+          - '&7'
+          - '&bTốc độ: &fx4 Nhanh Hơn'
+          - '&bGiá nâng cấp: &f$2,500,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '4':
+      has-next-level:
+        type: MOB_SPAWNER
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của tốc độ Spawner!'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: MOB_SPAWNER
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của tốc độ Spawner!'
+        flags:
+          - HIDE_ATTRIBUTES
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+  mob-drops:
+    item: '*'
+    '1':
+      has-next-level:
+        type: ROTTEN_FLESH
+        name: '&4&l🍖 Chiến Lợi Phẩm Viễn Chinh &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&4Cấp tiếp theo: &e2'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7quái vật bị diệt tại Căn Cứ'
+          - '&7rơi ra nhiều chiến lợi phẩm hơn.'
+          - '&7'
+          - '&4Tỉ lệ rơi: &fx2 Vật Phẩm'
+          - '&4Giá nâng cấp: &f$1,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: ROTTEN_FLESH
+        name: '&4&l🍖 Chiến Lợi Phẩm Viễn Chinh &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&4Cấp tiếp theo: &e2'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7quái vật bị diệt tại Căn Cứ'
+          - '&7rơi ra nhiều chiến lợi phẩm hơn.'
+          - '&7'
+          - '&4Tỉ lệ rơi: &fx2 Vật Phẩm'
+          - '&4Giá nâng cấp: &f$1,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '2':
+      has-next-level:
+        type: ROTTEN_FLESH
+        name: '&4&l🍖 Chiến Lợi Phẩm Viễn Chinh &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&4Cấp tiếp theo: &e3'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7quái vật bị diệt tại Căn Cứ'
+          - '&7rơi ra nhiều chiến lợi phẩm hơn.'
+          - '&7'
+          - '&4Tỉ lệ rơi: &fx3 Vật Phẩm'
+          - '&4Giá nâng cấp: &f$2,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: ROTTEN_FLESH
+        name: '&4&l🍖 Chiến Lợi Phẩm Viễn Chinh &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&4Cấp tiếp theo: &e3'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7quái vật bị diệt tại Căn Cứ'
+          - '&7rơi ra nhiều chiến lợi phẩm hơn.'
+          - '&7'
+          - '&4Tỉ lệ rơi: &fx3 Vật Phẩm'
+          - '&4Giá nâng cấp: &f$2,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '3':
+      has-next-level:
+        type: ROTTEN_FLESH
+        name: '&4&l🍖 Chiến Lợi Phẩm Viễn Chinh &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&4Cấp tiếp theo: &e4'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7quái vật bị diệt tại Căn Cứ'
+          - '&7rơi ra nhiều chiến lợi phẩm hơn.'
+          - '&7'
+          - '&4Tỉ lệ rơi: &fx4 Vật Phẩm'
+          - '&4Giá nâng cấp: &f$5,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: ROTTEN_FLESH
+        name: '&4&l🍖 Chiến Lợi Phẩm Viễn Chinh &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&4Cấp tiếp theo: &e4'
+          - '&7'
+          - '&7Nâng cấp này giúp toàn bộ'
+          - '&7quái vật bị diệt tại Căn Cứ'
+          - '&7rơi ra nhiều chiến lợi phẩm hơn.'
+          - '&7'
+          - '&4Tỉ lệ rơi: &fx4 Vật Phẩm'
+          - '&4Giá nâng cấp: &f$5,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '4':
+      has-next-level:
+        type: ROTTEN_FLESH
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của lượng vật phẩm rơi!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: ROTTEN_FLESH
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của lượng vật phẩm rơi!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+  members-limit:
+    item: '~'
+    '1':
+      has-next-level:
+        type: SKULL_ITEM
+        data: 3
+        name: '&2&l⛵ Quy Mô Hạm Đội Thủy Thủ &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&2Cấp tiếp theo: &e2'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng số lượng'
+          - '&7quy mô Thủy Thủ tối đa có thể'
+          - '&7tham gia vào đảo của bạn.'
+          - '&7'
+          - '&2Số lượng: &f8 Thành Viên'
+          - '&2Giá nâng cấp: &f$100,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: SKULL_ITEM
+        data: 3
+        name: '&2&l⛵ Quy Mô Hạm Đội Thủy Thủ &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&2Cấp tiếp theo: &e2'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng số lượng'
+          - '&7quy mô Thủy Thủ tối đa có thể'
+          - '&7tham gia vào đảo của bạn.'
+          - '&7'
+          - '&2Số lượng: &f8 Thành Viên'
+          - '&2Giá nâng cấp: &f$100,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '2':
+      has-next-level:
+        type: SKULL_ITEM
+        data: 3
+        name: '&2&l⛵ Quy Mô Hạm Đội Thủy Thủ &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&2Cấp tiếp theo: &e3'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng số lượng'
+          - '&7quy mô Thủy Thủ tối đa có thể'
+          - '&7tham gia vào đảo của bạn.'
+          - '&7'
+          - '&2Số lượng: &f16 Thành Viên'
+          - '&2Giá nâng cấp: &f$300,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: SKULL_ITEM
+        data: 3
+        name: '&2&l⛵ Quy Mô Hạm Đội Thủy Thủ &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&2Cấp tiếp theo: &e3'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng số lượng'
+          - '&7quy mô Thủy Thủ tối đa có thể'
+          - '&7tham gia vào đảo của bạn.'
+          - '&7'
+          - '&2Số lượng: &f16 Thành Viên'
+          - '&2Giá nâng cấp: &f$300,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '3':
+      has-next-level:
+        type: SKULL_ITEM
+        data: 3
+        name: '&2&l⛵ Quy Mô Hạm Đội Thủy Thủ &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&2Cấp tiếp theo: &e4'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng số lượng'
+          - '&7quy mô Thủy Thủ tối đa có thể'
+          - '&7tham gia vào đảo của bạn.'
+          - '&7'
+          - '&2Số lượng: &f32 Thành Viên'
+          - '&2Giá nâng cấp: &f$500,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: SKULL_ITEM
+        data: 3
+        name: '&2&l⛵ Quy Mô Hạm Đội Thủy Thủ &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&2Cấp tiếp theo: &e4'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng số lượng'
+          - '&7quy mô Thủy Thủ tối đa có thể'
+          - '&7tham gia vào đảo của bạn.'
+          - '&7'
+          - '&2Số lượng: &f32 Thành Viên'
+          - '&2Giá nâng cấp: &f$500,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '4':
+      has-next-level:
+        type: SKULL_ITEM
+        data: 3
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của giới hạn thành viên!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: SKULL_ITEM
+        data: 3
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của giới hạn thành viên!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+  border-size:
+    item: '!'
+    '1':
+      has-next-level:
+        type: BARRIER
+        name: '&9&l🗺 Mở Rộng Lãnh Hải Căn Cứ &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&9Cấp tiếp theo: &e2'
+          - '&7'
+          - '&7Nâng cấp này sẽ mở rộng'
+          - '&7bán kính kích thước đảo'
+          - '&7của bạn thêm rộng lớn hơn.'
+          - '&7'
+          - '&9Bán kính: &f50 Khối'
+          - '&9Giá nâng cấp: &f$30,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: BARRIER
+        name: '&9&l🗺 Mở Rộng Lãnh Hải Căn Cứ &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&9Cấp tiếp theo: &e2'
+          - '&7'
+          - '&7Nâng cấp này sẽ mở rộng'
+          - '&7bán kính kích thước đảo'
+          - '&7của bạn thêm rộng lớn hơn.'
+          - '&7'
+          - '&9Bán kính: &f50 Khối'
+          - '&9Giá nâng cấp: &f$30,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '2':
+      has-next-level:
+        type: BARRIER
+        name: '&9&l🗺 Mở Rộng Lãnh Hải Căn Cứ &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&9Cấp tiếp theo: &e3'
+          - '&7'
+          - '&7Nâng cấp này sẽ mở rộng'
+          - '&7bán kính kích thước đảo'
+          - '&7của bạn thêm rộng lớn hơn.'
+          - '&7'
+          - '&9Bán kính: &f75 Khối'
+          - '&9Giá nâng cấp: &f$80,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: BARRIER
+        name: '&9&l🗺 Mở Rộng Lãnh Hải Căn Cứ &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&9Cấp tiếp theo: &e3'
+          - '&7'
+          - '&7Nâng cấp này sẽ mở rộng'
+          - '&7bán kính kích thước đảo'
+          - '&7của bạn thêm rộng lớn hơn.'
+          - '&7'
+          - '&9Bán kính: &f75 Khối'
+          - '&9Giá nâng cấp: &f$80,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '3':
+      has-next-level:
+        type: BARRIER
+        name: '&9&l🗺 Mở Rộng Lãnh Hải Căn Cứ &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&9Cấp tiếp theo: &e4'
+          - '&7'
+          - '&7Nâng cấp này sẽ mở rộng'
+          - '&7bán kính kích thước đảo'
+          - '&7của bạn thêm rộng lớn hơn.'
+          - '&7'
+          - '&9Bán kính: &f125 Khối'
+          - '&9Giá nâng cấp: &f$150,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: BARRIER
+        name: '&9&l🗺 Mở Rộng Lãnh Hải Căn Cứ &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&9Cấp tiếp theo: &e4'
+          - '&7'
+          - '&7Nâng cấp này sẽ mở rộng'
+          - '&7bán kính kích thước đảo'
+          - '&7của bạn thêm rộng lớn hơn.'
+          - '&7'
+          - '&9Bán kính: &f125 Khối'
+          - '&9Giá nâng cấp: &f$150,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '4':
+      has-next-level:
+        type: BARRIER
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của kích thước đảo!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: BARRIER
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của kích thước đảo!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+  generator-rates:
+    item: '+'
+    '1':
+      has-next-level:
+        type: COBBLESTONE
+        name: '&3&l⚒ Lò Khai Khoáng Hải Lâu Thạch - Cấp 1 &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&3Cấp tiếp theo: &eCấp 2'
+          - '&7'
+          - '&7Nâng cấp Máy Tạo Đá (Ore Plugin)'
+          - '&7để mở khóa &fQuặng Sắt &7và &cHồng Ngọc&7!'
+          - '&7'
+          - '&3Tỉ lệ Cấp 2:'
+          - ' &7 - &f65% Đá Cuội &7| &f12% Đá'
+          - ' &7 - &810% Than'
+          - ' &7 - &f8% Quặng Sắt &7(Mới)'
+          - ' &7 - &c5% Hồng Ngọc Đỏ &7(Mới)'
+          - '&7'
+          - '&3Giá nâng cấp: &f$25,000'
+          - '&7'
+          - '&aNhấn để nâng cấp!'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: COBBLESTONE
+        name: '&3&l⚒ Lò Khai Khoáng Hải Lâu Thạch - Cấp 1 &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&3Cấp tiếp theo: &eCấp 2'
+          - '&7'
+          - '&7Nâng cấp Máy Tạo Đá (Ore Plugin)'
+          - '&7để mở khóa &fQuặng Sắt &7và &cHồng Ngọc&7!'
+          - '&7'
+          - '&3Tỉ lệ Cấp 2:'
+          - ' &7 - &f65% Đá Cuội &7| &f12% Đá'
+          - ' &7 - &810% Than'
+          - ' &7 - &f8% Quặng Sắt &7(Mới)'
+          - ' &7 - &c5% Hồng Ngọc Đỏ &7(Mới)'
+          - '&7'
+          - '&3Giá nâng cấp: &c$25,000'
+          - '&7'
+          - '&cBạn không đủ tiền!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '2':
+      has-next-level:
+        type: IRON_ORE
+        name: '&3&l⚒ Lò Khai Khoáng Hải Lâu Thạch - Cấp 2 &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&3Cấp tiếp theo: &eCấp 3'
+          - '&7'
+          - '&7Nâng cấp Máy Tạo Đá (Ore Plugin)'
+          - '&7để mở khóa &6Quặng Vàng &7và &9Lưu Ly&7!'
+          - '&7'
+          - '&3Tỉ lệ Cấp 3:'
+          - ' &7 - &f55% Đá Cuội &7| &f10% Đá'
+          - ' &7 - &810% Than &7| &f10% Sắt'
+          - ' &7 - &c6% Hồng Ngọc'
+          - ' &7 - &95% Lưu Ly &7(Mới)'
+          - ' &7 - &64% Quặng Vàng &7(Mới)'
+          - '&7'
+          - '&3Giá nâng cấp: &f$75,000'
+          - '&7'
+          - '&aNhấn để nâng cấp!'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: IRON_ORE
+        name: '&3&l⚒ Lò Khai Khoáng Hải Lâu Thạch - Cấp 2 &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&3Cấp tiếp theo: &eCấp 3'
+          - '&7'
+          - '&7Nâng cấp Máy Tạo Đá (Ore Plugin)'
+          - '&7để mở khóa &6Quặng Vàng &7và &9Lưu Ly&7!'
+          - '&7'
+          - '&3Tỉ lệ Cấp 3:'
+          - ' &7 - &f55% Đá Cuội &7| &f10% Đá'
+          - ' &7 - &810% Than &7| &f10% Sắt'
+          - ' &7 - &c6% Hồng Ngọc'
+          - ' &7 - &95% Lưu Ly &7(Mới)'
+          - ' &7 - &64% Quặng Vàng &7(Mới)'
+          - '&7'
+          - '&3Giá nâng cấp: &c$75,000'
+          - '&7'
+          - '&cBạn không đủ tiền!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '3':
+      has-next-level:
+        type: GOLD_ORE
+        name: '&3&l⚒ Lò Khai Khoáng Hải Lâu Thạch - Cấp 3 &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&3Cấp tiếp theo: &eCấp 4'
+          - '&7'
+          - '&7Nâng cấp Máy Tạo Đá (Ore Plugin)'
+          - '&7để mở khóa &bKim Cương &7và tăng mạnh tỷ lệ quặng!'
+          - '&7'
+          - '&3Tỉ lệ Cấp 4:'
+          - ' &7 - &f42% Đá Cuội &7| &f10% Đá'
+          - ' &7 - &811% Than &7| &f13% Sắt'
+          - ' &7 - &c7% Hồng Ngọc &7| &96% Lưu Ly'
+          - ' &7 - &67% Quặng Vàng'
+          - ' &7 - &b4% Kim Cương &7(Mới)'
+          - '&7'
+          - '&3Giá nâng cấp: &f$200,000'
+          - '&7'
+          - '&aNhấn để nâng cấp!'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: GOLD_ORE
+        name: '&3&l⚒ Lò Khai Khoáng Hải Lâu Thạch - Cấp 3 &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&3Cấp tiếp theo: &eCấp 4'
+          - '&7'
+          - '&7Nâng cấp Máy Tạo Đá (Ore Plugin)'
+          - '&7để mở khóa &bKim Cương &7và tăng mạnh tỷ lệ quặng!'
+          - '&7'
+          - '&3Tỉ lệ Cấp 4:'
+          - ' &7 - &f42% Đá Cuội &7| &f10% Đá'
+          - ' &7 - &811% Than &7| &f13% Sắt'
+          - ' &7 - &c7% Hồng Ngọc &7| &96% Lưu Ly'
+          - ' &7 - &67% Quặng Vàng'
+          - ' &7 - &b4% Kim Cương &7(Mới)'
+          - '&7'
+          - '&3Giá nâng cấp: &c$200,000'
+          - '&7'
+          - '&cBạn không đủ tiền!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '4':
+      has-next-level:
+        type: DIAMOND_ORE
+        name: '&3&l⚒ Lò Khai Khoáng Hải Lâu Thạch - Cấp 4 &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&3Cấp tiếp theo: &6&lCấp 5 (Tối Đa)'
+          - '&7'
+          - '&7Nâng cấp Máy Tạo Đá (Ore Plugin)'
+          - '&7lên cấp tối đa để mở khóa &aNgọc Lục Bảo&7!'
+          - '&7'
+          - '&3Tỉ lệ Cấp 5:'
+          - ' &7 - &f30% Đá Cuội &7| &f10% Đá'
+          - ' &7 - &812% Than &7| &f16% Sắt'
+          - ' &7 - &c7% Hồng Ngọc &7| &97% Lưu Ly'
+          - ' &7 - &69% Quặng Vàng'
+          - ' &7 - &b6% Kim Cương'
+          - ' &7 - &a3% Ngọc Lục Bảo &7(Mới)'
+          - '&7'
+          - '&3Giá nâng cấp: &f$500,000'
+          - '&7'
+          - '&aNhấn để nâng cấp!'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: DIAMOND_ORE
+        name: '&3&l⚒ Lò Khai Khoáng Hải Lâu Thạch - Cấp 4 &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&3Cấp tiếp theo: &6&lCấp 5 (Tối Đa)'
+          - '&7'
+          - '&7Nâng cấp Máy Tạo Đá (Ore Plugin)'
+          - '&7lên cấp tối đa để mở khóa &aNgọc Lục Bảo&7!'
+          - '&7'
+          - '&3Tỉ lệ Cấp 5:'
+          - ' &7 - &f30% Đá Cuội &7| &f10% Đá'
+          - ' &7 - &812% Than &7| &f16% Sắt'
+          - ' &7 - &c7% Hồng Ngọc &7| &97% Lưu Ly'
+          - ' &7 - &69% Quặng Vàng'
+          - ' &7 - &b6% Kim Cương'
+          - ' &7 - &a3% Ngọc Lục Bảo &7(Mới)'
+          - '&7'
+          - '&3Giá nâng cấp: &c$500,000'
+          - '&7'
+          - '&cBạn không đủ tiền!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '5':
+      has-next-level:
+        type: EMERALD_ORE
+        name: '&6&l⚒ LÒ HẢI LÂU THẠCH - CẤP 5 (TỐI ĐA)'
+        lore:
+          - '&7Máy tạo đá của Căn Cứ bạn đã đạt'
+          - '&7cấp độ tối đa (&eCấp 5&7)!'
+          - '&7'
+          - '&3Tỉ lệ hiện tại:'
+          - ' &7 - &f30% Đá Cuội &7| &f10% Đá'
+          - ' &7 - &812% Than &7| &f16% Sắt'
+          - ' &7 - &c7% Hồng Ngọc &7| &97% Lưu Ly'
+          - ' &7 - &69% Vàng &7| &b6% Kim Cương &7| &a3% Lục Bảo'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: EMERALD_ORE
+        name: '&6&l⚒ LÒ HẢI LÂU THẠCH - CẤP 5 (TỐI ĐA)'
+        lore:
+          - '&7Máy tạo đá của Căn Cứ bạn đã đạt'
+          - '&7cấp độ tối đa (&eCấp 5&7)!'
+          - '&7'
+          - '&3Tỉ lệ hiện tại:'
+          - ' &7 - &f30% Đá Cuội &7| &f10% Đá'
+          - ' &7 - &812% Than &7| &f16% Sắt'
+          - ' &7 - &c7% Hồng Ngọc &7| &97% Lưu Ly'
+          - ' &7 - &69% Vàng &7| &b6% Kim Cương &7| &a3% Lục Bảo'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+  minecarts-limit:
+    item: '&'
+    '1':
+      has-next-level:
+        type: MINECART
+        name: '&d&l🛒 Đoàn Xe Tiếp Vận Hạm Đội &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&dCấp tiếp theo: &e2'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng giới hạn'
+          - '&7số lượng tối đa cho phép'
+          - '&7xe mỏ (Minecart) tại Căn Cứ.'
+          - '&7'
+          - '&dSố lượng: &f8x Xe Mỏ'
+          - '&dGiá nâng cấp: &f$1,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: MINECART
+        name: '&d&l🛒 Đoàn Xe Tiếp Vận Hạm Đội &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&dCấp tiếp theo: &e2'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng giới hạn'
+          - '&7số lượng tối đa cho phép'
+          - '&7xe mỏ (Minecart) tại Căn Cứ.'
+          - '&7'
+          - '&dSố lượng: &f8x Xe Mỏ'
+          - '&dGiá nâng cấp: &f$1,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '2':
+      has-next-level:
+        type: MINECART
+        name: '&d&l🛒 Đoàn Xe Tiếp Vận Hạm Đội &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&dCấp tiếp theo: &e3'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng giới hạn'
+          - '&7số lượng tối đa cho phép'
+          - '&7xe mỏ (Minecart) tại Căn Cứ.'
+          - '&7'
+          - '&dSố lượng: &f16x Xe Mỏ'
+          - '&dGiá nâng cấp: &f$3,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: MINECART
+        name: '&d&l🛒 Đoàn Xe Tiếp Vận Hạm Đội &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&dCấp tiếp theo: &e3'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng giới hạn'
+          - '&7số lượng tối đa cho phép'
+          - '&7xe mỏ (Minecart) tại Căn Cứ.'
+          - '&7'
+          - '&dSố lượng: &f16x Xe Mỏ'
+          - '&dGiá nâng cấp: &f$3,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '3':
+      has-next-level:
+        type: MINECART
+        name: '&d&l🛒 Đoàn Xe Tiếp Vận Hạm Đội &a(Khả dụng)'
+        lore:
+          - '&7'
+          - '&dCấp tiếp theo: &e4'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng giới hạn'
+          - '&7số lượng tối đa cho phép'
+          - '&7xe mỏ (Minecart) tại Căn Cứ.'
+          - '&7'
+          - '&dSố lượng: &f32x Xe Mỏ'
+          - '&dGiá nâng cấp: &f$9,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: ENTITY_EXPERIENCE_ORB_PICKUP
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: MINECART
+        name: '&d&l🛒 Đoàn Xe Tiếp Vận Hạm Đội &c(Chưa đủ tiền)'
+        lore:
+          - '&7'
+          - '&dCấp tiếp theo: &e4'
+          - '&7'
+          - '&7Nâng cấp này sẽ tăng giới hạn'
+          - '&7số lượng tối đa cho phép'
+          - '&7xe mỏ (Minecart) tại Căn Cứ.'
+          - '&7'
+          - '&dSố lượng: &f32x Xe Mỏ'
+          - '&dGiá nâng cấp: &f$9,000,000'
+          - '&7'
+          - '&aNhấp để mua nâng cấp.'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+    '4':
+      has-next-level:
+        type: MINECART
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của giới hạn xe mỏ!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2
+      no-next-level:
+        type: MINECART
+        name: '&6&lCẤP ĐỘ TỐI ĐA'
+        lore:
+          - '&7Bạn đã đạt đến cấp độ'
+          - '&7tối đa của giới hạn xe mỏ!'
+        sound:
+          type: BLOCK_ANVIL_PLACE
+          volume: 0.2
+          pitch: 0.2

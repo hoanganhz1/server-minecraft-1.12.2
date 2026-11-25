@@ -1,0 +1,53 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+title: '&c&lKho Vũ Khí Băng Hải Tặc'
+previous-menu: true
+
+pattern:
+  - '# # # # # # # # #'
+  - '# $ @ @ @ @ @ $ #'
+  - '# $ @ @ @ @ @ $ #'
+  - '# $ @ @ @ @ @ $ #'
+  - '# $ @ @ @ @ @ $ #'
+  - '# # % # * # ^ # #'
+
+slots: '@'
+previous-page: '%'
+current-page: '*'
+next-page: '^'
+
+items:
+  '@':
+    valid-page:
+      type: STORAGE_MINECART
+      name: '&eNgăn Vũ Khí #{0}'
+      lore:
+        - '&eSức chứa: &7{1} ô'
+    invalid-page:
+      type: MINECART
+      name: '&f '
+  '%':
+    type: PAPER
+    name: '{0}Trang Trước'
+  '*':
+    type: DOUBLE_PLANT
+    name: '&aTrang Hiện Tại'
+    lore:
+      - '&7Trang {0}'
+  '^':
+    type: PAPER
+    name: '{0}Trang Sau'
+  '#':
+    type: RAILS
+    name: '&f '
+
+sounds:
+  '@':
+    type: BLOCK_CHEST_OPEN
+    volume: 0.8
+    pitch: 1

@@ -1,0 +1,118 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+# The mission file to use
+mission-file: FarmingMissions
+
+# Whether the mission should be given when completing all requirements.
+auto-reward: true
+
+# Should plant counts of players get reset when completing the mission?
+reset-after-finish: true
+
+# Rewards given when completing the mission.
+rewards:
+  commands:
+    - 'is admin rankup %player% crop-growth'
+    - 'eco give %player% 15000'
+    - 'talentadmin addpoints %player% 5'
+    - 'is admin msg %player% &e&lNông Dân | &7Hoàn thành xuất sắc nhiệm vụ Nông Dân III!'
+
+# List of required missions that must be completed before completing this one.
+required-missions:
+  - 'farmer_1'
+  - 'farmer_2'
+
+# List of all required plants must be gathered in order to complete the mission.
+required-plants:
+  '1':
+    types:
+      - 'SUGAR_CANE'
+    amount: 10
+  '2':
+    types:
+      - 'CACTUS'
+    amount: 10
+
+# Icons used in the menus.
+icons:
+  locked:
+    type: PAPER
+    name: '&aNông Dân III'
+    lore:
+      - '&7Mở rộng nông trại với cây mía và xương rồng.'
+      - ''
+      - '&6Yêu Cầu Cây Trồng:'
+      - '&8 - &7x10 Cây Mía'
+      - '&8 - &7x10 Xương Rồng'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &7$15,000'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7Nâng Cấp Tốc Độ Cây Trồng'
+      - ''
+      - '&6Mía đã trồng: &7{value_sugar_cane}/10'
+      - '&6Xương Rồng đã trồng: &7{value_cactus}/10'
+      - '&c&l ✘ &7Chưa Mở Khóa'
+    amount: 3
+  not-completed:
+    type: PAPER
+    name: '&aNông Dân III'
+    lore:
+      - '&7Mở rộng nông trại với cây mía và xương rồng.'
+      - ''
+      - '&6Yêu Cầu Cây Trồng:'
+      - '&8 - &7x10 Cây Mía'
+      - '&8 - &7x10 Xương Rồng'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &7$15,000'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7Nâng Cấp Tốc Độ Cây Trồng'
+      - ''
+      - '&6Mía đã trồng: &7{value_sugar_cane}/10'
+      - '&6Xương Rồng đã trồng: &7{value_cactus}/10'
+      - '&6Tiến độ: &7{0}%'
+      - '&c&l ✘ &7Chưa Hoàn Thành'
+    amount: 3
+  can-complete:
+    type: PAPER
+    name: '&aNông Dân III'
+    lore:
+      - '&7Mở rộng nông trại với cây mía và xương rồng.'
+      - ''
+      - '&6Yêu Cầu Cây Trồng:'
+      - '&8 - &7x10 Cây Mía'
+      - '&8 - &7x10 Xương Rồng'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &7$15,000'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7Nâng Cấp Tốc Độ Cây Trồng'
+      - ''
+      - '&6Mía đã trồng: &710/10'
+      - '&6Xương Rồng đã trồng: &710/10'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Nhấp để nhận phần thưởng.'
+    amount: 3
+    glow: true
+  completed:
+    type: MAP
+    name: '&aNông Dân III'
+    lore:
+      - '&7Mở rộng nông trại với cây mía và xương rồng.'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &7$15,000'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7Nâng Cấp Tốc Độ Cây Trồng'
+      - ''
+      - '&6Mía đã trồng: &710/10'
+      - '&6Xương Rồng đã trồng: &710/10'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Đã Nhận Thưởng.'
+    amount: 3

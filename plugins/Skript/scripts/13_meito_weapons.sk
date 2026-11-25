@@ -1,0 +1,1039 @@
+# =====================================================================
+# HỆ THỐNG 13 DANH KIẾM & VŨ KHÍ ĐẶC CHỦNG (PHASE 13 - SKBEE + REFLECT)
+# - Kiến trúc Resource Pack Vanilla Durability Predicate (diamond hoe 1561)
+# - Máy trạng thái biến hình động In-place: Tra Vỏ -> Rút Kiếm -> Bọc Haki
+# - Cơ chế Kiếm Khí đòn thứ 4, Tầm đánh mở rộng & Sát thương quét lan
+# - Luyện Hắc Kiếm Vĩnh Viễn (Permanent Black Blade Awakening)
+# - GUI Xưởng Rèn Danh Kiếm /danhkiem
+# =====================================================================
+
+import:
+    java.lang.System
+    java.util.UUID
+    org.bukkit.Bukkit
+    org.bukkit.Material
+    org.bukkit.Sound
+    org.bukkit.entity.Player
+    org.bukkit.entity.LivingEntity
+    org.bukkit.inventory.ItemStack
+    org.bukkit.event.inventory.InventoryDragEvent
+
+# ---------------------------------------------------------------------
+# 1. HÀM TRA CỨU MÔ HÌNH VÀ THÔNG SỐ DANH KIẾM
+# ---------------------------------------------------------------------
+
+function getMeitoDisplayName(wid: text) :: text:
+    if {_wid} is "katana":
+        return "&f&lThái Đao Hải Tặc"
+    if {_wid} is "sandai_kitetsu":
+        return "&c&lTam Đại Quỷ Triệt"
+    if {_wid} is "wado_ichimonji":
+        return "&b&lHòa Đạo Nhất Văn Tự"
+    if {_wid} is "nidai_kitetsu":
+        return "&5&lNhị Đại Quỷ Triệt"
+    if {_wid} is "shusui":
+        return "&d&lHắc Bảo Kiếm Thu Thủy"
+    if {_wid} is "gryphon":
+        return "&6&lThánh Kiếm Gryphon"
+    if {_wid} is "kikoku":
+        return "&e&lQuỷ Khốc Kikoku"
+    if {_wid} is "soul_solid":
+        return "&3&lHồn Kiếm Soul Solid"
+    if {_wid} is "enma":
+        return "&5&l✦ Diêm Ma Enma ✦"
+    if {_wid} is "ame_no_habakiri":
+        return "&b&l✦ Thiên Vũ Vũ Trảm ✦"
+    if {_wid} is "yoru":
+        return "&2&l✦ Hắc Kiếm Yoru ✦"
+    if {_wid} is "bisento":
+        return "&6&l✦ Đại Đao Bisento ✦"
+    if {_wid} is "murakumogiri":
+        return "&c&l✦ Thiên Tùng Vân Thiết ✦"
+    return "&7Danh Kiếm"
+
+function getMeitoTier(wid: text) :: number:
+    if {_wid} is "katana":
+        return 1
+    if {_wid} is "sandai_kitetsu" or "wado_ichimonji":
+        return 2
+    if {_wid} is "nidai_kitetsu" or "shusui" or "gryphon" or "kikoku" or "soul_solid":
+        return 3
+    if {_wid} is "enma" or "ame_no_habakiri" or "yoru" or "bisento" or "murakumogiri":
+        return 4
+    return 1
+
+function getMeitoBaseStats(wid: text, stat: text) :: number:
+    if {_wid} is "katana":
+        if {_stat} is "atk":
+            return 14
+        if {_stat} is "crit":
+            return 5
+        return 0
+    if {_wid} is "sandai_kitetsu":
+        if {_stat} is "atk":
+            return 17
+        if {_stat} is "crit":
+            return 8
+        return 0
+    if {_wid} is "wado_ichimonji":
+        if {_stat} is "atk":
+            return 17
+        if {_stat} is "crit":
+            return 9
+        return 0
+    if {_wid} is "nidai_kitetsu":
+        if {_stat} is "atk":
+            return 21
+        if {_stat} is "crit":
+            return 11
+        return 6
+    if {_wid} is "shusui":
+        if {_stat} is "atk":
+            return 22
+        if {_stat} is "crit":
+            return 12
+        return 10
+    if {_wid} is "gryphon":
+        if {_stat} is "atk":
+            return 22
+        if {_stat} is "crit":
+            return 12
+        return 10
+    if {_wid} is "kikoku":
+        if {_stat} is "atk":
+            return 21
+        if {_stat} is "crit":
+            return 10
+        return 8
+    if {_wid} is "soul_solid":
+        if {_stat} is "atk":
+            return 21
+        if {_stat} is "crit":
+            return 10
+        return 6
+    if {_wid} is "enma":
+        if {_stat} is "atk":
+            return 26
+        if {_stat} is "crit":
+            return 15
+        return 12
+    if {_wid} is "ame_no_habakiri":
+        if {_stat} is "atk":
+            return 26
+        if {_stat} is "crit":
+            return 15
+        return 12
+    if {_wid} is "yoru":
+        if {_stat} is "atk":
+            return 28
+        if {_stat} is "crit":
+            return 15
+        return 12
+    if {_wid} is "bisento":
+        if {_stat} is "atk":
+            return 27
+        if {_stat} is "crit":
+            return 12
+        return 12
+    if {_wid} is "murakumogiri":
+        if {_stat} is "atk":
+            return 27
+        if {_stat} is "crit":
+            return 12
+        return 14
+    return 0
+
+function getMeitoSheathedModelKey(wid: text) :: text:
+    if {_wid} is "sandai_kitetsu":
+        return "sandai_kitetsu_sheathed"
+    if {_wid} is "wado_ichimonji":
+        return "wado_ichimonji_sheathed"
+    if {_wid} is "nidai_kitetsu":
+        return "nidai_kitetsu_sheathed"
+    if {_wid} is "shusui":
+        return "shusui_sheathed"
+    if {_wid} is "soul_solid":
+        return "soul_solid_sheathed"
+    if {_wid} is "enma":
+        return "enma_sheathed"
+    if {_wid} is "ame_no_habakiri":
+        return "ame_no_habakiri_sheathed"
+    return {_wid}
+
+function getMeitoHakiModelKey(wid: text) :: text:
+    if {_wid} is "katana":
+        return "katana_overlay_haki"
+    if {_wid} is "sandai_kitetsu":
+        return "sandai_kitetsu_haki"
+    if {_wid} is "wado_ichimonji":
+        return "wado_ichimonji_haki"
+    if {_wid} is "nidai_kitetsu":
+        return "nidai_kitetsu_haki"
+    if {_wid} is "shusui":
+        return "shusui_haki"
+    if {_wid} is "gryphon":
+        return "gryphon_haki"
+    if {_wid} is "kikoku":
+        return "kikoku_haki"
+    if {_wid} is "soul_solid":
+        return "soul_solid_haki"
+    if {_wid} is "enma":
+        return "enma_haki"
+    if {_wid} is "ame_no_habakiri":
+        return "ame_no_habakiri_haki"
+    if {_wid} is "yoru":
+        return "yoru_haki"
+    if {_wid} is "bisento":
+        return "bisento_overlay_haki"
+    if {_wid} is "murakumogiri":
+        return "murakumogiri_haki"
+    return {_wid}
+
+# ---------------------------------------------------------------------
+# 2. KHỞI TẠO VẬT PHẨM DANH KIẾM (NBT TIÊU CHUẨN)
+# ---------------------------------------------------------------------
+
+function createMeitoItem(wid: text, isBlackBlade: boolean = false) :: item:
+    set {_name} to getMeitoDisplayName({_wid})
+    set {_tier} to getMeitoTier({_wid})
+    set {_atk} to getMeitoBaseStats({_wid}, "atk")
+    set {_crit} to getMeitoBaseStats({_wid}, "crit")
+    set {_pen} to getMeitoBaseStats({_wid}, "pen")
+
+    if {_isBlackBlade} is true:
+        set {_atk} to round({_atk} * 1.15)
+
+    delete {_lore::*}
+    set {_lore::1} to "&8&m----------------------------------------"
+    set {_lore::2} to "&7Loại: &6Danh Kiếm Tuyệt Phẩm &8| &eBậc: &6&lBẬC %{_tier}%"
+    set {_lore::3} to "&7Sát thương cơ bản: &c+%{_atk}% ATK"
+    set {_lore::4} to "&7Tỷ lệ chí mạng: &e+%{_crit}%%% Crit"
+    if {_pen} > 0:
+        set {_lore::5} to "&7Xuyên giáp: &b+%{_pen}%%% Xuyên Giáp"
+    else:
+        set {_lore::5} to "&7Xuyên giáp: &80%%"
+    set {_lore::6} to ""
+    set {_lore::7} to "&6&l✦ ĐẶC TÍNH NỘI TẠI:"
+
+    if {_wid} is "katana":
+        set {_lore::8} to "&f• &eThuần Thục Kiếm Thuật: &a+15%% EXP Kiếm Đạo&7."
+    else if {_wid} is "sandai_kitetsu":
+        set {_lore::8} to "&f• &cKiếm Khí Liên Trảm: &7Đòn thứ 4 phóng kiếm khí &e7m &7(&c115%% ATK&7),"
+        set {_lore::9} to "  &7gây xuất huyết &c3 HP/s &7trong 2s."
+    else if {_wid} is "wado_ichimonji":
+        set {_lore::8} to "&f• &bHòa Nhất Chi Đạo: &7Đòn thứ 4 phóng kiếm khí &e7m &7(&c115%% ATK&7)."
+        set {_lore::9} to "  &7Giảm &a15%% tiêu hao Bá Khí &7khi bật Busoshoku."
+    else if {_wid} is "nidai_kitetsu":
+        set {_lore::8} to "&f• &5Quỷ Khí Xuất Huyết: &7Đòn thứ 4 phóng khí &e8m &7(&c125%% ATK&7)"
+        set {_lore::9} to "  &7gây xuất huyết &c4.5 HP/s &7trong 3s."
+    else if {_wid} is "shusui":
+        set {_lore::8} to "&f• &dLong Trảm Hắc Khí: &7Đòn thứ 4 phóng kiếm khí tím &e8m &7(&c135%% ATK&7)."
+        set {_lore::9} to "  &7Tăng &9+20 DEF &7khi cầm trên tay."
+    else if {_wid} is "gryphon":
+        set {_lore::8} to "&f• &6Bá Vương Uy Áp: &7Đòn thứ 4 phóng kiếm khí &e8m &7(&c125%% ATK&7)."
+        set {_lore::9} to "  &e+25%% ST &7và &e+2m bán kính &7cho đòn &6Haki Bá Vương&7."
+    else if {_wid} is "kikoku":
+        set {_lore::8} to "&f• &eCộng Hưởng Ope Ope: &7Đòn thứ 4 phóng kiếm khí &e8m&7."
+        set {_lore::9} to "  &b+3m ROOM&7, &6+18 ST &7vật lý chiêu &cGamma Knife&7."
+    else if {_wid} is "soul_solid":
+        set {_lore::8} to "&f• &3Hàn Khí Âm Giới: &7Đòn đánh thứ 3 phủ băng mục tiêu,"
+        set {_lore::9} to "  &7gây &bSlowness II &7trong 2 giây. Kiếm khí làm chậm."
+    else if {_wid} is "enma":
+        set {_lore::8} to "&f• &5Hút Bá Khí Địa Ngục: &c-2.5 BK/s &7(-1.5 khi Hắc Kiếm)"
+        set {_lore::9} to "  &7đổi &e+25%% ST Chí Mạng &7(mở trần &ex2.10&7), kiếm khí &c150%% ATK&7."
+    else if {_wid} is "ame_no_habakiri":
+        set {_lore::8} to "&f• &bTrảm Long Tuyệt Kỹ: &7Kiếm khí &e9m &7(&c145%% ATK&7)."
+        set {_lore::9} to "  &c+20%% Sát Thương &7lên &6Boss Đô Đốc &7và hệ &9Zoan&7."
+    else if {_wid} is "yoru":
+        set {_lore::8} to "&f• &2Đệ Nhất Kiếm Khách: &aTầm đánh 4.2m&7, đòn thứ 4"
+        set {_lore::9} to "  &achém sóng kiếm khí xanh lục 10m &7(&c155%% ATK&7)."
+    else if {_wid} is "bisento":
+        set {_lore::8} to "&f• &6Tứ Hoàng Uy Lực: &aTầm 4.5m&7, chém lan &c60%% ATK 2.5m&7."
+        set {_lore::9} to "  &6Cộng Hưởng Gura Gura: &e+15%% ST &7chiêu Gura & kích Chấn Nứt."
+    else if {_wid} is "murakumogiri":
+        set {_lore::8} to "&f• &cPhá Giáp Đại Đao: &aTầm 4.5m&7, chém lan &c60%% ATK&7."
+        set {_lore::9} to "  &7Đòn chí mạng &cgiảm 15%% Giáp mục tiêu &7trong 4s."
+
+    add "" to {_lore::*}
+    if {_tier} is 4:
+        if {_isBlackBlade} is true:
+            add "&5&l✦ HẮC KIẾM VĨNH VIỄN (ĐÃ THỨC TỈNH) ✦" to {_lore::*}
+            add "&d• Đã hòa quyện linh hồn Kiếm Sĩ và Haki Vũ Trang vĩnh cửu." to {_lore::*}
+        else:
+            add "&8[&7Tiến Trình Luyện Hắc Kiếm: &d0&7/&d1000&8]" to {_lore::*}
+            add "&7Cầm kiếm bật Busoshoku đánh trúng để tích lũy EXP Hắc Kiếm." to {_lore::*}
+        add "" to {_lore::*}
+
+    add "&8&m----------------------------------------" to {_lore::*}
+
+    set {_item} to makeCustomRPItem({_wid}, {_name}, {_lore::*})
+    set {_nbt} to nbt compound of {_item}
+    set string tag "SigWeaponId" of {_nbt} to {_wid}
+    set int tag "SigTier" of {_nbt} to {_tier}
+    set int tag "SigBaseAtk" of {_nbt} to {_atk}
+    set int tag "SigCritChance" of {_nbt} to {_crit}
+    set int tag "SigArmorPen" of {_nbt} to {_pen}
+    set int tag "SigHakiExp" of {_nbt} to 0
+    if {_isBlackBlade} is true:
+        set byte tag "SigBlackBlade" of {_nbt} to 1
+    else:
+        set byte tag "SigBlackBlade" of {_nbt} to 0
+    set string tag "SigTransmogKey" of {_nbt} to ""
+    set string tag "SkyblockItem" of {_nbt} to "meito_%{_wid}%"
+    return {_item}
+
+function getPlayerActiveMeito(p: player) :: item:
+    if {_p} is not online:
+        return air
+    set {_u} to uuid of {_p}
+    if {combat_mode::%{_u}%} is true:
+        set {_it8} to slot 8 of {_p}'s inventory
+        if isValidItem({_it8}) is true:
+            set {_w8} to string tag "SigWeaponId" of nbt compound of {_it8}
+            if {_w8} is set:
+                if {_w8} is not "":
+                    return {_it8}
+    set {_tool} to {_p}'s tool
+    if isValidItem({_tool}) is true:
+        set {_wt} to string tag "SigWeaponId" of nbt compound of {_tool}
+        if {_wt} is set:
+            if {_wt} is not "":
+                return {_tool}
+    return air
+
+function getMeitoBaseAtk(p: player) :: number:
+    set {_it} to getPlayerActiveMeito({_p})
+    if isValidItem({_it}) is true:
+        set {_wid} to string tag "SigWeaponId" of nbt compound of {_it}
+        if {_wid} is set:
+            if {_wid} is not "":
+                set {_atk} to getMeitoBaseStats({_wid}, "atk")
+                set {_bb} to byte tag "SigBlackBlade" of nbt compound of {_it}
+                if {_bb} is 1:
+                    set {_atk} to round({_atk} * 1.15)
+                return {_atk}
+        set {_atk} to int tag "SigBaseAtk" of nbt compound of {_it}
+        if {_atk} is set:
+            return {_atk}
+    return 0
+
+function getMeitoCritChance(p: player) :: number:
+    set {_it} to getPlayerActiveMeito({_p})
+    if isValidItem({_it}) is true:
+        set {_wid} to string tag "SigWeaponId" of nbt compound of {_it}
+        if {_wid} is set:
+            if {_wid} is not "":
+                return getMeitoBaseStats({_wid}, "crit")
+        set {_cc} to int tag "SigCritChance" of nbt compound of {_it}
+        if {_cc} is set:
+            return {_cc}
+    return 0
+
+function getMeitoArmorPen(p: player) :: number:
+    set {_it} to getPlayerActiveMeito({_p})
+    if isValidItem({_it}) is true:
+        set {_wid} to string tag "SigWeaponId" of nbt compound of {_it}
+        set {_pen} to 0
+        if {_wid} is set:
+            if {_wid} is not "":
+                set {_pen} to getMeitoBaseStats({_wid}, "pen")
+        else:
+            set {_pen} to (int tag "SigArmorPen" of nbt compound of {_it}) ? 0
+        set {_bb} to byte tag "SigBlackBlade" of nbt compound of {_it}
+        if {_bb} is 1:
+            add 8 to {_pen}
+        return {_pen}
+    return 0
+
+function getMeitoCritDmgBonus(p: player) :: number:
+    set {_it} to getPlayerActiveMeito({_p})
+    if isValidItem({_it}) is true:
+        set {_wid} to string tag "SigWeaponId" of nbt compound of {_it}
+        if {_wid} is "enma":
+            set {_u} to uuid of {_p}
+            if {haki_active::%{_u}%::buso} is true:
+                return 25.0
+    return 0.0
+
+# ---------------------------------------------------------------------
+# 3. MÁY TRẠNG THÁI BIẾN HÌNH ĐỘNG IN-PLACE (syncMeitoVisual)
+# ---------------------------------------------------------------------
+
+function syncMeitoVisual(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+
+    set {_slots::1} to {_p}.getInventory().getHeldItemSlot()
+    if {combat_mode::%{_u}%} is true:
+        set {_slots::2} to 8
+
+    loop {_slots::*}:
+        set {_slotIdx} to loop-value
+        set {_item} to slot {_slotIdx} of {_p}'s inventory
+        if isValidItem({_item}) is true:
+            set {_nbt} to nbt compound of {_item}
+            set {_wid} to string tag "SigWeaponId" of {_nbt}
+            if {_wid} is set:
+                if {_wid} is not "":
+                    set {_baseKey} to {_wid}
+
+                    set {_isBlack} to byte tag "SigBlackBlade" of {_nbt}
+                    set {_targetKey} to {_baseKey}
+
+                    if {haki_active::%{_u}%::buso} is true:
+                        set {_targetKey} to getMeitoHakiModelKey({_baseKey})
+                    else if {_isBlack} is 1:
+                        set {_targetKey} to getMeitoHakiModelKey({_baseKey})
+                    else if {combat_mode::%{_u}%} is true:
+                        set {_targetKey} to {_baseKey}
+                    else:
+                        set {_targetKey} to getMeitoSheathedModelKey({_baseKey})
+
+                    set {_mId} to getCustomModelDataId({_targetKey})
+                    if {_mId} > 0:
+                        set data value of {_item} to {_mId}
+                        set damage of {_item} to {_mId}
+                        set string tag "CustomModelKey" of {_nbt} to {_targetKey}
+                        set slot {_slotIdx} of {_p}'s inventory to {_item}
+
+# ---------------------------------------------------------------------
+# 4. LUYỆN HẮC KIẾM VĨNH VIỄN (TIẾN TRÌNH 0 -> 1000)
+# ---------------------------------------------------------------------
+
+function addMeitoHakiExp(p: player, amt: number):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    if {haki_active::%{_u}%::buso} is not true:
+        stop
+
+    set {_targetSlot} to -1
+    set {_heldSlot} to {_p}.getInventory().getHeldItemSlot()
+    set {_checkItem} to slot {_heldSlot} of {_p}'s inventory
+    if isValidItem({_checkItem}) is true:
+        set {_checkWid} to string tag "SigWeaponId" of nbt compound of {_checkItem}
+        if {_checkWid} is set:
+            if {_checkWid} is not "":
+                set {_targetSlot} to {_heldSlot}
+    if {_targetSlot} is -1:
+        if {combat_mode::%{_u}%} is true:
+            set {_checkItem8} to slot 8 of {_p}'s inventory
+            if isValidItem({_checkItem8}) is true:
+                set {_checkWid8} to string tag "SigWeaponId" of nbt compound of {_checkItem8}
+                if {_checkWid8} is set:
+                    if {_checkWid8} is not "":
+                        set {_targetSlot} to 8
+
+    if {_targetSlot} is -1:
+        stop
+
+    set {_it} to slot {_targetSlot} of {_p}'s inventory
+    if isValidItem({_it}) is not true:
+        stop
+
+    set {_nbt} to nbt compound of {_it}
+    set {_wid} to string tag "SigWeaponId" of {_nbt}
+    if {_wid} is not set:
+        stop
+    if {_wid} is "":
+        stop
+
+    set {_isBlack} to byte tag "SigBlackBlade" of {_nbt}
+    if {_isBlack} is 1:
+        stop
+
+    set {_curExp} to int tag "SigHakiExp" of {_nbt}
+    if {_curExp} is not set:
+        set {_curExp} to 0
+
+    add {_amt} to {_curExp}
+    set int tag "SigHakiExp" of {_nbt} to {_curExp}
+
+    if {_curExp} >= 1000:
+        set byte tag "SigBlackBlade" of {_nbt} to 1
+        set int tag "SigHakiExp" of {_nbt} to 1000
+        set {_baseAtk} to int tag "SigBaseAtk" of {_nbt}
+        set {_newAtk} to round({_baseAtk} * 1.15)
+        set int tag "SigBaseAtk" of {_nbt} to {_newAtk}
+
+        set {_wName} to getMeitoDisplayName({_wid})
+        set {_lore::*} to lore of {_it}
+        add "&5&l✦ HẮC KIẾM VĨNH VIỄN (ĐÃ THỨC TỈNH) ✦" to {_lore::*}
+        set lore of {_it} to {_lore::*}
+
+        set slot {_targetSlot} of {_p}'s inventory to {_it}
+        syncMeitoVisual({_p})
+
+        set {_pName} to name of {_p}
+        broadcastDualCard("&5&l⚔ HẮC KIẾM", "%{_pName}% đã tôi luyện thành công Hắc Kiếm Vĩnh Viễn %{_wName}%!", "Tăng +15%% Sát thương gốc và giảm 30%% tiêu hao Bá Khí duy trì!")
+        play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1.5 and pitch 0.8 to {_p}
+        set {_loc} to location of {_p}
+        add 1 to y-coordinate of {_loc}
+        spawnVisualParticle("PORTAL", {_loc}, 60, 0.8, 1.2, 0.8, 0.2)
+        spawnVisualParticle("FIREWORKS_SPARK", {_loc}, 40, 0.6, 0.8, 0.6, 0.1)
+    else:
+        set slot {_targetSlot} of {_p}'s inventory to {_it}
+        send action bar "&8[&5⚔ Haki Kiếm: &d%{_curExp}%&7/&d1000&8]" to {_p}
+
+# ---------------------------------------------------------------------
+# 5. CƠ CHẾ ĐÒN ĐÁNH THỨ 4, SÓNG KIẾM KHÍ & SÁT THƯƠNG QUÉT LAN
+# ---------------------------------------------------------------------
+
+function applySwordWaveHit(p: player, vic: entity, target: entity, dmg: number):
+    if {_target} is {_p}:
+        stop
+    if {_target} is {_vic}:
+        stop
+    if {_target} is a player:
+        set {_attCrew} to getCrewIslandUUID({_p})
+        set {_vicCrew} to getCrewIslandUUID({_target})
+        if {_attCrew} is not "":
+            if {_attCrew} is {_vicCrew}:
+                stop
+    set {_tUid} to uuid of {_target}
+    set {_u} to uuid of {_p}
+    set {_pen} to ({aov_bonus::%{_u}%::armor_pen} ? 0.0) + ({haki_bonus::%{_u}%::armor_pen} ? 0.0) + getMeitoArmorPen({_p})
+    if {_pen} > 55.0:
+        set {_pen} to 55.0
+    if {ope_room_buff_until::%{_u}%} is set:
+        if System.currentTimeMillis() < {ope_room_buff_until::%{_u}%}:
+            add 35.0 to {_pen}
+    if {_pen} > 100.0:
+        set {_pen} to 100.0
+
+    if {dummy_type::%{_tUid}%} is set:
+        set {_waveDummyDmg} to {_dmg}
+        if {dummy_type::%{_tUid}%} is "boss":
+            set {_waveDummyDmg} to calculateEffectiveDamage({_dmg}, {_pen}, 150.0)
+        set {_hasPenWave} to false
+        if {_pen} > 0:
+            set {_hasPenWave} to true
+        handleCombatDummyDirectDamage({_p}, {_target}, {_waveDummyDmg}, false, {_hasPenWave})
+        # Vẫn áp dụng hiệu ứng nguyên tố lên dummy
+        set {_f} to {df_data::%{_u}%::fruit} ? ""
+        if {_f} is "mera":
+            set {mera_curse_until::%{_tUid}%} to System.currentTimeMillis() + 4000
+            set {hoa_doc::%{_tUid}%} to System.currentTimeMillis() + 4000
+            ignite {_target} for 4 seconds
+        else if {_f} is "goro":
+            apply potion of slowness 1 to {_target} for 3 seconds
+        else if {_f} is "pika":
+            set {pika_quang_an::%{_tUid}%} to System.currentTimeMillis() + 5000
+        else if {_f} is "gura":
+            set {gura_channut::%{_tUid}%} to System.currentTimeMillis() + 4000
+        stop
+
+    set {_vicDef} to 0.0
+    if {_target} is a player:
+        set {_vicDef} to getPlayerTotalDEF({_target})
+    else:
+        set {_wName} to uncolored name of {_target}
+        if {_wName} contains "Akainu":
+            set {_vicDef} to 140.0
+        else if {_wName} contains "Aokiji":
+            set {_vicDef} to 120.0
+        else if {_wName} contains "Vua Biển":
+            set {_vicDef} to 160.0
+
+    set {_effWaveDmg} to calculateEffectiveDamage({_dmg}, {_pen}, {_vicDef})
+    if {_target} is a player:
+        if {mera_dmg_reduction_until::%{_tUid}%} is set:
+            if System.currentTimeMillis() < {mera_dmg_reduction_until::%{_tUid}%}:
+                set {_effWaveDmg} to {_effWaveDmg} * 0.60
+
+    if {haki_active::%{_u}%::buso} is true:
+        setDamageVisualTag({_target}, "haki")
+    else:
+        setDamageVisualTag({_target}, "normal")
+    damage {_target} by ({_effWaveDmg} / 2)
+
+    set {_f} to {df_data::%{_u}%::fruit} ? ""
+    if {_f} is "mera":
+        set {mera_curse_until::%{_tUid}%} to System.currentTimeMillis() + 4000
+        set {hoa_doc::%{_tUid}%} to System.currentTimeMillis() + 4000
+        ignite {_target} for 4 seconds
+    else if {_f} is "goro":
+        apply potion of slowness 1 to {_target} for 3 seconds
+    else if {_f} is "pika":
+        set {pika_quang_an::%{_tUid}%} to System.currentTimeMillis() + 5000
+    else if {_f} is "gura":
+        set {gura_channut::%{_tUid}%} to System.currentTimeMillis() + 4000
+
+function triggerMeitoComboEffect(p: player, vic: entity, wid: text, baseAtk: number):
+    set {_u} to uuid of {_p}
+    set {_pLoc} to location of {_p}
+    add 1.2 to y-coordinate of {_pLoc}
+    set {_dir} to vector from {_p} to {_vic}
+    set {_dir} to normalized {_dir}
+
+    if {_wid} is "sandai_kitetsu":
+        play sound "ENTITY_PLAYER_ATTACK_SWEEP" with volume 1.2 and pitch 1.4 to {_p}
+        send action bar "&c&l✦ KIẾM KHÍ LIÊN TRẢM! (115%% ATK) ✦" to {_p}
+        set {_dmg} to roundOneDecimal({_baseAtk} * 1.15)
+        loop 7 times:
+            set {_stepLoc} to {_pLoc}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("SWEEP_ATTACK", {_stepLoc}, 2, 0.2, 0.2, 0.2, 0.05)
+            spawnVisualParticle("CRIT", {_stepLoc}, 4, 0.2, 0.2, 0.2, 0.05)
+            loop living entities in radius 1.8 of {_stepLoc}:
+                apply potion of wither 1 to loop-entity for 2 seconds
+                applySwordWaveHit({_p}, {_vic}, loop-entity, {_dmg})
+
+    else if {_wid} is "wado_ichimonji":
+        play sound "ENTITY_PLAYER_ATTACK_SWEEP" with volume 1.2 and pitch 1.8 to {_p}
+        send action bar "&b&l✦ HÒA ĐẠO KIẾM KHÍ! (115%% ATK) ✦" to {_p}
+        set {_dmg} to roundOneDecimal({_baseAtk} * 1.15)
+        loop 7 times:
+            set {_stepLoc} to {_pLoc}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("FIREWORKS_SPARK", {_stepLoc}, 3, 0.2, 0.2, 0.2, 0.05)
+            spawnVisualParticle("SWEEP_ATTACK", {_stepLoc}, 2, 0.2, 0.2, 0.2, 0.05)
+            loop living entities in radius 1.8 of {_stepLoc}:
+                applySwordWaveHit({_p}, {_vic}, loop-entity, {_dmg})
+
+    else if {_wid} is "nidai_kitetsu":
+        play sound "ENTITY_WITHER_SHOOT" with volume 1.0 and pitch 1.6 to {_p}
+        send action bar "&5&l✦ QUỶ KHÍ XUẤT HUYẾT! (125%% ATK) ✦" to {_p}
+        set {_dmg} to roundOneDecimal({_baseAtk} * 1.25)
+        loop 8 times:
+            set {_stepLoc} to {_pLoc}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("SPELL_WITCH", {_stepLoc}, 3, 0.2, 0.2, 0.2, 0.05)
+            spawnVisualParticle("REDSTONE", {_stepLoc}, 4, 0.2, 0.2, 0.2, 0.05)
+            loop living entities in radius 1.8 of {_stepLoc}:
+                apply potion of wither 1 to loop-entity for 3 seconds
+                applySwordWaveHit({_p}, {_vic}, loop-entity, {_dmg})
+
+    else if {_wid} is "shusui":
+        play sound "ENTITY_ENDERDRAGON_GROWL" with volume 0.8 and pitch 1.8 to {_p}
+        send action bar "&d&l✦ LONG TRẢM THU THỦY! (135%% ATK) ✦" to {_p}
+        set {_dmg} to roundOneDecimal({_baseAtk} * 1.35)
+        loop 8 times:
+            set {_stepLoc} to {_pLoc}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("DRAGON_BREATH", {_stepLoc}, 4, 0.2, 0.2, 0.2, 0.05)
+            spawnVisualParticle("SMOKE_LARGE", {_stepLoc}, 2, 0.2, 0.2, 0.2, 0.02)
+            loop living entities in radius 2.0 of {_stepLoc}:
+                applySwordWaveHit({_p}, {_vic}, loop-entity, {_dmg})
+
+    else if {_wid} is "gryphon":
+        play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1.0 and pitch 1.2 to {_p}
+        send action bar "&6&l✦ BÁ VƯƠNG KIẾM KHÍ! (125%% ATK) ✦" to {_p}
+        set {_dmg} to roundOneDecimal({_baseAtk} * 1.25)
+        loop 8 times:
+            set {_stepLoc} to {_pLoc}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("SWEEP_ATTACK", {_stepLoc}, 3, 0.3, 0.3, 0.3, 0.05)
+            spawnVisualParticle("CRIT_MAGIC", {_stepLoc}, 4, 0.2, 0.2, 0.2, 0.05)
+            loop living entities in radius 2.0 of {_stepLoc}:
+                applySwordWaveHit({_p}, {_vic}, loop-entity, {_dmg})
+
+    else if {_wid} is "kikoku":
+        play sound "ENTITY_ZOMBIE_VILLAGER_CURE" with volume 1.0 and pitch 1.5 to {_p}
+        send action bar "&b&l✦ QUỶ KHỐC PHÂN TÁCH! (125%% ATK) ✦" to {_p}
+        set {_dmg} to roundOneDecimal({_baseAtk} * 1.25)
+        loop 8 times:
+            set {_stepLoc} to {_pLoc}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("PORTAL", {_stepLoc}, 4, 0.2, 0.2, 0.2, 0.05)
+            spawnVisualParticle("SPELL_INSTANT", {_stepLoc}, 3, 0.2, 0.2, 0.2, 0.05)
+            loop living entities in radius 2.0 of {_stepLoc}:
+                applySwordWaveHit({_p}, {_vic}, loop-entity, {_dmg})
+
+    else if {_wid} is "soul_solid":
+        play sound "BLOCK_GLASS_BREAK" with volume 1.2 and pitch 1.2 to {_p}
+        send action bar "&3&l✦ HÀN BĂNG KIẾM KHÍ! (125%% ATK) ✦" to {_p}
+        set {_dmg} to roundOneDecimal({_baseAtk} * 1.25)
+        loop 8 times:
+            set {_stepLoc} to {_pLoc}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("SNOW_SHOVEL", {_stepLoc}, 4, 0.2, 0.2, 0.2, 0.05)
+            loop living entities in radius 2.0 of {_stepLoc}:
+                apply potion of slowness 1 to loop-entity for 2 seconds
+                applySwordWaveHit({_p}, {_vic}, loop-entity, {_dmg})
+
+    else if {_wid} is "enma":
+        play sound "ENTITY_BLAZE_SHOOT" with volume 1.2 and pitch 0.8 to {_p}
+        send action bar "&5&l✦ DIÊM MA KIẾM KHÍ! (150%% ATK) ✦" to {_p}
+        set {_dmg} to roundOneDecimal({_baseAtk} * 1.5)
+        loop 9 times:
+            set {_stepLoc} to {_pLoc}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("FLAME", {_stepLoc}, 5, 0.25, 0.25, 0.25, 0.06)
+            spawnVisualParticle("PORTAL", {_stepLoc}, 4, 0.2, 0.2, 0.2, 0.05)
+            loop living entities in radius 2.0 of {_stepLoc}:
+                ignite loop-entity for 4 seconds
+                applySwordWaveHit({_p}, {_vic}, loop-entity, {_dmg})
+
+    else if {_wid} is "ame_no_habakiri":
+        play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1.2 and pitch 1.5 to {_p}
+        send action bar "&b&l✦ THIÊN VŨ VŨ TRẢM! (145%% ATK) ✦" to {_p}
+        set {_dmg} to roundOneDecimal({_baseAtk} * 1.45)
+        loop 9 times:
+            set {_stepLoc} to {_pLoc}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("DRAGON_BREATH", {_stepLoc}, 5, 0.25, 0.25, 0.25, 0.06)
+            spawnVisualParticle("SWEEP_ATTACK", {_stepLoc}, 3, 0.2, 0.2, 0.2, 0.05)
+            loop living entities in radius 2.0 of {_stepLoc}:
+                applySwordWaveHit({_p}, {_vic}, loop-entity, {_dmg})
+
+    else if {_wid} is "yoru":
+        play sound "ENTITY_GENERIC_EXPLODE" with volume 1.2 and pitch 1.4 to {_p}
+        send action bar "&2&l✦ ĐỆ NHẤT THẾ GIỚI TRẢM! (155%% ATK) ✦" to {_p}
+        set {_dmg} to roundOneDecimal({_baseAtk} * 1.55)
+        loop 10 times:
+            set {_stepLoc} to {_pLoc}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("VILLAGER_HAPPY", {_stepLoc}, 8, 0.5, 0.5, 0.5, 0.1)
+            spawnVisualParticle("SWEEP_ATTACK", {_stepLoc}, 3, 0.6, 0.3, 0.6, 0.05)
+            loop living entities in radius 2.5 of {_stepLoc}:
+                applySwordWaveHit({_p}, {_vic}, loop-entity, {_dmg})
+
+    else if {_wid} is "bisento":
+        play sound "ENTITY_GENERIC_EXPLODE" with volume 1.0 and pitch 0.8 to {_p}
+        send action bar "&6&l✦ ĐẠI ĐAO TRẢM KÍCH! (125%% ATK) ✦" to {_p}
+        set {_dmg} to roundOneDecimal({_baseAtk} * 1.25)
+        loop 8 times:
+            set {_stepLoc} to {_pLoc}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("EXPLOSION_NORMAL", {_stepLoc}, 4, 0.3, 0.3, 0.3, 0.05)
+            spawnVisualParticle("SWEEP_ATTACK", {_stepLoc}, 2, 0.3, 0.3, 0.3, 0.05)
+            loop living entities in radius 2.0 of {_stepLoc}:
+                set {gura_channut::%uuid of loop-entity%} to System.currentTimeMillis() + 4000
+                applySwordWaveHit({_p}, {_vic}, loop-entity, {_dmg})
+
+on damage:
+    attacker is a player
+    victim is a living entity
+    damage > 0
+
+    set {_it} to getPlayerActiveMeito(attacker)
+    if isValidItem({_it}) is true:
+        set {_wid} to string tag "SigWeaponId" of nbt compound of {_it}
+        if {_wid} is set:
+            if {_wid} is not "":
+                set {_u} to uuid of attacker
+                set {_atk} to int tag "SigBaseAtk" of nbt compound of {_it}
+
+                set {_nowMs} to System.currentTimeMillis()
+                set {_lastHitExp} to {meito_last_exp_hit::%{_u}%} ? 0
+                if ({_nowMs} - {_lastHitExp}) >= 500:
+                    set {meito_last_exp_hit::%{_u}%} to {_nowMs}
+                    addMeitoHakiExp(attacker, 1)
+
+                if {_wid} is "soul_solid":
+                    add 1 to {meito_hit_counter::%{_u}%}
+                    if {meito_hit_counter::%{_u}%} >= 3:
+                        set {meito_hit_counter::%{_u}%} to 0
+                        apply potion of slowness 2 to victim for 2 seconds
+                        play sound "BLOCK_GLASS_BREAK" with volume 1 and pitch 1.5 to attacker
+                        set {_vLoc} to location of victim
+                        add 1 to y-coordinate of {_vLoc}
+                        spawnVisualParticle("SNOW_SHOVEL", {_vLoc}, 15, 0.4, 0.5, 0.4, 0.05)
+                        send action bar "&3&l✦ HÀN KHÍ ÂM GIỚI: ĐÓNG BĂNG MỤC TIÊU! ✦" to attacker
+
+                else if {_wid} is "sandai_kitetsu" or "wado_ichimonji" or "nidai_kitetsu" or "shusui" or "gryphon" or "kikoku" or "enma" or "ame_no_habakiri" or "yoru" or "bisento":
+                    add 1 to {meito_hit_counter::%{_u}%}
+                    if {meito_hit_counter::%{_u}%} >= 4:
+                        set {meito_hit_counter::%{_u}%} to 0
+                        triggerMeitoComboEffect(attacker, victim, {_wid}, {_atk})
+
+                if {_wid} is "bisento" or "murakumogiri":
+                    set {_cleaveDmg} to roundOneDecimal({_atk} * 0.6)
+                    set {_vLoc} to location of victim
+                    spawnVisualParticle("SWEEP_ATTACK", {_vLoc}, 5, 1.2, 0.2, 1.2, 0.05)
+                    set {_cleavePen} to ({aov_bonus::%{_u}%::armor_pen} ? 0.0) + ({haki_bonus::%{_u}%::armor_pen} ? 0.0) + getMeitoArmorPen(attacker)
+                    if {_cleavePen} > 55.0:
+                        set {_cleavePen} to 55.0
+                    if {ope_room_buff_until::%{_u}%} is set:
+                        if System.currentTimeMillis() < {ope_room_buff_until::%{_u}%}:
+                            add 35.0 to {_cleavePen}
+                    if {_cleavePen} > 100.0:
+                        set {_cleavePen} to 100.0
+
+                    loop living entities in radius 2.5 around victim:
+                        if loop-entity is not attacker:
+                            if loop-entity is not victim:
+                                set {_loopEUid} to uuid of loop-entity
+                                if {dummy_type::%{_loopEUid}%} is set:
+                                    set {_effCleaveDummyDmg} to {_cleaveDmg}
+                                    if {dummy_type::%{_loopEUid}%} is "boss":
+                                        set {_effCleaveDummyDmg} to calculateEffectiveDamage({_cleaveDmg}, {_cleavePen}, 150.0)
+                                    set {_hasPenCleave} to false
+                                    if {_cleavePen} > 0:
+                                        set {_hasPenCleave} to true
+                                    handleCombatDummyDirectDamage(attacker, loop-entity, {_effCleaveDummyDmg}, false, {_hasPenCleave})
+                                else:
+                                    set {_vicCleaveDef} to 0.0
+                                    if loop-entity is a player:
+                                        set {_vicCleaveDef} to getPlayerTotalDEF(loop-entity)
+                                    else:
+                                        set {_wCleaveName} to uncolored name of loop-entity
+                                        if {_wCleaveName} contains "Akainu":
+                                            set {_vicCleaveDef} to 140.0
+                                        else if {_wCleaveName} contains "Aokiji":
+                                            set {_vicCleaveDef} to 120.0
+                                        else if {_wCleaveName} contains "Vua Biển":
+                                            set {_vicCleaveDef} to 160.0
+
+                                    set {_effCleaveDmg} to calculateEffectiveDamage({_cleaveDmg}, {_cleavePen}, {_vicCleaveDef})
+                                    if loop-entity is a player:
+                                        if {mera_dmg_reduction_until::%{_loopEUid}%} is set:
+                                            if System.currentTimeMillis() < {mera_dmg_reduction_until::%{_loopEUid}%}:
+                                                set {_effCleaveDmg} to {_effCleaveDmg} * 0.60
+
+                                    if {haki_active::%{_u}%::buso} is true:
+                                        setDamageVisualTag(loop-entity, "haki")
+                                    else:
+                                        setDamageVisualTag(loop-entity, "normal")
+                                    damage loop-entity by ({_effCleaveDmg} / 2)
+
+                if {_wid} is "murakumogiri":
+                    set {murakumogiri_shred::%uuid of victim%} to System.currentTimeMillis() + 4000
+
+# ---------------------------------------------------------------------
+# 6. GIAO DIỆN XƯỞNG RÈN DANH KIẾM (/danhkiem)
+# ---------------------------------------------------------------------
+
+function getMeitoCoinPrice(wid: text) :: number:
+    if {_wid} is "katana":
+        return 60
+    else if {_wid} is "sandai_kitetsu" or "wado_ichimonji":
+        return 180
+    else if {_wid} is "nidai_kitetsu" or "shusui" or "soul_solid":
+        return 400
+    else if {_wid} is "gryphon" or "kikoku":
+        return 500
+    else if {_wid} is "enma" or "ame_no_habakiri" or "murakumogiri":
+        return 1000
+    else if {_wid} is "bisento":
+        return 1100
+    else if {_wid} is "yoru":
+        return 1200
+    return 0
+
+function openMeitoForgeGUI(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G4_C", "&6✦ &lXƯỞNG RÈN DANH KIẾM ONE PIECE &6✦", 6, yellow stained glass pane named " ", "UI_G4", "Đại Xưởng Rèn")
+
+    # --- Slot 4: Đe Tôi Luyện Hắc Kiếm (Kokuto Tracker) ---
+    set {_activeItem} to getPlayerActiveMeito({_p})
+    if isValidItem({_activeItem}) is true:
+        set {_wName} to name of {_activeItem}
+        set {_nbt} to nbt compound of {_activeItem}
+        set {_curExp} to (int tag "SigHakiExp" of {_nbt}) ? 0
+        set {_isBlk} to (byte tag "SigBlackBlade" of {_nbt}) ? 0
+        delete {_infoLore::*}
+        set {_infoLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_infoLore::2} to "&8▪ &7Vũ khí đang cầm: %{_wName}%"
+        if {_isBlk} is 1:
+            set {_infoLore::3} to "&5✦ Trạng thái: &dĐÃ THỨC TỈNH HẮC KIẾM VĨNH VIỄN"
+            set {_infoLore::4} to "&a✔ +15%% Sát thương gốc & -30%% hao Haki"
+        else:
+            set {_infoLore::3} to "&7Tiến trình Hắc Kiếm: &d[%{_curExp}%/1000 EXP]"
+            set {_infoLore::4} to "&eBật Busoshoku Haki đánh trúng mục tiêu để tôi luyện."
+        set {_infoLore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_infoItem} to makeCustomRPItem("haki_buso", "&6&l✦ ĐE TÔI LUYỆN HẮC KIẾM (KOKUTO TRACKER) ✦", {_infoLore::*})
+        set slot 4 of {_inv} to {_infoItem}
+    else:
+        delete {_emptyLore::*}
+        set {_emptyLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_emptyLore::2} to "&7Bạn chưa cầm Danh Kiếm nào trên tay!"
+        set {_emptyLore::3} to "&eCầm Danh Kiếm trên tay chính để theo dõi tiến trình Hắc Kiếm."
+        set {_emptyLore::4} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+        set {_infoItem} to makeCustomRPItem("haki_buso", "&7&l✦ CHƯA CẦM DANH KIẾM ✦", {_emptyLore::*})
+        set slot 4 of {_inv} to {_infoItem}
+
+    set {_slots::1} to 10
+    set {_slots::2} to 12
+    set {_slots::3} to 14
+
+    set {_slots::4} to 19
+    set {_slots::5} to 20
+    set {_slots::6} to 21
+    set {_slots::7} to 22
+    set {_slots::8} to 23
+
+    set {_slots::9} to 28
+    set {_slots::10} to 29
+    set {_slots::11} to 30
+    set {_slots::12} to 31
+    set {_slots::13} to 32
+
+    set {_wids::1} to "katana"
+    set {_wids::2} to "sandai_kitetsu"
+    set {_wids::3} to "wado_ichimonji"
+    set {_wids::4} to "nidai_kitetsu"
+    set {_wids::5} to "shusui"
+    set {_wids::6} to "gryphon"
+    set {_wids::7} to "kikoku"
+    set {_wids::8} to "soul_solid"
+    set {_wids::9} to "enma"
+    set {_wids::10} to "ame_no_habakiri"
+    set {_wids::11} to "yoru"
+    set {_wids::12} to "bisento"
+    set {_wids::13} to "murakumogiri"
+
+    loop 13 times:
+        set {_w} to {_wids::%loop-number%}
+        set {_s} to {_slots::%loop-number%}
+        set {_item} to createMeitoItem({_w})
+        # Bổ sung Nhãn Cộng Hưởng (Synergy Tag)
+        if {_w} is "gryphon":
+            add "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&d✦ CỘNG HƯỞNG BÁ VƯƠNG:" and "&f • &a+20%% Sát Thương & +2m Bán Kính Haoshoku" to lore of {_item}
+        else if {_w} is "kikoku":
+            add "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&b✦ CỘNG HƯỞNG OPE OPE:" and "&f • &a+3m ROOM & +20%% ST Chuẩn Gamma Knife" to lore of {_item}
+        else if {_w} is "ame_no_habakiri":
+            add "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&6✦ CỘNG HƯỞNG TRẢM XÀ:" and "&f • &a+20%% ST Lên Boss Đô Đốc & Rồng Seiryu" to lore of {_item}
+        else if {_w} is "bisento":
+            add "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&c✦ CỘNG HƯỞNG CHẤN ĐỘNG:" and "&f • &a+20%% Sát Thương Cả 3 Chiêu Gura Gura" to lore of {_item}
+
+        # Bổ sung Chi Phí Rèn Kiếm
+        set {_coinPrice} to getMeitoCoinPrice({_w})
+        add "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯" and "&6✦ CHI PHÍ RÈN KIẾM ✦" and "&f • Giá: &6%{_coinPrice}% Coin" and "" and "&a▸ Nhấn để Rèn Danh Kiếm!" to lore of {_item}
+
+        set slot {_s} of {_inv} to {_item}
+
+    # Slot 49: Hiển thị Số Dư Coin & Lối Tắt Ngân Hàng
+    delete {_balLore::*}
+    set {_balLore::1} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set {_balLore::2} to "&7Số dư Coin: &6%routerFormatNumber(getCoinBalance({_p}))% ⛁"
+    set {_balLore::3} to "&7Dùng Coin để rèn 13 Danh Kiếm One Piece!"
+    set {_balLore::4} to "&e▸ Đổi Money thành Coin tại &a/nganhang&e!"
+    set {_balLore::5} to "&8&m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"
+    set slot 49 of {_inv} to makeGlowingItem(sunflower, "&e&l✦ SỐ DƯ COIN & RÈN DANH KIẾM ✦", {_balLore::*})
+
+    openStandardUI({_p}, {_inv}, "UI_G4_C", "UI_G4")
+
+# ---------------------------------------------------------------------
+# 8. SỰ KIỆN CLICK GUI & ĐỒNG BỘ CHIẾN ĐẤU
+# ---------------------------------------------------------------------
+
+on inventory click:
+    set {_u} to uuid of player
+    if {ui_active::%{_u}%} is not "UI_G4_C":
+        stop
+    cancel event
+    if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+        player.updateInventory()
+        stop
+    if clicked inventory is not player's current inventory:
+        stop
+    set {_slot} to index of event-slot
+    if {_slot} is 45 or 46 or 53:
+        stop
+    set {_p} to player
+
+    set {_slotMap::10} to "katana"
+    set {_slotMap::12} to "sandai_kitetsu"
+    set {_slotMap::14} to "wado_ichimonji"
+    set {_slotMap::19} to "nidai_kitetsu"
+    set {_slotMap::20} to "shusui"
+    set {_slotMap::21} to "gryphon"
+    set {_slotMap::22} to "kikoku"
+    set {_slotMap::23} to "soul_solid"
+    set {_slotMap::28} to "enma"
+    set {_slotMap::29} to "ame_no_habakiri"
+    set {_slotMap::30} to "yoru"
+    set {_slotMap::31} to "bisento"
+    set {_slotMap::32} to "murakumogiri"
+
+    set {_targetWid} to {_slotMap::%{_slot}%}
+    if {_targetWid} is set:
+        set {_coinCost} to getMeitoCoinPrice({_targetWid})
+        if {_coinCost} <= 0:
+            stop
+
+        if getCoinBalance({_p}) < {_coinCost}:
+            sendSystemMsg({_p}, "error", "Bạn thiếu Coin! Cần %{_coinCost}% Coin để rèn kiếm này (Đổi tại /nganhang).")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+
+        takeCoinBalance({_p}, {_coinCost})
+
+        set {_newSword} to createMeitoItem({_targetWid})
+        set {_sName} to getMeitoDisplayName({_targetWid})
+        giveItemSafely({_p}, {_newSword})
+
+        set {_pName} to name of {_p}
+        broadcastDualCard("&6&l⚔ DANH KIẾM XUẤT THẾ", "%{_pName}% đã rèn thành công %{_sName}%!", "Một tuyệt tác vũ khí nữa đã gia nhập chiến trường Hải Tặc! (-%{_coinCost}% Coin)")
+        play sound "BLOCK_ANVIL_USE" with volume 1.2 and pitch 1.0 to {_p}
+        wait 1 tick
+        openMeitoForgeGUI({_p})
+
+on InventoryDragEvent:
+    set {_who} to event.getWhoClicked()
+    set {_u} to uuid of {_who}
+    if {ui_active::%{_u}%} is "UI_G4_C":
+        cancel event
+
+# ---------------------------------------------------------------------
+# 9. LỆNH NGƯỜI CHƠI & LỆNH QUẢN TRỊ ADMIN
+# ---------------------------------------------------------------------
+
+command /danhkiem:
+    aliases: /meito, /renvukhi
+    trigger:
+        openMeitoForgeGUI(player)
+
+
+
+command /meitoadmin [<text>] [<player>] [<text>] [<number>]:
+    permission: op
+    permission message: &cBạn không có quyền quản trị Danh Kiếm!
+    trigger:
+        if arg-1 is "give":
+            if arg-2 is not set:
+                send "&c/meitoadmin give <player> <weapon_id>" to player
+                stop
+            set {_w} to arg-3 ? "katana"
+            set {_item} to createMeitoItem({_w})
+            set {_p} to arg-2
+            if {_p} can hold {_item}:
+                give {_item} to {_p}
+            else:
+                drop {_item} at location of {_p}
+            set {_wName} to getMeitoDisplayName({_w})
+            send "&aĐã trao Danh Kiếm %{_wName}% &acho %name of {_p}%!" to player
+
+        else if arg-1 is "blackblade":
+            set {_p} to arg-2 ? player
+            set {_it} to getPlayerActiveMeito({_p})
+            if isValidItem({_it}) is true:
+                set {_nbt} to nbt compound of {_it}
+                set byte tag "SigBlackBlade" of {_nbt} to 1
+                set int tag "SigHakiExp" of {_nbt} to 1000
+                set {_u} to uuid of {_p}
+                if {combat_mode::%{_u}%} is true:
+                    set slot 8 of {_p}'s inventory to {_it}
+                else:
+                    set {_p}'s tool to {_it}
+                syncMeitoVisual({_p})
+                send "&aĐã đánh thức Hắc Kiếm Vĩnh Viễn cho %name of {_p}%!" to player
+            else:
+                send "&cNgười chơi không cầm Danh Kiếm trên tay!" to player
+
+        else if arg-1 is "setcharge" or "setexp":
+            set {_p} to arg-2 ? player
+            set {_amt} to arg-4 ? 1000
+            set {_it} to getPlayerActiveMeito({_p})
+            if isValidItem({_it}) is true:
+                set {_nbt} to nbt compound of {_it}
+                set int tag "SigHakiExp" of {_nbt} to {_amt}
+                if {_amt} >= 1000:
+                    set byte tag "SigBlackBlade" of {_nbt} to 1
+                set {_u} to uuid of {_p}
+                if {combat_mode::%{_u}%} is true:
+                    set slot 8 of {_p}'s inventory to {_it}
+                else:
+                    set {_p}'s tool to {_it}
+                syncMeitoVisual({_p})
+                send "&aĐã đặt tiến trình Hắc Kiếm của %name of {_p}% thành %{_amt}%/1000!" to player
+            else:
+                send "&cNgười chơi không cầm Danh Kiếm trên tay!" to player
+
+        else if arg-1 is "list":
+            send "&6&l✦ DANH SÁCH 13 DANH KIẾM HẢI TẶC ✦" to player
+            send "&7• Bậc I: &fkatana" to player
+            send "&7• Bậc II: &csandai_kitetsu&7, &bwado_ichimonji" to player
+            send "&7• Bậc III: &5nidai_kitetsu&7, &dshusui&7, &6gryphon&7, &ekikoku&7, &3soul_solid" to player
+            send "&7• Bậc IV: &5enma&7, &bame_no_habakiri&7, &2yoru&7, &6bisento&7, &cmurakumogiri" to player
+
+        else:
+            send "&6&l✦ HỆ THỐNG QUẢN TRỊ DANH KIẾM ✦" to player
+            send "&e• /meitoadmin give <player> <weapon_id>" to player
+            send "&e• /meitoadmin blackblade <player>" to player
+            send "&e• /meitoadmin setcharge <player> <amount>" to player
+            send "&e• /meitoadmin list" to player

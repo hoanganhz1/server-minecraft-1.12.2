@@ -1,0 +1,17 @@
+enable: true
+slot: 16
+title: '&c&lChiến Lợi Phẩm Quái (Chỉ Bán)'
+hidden: false
+sub-section: false
+display-item: false
+fill-item:
+  material: AIR
+nav-bar:
+  mode: INHERIT
+item:
+  material: BLAZE_ROD
+  displayname: '&c&lChiến Lợi Phẩm Quái'
+  name: '&c&lChiến Lợi Phẩm Quái'
+  lore:
+  - '&7Chỉ hỗ trợ BÁN vật phẩm rơi từ quái'
+  - '&7(Thịt thối, Xương, Dây nhện, Que Blaze...)'

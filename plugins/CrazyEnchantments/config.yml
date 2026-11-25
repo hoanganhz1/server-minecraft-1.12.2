@@ -1,0 +1,536 @@
+###################################
+## Currency Types: https://github.com/badbones69/Crazy-Enchantments/wiki/Currency-Types
+## Commands and Permissions: https://github.com/badbones69/Crazy-Enchantments/wiki/Commands-and-Permissions
+## 1.8 and lower players use these sounds: http://badbones69.com/javadocs/1.8.8/org/bukkit/Sound.html
+## 1.9 and up players use these sounds: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+###################################
+Settings:
+  Prefix: '&8[&aPhù Phép&8]: ' #The prefix in the messages
+  Update-Checker: false #Toggle on and off if you get an update message when you join if there is a new update.
+  Player-Info-Backup-Message: true #Toggle this on and off if you wish to see when the player's data gets backed up.
+  Reset-Players-Max-Health: false #Disabled to preserve Skript Armor Set Max Health bonuses
+  InvName: '&4&l&nLò Phù Phép' #The name of the /CE inventory
+  Enchantment-Book-Item: 'BOOK' #The item that the enchantment book is.
+  Enchantment-Book-Glowing: true #Toggle on or off if the book will have an enchanted look.
+  GUISize: 54 #The size of the GUI, must be a factor of 9
+  EnchantmentBookLore: #The lore on the enchantments books.
+    - '&7Kéo cuốn sách và thả vào vật phẩm.'
+    - '&7Chuột phải để xem thông tin chi tiết.'
+    - ''
+    - '%description%'
+    - ''
+    - '&4%destroy_rate%% Tỷ lệ Phá hủy'
+    - '&a%success_rate%% Tỷ lệ Thành công'
+  LostBook: #Lost book options.
+    Item: 'BOOK' #The item the lost books are.
+    Name: '&8&l&nSách Thất Lạc %category%' #The name of the lost books.
+    Lore: #The lore of the lost books.
+      - '&7Cuốn sách này đã thất lạc qua nhiều thế kỷ,'
+      - '&7Tương truyền chứa phù phép thuộc bậc %category%&7.'
+      - '&7Bạn cần phủi bụi để biết nội dung bên trong.'
+      - '&7&l(&6&l!&7&l) &7Chuột phải để mở sách.'
+  Scrambler:
+    Item: 'DOUBLE_PLANT' #The item it will be.
+    Glowing: true #If it has a glowing effect.
+    Name: '&e&lĐá Xáo Tỷ Lệ' #The name of the item.
+    Lore: #The lore of the item.
+      - '&7&lĐá Xáo Tỷ Lệ &7cho phép bạn'
+      - '&7quay lại tỷ lệ thành công và phá hủy.'
+      - '&7Kéo thả vào một Sách Phù Phép'
+      - '&7để nhận bộ tỷ lệ hoàn toàn mới.'
+    GUI: #Options for the GUI.
+      Name: '&8Đang quay &eĐá Xáo Tỷ Lệ' #Name of the GUI.
+      Toggle: true #If the GUI will show. Warning>> This may cause lag if a lot of players are using it all the time.
+      Pointer: #The pointer in the middle of the GUI.
+        Item: 'REDSTONE_TORCH_ON' #The item the pointer is.
+        Name: '&c&lCon Trỏ' #The name of the pointer.
+        Lore: #The lore on the pointer.
+          - '&7Tỷ lệ tại vị trí con trỏ dừng lại'
+          - '&7sẽ là tỷ lệ mới của cuốn sách.'
+    InGUI: false #If you can buy it in the GUI.
+    Slot: 1 #The slot the item will be in.
+    GUIName: '&e&lĐá Xáo Tỷ Lệ' #Name of the item in the GUI.
+    GUILore: #The lore of the item in the GUI.
+      - '&7&lĐá Xáo Tỷ Lệ &7cho phép bạn'
+      - '&7quay lại tỷ lệ thành công và phá hủy.'
+      - '&7Kéo thả vào một Sách Phù Phép'
+      - '&7để nhận bộ tỷ lệ hoàn toàn mới.'
+      - ''
+      - '&eGiá: &e&l$800'
+  GKitz: #GKitz GUI option.
+    InGUI: false #If you can open the GKitz GUI from the main /ce gui.
+    Enabled: true #If the GKitz option is enabled on the server.
+    Slot: 1 #The slot it will be in.
+    Item: 'DIAMOND_CHESTPLATE' #The item it is.
+    Glowing: true #If it has a glowing effect.
+    Name: '&c&lBộ GKitz' #The name of the item.
+    Lore: #The lore of the item.
+      - '&b>>&7&nNhấp để mở&b<<'
+  ProtectionCrystal:
+    InGUI: false #If it's in the GUI.
+    Slot: 1 #Slot it is in
+    Item: 'EMERALD' #Item it is
+    Glowing: true #If it is enchanted
+    Protected: '&6Đã Bảo Hiểm Cổ Đại' #The lore that goes on the item that is protected.
+    Lose-Protection-On-Death: true #If true then when the player dies they get the item but it loses its protection.
+    Chance: #The option to allow protection to fail.
+      Toggle: false #Toggle if the protection has a chance of failing.
+      Success-Chance: 75 #The chance that the protection will work.
+    Name: '&5&lĐá &b&lBảo Hiểm' #Name of the item
+    Lore: #Lore of the item
+      - '&7Viên đá quý hiếm giúp bảo vệ'
+      - '&7vật phẩm không bị rơi mất khi'
+      - '&7chủ nhân chẳng may tử nạn.'
+      - ''
+      - '&7&l(&6&l!&7&l) &7Kéo thả vào vật phẩm.'
+    GUIName: '&5&lĐá &b&lBảo Hiểm'
+    GUILore:
+      - '&7Viên đá quý hiếm giúp bảo vệ'
+      - '&7vật phẩm không bị rơi mất khi'
+      - '&7chủ nhân chẳng may tử nạn.'
+      - ''
+      - '&eGiá: &e&l$500'
+  BlackSmith: #Options for the Black Smith
+    InGUI: true #In the GUI.
+    Slot: 24 #Slot it is in.
+    Item: 'ANVIL' #Item that shows in the GUI
+    Glowing: false #If it has a glowing effect.
+    Name: '&7&lThợ &b&lRèn &9&lCổ Đại' #Name of the Item in the GUI
+    Lore: #Lore on the item.
+      - '&b>>&7&nNhấp để mở&b<<'
+    GUIName: '&8&lThợ Rèn' #Name of the Black Smith's GUI
+    Results:
+      None: '&c&lKhông Có Kết Quả' #Name of the item when there are no results in the Black Smith
+      Not-Found-Lore:
+        - '&7Không thể ghép hai vật phẩm này.'
+        - '&7Hãy đặt vào hai cuốn sách cùng'
+        - '&7tên và cùng cấp độ để nâng cấp,'
+        - '&7hoặc đặt hai trang bị để gộp'
+        - '&7toàn bộ phù phép lại với nhau.'
+      Found: '&c&lChi phí: &6&l%cost% Cấp XP' #The lore at the bottom of the item
+    Transaction: #Options for the pricing
+      Currency: XP_Level
+      Costs: #Cost options
+        Power-Up: 5 #When an enchantment levels up 1 on an item
+        Add-Enchantment: 3 #When it adds an enchantment to the item from another item
+        Book-Upgrade: 5 #Leveling up the power of a book
+  Tinker: #Settings for Info item in the GUI
+    InGUI: true #Toggle whether it is in the /CE GUI or not
+    Slot: 22 #Slot it is in
+    Item: 'NETHER_STAR' #Item it is
+    Glowing: false #If it has a glowing effect.
+    Name: '&7&lThợ &b&lPhân &9&lGiải' #Name of the Item
+    Lore: #Lore of the item
+      - '&b>>&7&nNhấp để mở&b<<'
+  Info: #Settings for Info item in the GUI
+    InGUI: true #Toggle whether it is in the /CE GUI or not
+    Slot: 23 #Slot it is in
+    Item: 'COMPASS' #Item it is
+    Glowing: true #If it has a glowing effect.
+    Name: '&eTra Cứu Phù Phép' #Name of the Item
+    Lore: #Lore of the item
+      - '&b>>&7&nNhấp để xem&b<<'
+  Dust: #Settings for the Magical Dust
+    MysteryDust:
+      Item: 'SULPHUR' #Item mystery dust is
+      Name: '&7Bụi Bí Ẩn' #Name of the dust
+      Lore: #Use %percent% to set the percent
+        - '&a1-%percent%% &7sẽ biến thành'
+        - '&aBụi Tăng Tỷ Lệ &7hoặc &eBụi Giảm Phá Hủy'
+        - '&7&l(&6&l!&7&l) &7Chuột phải để mở'
+      Firework:
+        Toggle: true #Toggle if the firework happens on open.
+        Colors: 'Black, Gray, Lime' #The colors the firework will be.
+      Dust-Toggle:
+        Success: true #Toggle whether you can get success dust from Mystery Dust.
+        Destroy: true #Toggle whether you can get destroy dust from Mystery Dust.
+        Failed: true #Toggle whether you can get failed dust from Mystery Dust.
+      PercentRange: #Range the mystery rate will be.
+        Max: 30 #Max percent
+        #Min will always be 1.
+    SuccessDust:
+      InGUI: true #If you can buy it in the /CE GUI
+      GUIName: '&aBụi Tăng Tỷ Lệ' #Name of the item in the GUI
+      GUILore: #Lore in the GUI.
+        - '&eGiá: &a&l$500'
+        - '&7Bụi phép giúp bạn tăng'
+        - '&7chỉ số &aTỷ Lệ Thành Công&7.'
+      Slot: 25 #Slot number it is on
+      Item: 'SUGAR' #Item the dust is
+      Name: '&aBụi Tăng Tỷ Lệ' #Name of the dust
+      Lore: #Lore for the dust
+        - '&a+%percent%% Tỷ Lệ Thành Công'
+        - '&7Kéo thả vào Sách Phù Phép để'
+        - '&7tăng tỷ lệ thành công thêm &e%percent%%'
+      PercentRange: #Range the success rate will be.
+        Max: 30 #Max percent
+        Min: 2 #Minimum percent
+    DestroyDust:
+      InGUI: true #If you can buy it in the /CE GUI
+      GUIName: '&eBụi Giảm Phá Hủy' #Name of the item in the GUI
+      GUILore: #Lore in the GUI.
+        - '&eGiá: &a&l$500'
+        - '&7Bụi phép giúp bạn giảm'
+        - '&7chỉ số &4Tỷ Lệ Phá Hủy&7.'
+      Slot: 34 #Slot number it is on
+      Item: 'REDSTONE' #Item the dust is
+      Name: '&eBụi Giảm Phá Hủy' #Name of the dust
+      Lore: #Lore for the dust
+        - '&c-%percent%% Tỷ Lệ Phá Hủy'
+        - '&7Kéo thả vào Sách Phù Phép để'
+        - '&7giảm tỷ lệ phá hủy đi &e%percent%%'
+      PercentRange: #Range the destroy rate will be.
+        Max: 10 #Max percent
+        Min: 2 #Minimum percent
+    FailedDust:
+      Item: 'SULPHUR' #Item the dust is
+      Name: '&7Bụi Hỏng' #Name of the dust
+      Lore: #Lore for the dust
+        - '&7Hạt bụi này đã mất hết ma lực.'
+        - '&7Giờ nó chỉ còn tác dụng làm thuốc'
+        - '&7nổ TNT như thuốc súng thông thường.'
+  BlackScroll: #Settings for the black scrolls
+    Item: 'INK_SACK' #The item the black scroll can be
+    Name: '&8&l&nGiấy Đen (Tách Phép)' #The name of the black scroll
+    Item-Lore: #The lore that will be on the black scroll.
+      - '&7Muốn gỡ bỏ một phù phép trên đồ?'
+      - '&7Kéo thả tờ giấy này vào vật phẩm'
+      - '&7để tách ngẫu nhiên một phù phép thành sách.'
+      - '&7&l(&6&l!&7&l) &7Chỉ áp dụng cho Phù Phép Tùy Chỉnh.'
+    Chance-Toggle: false #Toggle on and off if the black scrolls have a chance of failing.
+    Chance: 75 #The chance that the black scroll will work.
+    InGUI: true #Toggle being able to buy in the /CE GUI. Cost is controlled in the SignOptions section
+    GUIName: '&7Giấy Đen (Tách Phép)'
+    Glowing: false #If it has a glowing effect.
+    Slot: 21 #Slot you can buy the scroll at
+    Lore: #Lore of the item in the GUI
+      - '&eGiá: &a&l$1000'
+      - '&7Giấy Đen cho phép bạn tách'
+      - '&7ngẫu nhiên một phù phép ra ngoài.'
+    SuccessChance: #Controls what the success chance will be when they get the book from the Black Scroll
+      Max: 75 #The Max percent
+      Min: 35 #The Minimum percent
+    DestroyChance: #Controls what the destroy chance will be when they get the book from the Black Scroll
+      Max: 25 #The Max percent
+      Min: 5 #The Minimum percent
+  WhiteScroll:
+    Item: 'PAPER' #The item the white scroll is.
+    Name: '&f&lBùa Trắng (Bảo Vệ)' #The name of the white scrolls.
+    Item-Lore: #The lore that will be on the white scroll.
+      - '&7Muốn bảo vệ đồ khỏi bị vỡ khi ép xịt?'
+      - '&7Kéo thả bùa này lên trang bị để'
+      - '&7kháng hiệu ứng phá hủy khi ép sách.'
+    InGUI: true #Toggle being able to buy in the /CE GUI. Cost is controlled in the SignOptions section
+    GUIName: '&fBùa Trắng (Bảo Vệ)'
+    Glowing: false #If the item is glowing.
+    Slot: 30 #Slot you can buy the scroll at
+    Lore: #Lore of the scroll in the GUI
+      - '&eGiá: &a&l$2000'
+      - '&7Bùa Trắng giúp trang bị không bị'
+      - '&7phá hủy khi ép Sách Phù Phép.'
+    ProtectedName: '&b&lĐƯỢC BẢO VỆ' #The lore that is added to protect an item.
+  TransmogScroll:
+    Item: 'QUARTZ' #The item the scroll is.
+    Name: '&d&lBùa Sắp Xếp' #The name of the scroll.
+    Item-Lore: #The lore that will be on the scroll.
+      - '&7Giúp sắp xếp gọn gàng các dòng'
+      - '&7phù phép trên trang bị theo độ hiếm'
+      - '&7và hiển thị tổng số phù phép.'
+    InGUI: false #Toggle being able to buy in the /CE GUI. Cost is controlled in the SignOptions section
+    GUIName: '&dBùa Sắp Xếp'
+    Glowing: false #If it has a glowing effect.
+    Slot: 30 #Slot you can buy the scroll at
+    Lore: #Lore of the scroll in the GUI
+      - '&eGiá: &a&l$200'
+      - '&7Giúp sắp xếp gọn gàng các dòng'
+      - '&7phù phép trên trang bị theo độ hiếm'
+      - '&7và hiển thị tổng số phù phép.'
+    Amount-of-Enchantments: ' &7[&6&n%amount%&7]' #The suffix that will be added at the end of the item's name.
+    Amount-Toggle: true #If the amount is added to the suffix of the item's name.
+    Count-Vanilla-Enchantments: true #If it counts the vanilla enchantments in the amount.
+  EnchantmentOptions: #Options for enchanted books.
+    MaxAmountOfEnchantmentsToggle: true #Turn on and off the Max amount of enchantments. Use crazyenchantments.limit.# permission to set the limit.
+    IncludeVanillaEnchantments: false #Count Vanilla enchantments also.
+    Enchant-Stacked-Items: false #Turn on if you wish for enchantment books to enchant stacked items.
+    MaxRageLevel: 4 #The max amount of rage that can stack when fighting.
+    Break-Rage-On-Damage: true #If the player is damaged while building rage, it will be broken if this is enabled.
+    Right-Click-Book-Description: true #Toggles whether when you right-click the enchantment book if it messages the player the description or not.
+    UnSafe-Enchantments: true #Having this set to true will allow players to use enchantments levels above the max level.
+    Blast-Full-Durability: true #Toggle if the item takes damage for every block it breaks or just one. True to take full damage or false to take only 1 damage.
+    Right-Click-Enchantment-Table: false #When set to true if a player right-clicks an enchantment table it will open the /ce GUI.
+    EXP-Bug: false #Only needs to be true if the player's XP sometimes glitches to 1Bill after buying an item with all their XP.
+    Lightning-Sound-Range: 160 #Range in blocks where the lightning sound should become inaudible.
+    Ally-Mobs: #The name of ally mobs that show above their heads.
+      Wolf: '&bSói Chiến của %player%'
+      Iron-Golem: '&6Người Sắt của %player%'
+      Zombie: '&2Xác Sống của %player%'
+      Endermite: '&5Bọ Ender của %player%'
+      Silverfish: '&7Cá Bạc của %player%'
+      Bee: '&eOng Chiến của %player%'
+    Armor-Upgrade: #Having this enabled will allow players to try and add a higher level of an enchantment onto an item with a lower level of the enchantment.
+      Toggle: true #Toggle on or off the ability to upgrade the enchantments.
+      Enchantment-Break: true #If the book's destroy rate happens the item doesn't break but instead the current lower version of the enchantment is destroyed. If false then the item will be destroyed instead.
+    Wings: #Options for the Wings Enchantment.
+      Clouds: true #Toggle if the wings enchantment shows particles under the player's feet. Warning this option has been known to cause lag so toggle it off if you get lag.
+      Enemy-Toggle: true #This toggles on and off the wings enchantment when an enemy is close to the player.
+      Distance: 25 #How far away the enemy has to be to toggle off the enchantment.
+      Members-Can-Fly: true #Toggle if a player is a member of a world guard region if they can fly.
+      Owners-Can-Fly: true #Toggle if a player is an owner of a world guard region if they can fly.
+      Regions: #All world guard regions the Wings enchantment can work in.
+        - 'Free_Fly'
+        - 'SafeZone'
+      Worlds: #The option to disable/enable wings in worlds.
+        Limitless-Flight-Worlds: #Worlds that players are allowed to fly for a limitless amount of time. This bypasses enemy checks as well.
+          - 'Hub_Example'
+        Whitelisted: #If the player has wings enchantment in these worlds they will be able to fly anywhere regardless of regions/enemies.
+          - 'Hub_Example'
+        Blacklisted: #Wings will not work at all in these worlds regardless of regions.
+          - 'SkyBlock_Example'
+  Costs: #This is where you set the cost of stuff in the shop GUI.
+    Scrambler: #The item that is being bought.
+      Cost: 800 #How much the item will cost.
+      Currency: Vault #The currency that will be taken when bought.
+    ProtectionCrystal:
+      Cost: 500
+      Currency: Vault
+    TransmogScroll:
+      Cost: 200
+      Currency: Vault
+    BlackScroll:
+      Cost: 1000
+      Currency: Vault
+    WhiteScroll:
+      Cost: 2000
+      Currency: Vault
+    SuccessDust:
+      Cost: 500
+      Currency: Vault
+    DestroyDust:
+      Cost: 500
+      Currency: Vault
+  SignOptions: #Options for the Signs.
+    CategoryShopStyle: #What the sign will look like. The price will be determined by the category you pick
+      Line1: '&b&lCửa Hàng' #Line 1 of the sign
+      Line2: '&b&lPhù Phép:' #Line 2 of the sign
+      Line3: '&2&l%category%' #Line 3 of the sign
+      Line4: '&c&lGiá: &6&l%cost% XP' #Line 4 of the sign
+      Buy-Message: '&7Bạn vừa mua Sách Phù Phép %bookname% &7thuộc bậc %category%&7.'
+    ProtectionCrystalStyle:
+      Line1: '&b&lCửa Hàng'
+      Line2: '&b&lPhù Phép:'
+      Line3: '&5&lĐá &b&lBảo Hiểm'
+      Line4: '&c&lGiá: &a&l$500'
+      Buy-Message: '&7Bạn vừa mua một &5&lĐá &b&lBảo Hiểm&7.' #Message when buying an item.
+    ScramblerStyle:
+      Line1: '&b&lCửa Hàng'
+      Line2: '&b&lPhù Phép:'
+      Line3: '&e&lĐá Xáo Tỷ Lệ'
+      Line4: '&c&lGiá: &a&l$800'
+      Buy-Message: '&7Bạn vừa mua một &e&lĐá Xáo Tỷ Lệ&7.' #Message when buying an item.
+    SuccessDustStyle:
+      Line1: '&b&lCửa Hàng'
+      Line2: '&b&lPhù Phép:'
+      Line3: '&a&lBụi Tăng Tỷ Lệ'
+      Line4: '&c&lGiá: &a&l$500'
+      Buy-Message: '&7Bạn vừa mua một &aBụi Tăng Tỷ Lệ&7.'
+    DestroyDustStyle:
+      Line1: '&b&lCửa Hàng'
+      Line2: '&b&lPhù Phép:'
+      Line3: '&e&lBụi Giảm Phá Hủy'
+      Line4: '&c&lGiá: &a&l$500'
+      Buy-Message: '&7Bạn vừa mua một &eBụi Giảm Phá Hủy&7.'
+    BlackScrollStyle:
+      Line1: '&b&lCửa Hàng'
+      Line2: '&b&lPhù Phép:'
+      Line3: '&4&lGiấy &8&lĐen'
+      Line4: '&c&lGiá: &a&l$1000'
+      Buy-Message: '&7Bạn vừa mua một &8&l&nGiấy Đen&7.'
+    WhiteScrollStyle:
+      Line1: '&b&lCửa Hàng'
+      Line2: '&b&lPhù Phép:'
+      Line3: '&f&lBùa &b&lTrắng'
+      Line4: '&c&lGiá: &a&l$2000'
+      Buy-Message: '&7Bạn vừa mua một &f&lBùa Trắng&7.'
+    TransmogScrollStyle:
+      Line1: '&b&lCửa Hàng'
+      Line2: '&b&lPhù Phép:'
+      Line3: '&d&lBùa Sắp Xếp'
+      Line4: '&c&lGiá: &a&l$200'
+      Buy-Message: '&7Bạn vừa mua một &d&lBùa Sắp Xếp&7.'
+  #####################
+  # Slot:<Slot> - The slot the item will go in.
+  # Item:<Item Name> - The item that it will be. You can use meta data for the items. List of names: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+  # Name:<Name> - The name that will go on the item.
+  # Lore:<Line1>,<Line2>,<Line3>,<Line4> - The lore can use multiple lines by adding a , in-between letters. Example: "Lore:&7I am line1,&aI am line 2,&eI am line3"
+  #Placeholders can be used in the name and lore and they must be lowercase.
+  #Placeholders: %vault% %xp_level% %xp_total%
+  #####################
+  GUICustomization: #This allows you to customize unclickable items into your GUI.
+    - 'Slot:1, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:2, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:3, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:4, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:5, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:6, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:7, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:8, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:9, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:10, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:18, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:19, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:27, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:28, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:36, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:37, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:45, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:46, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:47, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:48, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:49, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:50, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:51, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:52, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:53, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:54, Item:STAINED_GLASS_PANE:15, Name: '
+    - 'Slot:11, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:12, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:13, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:14, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:15, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:16, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:17, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:20, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:26, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:29, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:35, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:38, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:39, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:40, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:41, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:42, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:43, Item:STAINED_GLASS_PANE:0, Name: '
+    - 'Slot:44, Item:STAINED_GLASS_PANE:0, Name: '
+Categories: #You can make as many different categories as you want
+  Common: #Name of the category
+    Name: '&a&l&nPhổ Thông' #Name in the GUI
+    Slot: 31 #The Slot number the item will be in
+    InGUI: true #Toggle if it's in the GUI or not.
+    Lore: #The lore of the Item
+      - '&eGiá: &6&l20 &6Cấp XP'
+    Item: 'STAINED_GLASS_PANE:5' #The id for the item
+    Glowing: true #If the item has a glowing effect.
+    Cost: 20 #How much each book will cost to buy.
+    Currency: XP_Level #The currency you wish to use. https://github.com/kicjow/Crazy-Enchantments/wiki/Currency-Types
+    Rarity: 1 #This allows the enchantments to be ordered with the Transmog Scrolls. The higher the number the rarer it is. Try and have each category have different rarities.
+    LostBook: #Controls the Lost Book shop for this tier
+      InGUI: false #If it shows in the /CE Gui
+      Slot: 31 #Slot it will be in
+      Item: 'BOOK' #The item that is shown in the GUI
+      Glowing: false #If the item has a glowing effect.
+      Name: '&8&l&nSách Thất Lạc &a&lBậc 1' #Name of the item
+      Lore: #Lore on the item
+        - '&7Cuốn sách cổ tương truyền chứa'
+        - '&7Phù Phép thuộc &a&lBậc 1 (Phổ Thông)&7.'
+        - '&7Chưa ai từng phủi bụi mở nó ra.'
+        - '&7Bạn có muốn thử vận may?'
+        - ''
+        - '&c&lGiá: &6&l$1000'
+      Cost: 1000
+      Currency: Vault
+      FireworkToggle: true #Toggle on and off if when opening a lost book a firework effect happens
+      FireworkColors: 'Red, White, Blue' #The colors of the firework
+      Sound-Toggle: false
+      Sound: 'BLOCK_ANVIL_PLACE'
+    EnchOptions: #Enchantment Options
+      SuccessPercent: #The range for the success rate that the enchantment will have
+        Max: 90 #The max success rate
+        Min: 40 #The min success rate
+      DestroyPercent: #The range for the destroy rate that the enchantment will have
+        Max: 10 #The max destroy rate
+        Min: 0 #The min destroy rate
+      MaxLvlToggle: true #Turn on and off Max Level cap
+      LvlRange: #The range of levels that can be found in the Category.
+        Max: 2
+        Min: 1
+  Rare:
+    Name: '&9&l&nHiếm'
+    Slot: 32
+    InGUI: true
+    Lore:
+      - '&eGiá: &6&l40 &6Cấp XP'
+    Item: 'STAINED_GLASS_PANE:11'
+    Glowing: true
+    Cost: 40
+    Currency: XP_Level
+    Rarity: 2
+    LostBook:
+      InGUI: false
+      Slot: 32
+      Item: 'BOOK'
+      Glowing: false
+      Name: '&8&l&nSách Thất Lạc &9&lBậc 2'
+      Lore:
+        - '&7Cuốn sách cổ tương truyền chứa'
+        - '&7Phù Phép thuộc &9&lBậc 2 (Hiếm)&7.'
+        - '&7Chưa ai từng phủi bụi mở nó ra.'
+        - '&7Bạn có muốn thử vận may?'
+        - ''
+        - '&c&lGiá: &6&l$2000'
+      Cost: 2000
+      Currency: Vault
+      FireworkToggle: true
+      FireworkColors: 'Black, Yellow'
+      Sound-Toggle: false
+      Sound: 'BLOCK_ANVIL_PLACE'
+    EnchOptions:
+      SuccessPercent:
+        Max: 70
+        Min: 35
+      DestroyPercent:
+        Max: 25
+        Min: 10
+      MaxLvlToggle: true
+      LvlRange:
+        Max: 3
+        Min: 2
+  Legendary:
+    Name: '&4&l&nSử Thi'
+    Slot: 33
+    InGUI: true
+    Lore:
+      - '&eGiá: &6&l60 &6Cấp XP'
+    Item: 'STAINED_GLASS_PANE:14'
+    Glowing: true
+    Cost: 60
+    Currency: XP_Level
+    Rarity: 3
+    LostBook:
+      InGUI: false
+      Slot: 33
+      Item: 'BOOK'
+      Glowing: false
+      Name: '&8&l&nSách Thất Lạc &4&lBậc 3'
+      Lore:
+        - '&7Cuốn sách cổ tương truyền chứa'
+        - '&7Phù Phép thuộc &4&lBậc 3 (Sử Thi)&7.'
+        - '&7Chưa ai từng phủi bụi mở nó ra.'
+        - '&7Bạn có muốn thử vận may?'
+        - ''
+        - '&c&lGiá: &6&l$3000'
+      Cost: 3000
+      Currency: Vault
+      FireworkToggle: true
+      FireworkColors: 'White, Gray'
+      Sound-Toggle: false
+      Sound: 'BLOCK_ANVIL_PLACE'
+    EnchOptions:
+      SuccessPercent:
+        Max: 50
+        Min: 25
+      DestroyPercent:
+        Max: 35
+        Min: 15
+      MaxLvlToggle: true
+      LvlRange:
+        Max: 5
+        Min: 3

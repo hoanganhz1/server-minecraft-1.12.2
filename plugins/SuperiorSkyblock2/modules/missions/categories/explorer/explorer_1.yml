@@ -1,0 +1,65 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+# The mission file to use
+mission-file: IslandMissions
+
+# Whether the mission should be given when completing all requirements.
+auto-reward: true
+
+# Rewards given when completing the mission.
+rewards:
+  commands:
+    - 'eco give %player% 25000'
+    - 'talentadmin addpoints %player% 5'
+    - 'is admin msg %player% &e&lThám Hiểm | &7Hoàn thành xuất sắc nhiệm vụ Khám Phá Địa Ngục!'
+    - 'is admin msg %player% &e&lThám Hiểm | &7Bạn đã sẵn sàng cho thử thách thực sự chưa?'
+    - 'is admin msg %player% &e&lThám Hiểm | &7&oXem nhiệm vụ tiếp theo tại lệnh /is missions'
+
+# List of events that will trigger the mission.
+events:
+  - IslandSchematicPasteEvent
+
+# Requirement of the event to complete the mission.
+success-check: 'event.getSchematic().endsWith("_nether")'
+
+# Icons used in the menus.
+icons:
+  not-completed:
+    type: PAPER
+    name: '&aThám Hiểm Địa Ngục'
+    lore:
+      - '&7Đặt chân đến Địa Ngục (Nether).'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7$25,000'
+      - ''
+      - '&c&l ✘ &7Chưa Hoàn Thành'
+  can-complete:
+    type: PAPER
+    name: '&aThám Hiểm Địa Ngục'
+    lore:
+      - '&7Đặt chân đến Địa Ngục (Nether).'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7$25,000'
+      - ''
+      - '&a&l ✔ &7Nhấp để nhận phần thưởng.'
+    glow: true
+  completed:
+    type: MAP
+    name: '&aThám Hiểm Địa Ngục'
+    lore:
+      - '&7Đặt chân đến Địa Ngục (Nether).'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7$25,000'
+      - ''
+      - '&a&l ✔ &7Đã Nhận Thưởng.'

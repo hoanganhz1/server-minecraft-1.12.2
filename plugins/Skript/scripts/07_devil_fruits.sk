@@ -1,0 +1,3715 @@
+# =====================================================================
+# HỆ THỐNG TRÁI ÁC QUỶ ONE PIECE (MINECRAFT 1.12.2 - SKRIPT 2.6.4 + SKBEE + REFLECT)
+# STUDIO MASTER SPECIFICATION — CHẶNG 3 (07_devil_fruits.sk)
+# 4 Trái: Mera Mera, Gomu Gomu, Ope Ope, Uouo Seiryu (Đầu 3D Base64)
+# Lõi Ác Quỷ, Đá Thức Tỉnh, Thuốc Xóa Ác Quỷ đổi màu NBT
+# Giới hạn 1 trái, Lời nguyền Biển cả, Mastery Lv.1-100, Thức Tỉnh
+# 3 Chiêu thức qua Lõi Ác Quỷ (Giảm hồi chiêu AoV) & GUI /traiacquy
+# =====================================================================
+
+import:
+    java.lang.System
+    java.util.UUID
+    java.nio.charset.StandardCharsets
+    org.bukkit.Bukkit
+    org.bukkit.Material
+    org.bukkit.Particle
+    org.bukkit.Location
+    org.bukkit.util.Vector
+    org.bukkit.entity.Player
+    org.bukkit.entity.LivingEntity
+    org.bukkit.entity.Entity
+    org.bukkit.event.inventory.InventoryDragEvent
+    org.bukkit.event.player.PlayerSwapHandItemsEvent
+    org.bukkit.event.player.PlayerItemHeldEvent
+
+# ---------------------------------------------------------------------
+# 1. HÀM TẠO VẬT PHẨM ĐỘC QUYỀN (3D BASE64 & POTION RGB)
+# ---------------------------------------------------------------------
+
+function getDevilFruitDisplayName(id: text) :: text:
+    if {_id} is "mera":
+        return "&6&lMera Mera no Mi &c(Hỏa Long)"
+    if {_id} is "gomu":
+        return "&d&lGomu Gomu no Mi &5(Cao Su)"
+    if {_id} is "ope":
+        return "&c&lOpe Ope no Mi &4(Phẫu Thuật)"
+    if {_id} is "seiryu":
+        return "&b&lUouo no Mi: Seiryu &3(Thanh Long)"
+    if {_id} is "gura":
+        return "&f&lGura Gura no Mi &7(Chấn Động)"
+    if {_id} is "pika":
+        return "&e&lPika Pika no Mi &6(Ánh Sáng)"
+    if {_id} is "goro":
+        return "&9&lGoro Goro no Mi &b(Sấm Sét)"
+    if {_id} is "phoenix":
+        return "&3&lTori Tori: Phoenix &b(Phượng Hoàng)"
+    return "&7Trái Ác Quỷ Vô Danh"
+
+function getDevilFruitItem(id: text) :: item:
+    set {_skullKey} to "%{_id}%_fruit"
+    set {_name} to ""
+    delete {_lore::*}
+
+    if {_id} is "mera":
+        set {_name} to "&6&l✦ &c&lTRÁI MERA MERA NO MI &6&l✦"
+        set {_lore::1} to "&8&m----------------------------------------"
+        set {_lore::2} to "&7Loại: &cTrái Ác Quỷ &8| &eHệ: &6Logia (Nguyên Tố Lửa)"
+        set {_lore::3} to "&7Độ hiếm: &6&lTHẦN THOẠI"
+        set {_lore::4} to ""
+        set {_lore::5} to "&6&l✦ NỘI TẠI NGUYÊN TỐ LỬA:"
+        set {_lore::6} to "&f• &eMiễn nhiễm 100%% &7sát thương Lửa, Đốt cháy và Dung nham."
+        set {_lore::7} to "&f• &eThân thể Hỏa Linh: &7Miễn nhiễm mọi đòn đánh thường nếu"
+        set {_lore::8} to "  &7đối thủ &ckhông kích hoạt Haki Vũ Trang&7!"
+        set {_lore::9} to ""
+        set {_lore::10} to "&6&l✦ BỘ KỸ NĂNG (KÍCH HOẠT QUA LÕI ÁC QUỶ):"
+        set {_lore::11} to "&f• &eChiêu 1: &6Hỏa Quyền &8(Chuột Phải - CD 5s)"
+        set {_lore::12} to "  &7Phóng luồng hỏa diệm 14 block thiêu đốt và phát nổ mục tiêu."
+        set {_lore::13} to "&f• &eChiêu 2: &cHỏa Giới Dai Enkai &8(Shift+Chuột Phải - CD 12s)"
+        set {_lore::14} to "  &7Vòng lửa bán kính 5 block thiêu đốt và hất tung kẻ địch."
+        set {_lore::15} to "&f• &eChiêu 3: &4Đại Hỏa Đế Entei &8(Phím F - CD 28s - Lv.60)"
+        set {_lore::16} to "  &7Bay lên tụ cầu lửa khổng lồ giáng xuống phát nổ 7 block."
+        set {_lore::17} to ""
+        set {_lore::18} to "&c&l⚠ CẢNH BÁO: &fMỗi người chỉ ăn được &c1 Trái Ác Quỷ&f."
+        set {_lore::19} to "&cĂn trái thứ 2 sẽ bị nổ tung cơ thể tan xác!"
+        set {_lore::20} to ""
+        set {_lore::21} to "&e▶ Nhấp Chuột Phải để hấp thu năng lực!"
+        set {_lore::22} to "&8&m----------------------------------------"
+
+    else if {_id} is "gomu":
+        set {_name} to "&d&l✦ &5&lTRÁI GOMU GOMU NO MI &d&l✦"
+        set {_lore::1} to "&8&m----------------------------------------"
+        set {_lore::2} to "&7Loại: &cTrái Ác Quỷ &8| &eHệ: &dParamecia (Siêu Nhân)"
+        set {_lore::3} to "&7Độ hiếm: &5&lHUYỀN THOẠI"
+        set {_lore::4} to ""
+        set {_lore::5} to "&d&l✦ NỘI TẠI THÂN THỂ CAO SU:"
+        set {_lore::6} to "&f• &dMiễn nhiễm 100%% &7sát thương khi rơi từ trên cao."
+        set {_lore::7} to "&f• &dĐộ co giãn cao su: &7Giảm &e35%% &7sát thương cung tên/đạn đạo."
+        set {_lore::8} to ""
+        set {_lore::9} to "&d&l✦ BỘ KỸ NĂNG (KÍCH HOẠT QUA LÕI ÁC QUỶ):"
+        set {_lore::10} to "&f• &eChiêu 1: &dPistol Cao Su &8(Chuột Phải - CD 5s)"
+        set {_lore::11} to "  &7Đấm co giãn 12 block gây sát thương và kéo mục tiêu lại."
+        set {_lore::12} to "&f• &eChiêu 2: &5Gatling Liên Hoàn &8(Shift+Chuột Phải - CD 12s)"
+        set {_lore::13} to "  &7Tung liên tiếp 6 đợt đấm bão tố về phía trước mặt."
+        set {_lore::14} to "&f• &eChiêu 3: &dGear Fourth Boundman &8(Phím F - CD 28s - Lv.60)"
+        set {_lore::15} to "  &7Cường hóa 15s: &b+40%% CDR Chiêu 1, 2&7, &a+40 DEF&7, &c+30%% VL&7."
+        set {_lore::16} to ""
+        set {_lore::17} to "&c&l⚠ CẢNH BÁO: &fMỗi người chỉ ăn được &c1 Trái Ác Quỷ&f."
+        set {_lore::18} to "&cĂn trái thứ 2 sẽ bị nổ tung cơ thể tan xác!"
+        set {_lore::19} to ""
+        set {_lore::20} to "&e▶ Nhấp Chuột Phải để hấp thu năng lực!"
+        set {_lore::21} to "&8&m----------------------------------------"
+
+    else if {_id} is "ope":
+        set {_name} to "&c&l✦ &4&lTRÁI OPE OPE NO MI &c&l✦"
+        set {_lore::1} to "&8&m----------------------------------------"
+        set {_lore::2} to "&7Loại: &cTrái Ác Quỷ &8| &eHệ: &cParamecia (Phẫu Thuật)"
+        set {_lore::3} to "&7Độ hiếm: &4&lTỐI THƯỢNG"
+        set {_lore::4} to ""
+        set {_lore::5} to "&c&l✦ NỘI TẠI BÁC SĨ TỬ THẦN:"
+        set {_lore::6} to "&f• &cKhi đứng trong ROOM: &7Được hồi máu liên tục và tăng tốc độ."
+        set {_lore::7} to "&f• &bChiêu 1 & Chiêu 3 &7lập tức hồi ngay &3Chiêu 2 (Shambles)&7."
+        set {_lore::8} to ""
+        set {_lore::9} to "&c&l✦ BỘ KỸ NĂNG (KÍCH HOẠT QUA LÕI ÁC QUỶ):"
+        set {_lore::10} to "&f• &eChiêu 1: &bKhông Gian ROOM &8(Chuột Phải - CD 5s)"
+        set {_lore::11} to "  &7Mở bán cầu không gian 10 block trong 12s, hồi phục & làm chậm địch."
+        set {_lore::12} to "  &a✦ Kích hoạt: Lập tức hồi ngay Chiêu 2 (Shambles)!"
+        set {_lore::13} to "&f• &eChiêu 2: &3Hoán Đổi Shambles &8(Shift+Chuột Phải - CD 12s)"
+        set {_lore::14} to "  &7Đổi vị trí tức thì với mục tiêu đang nhìn và làm choáng."
+        set {_lore::15} to "&f• &eChiêu 3: &4Gamma Knife &8(Phím F - CD 28s - Lv.60)"
+        set {_lore::16} to "  &7Áp sát sau lưng chém &c&lSÁT THƯƠNG CHUẨN XUYÊN GIÁP &7+ &8Wither II&7."
+        set {_lore::17} to "  &a✦ Kích hoạt: Lập tức hồi ngay Chiêu 2 (Shambles)!"
+        set {_lore::18} to ""
+        set {_lore::19} to "&c&l⚠ CẢNH BÁO: &fMỗi người chỉ ăn được &c1 Trái Ác Quỷ&f."
+        set {_lore::20} to "&cĂn trái thứ 2 sẽ bị nổ tung cơ thể tan xác!"
+        set {_lore::21} to ""
+        set {_lore::22} to "&e▶ Nhấp Chuột Phải để hấp thu năng lực!"
+        set {_lore::23} to "&8&m----------------------------------------"
+
+    else if {_id} is "seiryu":
+        set {_name} to "&b&l✦ &3&lTRÁI UOUO NO MI: SEIRYU &b&l✦"
+        set {_lore::1} to "&8&m----------------------------------------"
+        set {_lore::2} to "&7Loại: &cTrái Ác Quỷ &8| &eHệ: &bZoan Thần Thoại (Thanh Long)"
+        set {_lore::3} to "&7Độ hiếm: &b&lTHẦN THOẠI CỔ ĐẠI"
+        set {_lore::4} to ""
+        set {_lore::5} to "&b&l✦ NỘI TẠI THANH LONG ĐẾ:"
+        set {_lore::6} to "&f• &c+8.0 Máu tối đa &7(+4 Tim) vĩnh viễn (Đồng bộ máu máy chủ)."
+        set {_lore::7} to "&f• &bVảy Rồng Bất Diệt: &7Nhận vĩnh viễn hiệu ứng &aResistance I&7."
+        set {_lore::8} to ""
+        set {_lore::9} to "&b&l✦ BỘ KỸ NĂNG (KÍCH HOẠT QUA LÕI ÁC QUỶ):"
+        set {_lore::10} to "&f• &eChiêu 1: &bBolo Breath &8(Chuột Phải - CD 5s)"
+        set {_lore::11} to "  &7Khạc luồng nhiệt tức rồng thần 16 block hủy diệt phía trước."
+        set {_lore::12} to "&f• &eChiêu 2: &3Hoại Phong Kaifu &8(Shift+Chuột Phải - CD 12s)"
+        set {_lore::13} to "  &7Bão gió sắc bén đẩy lùi toàn bộ kẻ địch quanh 6 block."
+        set {_lore::14} to "&f• &eChiêu 3: &9Long Thần Giáng Thế &8(Phím F - CD 28s - Lv.60)"
+        set {_lore::15} to "  &7Bay lượn 10s, hồi &c20%% Máu &7và giáng sấm sét liên hoàn."
+        set {_lore::16} to ""
+        set {_lore::17} to "&c&l⚠ CẢNH BÁO: &fMỗi người chỉ ăn được &c1 Trái Ác Quỷ&f."
+        set {_lore::18} to "&cĂn trái thứ 2 sẽ bị nổ tung cơ thể tan xác!"
+        set {_lore::19} to ""
+        set {_lore::20} to "&e▶ Nhấp Chuột Phải để hấp thu năng lực!"
+        set {_lore::21} to "&8&m----------------------------------------"
+
+    else if {_id} is "gura":
+        set {_name} to "&f&l✦ &7&lTRÁI GURA GURA NO MI &f&l✦"
+        set {_lore::1} to "&8&m----------------------------------------"
+        set {_lore::2} to "&7Loại: &cTrái Ác Quỷ &8| &eHệ: &fParamecia (Chấn Động)"
+        set {_lore::3} to "&7Độ hiếm: &e&lTHẦN THOẠI TIER S"
+        set {_lore::4} to ""
+        set {_lore::5} to "&f&l✦ NỘI TẠI CHẤN ĐỘNG:"
+        set {_lore::6} to "&f• &eCộng thêm &c+8 HP Máu &7(+4 Tim tối đa)."
+        set {_lore::7} to ""
+        set {_lore::8} to "&f&l✦ BỘ KỸ NĂNG MOBA [1-3]:"
+        set {_lore::9} to "&f• &eChiêu 1: &fKhông Chấn Kaishin &8(CD 4s)"
+        set {_lore::10} to "  &7Đấm vỡ không gian thẳng 10m, đẩy lùi & giảm 15%% Giáp 3s."
+        set {_lore::11} to "&f• &eChiêu 2: &fChấn Kích Kabutowari &8(CD 8s - Lv.25)"
+        set {_lore::12} to "  &7Nắm đấm chấn động 4.5m Sát Thương Chuẩn & gây choáng 1.5s."
+        set {_lore::13} to "&f• &eChiêu 3: &fNghiêng Trời Lệch Đất &8(CD 16s - Lv.60)"
+        set {_lore::14} to "  &73 đợt xung kích 8m rung chuyển hất tung toàn bộ kẻ địch."
+        set {_lore::15} to ""
+        set {_lore::16} to "&e▶ Nhấp Chuột Phải để hấp thu năng lực!"
+        set {_lore::17} to "&8&m----------------------------------------"
+
+    else if {_id} is "pika":
+        set {_name} to "&e&l✦ &6&lTRÁI PIKA PIKA NO MI &e&l✦"
+        set {_lore::1} to "&8&m----------------------------------------"
+        set {_lore::2} to "&7Loại: &cTrái Ác Quỷ &8| &eHệ: &eLogia (Quang Học)"
+        set {_lore::3} to "&7Độ hiếm: &e&lTHẦN THOẠI TIER S"
+        set {_lore::4} to ""
+        set {_lore::5} to "&e&l✦ NỘI TẠI ÁNH SÁNG:"
+        set {_lore::6} to "&f• &eCộng thêm &c+6 HP Máu &7(+3 Tim tối đa)."
+        set {_lore::7} to "&f• &eThân thể Quang Linh: &b45%% Né Tránh &7nếu đối thủ không có Haki."
+        set {_lore::8} to ""
+        set {_lore::9} to "&e&l✦ BỘ KỸ NĂNG MOBA [1-3]:"
+        set {_lore::10} to "&f• &eChiêu 1: &eThiên Tùng Vân Kiếm &8(CD 3.5s)"
+        set {_lore::11} to "  &7Quét kiếm ánh sáng vòng cung 6m làm mù nhẹ 1.5s."
+        set {_lore::12} to "&f• &eChiêu 2: &eBát Chỉ Kính &8(CD 7s - Lv.25)"
+        set {_lore::13} to "  &7Tốc biến quang tốc 14m tới tâm ngắm & nổ ánh sáng 3.5m."
+        set {_lore::14} to "&f• &eChiêu 3: &eBát Xích Khúc Ngọc &8(CD 15s - Lv.60)"
+        set {_lore::15} to "  &7Bay lơ lửng phóng 12 luồng laser mưa ánh sáng diện rộng 7m."
+        set {_lore::16} to ""
+        set {_lore::17} to "&e▶ Nhấp Chuột Phải để hấp thu năng lực!"
+        set {_lore::18} to "&8&m----------------------------------------"
+
+    else if {_id} is "goro":
+        set {_name} to "&9&l✦ &b&lTRÁI GORO GORO NO MI &9&l✦"
+        set {_lore::1} to "&8&m----------------------------------------"
+        set {_lore::2} to "&7Loại: &cTrái Ác Quỷ &8| &eHệ: &9Logia (Lôi Điện)"
+        set {_lore::3} to "&7Độ hiếm: &e&lTHẦN THOẠI TIER S"
+        set {_lore::4} to ""
+        set {_lore::5} to "&9&l✦ NỘI TẠI SẤM SÉT:"
+        set {_lore::6} to "&f• &eCộng thêm &c+6 HP Máu &7(+3 Tim tối đa)."
+        set {_lore::7} to "&f• &eThân thể Lôi Linh: &b45%% Né Tránh &7nếu đối thủ không có Haki."
+        set {_lore::8} to ""
+        set {_lore::9} to "&9&l✦ BỘ KỸ NĂNG MOBA [1-3]:"
+        set {_lore::10} to "&f• &eChiêu 1: &bLôi Phạt El Thor &8(CD 4s)"
+        set {_lore::11} to "  &7Giáng cột sét thiên phạt 16m nổ điện bán kính 3.5m."
+        set {_lore::12} to "&f• &eChiêu 2: &bLôi Thần Phóng Điện Sango &8(CD 8s - Lv.25)"
+        set {_lore::13} to "  &7Phóng luồng điện hình nón 9m, làm chậm & trừ 15 Bá Khí."
+        set {_lore::14} to "&f• &eChiêu 3: &9Lôi Nghinh Raigo &8(CD 16s - Lv.60)"
+        set {_lore::15} to "  &7Tụ mây sấm giáng 5 tia sét liên hoàn nổ cực đại 8.5m."
+        set {_lore::16} to ""
+        set {_lore::17} to "&e▶ Nhấp Chuột Phải để hấp thu năng lực!"
+        set {_lore::18} to "&8&m----------------------------------------"
+
+    else if {_id} is "phoenix":
+        set {_name} to "&3&l✦ &b&lTRÁI TORI TORI: MODEL PHOENIX &3&l✦"
+        set {_lore::1} to "&8&m----------------------------------------"
+        set {_lore::2} to "&7Loại: &cTrái Ác Quỷ &8| &eHệ: &3Zoan Thần Thoại"
+        set {_lore::3} to "&7Độ hiếm: &e&lTHẦN THOẠI TIER S"
+        set {_lore::4} to ""
+        set {_lore::5} to "&3&l✦ NỘI TẠI PHƯỢNG HOÀNG BẤT TỬ:"
+        set {_lore::6} to "&f• &eCộng thêm &c+12 HP Máu &7(+6 Tim tối đa, Thức Tỉnh: +24 HP)."
+        set {_lore::7} to ""
+        set {_lore::8} to "&3&l✦ BỘ KỸ NĂNG MOBA [1-3]:"
+        set {_lore::9} to "&f• &eChiêu 1: &bPhượng Hoàng Ấn &8(CD 4s)"
+        set {_lore::10} to "  &7Lướt cánh lửa xanh 9m quét sát thương và đẩy lùi."
+        set {_lore::11} to "&f• &eChiêu 2: &bNgọn Lửa Tái Sinh &8(CD 9s - Lv.25)"
+        set {_lore::12} to "  &7Vòng lửa xanh 5.5m gây sát thương & hồi 20%% HP đồng minh."
+        set {_lore::13} to "&f• &eChiêu 3: &3Bất Tử Điểu Giáng Thế &8(CD 16s - Lv.60)"
+        set {_lore::14} to "  &7Đập cánh nổ biển lửa xanh 7.5m, giải hiệu ứng xấu & Giáp Hấp Thụ."
+        set {_lore::15} to ""
+        set {_lore::16} to "&e▶ Nhấp Chuột Phải để hấp thu năng lực!"
+        set {_lore::17} to "&8&m----------------------------------------"
+
+    set {_item} to makeCustomRPItem({_id}, {_name}, {_lore::*})
+    set string tag "DevilFruit" of nbt compound of {_item} to {_id}
+    set string tag "SkyblockItem" of nbt compound of {_item} to "df_%{_id}%"
+    return {_item}
+
+function getDevilCoreItem() :: item:
+    delete {_lore::*}
+    set {_lore::1} to "&8&m----------------------------------------"
+    set {_lore::2} to "&7Loại: &5Pháp Bảo Thần Bí &8(Vật Phẩm Kích Hoạt)"
+    set {_lore::3} to "&7Nguồn gốc: &dTinh hoa ngưng tụ của mọi Trái Ác Quỷ"
+    set {_lore::4} to ""
+    set {_lore::5} to "&d&l✦ CƠ CHẾ KÍCH HOẠT KỸ NĂNG TRÊN TAY CHÍNH:"
+    set {_lore::6} to "&f• &eChuột Phải: &fChiêu 1 &8(Độ thông thạo Lv.1)"
+    set {_lore::7} to "&f• &eShift + Chuột Phải: &fChiêu 2 &8(Độ thông thạo Lv.25)"
+    set {_lore::8} to "&f• &ePhím F (Đổi tay): &6Chiêu 3 / Tuyệt Kỹ &8(Độ thông thạo Lv.60)"
+    set {_lore::9} to ""
+    set {_lore::10} to "&b⏳ Hồi chiêu tự động giảm theo %% CDR Trang Bị Liên Quân!"
+    set {_lore::11} to "&a✦ Thức Tỉnh sẽ giảm thêm 20%% hồi chiêu và tăng 25%% sát thương!"
+    set {_lore::12} to "&8&m----------------------------------------"
+    set {_item} to makeCustomRPItem("df_chest", "&d&l✦ &5&lLÕI ÁC QUỶ THẦN BÍ &d&l✦", {_lore::*})
+    set string tag "SkyblockItem" of nbt compound of {_item} to "devil_core"
+    return {_item}
+
+function getAwakeningStoneItem() :: item:
+    delete {_lore::*}
+    set {_lore::1} to "&8&m----------------------------------------"
+    set {_lore::2} to "&7Loại: &eKhoáng Thạch Thần Thoại &8(Tiêu Hao)"
+    set {_lore::3} to "&7Công dụng: &fDùng để &6&lTHỨC TỈNH TRÁI ÁC QUỶ"
+    set {_lore::4} to "&7khi Độ Thông Thạo đạt &bLv.100 &7trong menu &e/traiacquy&7."
+    set {_lore::5} to ""
+    set {_lore::6} to "&6&l✦ HIỆU QUẢ SAU THỨC TỈNH:"
+    set {_lore::7} to "&f• &c+25%% Sát thương kỹ năng &7(Vĩnh viễn mọi chiêu)"
+    set {_lore::8} to "&f• &b-20%% Thời gian hồi chiêu &7(Cộng dồn với CDR Liên Quân)"
+    set {_lore::9} to "&8&m----------------------------------------"
+    set {_item} to makeCustomRPItem("skill_awaken", "&e&l✦ &6&lĐÁ THỨC TỈNH ÁNH SAO &e&l✦", {_lore::*})
+    set string tag "SkyblockItem" of nbt compound of {_item} to "awakening_stone"
+    return {_item}
+
+function getFruitRemoverItem() :: item:
+    delete {_lore::*}
+    set {_lore::1} to "&8&m----------------------------------------"
+    set {_lore::2} to "&7Loại: &5Thần Dược Ma Thuật &8(Uống Tiêu Hao)"
+    set {_lore::3} to "&7Công dụng: &fThanh tẩy toàn bộ sức mạnh Trái Ác Quỷ hiện tại,"
+    set {_lore::4} to "&fgiúp bạn trở về người bình thường an toàn và có thể ăn trái khác."
+    set {_lore::5} to ""
+    set {_lore::6} to "&a✔ An toàn 100%% không gây nổ tung cơ thể"
+    set {_lore::7} to "&e▶ Nhấp Chuột Phải / Uống để thanh tẩy!"
+    set {_lore::8} to "&8&m----------------------------------------"
+    # Màu Tím Hắc Ám: 8388736 (RGB: 128, 0, 128)
+    set {_item} to makeCustomPotion(8388736, "&5&l✦ &d&lTHUỐC XÓA NĂNG LỰC ÁC QUỶ &5&l✦", {_lore::*})
+    set string tag "SkyblockItem" of nbt compound of {_item} to "df_remover"
+    return {_item}
+
+function getRandomFruitChestItem() :: item:
+    delete {_lore::*}
+    set {_lore::1} to "&8&m----------------------------------------"
+    set {_lore::2} to "&7Loại: &6Rương Báu Hải Tặc &8(Mở Ngẫu Nhiên)"
+    set {_lore::3} to "&7Chứa đựng 1 trong 4 Trái Ác Quỷ Thần Thoại:"
+    set {_lore::4} to "&f• &6Mera Mera no Mi &8(Hệ Logia Lửa)"
+    set {_lore::5} to "&f• &dGomu Gomu no Mi &8(Hệ Paramecia Cao Su)"
+    set {_lore::6} to "&f• &cOpe Ope no Mi &8(Hệ Paramecia Phẫu Thuật)"
+    set {_lore::7} to "&f• &bUouo no Mi: Seiryu &8(Hệ Zoan Thanh Long)"
+    set {_lore::8} to ""
+    set {_lore::9} to "&e▶ Nhấp Chuột Phải để mở rương nhận thưởng!"
+    set {_lore::10} to "&8&m----------------------------------------"
+    set {_item} to makeCustomRPItem("df_chest", "&6&l✦ &e&lRƯƠNG TRÁI ÁC QUỶ THẦN BÍ &6&l✦", {_lore::*})
+    set string tag "SkyblockItem" of nbt compound of {_item} to "df_chest"
+    return {_item}
+
+# ---------------------------------------------------------------------
+# 2. HỆ THỐNG ĐỘ THÔNG THẠO (MASTERY LV.1 -> LV.100)
+# ---------------------------------------------------------------------
+
+function getDfRequiredExp(lvl: number) :: number:
+    if {_lvl} < 1:
+        return 50
+    if {_lvl} >= 100:
+        return 999999
+    return round({_lvl} * 40)
+
+function addDevilFruitExp(p: player, amount: number):
+    set {_u} to uuid of {_p}
+    set {_f_check} to {df_data::%{_u}%::fruit}
+    if {_f_check} is not "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+        stop
+
+    if {df_data::%{_u}%::mastery} is not set:
+        set {df_data::%{_u}%::mastery} to 1
+    if {df_data::%{_u}%::exp} is not set:
+        set {df_data::%{_u}%::exp} to 0
+    if {df_data::%{_u}%::mastery} >= 100:
+        stop
+
+    set {_isUuid} to getCrewIslandUUID({_p})
+    if hasCrewFlag({_isUuid}, "hoa_long") is true:
+        set {_amount} to round({_amount} * 1.2)
+
+    add {_amount} to {df_data::%{_u}%::exp}
+
+    # Kiểm tra thăng cấp liên tục
+    while {df_data::%{_u}%::exp} >= getDfRequiredExp({df_data::%{_u}%::mastery}):
+        set {_req} to getDfRequiredExp({df_data::%{_u}%::mastery})
+        remove {_req} from {df_data::%{_u}%::exp}
+        add 1 to {df_data::%{_u}%::mastery}
+
+        if {df_data::%{_u}%::mastery} >= 100:
+            set {df_data::%{_u}%::mastery} to 100
+            set {df_data::%{_u}%::exp} to 0
+            send title "&6&l✦ ĐẠT MASTERY LV.100! ✦" with subtitle "&eBạn đã đạt cảnh giới tối đa, hãy Thức Tỉnh trong &f/traiacquy&e!" to {_p} for 4 seconds
+            broadcastDualCard("&6&l✦ TRÁI ÁC QUỶ", "&e%name of {_p}% &fđã luyện &6%getDevilFruitDisplayName({df_data::%{_u}%::fruit})% &fđạt &b&lMastery Lv.100 &ftối đa!", "Cảnh giới tối cao đã hoàn thành, sẵn sàng Thức Tỉnh!")
+            play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to {_p}
+            exit loop
+
+        # Thăng cấp bình thường
+        set {_curLvl} to {df_data::%{_u}%::mastery}
+        send title "&6&lMASTER LEVEL UP!" with subtitle "&eĐộ thông thạo đã tăng lên &bLv.%{_curLvl}%&e!" to {_p} for 2 seconds
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to {_p}
+
+        if {_curLvl} is 25:
+            sendSystemMsg({_p}, "training", "Mastery đạt Lv.25! Đã mở khóa &eChiêu 2 &f(Phím [2] trong Chiến đấu)!")
+        else if {_curLvl} is 60:
+            sendSystemMsg({_p}, "training", "Mastery đạt Lv.60! Đã mở khóa &eChiêu 3 - Tuyệt Kỹ &f(Phím [3] trong Chiến đấu)!")
+
+function getProgressBar(cur: number, max: number) :: text:
+    if {_max} <= 0:
+        return "&7[----------]"
+    set {_pct} to {_cur} / {_max}
+    if {_pct} > 1.0:
+        set {_pct} to 1.0
+    set {_filled} to round({_pct} * 10)
+    set {_empty} to 10 - {_filled}
+    set {_res} to "&a["
+    loop {_filled} times:
+        set {_res} to "%{_res}%■"
+    set {_res} to "%{_res}%&7"
+    loop {_empty} times:
+        set {_res} to "%{_res}%□"
+    set {_res} to "%{_res}%&a]"
+    return {_res}
+
+# ---------------------------------------------------------------------
+# 3. HÀM TÍNH HỒI CHIÊU & GIẢM HỒI CHIÊU (AOV CDR + THỨC TỈNH)
+# ---------------------------------------------------------------------
+
+function playerHasDevilCore(p: player) :: boolean:
+    loop integers from 0 to 40:
+        set {_i} to slot loop-integer of {_p}'s inventory
+        if {_i} is set:
+            if {_i} is not air:
+                if type of {_i} is not air:
+                    set {_tag} to string tag "SkyblockItem" of nbt compound of {_i}
+                    if {_tag} is "devil_core":
+                        return true
+    if {_p}'s offhand tool is set:
+        if {_p}'s offhand tool is not air:
+            if type of {_p}'s offhand tool is not air:
+                set {_tag} to string tag "SkyblockItem" of nbt compound of {_p}'s offhand tool
+                if {_tag} is "devil_core":
+                    return true
+    return false
+
+function getDevilFruitSkillName(fruit: text, slot: number) :: text:
+    if {_fruit} is "mera":
+        if {_slot} is 1:
+            return "Hỏa Quyền"
+        if {_slot} is 2:
+            return "Hỏa Giới Dai Enkai"
+        if {_slot} is 3:
+            return "Đại Hỏa Đế Entei"
+    else if {_fruit} is "gomu":
+        if {_slot} is 1:
+            return "Pistol Cao Su"
+        if {_slot} is 2:
+            return "Gatling Liên Hoàn"
+        if {_slot} is 3:
+            return "Gear Fourth Boundman"
+    else if {_fruit} is "ope":
+        if {_slot} is 1:
+            return "Khai Mở ROOM"
+        if {_slot} is 2:
+            return "Phẫu Thuật Shambles"
+        if {_slot} is 3:
+            return "Dao Gamma Kháng Khuẩn"
+    else if {_fruit} is "seiryu":
+        if {_slot} is 1:
+            return "Bolo Breath Nhiệt Tức"
+        if {_slot} is 2:
+            return "Kaifu Hoại Phong"
+        if {_slot} is 3:
+            return "Long Thần Giáng Thế"
+    else if {_fruit} is "gura":
+        if {_slot} is 1:
+            return "Không Chấn Kaishin"
+        if {_slot} is 2:
+            return "Chấn Kích Kabutowari"
+        if {_slot} is 3:
+            return "Nghiêng Trời Lệch Đất"
+    else if {_fruit} is "pika":
+        if {_slot} is 1:
+            return "Thiên Tùng Vân Kiếm"
+        if {_slot} is 2:
+            return "Bát Chỉ Kính"
+        if {_slot} is 3:
+            return "Bát Xích Khúc Ngọc"
+    else if {_fruit} is "goro":
+        if {_slot} is 1:
+            return "Lôi Phạt El Thor"
+        if {_slot} is 2:
+            return "Lôi Thần Sango"
+        if {_slot} is 3:
+            return "Đại Lôi Nghinh Raigo"
+    else if {_fruit} is "phoenix":
+        if {_slot} is 1:
+            return "Phượng Hoàng Ấn"
+        if {_slot} is 2:
+            return "Ngọn Lửa Tái Sinh"
+        if {_slot} is 3:
+            return "Bất Tử Điểu Giáng Thế"
+    return "Chiêu %{_slot}%"
+
+function rotateDevilFruitSkill(p: player):
+    set {_u} to uuid of {_p}
+    set {_s} to {df_selected_skill::%{_u}%} ? 1
+    add 1 to {_s}
+    if {_s} > 3:
+        set {_s} to 1
+    set {df_selected_skill::%{_u}%} to {_s}
+
+    set {_fruit} to {df_data::%{_u}%::fruit}
+    if {_fruit} is set:
+        set {_skill_name} to getDevilFruitSkillName({_fruit}, {_s})
+        send action bar "&d&l✦ [F] Đang chọn Chiêu %{_s}%: &e%{_skill_name}% &7(Chuột Phải để tung chiêu)" to {_p}
+    else if {martial_style::%{_u}%} is set:
+        set {_skill_name} to getMartialSkillName({martial_style::%{_u}%}, {_s})
+        send action bar "&a&l⚔ [F] Đang chọn Chiêu %{_s}%: &e%{_skill_name}% &7(Chuột Phải để tung chiêu)" to {_p}
+    else:
+        send action bar "&e&l⚔ [F] Đang chọn Chiêu %{_s}% &7(Gõ &f/vohoc &7để học võ hoặc ăn Trái Ác Quỷ)" to {_p}
+
+    play sound "UI_BUTTON_CLICK" with volume 0.8 and pitch 1.6 to {_p}
+    updatePlayerSidebar({_p})
+
+function checkSkillCooldown(p: player, skillNum: number, baseCd: number) :: boolean:
+    set {_u} to uuid of {_p}
+    set {_fruit} to {df_data::%{_u}%::fruit}
+    set {_isAwakened} to ({df_data::%{_u}%::awakened} ? false)
+    set {_stdBase} to getFruitSkillBaseCooldown({_fruit}, {_skillNum}, {_isAwakened})
+    if {_stdBase} > 0:
+        set {_baseCd} to {_stdBase}
+    set {_cdSec} to getSkillCooldown({_p}, {_baseCd}, {_skillNum})
+    set {_nowMs} to System.currentTimeMillis()
+    if {df_cd_ms::%{_u}%::skill%{_skillNum}%} is set:
+        set {_passed} to ({_nowMs} - {df_cd_ms::%{_u}%::skill%{_skillNum}%}) / 1000
+        if {_passed} < {_cdSec}:
+            set {_rem} to round({_cdSec} - {_passed})
+            if {_rem} < 1:
+                set {_rem} to 1
+            set {df_cd_remaining::%{_u}%::%{_skillNum}%} to {_rem}
+            send action bar "&c&l◷ Chiêu %{_skillNum}% đang hồi! &8(Còn %{_rem}%s)" to {_p}
+            play sound "BLOCK_NOTE_BASS" with volume 0.8 and pitch 1 to {_p}
+            return false
+    else if {df_cd_time::%{_u}%::skill%{_skillNum}%} is set:
+        set {_passedSpan} to difference between {df_cd_time::%{_u}%::skill%{_skillNum}%} and now
+        set {_maxWait} to "%{_cdSec}% seconds" parsed as timespan
+        if {_passedSpan} < {_maxWait}:
+            set {_rem} to {df_cd_remaining::%{_u}%::%{_skillNum}%} ? 1
+            send action bar "&c&l◷ Chiêu %{_skillNum}% đang hồi! &8(Còn %{_rem}%s)" to {_p}
+            play sound "BLOCK_NOTE_BASS" with volume 0.8 and pitch 1 to {_p}
+            return false
+    set {df_cd_time::%{_u}%::skill%{_skillNum}%} to now
+    set {df_cd_ms::%{_u}%::skill%{_skillNum}%} to {_nowMs}
+    set {df_cd_remaining::%{_u}%::%{_skillNum}%} to round({_cdSec})
+    set {df_cd_duration::%{_u}%::skill%{_skillNum}%} to {_cdSec}
+    return true
+
+# ---------------------------------------------------------------------
+# 4. HÀM GÂY SÁT THƯƠNG KỸ NĂNG & TÍNH CHÍ MẠNG (01_talent_core)
+# ---------------------------------------------------------------------
+
+function dealDevilFruitSkillDamage(p: player, vic: entity, rawDmg: number, fruit: text, skillNum: number, flatTrue: number = 0):
+    if {_vic} is not living entity:
+        stop
+    if {_vic} is {_p}:
+        stop
+    if {_vic} is dead:
+        stop
+
+    if {_vic} is a player:
+        set {_pCrew} to getCrewIslandUUID({_p})
+        set {_vCrew} to getCrewIslandUUID({_vic})
+        if {_pCrew} is not "":
+            if {_pCrew} is {_vCrew}:
+                stop
+
+    set {_u} to uuid of {_p}
+    set {_vicU} to uuid of {_vic}
+
+    # 0. Kiểm tra Né Tránh Kỹ Năng (Dodge vs Accuracy, Bỏ trần 70%)
+    if {_vic} is a player:
+        set {_vic_dodge} to getTalentTotal({_vic}, "dodge")
+        set {_att_acc} to getTalentTotal({_p}, "accuracy")
+        set {_net_dodge} to {_vic_dodge} - {_att_acc}
+        if {_net_dodge} > 100.0:
+            set {_net_dodge} to 100.0
+        if {_net_dodge} > 0.0:
+            set {_roll_dodge} to random number between 0 and 100
+            if {_roll_dodge} <= {_net_dodge}:
+                spawnPacketDamageHolo(location of {_vic}, "&7&l» NÉ", {_vicU})
+                send action bar "&b&l✦ NÉ KỸ NĂNG! ✦" to {_vic}
+                send action bar "&7&o* Đối phương đã né tránh kỹ năng! *" to {_p}
+                play sound "ENTITY_ENDERDRAGON_FLAP" with volume 1 and pitch 1.8 to {_vic}
+                play sound "ENTITY_ENDERDRAGON_FLAP" with volume 1 and pitch 1.8 to {_p}
+                set {_vloc} to location of {_vic}
+                add 1 to y-coordinate of {_vloc}
+                spawnVisualParticle("CLOUD", {_vloc}, 15, 0.4, 0.5, 0.4, 0.05)
+                spawnVisualParticle("SMOKE_NORMAL", {_vloc}, 10, 0.3, 0.4, 0.3, 0.02)
+
+                # Haki Quan Sát né đòn: Phản công quan sát (hồi 5 Bá Khí và +15% ST trong 3s)
+                if {haki_active::%{_vicU}%::ken} is true:
+                    add 5 to {haki_energy::%{_vicU}%}
+                    if {haki_energy::%{_vicU}%} > {haki_max_energy::%{_vicU}%}:
+                        set {haki_energy::%{_vicU}%} to {haki_max_energy::%{_vicU}%}
+                    set {ken_counter_buff::%{_vicU}%} to (System.currentTimeMillis() + 3000)
+                    addHakiExp({_vic}, 10)
+                stop
+
+    # Nội tại chung Logia (mera, pika, goro): 38% Né Tránh trước đòn không bọc Haki Vũ Trang
+    if {_vic} is a player:
+        set {_vicFruit} to {df_data::%{_vicU}%::fruit}
+        if {_vicFruit} is "mera" or "pika" or "goro":
+            if {haki_active::%{_u}%::buso} is not true:
+                set {_rollLogia} to random number between 0 and 100
+                if {_rollLogia} <= 38:
+                    spawnPacketDamageHolo(location of {_vic}, "&e&l✦ LOGIA", {_vicU})
+                    send action bar "&b&l✦ LOGIA NÉ ĐÒN! &7(Cần Haki Vũ Trang)" to {_vic}
+                    send action bar "&7&o* Mục tiêu là Logia! Bật Haki Vũ Trang để tấn công! *" to {_p}
+                    play sound "ENTITY_ENDERDRAGON_FLAP" with volume 1 and pitch 1.8 to {_vic}
+                    stop
+
+    # Cập nhật Trái Mera: Kẻ địch trúng chiêu bị CẤM MỌI HỒI PHỤC trong 10s, bản thân nhận 40% Miễn Thương trong 10s
+    if {_fruit} is "mera":
+        set {mera_dmg_reduction_until::%{_u}%} to (System.currentTimeMillis() + 10000)
+        send action bar "&6&l✦ HỎA THẦN MERA: &e+40%% Miễn Thương (10s)! &c[Kẻ địch bị cấm hồi phục 10s] ✦" to {_p}
+        if {_vic} is a player:
+            set {mera_curse_until::%{_vicU}%} to (System.currentTimeMillis() + 10000)
+            set {hoa_doc::%{_vicU}%} to (System.currentTimeMillis() + 10000)
+            remove regeneration from {_vic}
+            send action bar "&c&l☠ DÍNH HỎA NGỤC MERA! &4(Bị cấm mọi hồi phục trong 10s!)" to {_vic}
+
+    # 1. Tổng hợp toàn bộ % Tăng Sát Thương Kỹ Năng (Section 3.3 Quy tắc Cộng Gộp)
+    set {_sumBonus} to 0.0
+
+    # Thưởng Bách Khoa Toàn Thư (+1.5% mỗi trái, tối đa +12%)
+    set {_pokedexBonus} to getPokedexBonusMult({_p})
+    add (({_pokedexBonus} - 1.0) * 100.0) to {_sumBonus}
+
+    # Rumble Ball Zoan (+15%)
+    if {_fruit} is "seiryu" or "phoenix":
+        if isZoanRumbleActive({_p}) is true:
+            add 15.0 to {_sumBonus}
+
+    # Cộng Hưởng Danh Kiếm (Meito Resonance)
+    set {_activeMeito} to getPlayerActiveMeito({_p})
+    if isValidItem({_activeMeito}) is true:
+        set {_mWid} to string tag "SigWeaponId" of nbt compound of {_activeMeito}
+        if {_mWid} is "kikoku":
+            if {_fruit} is "ope":
+                if {_skillNum} is 3:
+                    add 20.0 to {_sumBonus}
+        else if {_mWid} is "bisento":
+            if {_fruit} is "gura":
+                add 20.0 to {_sumBonus}
+        else if {_mWid} is "ame_no_habakiri":
+            if {boss_event::active} is true:
+                if uuid of {_vic} is {boss_event::uuid}:
+                    add 20.0 to {_sumBonus}
+            if {_vic} is a player:
+                if {df_data::%{_vicU}%::fruit} is "seiryu":
+                    add 20.0 to {_sumBonus}
+
+    # Thức Tỉnh Gura: +20% Sát thương lên Boss Đô Đốc & Vùng KOTH
+    if {_fruit} is "gura":
+        if {df_data::%{_u}%::awakened} is true:
+            if {boss_event::active} is true:
+                if uuid of {_vic} is {boss_event::uuid}:
+                    add 20.0 to {_sumBonus}
+            if {koth_active} is true:
+                if distance between {_vic} and {koth_loc} <= 8:
+                    add 20.0 to {_sumBonus}
+
+    # Thức tỉnh: Tăng 25% sát thương kỹ năng
+    if {df_data::%{_u}%::awakened} is true:
+        add 25.0 to {_sumBonus}
+
+    # Gear 4/5: +20% Sát thương kỹ năng
+    if {df_boundman::%{_u}%} is true:
+        add 20.0 to {_sumBonus}
+
+    # Lôi Thần Amaru 200 Triệu Volt: +18% sát thương kỹ năng
+    if {_fruit} is "goro":
+        set {_goroAmaru} to {goro_amaru_until::%{_u}%} ? 0
+        if System.currentTimeMillis() < {_goroAmaru}:
+            add 18.0 to {_sumBonus}
+
+    # Nanh Fenrir (AoV): +22% ST khi mục tiêu < 50% máu (+10% cho ST Chuẩn)
+    set {_fenrirTrueBonus} to 1.0
+    if {aov_bonus::%{_u}%::has_fenrir} is true:
+        if health of {_vic} < ((max health of {_vic}) / 2):
+            add 22.0 to {_sumBonus}
+            set {_fenrirTrueBonus} to 1.1
+
+    # Phản Công Kenbunshoku: +15% trong 3s
+    if {ken_counter_buff::%{_u}%} is set:
+        if System.currentTimeMillis() < {ken_counter_buff::%{_u}%}:
+            add 15.0 to {_sumBonus}
+            delete {ken_counter_buff::%{_u}%}
+
+    # CDR vượt trần 40% chuyển hóa sang Sát Thương Kỹ Năng
+    add ({aov_bonus::%{_u}%::cdr_overflow} ? 0.0) to {_sumBonus}
+
+    # Áp dụng công thức cộng đại số
+    set {_dmg} to {_rawDmg} * (1.0 + ({_sumBonus} / 100.0))
+
+    # 2. Tính toán Chí Mạng Kỹ Năng (Hạ trần xuống x1.25)
+    set {_isCrit} to false
+    set {_cc} to getTalentTotal({_p}, "crit_chance")
+    set {_cd} to getTalentTotal({_p}, "crit_damage")
+    if {_cc} > 0:
+        set {_roll_crit} to random number between 0 and 100
+        if {_roll_crit} <= {_cc}:
+            set {_isCrit} to true
+            set {_critRate} to {_cd} / 100.0
+            if {_critRate} > 1.25:
+                set {_critRate} to 1.25
+            set {_dmg} to {_dmg} * {_critRate}
+            send action bar "&c&l⚡ CHÍ MẠNG KỸ NĂNG! &e(%roundOneDecimal({_dmg})% Sát thương)" to {_p}
+            play sound "ENTITY_PLAYER_ATTACK_CRIT" with volume 1 and pitch 0.8 to {_p}
+            set {_vloc} to location of {_vic}
+            add 1 to y-coordinate of {_vloc}
+            spawnVisualParticle("CRIT_MAGIC", {_vloc}, 15, 0.4, 0.5, 0.4, 0.08)
+
+    # Khắc chế Gomu vs Sấm Sét (Goro & Sấm Sét Seiryu): Miễn 100% Sát thương sấm sét, hấp thu Bá Khí
+    set {_isLightning} to false
+    if {_fruit} is "goro":
+        set {_isLightning} to true
+    else if {_fruit} is "seiryu":
+        if {_skillNum} is 3:
+            set {_isLightning} to true
+    if {_isLightning} is true:
+        if {_vic} is a player:
+            if {df_data::%{_vicU}%::fruit} is "gomu":
+                add 15 to {haki_energy::%{_vicU}%}
+                if {haki_energy::%{_vicU}%} > {haki_max_energy::%{_vicU}%}:
+                    set {haki_energy::%{_vicU}%} to {haki_max_energy::%{_vicU}%}
+                send action bar "&a&l✦ CƠ THỂ CAO SU MIỄN NHIỄM SẤM SÉT! &7(Miễn 100%% ST, +15 Bá Khí)" to {_vic}
+                send action bar "&7&o* Mục tiêu là Cao Su (Gomu)! Miễn nhiễm 100%% Sấm Sét! *" to {_p}
+                play sound "ENTITY_SLIME_SQUISH" with volume 1 and pitch 1.8 to {_vic}
+                stop
+
+    # 3. Tính toán Xuyên Giáp & DEF mục tiêu (Trần 55%, chỉ duy nhất Nội tại ROOM Chiêu 1 Trái Ope được phép vượt trần)
+    set {_pen} to ({aov_bonus::%{_u}%::armor_pen} ? 0.0) + ({haki_bonus::%{_u}%::armor_pen} ? 0.0) + getMeitoArmorPen({_p})
+    if {mera_lam_diem::%{_u}%} is set:
+        if System.currentTimeMillis() < {mera_lam_diem::%{_u}%}:
+            add 15.0 to {_pen}
+    if {_pen} > 55.0:
+        set {_pen} to 55.0
+    # Nội tại Chiêu 1 Ope (ROOM): Duy nhất được phép phá vỡ giới hạn trần 55% (+35% Xuyên Giáp)
+    if {ope_room_buff_until::%{_u}%} is set:
+        if System.currentTimeMillis() < {ope_room_buff_until::%{_u}%}:
+            add 35.0 to {_pen}
+        else:
+            delete {ope_room_buff_until::%{_u}%}
+            delete {ope_room_seq::%{_u}%}
+    if {_pen} > 100.0:
+        set {_pen} to 100.0
+
+    set {_vicDef} to 0.0
+    if {_vic} is a player:
+        set {_vicDef} to getPlayerTotalDEF({_vic})
+    else if {dummy_type::%{_vicU}%} is set:
+        set {_dType} to {dummy_type::%{_vicU}%}
+        if {_dType} is "boss":
+            set {_vicDef} to 150.0
+    else if {boss_event::active} is true:
+        if uuid of {_vic} is {boss_event::uuid}:
+            set {_vicDef} to ({boss_event::def} ? 120.0)
+
+    # Tính sát thương sau khi trừ giáp
+    set {_finalDmg} to calculateEffectiveDamage({_dmg}, {_pen}, {_vicDef})
+
+    # Cộng Sát Thương Chuẩn (nếu có)
+    if {_flatTrue} > 0:
+        set {_trueDmg} to {_flatTrue} * {_fenrirTrueBonus}
+        add {_trueDmg} to {_finalDmg}
+
+    # Miễn thương từ Trái Mera (Hỏa Thần: 40% Miễn Thương trong 10s)
+    if {_vic} is a player:
+        if {mera_dmg_reduction_until::%{_vicU}%} is set:
+            if System.currentTimeMillis() < {mera_dmg_reduction_until::%{_vicU}%}:
+                set {_finalDmg} to {_finalDmg} * 0.60
+            else:
+                delete {mera_dmg_reduction_until::%{_vicU}%}
+
+    # 4. Mục tiêu là Bù Nhìn Thử Sát Thương (Combat Dummy)
+    if {dummy_type::%{_vicU}%} is set:
+        set {_hasPenSkill} to false
+        if {_pen} > 0:
+            set {_hasPenSkill} to true
+        if {_flatTrue} > 0:
+            set {_hasPenSkill} to true
+        handleCombatDummyDirectDamage({_p}, {_vic}, {_finalDmg}, {_isCrit}, {_hasPenSkill})
+        if {_skillNum} is 1:
+            addDevilFruitExp({_p}, 6)
+        else if {_skillNum} is 2:
+            addDevilFruitExp({_p}, 12)
+        else if {_skillNum} is 3:
+            addDevilFruitExp({_p}, 25)
+        stop
+
+    set {_isTrueDamage} to false
+    if {_isTrue} is true:
+        set {_isTrueDamage} to true
+    if {_flatTrue} > 0:
+        set {_isTrueDamage} to true
+
+    # 5. Gây sát thương thực tế (Gắn nguồn từ người chơi, tự tuân thủ WorldGuard PvP)
+    set {_tagDmg} to "normal"
+    if {_isCrit} is true:
+        set {_tagDmg} to "crit"
+    else if {_isTrueDamage} is true:
+        set {_tagDmg} to "true"
+    else if {haki_active::%{_u}%::buso} is true:
+        set {_tagDmg} to "haki"
+
+    if applySkillDamage({_p}, {_vic}, {_finalDmg}, {_tagDmg}) is false:
+        stop
+    set {_vloc} to location of {_vic}
+    add 1 to y-coordinate of {_vloc}
+    spawnVisualParticle("CRIT_MAGIC", {_vloc}, 10, 0.3, 0.4, 0.3, 0.05)
+
+    # 6. Gắn thẻ chiến đấu & EXP
+    set {last_combat::%{_u}%} to now
+    if {_vic} is a player:
+        set {last_combat::%{_vicU}%} to now
+        updatePlayerSidebar({_vic})
+    updatePlayerSidebar({_p})
+
+    if {_skillNum} is 1:
+        addDevilFruitExp({_p}, 6)
+    else if {_skillNum} is 2:
+        addDevilFruitExp({_p}, 12)
+    else if {_skillNum} is 3:
+        addDevilFruitExp({_p}, 25)
+
+# ---------------------------------------------------------------------
+# 5. ĐỒNG BỘ NỘI TẠI & LỜI NGUYỀN BIỂN CẢ (WATER CURSE)
+# ---------------------------------------------------------------------
+
+function updateDevilFruitPassives(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    # Dọn dẹp dữ liệu rác nếu fruit rỗng hoặc không hợp lệ
+    if {df_data::%{_u}%::fruit} is set:
+        set {_f_valid} to {df_data::%{_u}%::fruit}
+        if {_f_valid} is not "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+            delete {df_data::%{_u}%::*}
+            delete {df_boundman::%{_u}%}
+            delete {df_in_water::%{_u}%}
+            delete {df_bonus::%{_u}%::hp}
+            delete {df_bonus::%{_u}%::def}
+            recalcPlayerMaxHealth({_p})
+            remove resistance from {_p}
+            stop
+
+    # Xóa hoàn toàn Resistance vĩnh viễn (Section 3.2 Phase 15)
+    remove resistance from {_p}
+    delete {df_bonus::%{_u}%::hp}
+    delete {df_bonus::%{_u}%::def}
+    recalcPlayerMaxHealth({_p})
+
+on load:
+    loop all players:
+        set {_u} to uuid of loop-player
+        if {df_data::%{_u}%::fruit} is set:
+            set {_f_valid2} to {df_data::%{_u}%::fruit}
+            if {_f_valid2} is not "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+                delete {df_data::%{_u}%::*}
+                delete {df_boundman::%{_u}%}
+                delete {df_in_water::%{_u}%}
+                delete {df_bonus::%{_u}%::hp}
+                recalcPlayerMaxHealth(loop-player)
+                remove resistance from loop-player
+
+on join:
+    wait 7 ticks
+    if player is online:
+        updateDevilFruitPassives(player)
+
+on respawn:
+    wait 7 ticks
+    if player is online:
+        updateDevilFruitPassives(player)
+
+# Vòng lặp Lời nguyền Biển cả & Bá Chủ Biển Cả (Kiểm tra nước định kỳ mỗi 1 giây)
+every 1 second:
+    loop all players:
+        if loop-player is not alive:
+            continue
+        if health of loop-player <= 0:
+            continue
+        set {_u} to uuid of loop-player
+        set {_inWater} to false
+        set {_b1} to block at loop-player
+        set {_b2} to block at head location of loop-player
+        if {_b1} is water or stationary water:
+            set {_inWater} to true
+        else if {_b2} is water or stationary water:
+            set {_inWater} to true
+
+        set {_uFruit} to {df_data::%{_u}%::fruit}
+        if {_uFruit} is "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+            if {_inWater} is true:
+                set {df_in_water::%{_u}%} to true
+                apply potion of slowness 3 to loop-player for 3 seconds
+                apply potion of weakness 2 to loop-player for 3 seconds
+                apply potion of mining fatigue 2 to loop-player for 3 seconds
+                send action bar "&c&l☠ LỜI NGUYỀN BIỂN CẢ ☠ &eNước biển phong ấn sức mạnh của bạn!" to loop-player
+            else:
+                delete {df_in_water::%{_u}%}
+        else:
+            # Vô Quả Giả: Bá Chủ Biển Cả (Tăng Tốc II dưới nước)
+            if {_inWater} is true:
+                set {df_water_buff::%{_u}%} to true
+                apply potion of speed 2 to loop-player for 2 seconds
+                send action bar "&b&l✦ BÁ CHỦ BIỂN CẢ ✦ &fTốc độ & Sát thương tăng dưới nước!" to loop-player
+            else:
+                delete {df_water_buff::%{_u}%}
+
+            # Nội tại Lục Thức Hải Quân: Tăng tốc độ di chuyển thường trực (Speed I)
+            if {martial_style::%{_u}%} is "luc_thuc":
+                apply potion of speed 1 to loop-player for 2 seconds
+
+# Miễn nhiễm sát thương tự nhiên của Logia & Paramecia
+on damage of player:
+    if {skill_exact_dmg::%uuid of victim%} is set:
+        stop
+    set {_vicU} to uuid of victim
+    set {_fruit} to {df_data::%{_vicU}%::fruit}
+
+    # 1. Trái Mera Mera (Hệ Logia)
+    if {_fruit} is "mera":
+        if damage cause is fire, burn, lava, or melting:
+            cancel event
+            stop
+        if damage cause is attack:
+            if attacker is a player:
+                set {_attU} to uuid of attacker
+                # Đánh xuyên nếu có Haki Vũ Trang (buso)
+                if {haki_active::%{_attU}%::buso} is true:
+                    stop
+            cancel event
+            setDamageVisualTag(victim, "logia")
+            play sound "BLOCK_FIRE_EXTINGUISH" with volume 0.8 and pitch 1.2 to victim
+            set {_loc} to location of victim
+            add 1 to y-coordinate of {_loc}
+            spawnVisualParticle("FLAME", {_loc}, 10, 0.3, 0.5, 0.3, 0.05)
+            if attacker is a player:
+                send action bar "&c&lMERA LOGIA: &fĐối phương miễn nhiễm đòn đánh vật lý thường (Cần Haki Vũ Trang)!" to attacker
+            stop
+
+    # 2. Trái Gomu Gomu (Hệ Paramecia)
+    if {_fruit} is "gomu":
+        if damage cause is fall:
+            cancel event
+            play sound "ENTITY_SLIME_SQUISH" with volume 1 and pitch 1.5 to victim
+            stop
+        if damage cause is lightning:
+            cancel event
+            play sound "ENTITY_SLIME_SQUISH" with volume 1 and pitch 1.8 to victim
+            send action bar "&a&l✦ CƠ THỂ CAO SU MIỄN NHIỄM SẤM SÉT! &7(Miễn 100%% ST)" to victim
+            stop
+        if damage cause is projectile:
+            set damage to damage * 0.65
+
+    # 3. Trái Pika Pika (Hệ Logia 45%% Né Tránh nếu không có Busoshoku)
+    else if {_fruit} is "pika":
+        if damage cause is attack:
+            set {_bypass} to false
+            if attacker is a player:
+                if {haki_active::%uuid of attacker%::buso} is true:
+                    set {_bypass} to true
+            if {_bypass} is not true:
+                set {_r} to random number between 1 and 100
+                if {_r} <= 45:
+                    cancel event
+                    setDamageVisualTag(victim, "logia")
+                    play sound "ENTITY_FIREWORK_TWINKLE" with volume 1 and pitch 1.8 to victim
+                    set {_loc} to location of victim
+                    add 1 to y-coordinate of {_loc}
+                    spawnVisualParticle("FIREWORKS_SPARK", {_loc}, 15, 0.4, 0.6, 0.4, 0.08)
+                    send action bar "&e&lPIKA LOGIA: &fQuang hóa né tránh hoàn toàn đòn đánh!" to victim
+                    if attacker is a player:
+                        send action bar "&e&lPIKA LOGIA: &fĐối phương quang hóa né đòn (Cần Haki Vũ Trang)!" to attacker
+                    stop
+
+    # 4. Trái Goro Goro (Hệ Logia 45%% Né Tránh nếu không có Busoshoku)
+    else if {_fruit} is "goro":
+        if damage cause is attack:
+            set {_bypass} to false
+            if attacker is a player:
+                if {haki_active::%uuid of attacker%::buso} is true:
+                    set {_bypass} to true
+            if {_bypass} is not true:
+                set {_r} to random number between 1 and 100
+                if {_r} <= 45:
+                    cancel event
+                    setDamageVisualTag(victim, "logia")
+                    play sound "ENTITY_LIGHTNING_IMPACT" with volume 0.8 and pitch 1.8 to victim
+                    set {_loc} to location of victim
+                    add 1 to y-coordinate of {_loc}
+                    spawnVisualParticle("CRIT_MAGIC", {_loc}, 15, 0.4, 0.6, 0.4, 0.08)
+                    send action bar "&9&lGORO LOGIA: &fLôi hóa né tránh hoàn toàn đòn đánh!" to victim
+                    if attacker is a player:
+                        send action bar "&9&lGORO LOGIA: &fĐối phương lôi hóa né đòn (Cần Haki Vũ Trang)!" to attacker
+                    stop
+
+    # 5. Goro Thức Tỉnh: Nhịp Tim Điện (Hồi sinh 30%% HP khi nhận sát thương chí tử, CD 180s)
+    if {_fruit} is "goro":
+        if {df_data::%{_vicU}%::awakened} is true:
+            if damage >= (health of victim):
+                set {_nowMs} to System.currentTimeMillis()
+                set {_lastRevive} to {goro_revive_cd::%{_vicU}%} ? 0
+                if ({_nowMs} - {_lastRevive}) >= 180000:
+                    set {goro_revive_cd::%{_vicU}%} to {_nowMs}
+                    cancel event
+                    set {_reviveHp} to (max health of victim) * 0.3
+                    if {_reviveHp} < 1:
+                        set {_reviveHp} to 1
+                    set health of victim to {_reviveHp}
+                    extinguish victim
+                    remove poison from victim
+                    remove wither from victim
+                    apply resistance 5 to victim for 2 seconds
+                    strike lightning effect at location of victim
+                    play sound "ENTITY_LIGHTNING_THUNDER" with volume 1.5 and pitch 1.0 to victim
+                    send title "&9&l✦ NHỊP TIM ĐIỆN ✦" with subtitle "&bSốc điện tái khởi động tim! Hồi sinh 30%% HP!" to victim for 2 seconds
+                    broadcastDualCard("&9&l✦ LÔI THẦN BẤT TỬ", "%name of victim% đã kích hoạt Nhịp Tim Điện!", "Tự giật sét sốc tim hồi sinh giữa lằn ranh sinh tử!")
+                    stop
+
+# ---------------------------------------------------------------------
+# NỘI TẠI TẤN CÔNG (ON-HIT) TRÁI GORO GORO NO MI (SẤM SÉT)
+# ---------------------------------------------------------------------
+
+on damage:
+    if {skill_exact_dmg::%uuid of victim%} is set:
+        stop
+    attacker is a player
+    victim is a living entity
+    damage > 0
+
+    set {_attU} to uuid of attacker
+    set {_fruit} to {df_data::%{_attU}%::fruit}
+    if {_fruit} is "goro":
+        # Khắc chế: Gomu miễn nhiễm hoàn toàn hiệu ứng sét/choáng của Goro
+        set {_isGomuVictim} to false
+        if victim is a player:
+            if {df_data::%uuid of victim%::fruit} is "gomu":
+                set {_isGomuVictim} to true
+
+        if {_isGomuVictim} is false:
+            set {_goroAmaru} to {goro_amaru_until::%{_attU}%} ? 0
+            if System.currentTimeMillis() < {_goroAmaru}:
+                strike lightning effect at location of victim
+                send action bar "&9&l✦ LÔI THẦN AMARU: 200 TRIỆU VOLT! ✦" to attacker
+
+            apply potion of slowness 1 to victim for 1 second
+            play sound "ENTITY_LIGHTNING_IMPACT" with volume 0.7 and pitch 1.8 at location of victim
+            set {_vloc} to location of victim
+            add 1 to y-coordinate of {_vloc}
+            spawnVisualParticle("CRIT_MAGIC", {_vloc}, 12, 0.3, 0.4, 0.3, 0.08)
+            spawnVisualParticle("FIREWORKS_SPARK", {_vloc}, 8, 0.3, 0.3, 0.3, 0.05)
+
+# ---------------------------------------------------------------------
+# 6. HÀM THI TRIỂN KỸ NĂNG CHO TỪNG TRÁI ÁC QUỶ
+# ---------------------------------------------------------------------
+
+function castSkillMera(p: player, skillNum: number):
+    set {_u} to uuid of {_p}
+    if {_skillNum} is 1:
+        # Chiêu 1: Hỏa Quyền (Raytrace 14 block, 62 ST, CD 4.0s)
+        if checkSkillCooldown({_p}, 1, 4.0) is false:
+            stop
+        play sound "ENTITY_BLAZE_SHOOT" with volume 1 and pitch 0.9 at location of {_p}
+        send action bar "&6&l✦ HỎA QUYỀN! ✦" to {_p}
+        set {_eye} to {_p}.getEyeLocation()
+        set {_dir} to {_eye}.getDirection().normalize()
+        set {_hitMap::*} to ""
+        delete {_hitMap::*}
+
+        loop 14 times:
+            set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+            if block at {_stepLoc} is solid:
+                spawnVisualParticle("LAVA", {_stepLoc}, 5, 0.2, 0.2, 0.2, 0.05)
+                exit loop
+            spawnVisualParticle("FLAME", {_stepLoc}, 8, 0.2, 0.2, 0.2, 0.03)
+            spawnVisualParticle("SMOKE_LARGE", {_stepLoc}, 3, 0.1, 0.1, 0.1, 0.01)
+
+            loop all entities in radius 1.8 of {_stepLoc}:
+                if loop-entity is living entity:
+                    if loop-entity is not {_p}:
+                        set {_entId} to "%loop-entity.getEntityId()%"
+                        if {_hitMap::%{_entId}%} is not set:
+                            set {_hitMap::%{_entId}%} to true
+                            ignite loop-entity for 4 seconds
+                            dealDevilFruitSkillDamage({_p}, loop-entity, 62.0, "mera", 1)
+                            push loop-entity {_dir} at speed 0.5
+
+    else if {_skillNum} is 2:
+        # Chiêu 2: Hỏa Giới Dai Enkai (Vòng lửa 5.5 block, 86 ST, CD 9.0s)
+        if checkSkillCooldown({_p}, 2, 9.0) is false:
+            stop
+        play sound "ENTITY_GHAST_SHOOT" with volume 1 and pitch 1.1 at location of {_p}
+        send action bar "&6&l✦ HỎA GIỚI: DAI ENKAI! ✦" to {_p}
+        set {_pLoc} to location of {_p}
+        add 0.5 to y-coordinate of {_pLoc}
+
+        spawnVisualParticle("FLAME", {_pLoc}, 45, 4.0, 0.3, 4.0, 0.05)
+        spawnVisualParticle("LAVA", {_pLoc}, 15, 3.5, 0.2, 3.5, 0.02)
+
+        loop all entities in radius 5.5 of {_pLoc}:
+            if loop-entity is living entity:
+                if loop-entity is not {_p}:
+                    ignite loop-entity for 5 seconds
+                    push loop-entity upwards at speed 0.9
+                    dealDevilFruitSkillDamage({_p}, loop-entity, 86.0, "mera", 2)
+
+    else if {_skillNum} is 3:
+        # Chiêu 3: Đại Hỏa Đế Entei (138 ST, CD 18.0s, Thức tỉnh Lam Diệm 8s)
+        if checkSkillCooldown({_p}, 3, 18.0) is false:
+            stop
+        send action bar "&c&l✦ ĐẠI HỎA ĐẾ: ENTEI! ✦" to {_p}
+        play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1 and pitch 0.8 at location of {_p}
+        push {_p} upwards at speed 1.1
+
+        wait 15 ticks
+        if {_p} is not online:
+            stop
+        set {_eye} to {_p}.getEyeLocation()
+        set {_dir} to {_eye}.getDirection().normalize()
+        set {_boomLoc} to {_eye}.clone().add({_dir}.clone().multiply(8))
+
+        play sound "ENTITY_GENERIC_EXPLODE" with volume 2 and pitch 0.7 at {_boomLoc}
+        spawnVisualParticle("EXPLOSION_HUGE", {_boomLoc}, 3, 0.5, 0.5, 0.5, 0.1)
+        spawnVisualParticle("FLAME", {_boomLoc}, 80, 2.5, 2.0, 2.5, 0.2)
+        spawnVisualParticle("LAVA", {_boomLoc}, 30, 2.0, 1.5, 2.0, 0.1)
+
+        loop all entities in radius 7.5 of {_boomLoc}:
+            if loop-entity is living entity:
+                if loop-entity is not {_p}:
+                    ignite loop-entity for 7 seconds
+                    set {_pushVec} to loop-entity.getLocation().toVector().subtract({_boomLoc}.toVector()).normalize()
+                    push loop-entity {_pushVec} at speed 1.2
+                    dealDevilFruitSkillDamage({_p}, loop-entity, 138.0, "mera", 3)
+
+        if {df_data::%{_u}%::awakened} is true:
+            set {mera_lam_diem::%{_u}%} to System.currentTimeMillis() + 8000
+            send action bar "&6&l✦ THỨC TỈNH LAM DIỆM: +15%% Xuyên Giáp trong 8s! ✦" to {_p}
+
+function castSkillGomu(p: player, skillNum: number):
+    set {_u} to uuid of {_p}
+    if {_skillNum} is 1:
+        # Chiêu 1: Gomu Gomu no Pistol (Tia đấm 12 block, 60 ST, kéo mục tiêu, CD 4.0s)
+        if checkSkillCooldown({_p}, 1, 4.0) is false:
+            stop
+        play sound "ENTITY_PLAYER_ATTACK_STRONG" with volume 1 and pitch 1.2 at location of {_p}
+        send action bar "&d&l⚔ GOMU GOMU NO PISTOL! ⚔" to {_p}
+        set {_eye} to {_p}.getEyeLocation()
+        set {_dir} to {_eye}.getDirection().normalize()
+
+        loop 12 times:
+            set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+            if block at {_stepLoc} is solid:
+                exit loop
+            spawnVisualParticle("CLOUD", {_stepLoc}, 6, 0.15, 0.15, 0.15, 0.02)
+            spawnVisualParticle("CRIT", {_stepLoc}, 3, 0.1, 0.1, 0.1, 0.01)
+
+            loop all entities in radius 1.6 of {_stepLoc}:
+                if loop-entity is living entity:
+                    if loop-entity is not {_p}:
+                        dealDevilFruitSkillDamage({_p}, loop-entity, 60.0, "gomu", 1)
+                        # Kéo mục tiêu về phía người chơi
+                        set {_pullVec} to {_p}.getLocation().toVector().subtract(loop-entity.getLocation().toVector()).normalize()
+                        push loop-entity {_pullVec} at speed 1.3
+                        play sound "ENTITY_IRONGOLEM_ATTACK" with volume 1 and pitch 1 to {_p}
+                        stop
+
+    else if {_skillNum} is 2:
+        # Chiêu 2: Gomu Gomu no Gatling (6 đợt x (15 ST + 50% Buso), -15% DEF, CD 8.5s)
+        if checkSkillCooldown({_p}, 2, 8.5) is false:
+            stop
+        send action bar "&d&l⚔ GOMU GOMU NO GATLING! ⚔" to {_p}
+
+        set {_busoExtra} to 0.0
+        if {haki_active::%{_u}%::buso} is true:
+            set {_busoExtra} to ({haki_bonus::%{_u}%::flat_damage} ? 6.0) * 0.5
+        set {_hitDmg} to 15.0 + {_busoExtra}
+
+        loop 6 times:
+            if {_p} is not online:
+                stop
+            play sound "ENTITY_PLAYER_ATTACK_SWEEP" with volume 1 and pitch 1.4 at location of {_p}
+            set {_eye} to {_p}.getEyeLocation()
+            set {_dir} to {_eye}.getDirection().normalize()
+            set {_boxLoc} to {_eye}.clone().add({_dir}.clone().multiply(2.5))
+            spawnVisualParticle("SWEEP_ATTACK", {_boxLoc}, 4, 0.4, 0.4, 0.4, 0.05)
+            spawnVisualParticle("CLOUD", {_boxLoc}, 8, 0.5, 0.5, 0.5, 0.02)
+
+            loop all entities in radius 3.5 of {_boxLoc}:
+                if loop-entity is living entity:
+                    if loop-entity is not {_p}:
+                        set {gomu_def_shred::%uuid of loop-entity%} to System.currentTimeMillis() + 4000
+                        dealDevilFruitSkillDamage({_p}, loop-entity, {_hitDmg}, "gomu", 2)
+                        push loop-entity {_dir} at speed 0.3
+            wait 4 ticks
+
+    else if {_skillNum} is 3:
+        # Chiêu 3: Gear Fourth / Fifth 15s (+30% VL, +20% KN, +40 DEF, CD 19.0s)
+        if checkSkillCooldown({_p}, 3, 19.0) is false:
+            stop
+        set {df_boundman::%{_u}%} to true
+        apply potion of speed 2 to {_p} for 15 seconds
+        play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1 and pitch 1.3 at location of {_p}
+        play sound "ENTITY_WITHER_SPAWN" with volume 0.8 and pitch 1.5 at location of {_p}
+
+        if {df_data::%{_u}%::awakened} is true:
+            delete {df_cd_ms::%{_u}%::skill1}
+            delete {df_cd_ms::%{_u}%::skill2}
+            delete {df_cd_time::%{_u}%::skill1}
+            delete {df_cd_time::%{_u}%::skill2}
+            delete {df_cd_remaining::%{_u}%::1}
+            delete {df_cd_remaining::%{_u}%::2}
+            delete {df_cd_duration::%{_u}%::skill1}
+            delete {df_cd_duration::%{_u}%::skill2}
+            send action bar "&5&l✦ GEAR 5 NIKA: HỒI CHIÊU 1,2 & +40%% CDR! (+40 DEF, +30%% VL) ✦" to {_p}
+        else:
+            send action bar "&5&l✦ GEAR 4 BOUNDMAN: +40%% CDR CHIÊU 1,2! (+40 DEF, +30%% VL, Speed II) ✦" to {_p}
+
+        updatePlayerSidebar({_p})
+
+        set {_loc} to location of {_p}
+        spawnVisualParticle("EXPLOSION_NORMAL", {_loc}, 20, 0.6, 1.0, 0.6, 0.1)
+        spawnVisualParticle("SMOKE_LARGE", {_loc}, 30, 0.8, 1.2, 0.8, 0.05)
+
+        wait 15 seconds
+        if {_p} is online:
+            delete {df_boundman::%{_u}%}
+            updatePlayerSidebar({_p})
+            send action bar "&7&o* Trạng thái Gear kết thúc *" to {_p}
+            play sound "ENTITY_ITEM_BREAK" with volume 1 and pitch 1 to {_p}
+
+function castSkillOpe(p: player, skillNum: number):
+    set {_u} to uuid of {_p}
+    if {_skillNum} is 1:
+        # Chiêu 1: Không Gian ROOM (10m, 13m với Kikoku, +100% Chính Xác & +35% Xuyên Giáp trong 10s, CD 4.5s)
+        if checkSkillCooldown({_p}, 1, 4.5) is false:
+            stop
+
+        # Nội tại Ope Ope: Kích hoạt ROOM lập tức hồi chiêu Shambles (Chiêu 2)
+        delete {df_cd_ms::%{_u}%::skill2}
+        delete {df_cd_time::%{_u}%::skill2}
+        delete {df_cd_remaining::%{_u}%::2}
+        delete {df_cd_duration::%{_u}%::skill2}
+        updatePlayerSidebar({_p})
+        play sound "BLOCK_BEACON_ACTIVATE" with volume 0.8 and pitch 1.8 to {_p}
+
+        # Kích hoạt Buff +100% Chính Xác & +35% Xuyên Giáp trong 10 giây
+        set {ope_room_buff_until::%{_u}%} to System.currentTimeMillis() + 10000
+        add 1 to {ope_room_seq::%{_u}%}
+        set {_roomSeq} to {ope_room_seq::%{_u}%}
+
+        play sound "ENTITY_WITHER_SHOOT" with volume 1 and pitch 1.4 at location of {_p}
+        send action bar "&b&l❖ R O O M ! (+100%% CX & +35%% Xuyên Giáp 10s - Hồi Chiêu 2) ❖" to {_p}
+        set {_center} to location of {_p}
+
+        set {_roomRad} to 10.0
+        set {_activeMeitoOpe} to getPlayerActiveMeito({_p})
+        if isValidItem({_activeMeitoOpe}) is true:
+            if string tag "SigWeaponId" of nbt compound of {_activeMeitoOpe} is "kikoku":
+                set {_roomRad} to 13.0
+                send action bar "&b&l❖ R O O M (KIKOKU 13M: +100%% CX & +35%% Xuyên Giáp 10s - Hồi Chiêu 2)! ❖" to {_p}
+
+        # Vòng lặp duy trì 10 giây
+        loop 10 times:
+            if {_p} is not online:
+                stop
+            spawnVisualParticle("SPELL_WITCH", {_center}, 50, ({_roomRad} * 0.65), 0.3, ({_roomRad} * 0.65), 0.05)
+            spawnVisualParticle("PORTAL", {_center}, 30, ({_roomRad} * 0.6), 0.3, ({_roomRad} * 0.6), 0.05)
+
+            loop all entities in radius {_roomRad} of {_center}:
+                if loop-entity is a player:
+                    if loop-entity is not {_p}:
+                        if {df_data::%{_u}%::awakened} is true:
+                            # Thức Tỉnh ROOM: Khóa lướt / tốc biến
+                            apply potion of slowness 2 to loop-entity for 2 seconds
+                    else:
+                        apply potion of regeneration 1 to loop-entity for 2 seconds
+                else if loop-entity is living entity:
+                    apply potion of slowness 1 to loop-entity for 2 seconds
+            wait 1 second
+
+        if {ope_room_seq::%{_u}%} is {_roomSeq}:
+            if System.currentTimeMillis() >= {ope_room_buff_until::%{_u}%}:
+                delete {ope_room_buff_until::%{_u}%}
+                if {_p} is online:
+                    send action bar "&7&o* Hiệu ứng ROOM (+100%% CX & +35%% Xuyên Giáp) đã kết thúc *" to {_p}
+
+    else if {_skillNum} is 2:
+        # Chiêu 2: Hoán Đổi Shambles (34 ST, đổi vị trí, Mù 2.5s, CD 9.0s)
+        if checkSkillCooldown({_p}, 2, 9.0) is false:
+            stop
+        set {_target} to {_p}'s target
+        if {_target} is not living entity:
+            set {_eye} to {_p}.getEyeLocation()
+            set {_dir} to {_eye}.getDirection().normalize()
+            loop 15 times:
+                set {_checkLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+                loop all entities in radius 2.0 of {_checkLoc}:
+                    if loop-entity is living entity:
+                        if loop-entity is not {_p}:
+                            set {_target} to loop-entity
+                            exit loop
+                if {_target} is set:
+                    exit loop
+
+        if {_target} is not set:
+            delete {df_cd_ms::%{_u}%::skill2}
+            delete {df_cd_time::%{_u}%::skill2}
+            delete {df_cd_remaining::%{_u}%::2}
+            delete {df_cd_duration::%{_u}%::skill2}
+            updatePlayerSidebar({_p})
+            send action bar "&c[Shambles] &7Không tìm thấy mục tiêu trong phạm vi 15 block!" to {_p}
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+
+        send action bar "&b&l❖ S H A M B L E S ! (Hoán Đổi Vị Trí) ❖" to {_p}
+        set {_pLoc} to location of {_p}
+        set {_tLoc} to location of {_target}
+
+        teleport {_p} to {_tLoc}
+        teleport {_target} to {_pLoc}
+
+        play sound "ENTITY_ENDERMEN_TELEPORT" with volume 1 and pitch 1.2 at {_pLoc}
+        play sound "ENTITY_ENDERMEN_TELEPORT" with volume 1 and pitch 1.2 at {_tLoc}
+        spawnVisualParticle("PORTAL", {_pLoc}, 30, 0.5, 1.0, 0.5, 0.1)
+        spawnVisualParticle("PORTAL", {_tLoc}, 30, 0.5, 1.0, 0.5, 0.1)
+
+        apply potion of blindness 1 to {_target} for 2.5 seconds
+        dealDevilFruitSkillDamage({_p}, {_target}, 34.0, "ope", 2)
+
+    else if {_skillNum} is 3:
+        # Chiêu 3: Gamma Knife (36 ST Chuẩn (trần 48 PvP) + rút 3% HP/s (4s), CD 18.0s)
+        if checkSkillCooldown({_p}, 3, 18.0) is false:
+            stop
+        set {_target} to {_p}'s target
+        if {_target} is not living entity:
+            set {_eye} to {_p}.getEyeLocation()
+            set {_dir} to {_eye}.getDirection().normalize()
+            loop 12 times:
+                set {_checkLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+                loop all entities in radius 2.0 of {_checkLoc}:
+                    if loop-entity is living entity:
+                        if loop-entity is not {_p}:
+                            set {_target} to loop-entity
+                            exit loop
+                if {_target} is set:
+                    exit loop
+
+        if {_target} is not set:
+            delete {df_cd_ms::%{_u}%::skill3}
+            delete {df_cd_time::%{_u}%::skill3}
+            delete {df_cd_remaining::%{_u}%::3}
+            delete {df_cd_duration::%{_u}%::skill3}
+            updatePlayerSidebar({_p})
+            send action bar "&c[Gamma Knife] &7Không tìm thấy mục tiêu trong phạm vi 12 block!" to {_p}
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+
+        # Nội tại Ope Ope: Tuyệt Kỹ Gamma Knife lập tức hồi chiêu Shambles (Chiêu 2)
+        delete {df_cd_ms::%{_u}%::skill2}
+        delete {df_cd_time::%{_u}%::skill2}
+        delete {df_cd_remaining::%{_u}%::2}
+        delete {df_cd_duration::%{_u}%::skill2}
+        updatePlayerSidebar({_p})
+        play sound "BLOCK_BEACON_ACTIVATE" with volume 0.8 and pitch 1.8 to {_p}
+
+        send action bar "&4&l⚡ GAMMA KNIFE! (36 ST Chuẩn + Hồi Chiêu 2) ⚡" to {_p}
+        # Dịch chuyển ra sau lưng mục tiêu
+        set {_tEye} to {_target}.getEyeLocation()
+        set {_tDir} to {_tEye}.getDirection().normalize().multiply(-1.5)
+        set {_behindLoc} to {_target}.getLocation().add({_tDir}.getX(), 0, {_tDir}.getZ())
+        teleport {_p} to {_behindLoc}
+
+        play sound "ENTITY_WITHER_HURT" with volume 1 and pitch 0.8 at location of {_target}
+        play sound "ENTITY_PLAYER_ATTACK_CRIT" with volume 1 and pitch 0.6 at location of {_target}
+        spawnVisualParticle("CRIT_MAGIC", location of {_target}, 30, 0.5, 1.0, 0.5, 0.1)
+        spawnVisualParticle("SPELL_INSTANT", location of {_target}, 20, 0.4, 0.8, 0.4, 0.05)
+
+        set {_trueDmg} to 36.0
+        if {_target} is a player:
+            if {_trueDmg} > 48.0:
+                set {_trueDmg} to 48.0
+        dealDevilFruitSkillDamage({_p}, {_target}, 0, "ope", 3, {_trueDmg})
+
+        # DoT rút 3% HP hiện tại mỗi giây trong 4 giây
+        loop 4 times:
+            wait 1 second
+            if {_target} is alive:
+                set {_curHp} to health of {_target}
+                set {_dotDmg} to roundOneDecimal({_curHp} * 0.03)
+                if {_dotDmg} < 1:
+                    set {_dotDmg} to 1
+                if {dummy_type::%uuid of {_target}%} is set:
+                    handleCombatDummyDirectDamage({_p}, {_target}, ({_dotDmg} * 2), false, true)
+                    spawnVisualParticle("CRIT_MAGIC", location of {_target}, 6, 0.2, 0.4, 0.2, 0.03)
+                else if applySkillDamage({_p}, {_target}, ({_dotDmg} * 2), "true") is true:
+                    spawnVisualParticle("CRIT_MAGIC", location of {_target}, 6, 0.2, 0.4, 0.2, 0.03)
+
+function castSkillSeiryu(p: player, skillNum: number):
+    set {_u} to uuid of {_p}
+    if {_skillNum} is 1:
+        # Chiêu 1: Bolo Breath (66 ST đốt 16m, CD 4.5s)
+        if checkSkillCooldown({_p}, 1, 4.5) is false:
+            stop
+        play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1 and pitch 1.3 at location of {_p}
+        play sound "ENTITY_GHAST_SHOOT" with volume 1 and pitch 0.7 at location of {_p}
+        send action bar "&b&l❖ BOLO BREATH: NHIỆT TỨC! ❖" to {_p}
+        set {_eye} to {_p}.getEyeLocation()
+        set {_dir} to {_eye}.getDirection().normalize()
+        set {_hitMap::*} to ""
+        delete {_hitMap::*}
+
+        loop 16 times:
+            set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+            if block at {_stepLoc} is solid:
+                spawnVisualParticle("EXPLOSION_NORMAL", {_stepLoc}, 8, 0.3, 0.3, 0.3, 0.05)
+                exit loop
+            spawnVisualParticle("DRAGON_BREATH", {_stepLoc}, 8, 0.25, 0.25, 0.25, 0.02)
+            spawnVisualParticle("FLAME", {_stepLoc}, 6, 0.2, 0.2, 0.2, 0.03)
+
+            loop all entities in radius 2.0 of {_stepLoc}:
+                if loop-entity is living entity:
+                    if loop-entity is not {_p}:
+                        set {_entId} to "%loop-entity.getEntityId()%"
+                        if {_hitMap::%{_entId}%} is not set:
+                            set {_hitMap::%{_entId}%} to true
+                            ignite loop-entity for 5 seconds
+                            dealDevilFruitSkillDamage({_p}, loop-entity, 66.0, "seiryu", 1)
+
+    else if {_skillNum} is 2:
+        # Chiêu 2: Hoại Phong Kaifu (84 ST AoE 6.5m, trừ 15 Bá Khí, CD 9.5s)
+        if checkSkillCooldown({_p}, 2, 9.5) is false:
+            stop
+        play sound "ENTITY_PLAYER_ATTACK_SWEEP" with volume 1 and pitch 0.8 at location of {_p}
+        play sound "ENTITY_GENERIC_EXPLODE" with volume 1 and pitch 1.5 at location of {_p}
+        send action bar "&b&l✦ KAIFU: HOẠI PHONG! ✦" to {_p}
+        set {_pLoc} to location of {_p}
+        add 0.5 to y-coordinate of {_pLoc}
+
+        spawnVisualParticle("SWEEP_ATTACK", {_pLoc}, 25, 4.0, 0.3, 4.0, 0.08)
+        spawnVisualParticle("EXPLOSION_NORMAL", {_pLoc}, 15, 3.5, 0.2, 3.5, 0.03)
+
+        loop all entities in radius 6.5 of {_pLoc}:
+            if loop-entity is living entity:
+                if loop-entity is not {_p}:
+                    set {_pushVec} to loop-entity.getLocation().toVector().subtract({_pLoc}.toVector()).normalize()
+                    push loop-entity {_pushVec} at speed 1.6
+                    if loop-entity is a player:
+                        subtract 15 from {haki_energy::%uuid of loop-entity%}
+                    dealDevilFruitSkillDamage({_p}, loop-entity, 84.0, "seiryu", 2)
+
+    else if {_skillNum} is 3:
+        # Chiêu 3: Long Thần Giáng Thế (Bay 15s, x2 Máu 15s + hồi 50% Max HP + 7 đợt sét 28 ST AoE 8.5m, CD 18.0s)
+        if checkSkillCooldown({_p}, 3, 18.0) is false:
+            stop
+        set {seiryu_hp_boost::%{_u}%} to true
+        recalcPlayerMaxHealth({_p})
+        updatePlayerSidebar({_p})
+
+        # Hồi 50% Máu tối đa (theo Max HP mới đã x2) - Kiểm tra cấm hồi phục từ Mera
+        set {_canHealSeiryu} to true
+        if {mera_curse_until::%{_u}%} is set:
+            if System.currentTimeMillis() < {mera_curse_until::%{_u}%}:
+                set {_canHealSeiryu} to false
+                send action bar "&c&l☠ DÍNH HỎA NGỤC MERA: &4Không thể hồi phục Máu! ☠" to {_p}
+            else:
+                delete {mera_curse_until::%{_u}%}
+        if {_canHealSeiryu} is true:
+            set {_maxHp} to max health of {_p}
+            set {_curHp} to health of {_p}
+            set {_heal} to {_maxHp} * 0.50
+            set {_newHp} to {_curHp} + {_heal}
+            if {_newHp} > {_maxHp}:
+                set {_newHp} to {_maxHp}
+            set health of {_p} to {_newHp}
+
+        send action bar "&b&l⚡ LONG THẦN GIÁNG THẾ! (x2 Máu 15s + Hồi 50%% HP + Bay) ⚡" to {_p}
+        play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1 and pitch 0.8 at location of {_p}
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.5 to {_p}
+        set {_p}'s flight mode to true
+
+        # Giáng sấm sét mỗi 2 giây trong 15 giây (7 đợt x 28 ST)
+        loop 7 times:
+            if {_p} is not online:
+                stop
+            set {_loc} to location of {_p}
+            spawnVisualParticle("DRAGON_BREATH", {_loc}, 20, 0.8, 1.0, 0.8, 0.05)
+            spawnVisualParticle("END_ROD", {_loc}, 15, 0.6, 0.8, 0.6, 0.05)
+
+            loop all entities in radius 8.5 of {_loc}:
+                if loop-entity is living entity:
+                    if loop-entity is not {_p}:
+                        strike lightning effect at location of loop-entity
+                        dealDevilFruitSkillDamage({_p}, loop-entity, 28.0, "seiryu", 3)
+            wait 2 seconds
+
+        wait 1 second
+        if {_p} is online:
+            delete {seiryu_hp_boost::%{_u}%}
+            recalcPlayerMaxHealth({_p})
+            updatePlayerSidebar({_p})
+            if {_p}'s gamemode is not creative:
+                set {_p}'s flight mode to false
+            send action bar "&7&o* Trạng thái Long Thần Giáng Thế kết thúc *" to {_p}
+
+
+# --- KỸ NĂNG TRÁI GURA GURA NO MI (CHẤN ĐỘNG) ---
+function castSkillGura(p: player, skillNum: number):
+    set {_u} to uuid of {_p}
+    if {_skillNum} is 1:
+        # Chiêu 1: Không Chấn Kaishin (Chấn Động Đa Tầng 3 đợt x 66 ST, nón 10m + AoE 6x6, gây Chấn Nứt -15% DEF, CD 4.0s)
+        if checkSkillCooldown({_p}, 1, 4.0) is false:
+            stop
+        play sound "BLOCK_GLASS_BREAK" with volume 1.5 and pitch 0.5 at location of {_p}
+        play sound "ENTITY_GENERIC_EXPLODE" with volume 1.2 and pitch 1.2 at location of {_p}
+        send action bar "&f&l✦ KHÔNG CHẤN KAISHIN! (Chấn Động Đa Tầng 3 Đợt x 66 ST - 6x6) ✦" to {_p}
+        set {_eye} to {_p}.getEyeLocation()
+        set {_dir} to {_eye}.getDirection().normalize()
+
+        # Phát 3 đợt sóng chấn nứt liên tiếp (mỗi đợt cách nhau 3 ticks), giữ nguyên nấc 66 ST mỗi đợt
+        loop 3 times:
+            if {_p} is not online:
+                stop
+            delete {_hitMap::*}
+            if loop-number > 1:
+                play sound "BLOCK_GLASS_BREAK" with volume 1.2 and pitch 0.6 at location of {_p}
+                play sound "ENTITY_GENERIC_EXPLODE" with volume 1.0 and pitch 1.4 at location of {_p}
+
+            # Quét sóng xung kích theo hướng nhìn 10m & bán kính rộng 3.5m mỗi bước
+            loop 10 times:
+                set {_step} to loop-number-2
+                set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply({_step}))
+                spawnVisualParticle("EXPLOSION_LARGE", {_stepLoc}, 2, 0.4, 0.4, 0.4, 0.05)
+                spawnVisualParticle("CLOUD", {_stepLoc}, 5, 0.4, 0.4, 0.4, 0.05)
+                loop living entities in radius 3.5 of {_stepLoc}:
+                    if loop-entity is not {_p}:
+                        set {_entId} to "%loop-entity.getEntityId()%"
+                        if {_hitMap::%{_entId}%} is not set:
+                            set {_hitMap::%{_entId}%} to true
+                            push loop-entity {_dir} at speed 0.5
+                            set {gura_channut::%uuid of loop-entity%} to System.currentTimeMillis() + 4000
+                            dealDevilFruitSkillDamage({_p}, loop-entity, 66.0, "gura", 1)
+
+            # Quét bao phủ toàn bộ mục tiêu trong bán kính 6.0 xung quanh người chơi (6x6)
+            loop living entities in radius 6.0 of location of {_p}:
+                if loop-entity is not {_p}:
+                    set {_entId} to "%loop-entity.getEntityId()%"
+                    if {_hitMap::%{_entId}%} is not set:
+                        set {_hitMap::%{_entId}%} to true
+                        push loop-entity {_dir} at speed 0.5
+                        set {gura_channut::%uuid of loop-entity%} to System.currentTimeMillis() + 4000
+                        dealDevilFruitSkillDamage({_p}, loop-entity, 66.0, "gura", 1)
+
+            wait 3 ticks
+
+    else if {_skillNum} is 2:
+        # Chiêu 2: Chấn Kích Kabutowari (64 ST VL bán kính 6x6; nếu có Chấn Nứt: +28 ST Chuẩn + Choáng 1.5s, CD 8.5s)
+        if checkSkillCooldown({_p}, 2, 8.5) is false:
+            stop
+        play sound "BLOCK_ANVIL_LAND" with volume 1.5 and pitch 0.8 at location of {_p}
+        play sound "ENTITY_WITHER_SHOOT" with volume 1.2 and pitch 0.6 at location of {_p}
+        send action bar "&f&l✦ CHẤN KÍCH KABUTOWARI! (Hitbox 6x6) ✦" to {_p}
+        set {_loc} to location of {_p}
+        add 0.5 to y-coordinate of {_loc}
+        spawnVisualParticle("EXPLOSION_HUGE", {_loc}, 5, 2.0, 0.8, 2.0, 0.1)
+        delete {_hitMap2::*}
+        loop living entities in radius 6.0 of {_loc}:
+            if loop-entity is not {_p}:
+                set {_entId} to "%loop-entity.getEntityId()%"
+                if {_hitMap2::%{_entId}%} is not set:
+                    set {_hitMap2::%{_entId}%} to true
+                    set {_flatTrue} to 0.0
+                    set {_vicId} to uuid of loop-entity
+                    if {gura_channut::%{_vicId}%} is set:
+                        if System.currentTimeMillis() < {gura_channut::%{_vicId}%}:
+                            set {_flatTrue} to 28.0
+                            if loop-entity is a player:
+                                if {_flatTrue} > 38.0:
+                                    set {_flatTrue} to 38.0
+                            apply potion of slowness 5 to loop-entity for 1.5 seconds
+                            apply potion of jump boost 128 to loop-entity for 1.5 seconds
+                    dealDevilFruitSkillDamage({_p}, loop-entity, 64.0, "gura", 2, {_flatTrue})
+
+    else if {_skillNum} is 3:
+        # Chiêu 3: Nghiêng Trời Lệch Đất Shima Yurashi (3 đợt x 48 ST = 144 ST AoE 8.5m, CD 17.0s)
+        if checkSkillCooldown({_p}, 3, 17.0) is false:
+            stop
+        play sound "ENTITY_GENERIC_EXPLODE" with volume 1.8 and pitch 0.5 at location of {_p}
+        send action bar "&f&l✦ NGHIÊNG TRỜI LỆCH ĐẤT SHIMA YURASHI! ✦" to {_p}
+        set {_pName} to name of {_p}
+        broadcastDualCard("&f&l☠ GURA GURA", "%{_pName}% tung tuyệt kỹ Nghiêng Trời Lệch Đất!", "Sóng xung kích đại địa chấn làm nghiêng ngả toàn bộ hòn đảo!")
+        set {_loc} to location of {_p}
+        loop 3 times:
+            if {_p} is not online:
+                stop
+            spawnVisualParticle("EXPLOSION_HUGE", {_loc}, 5, 2.5, 0.8, 2.5, 0.1)
+            spawnVisualParticle("CLOUD", {_loc}, 40, 2.5, 0.5, 2.5, 0.1)
+            play sound "ENTITY_GENERIC_EXPLODE" with volume 1.5 and pitch 0.7 at {_loc}
+            delete {_hitMap3::*}
+            loop living entities in radius 8.5 of {_loc}:
+                if loop-entity is not {_p}:
+                    set {_entId} to "%loop-entity.getEntityId()%"
+                    if {_hitMap3::%{_entId}%} is not set:
+                        set {_hitMap3::%{_entId}%} to true
+                        push loop-entity upward at speed 0.9
+                        dealDevilFruitSkillDamage({_p}, loop-entity, 48.0, "gura", 3)
+            wait 4 ticks
+
+# --- KỸ NĂNG TRÁI PIKA PIKA NO MI (ÁNH SÁNG) ---
+function castSkillPika(p: player, skillNum: number):
+    set {_u} to uuid of {_p}
+    if {_skillNum} is 1:
+        # Chiêu 1: Thiên Tùng Vân Kiếm (62 ST fan 6m, kích nổ Quang Ấn +32 ST, CD 3.5s)
+        if checkSkillCooldown({_p}, 1, 3.5) is false:
+            stop
+        play sound "ENTITY_PLAYER_ATTACK_SWEEP" with volume 1.2 and pitch 1.8 at location of {_p}
+        play sound "ENTITY_FIREWORK_TWINKLE" with volume 1.5 and pitch 1.5 at location of {_p}
+        send action bar "&e&l✦ THIÊN TÙNG VÂN KIẾM! ✦" to {_p}
+        set {_eye} to {_p}.getEyeLocation()
+        set {_dir} to {_eye}.getDirection().normalize()
+        loop 6 times:
+            set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("END_ROD", {_stepLoc}, 6, 0.3, 0.3, 0.3, 0.05)
+            spawnVisualParticle("FIREWORKS_SPARK", {_stepLoc}, 8, 0.3, 0.3, 0.3, 0.08)
+            loop living entities in radius 2.0 of {_stepLoc}:
+                if loop-entity is not {_p}:
+                    apply potion of blindness 1 to loop-entity for 1.5 seconds
+                    set {_pikaBonus} to 0.0
+                    set {_pikaVicU} to uuid of loop-entity
+                    if {pika_quang_an::%{_pikaVicU}%} is set:
+                        if System.currentTimeMillis() < {pika_quang_an::%{_pikaVicU}%}:
+                            set {_pikaBonus} to 32.0
+                            delete {pika_quang_an::%{_pikaVicU}%}
+                            send action bar "&e&l✦ KÍCH NỔ QUANG ẤN (+32 ST)! ✦" to {_p}
+                    dealDevilFruitSkillDamage({_p}, loop-entity, (62.0 + {_pikaBonus}), "pika", 1)
+
+    else if {_skillNum} is 2:
+        # Chiêu 2: Bát Chỉ Kính: Quang Tốc Biến (78 ST + Mù 1.5s, CD 7.0s / 4.8s)
+        set {_baseCd} to 7.0
+        if {df_data::%{_u}%::awakened} is true:
+            set {_baseCd} to 6.0
+        if checkSkillCooldown({_p}, 2, {_baseCd}) is false:
+            stop
+        play sound "ENTITY_ENDERMEN_TELEPORT" with volume 1.5 and pitch 1.6 at location of {_p}
+        play sound "ENTITY_FIREWORK_BLAST" with volume 1.2 and pitch 1.4 at location of {_p}
+        send action bar "&e&l✦ BÁT CHỈ KÍNH: QUANG TỐC BIẾN! ✦" to {_p}
+        set {_eye} to {_p}.getEyeLocation()
+        set {_dir} to {_eye}.getDirection().normalize()
+        set {_dest} to location of {_p}
+        loop 14 times:
+            set {_checkLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+            if block at {_checkLoc} is solid:
+                exit loop
+            set {_dest} to {_checkLoc}
+        teleport {_p} to {_dest}
+        spawnVisualParticle("FIREWORKS_SPARK", {_dest}, 40, 0.8, 1.0, 0.8, 0.15)
+        spawnVisualParticle("EXPLOSION_LARGE", {_dest}, 3, 0.5, 0.5, 0.5, 0.05)
+        play sound "ENTITY_GENERIC_EXPLODE" with volume 1.0 and pitch 1.8 at {_dest}
+        loop living entities in radius 3.5 of {_dest}:
+            if loop-entity is not {_p}:
+                apply potion of blindness 1 to loop-entity for 1.5 seconds
+                dealDevilFruitSkillDamage({_p}, loop-entity, 78.0, "pika", 2)
+
+    else if {_skillNum} is 3:
+        # Chiêu 3: Bát Xích Khúc Ngọc Yasakani no Magatama (16 đợt: 5 đợt đầu 20 ST + khắc Quang Ấn, 11 đợt sau 6 ST, CD 16.0s)
+        if checkSkillCooldown({_p}, 3, 16.0) is false:
+            stop
+        play sound "ENTITY_FIREWORK_LAUNCH" with volume 1.5 and pitch 1.6 at location of {_p}
+        play sound "ENTITY_WITHER_SHOOT" with volume 1.0 and pitch 1.8 at location of {_p}
+        send action bar "&e&l✦ BÁT XÍCH KHÚC NGỌC YASAKANI NO MAGATAMA! ✦" to {_p}
+
+        set {_pName} to name of {_p}
+        broadcastDualCard("&e&l⚡ PIKA PIKA", "%{_pName}% giáng thế Bát Xích Khúc Ngọc!", "Mưa đạn quang tử Yasakani no Magatama càn quét toàn bộ khu vực!")
+
+        apply potion of levitation 1 to {_p} for 1.2 seconds
+
+        loop 16 times:
+            if {_p} is not online:
+                stop
+            set {_waveIdx} to loop-number
+            set {_eye} to {_p}.getEyeLocation()
+            set {_baseDir} to {_eye}.getDirection().normalize()
+
+            set {_dir} to {_baseDir}.clone()
+            add (random number between -0.15 and 0.15) to x-coordinate of {_dir}
+            add (random number between -0.12 and 0.12) to y-coordinate of {_dir}
+            add (random number between -0.15 and 0.15) to z-coordinate of {_dir}
+            set {_dir} to {_dir}.normalize()
+
+            set {_hitPoint} to {_eye}.clone().add({_dir}.clone().multiply(18))
+            set {_hit} to false
+            delete {_hitEnts::*}
+
+            set {_stepDist} to 0
+            loop 18 times:
+                if {_hit} is false:
+                    add 1 to {_stepDist}
+                    set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply({_stepDist}))
+                    if block at {_stepLoc} is solid:
+                        set {_hitPoint} to {_stepLoc}
+                        set {_hit} to true
+                    else:
+                        spawnVisualParticle("END_ROD", {_stepLoc}, 2, 0.08, 0.08, 0.08, 0.02)
+                        spawnVisualParticle("FIREWORKS_SPARK", {_stepLoc}, 3, 0.1, 0.1, 0.1, 0.03)
+                        loop living entities in radius 1.8 of {_stepLoc}:
+                            if loop-entity is not {_p}:
+                                set {_hitPoint} to {_stepLoc}
+                                set {_hit} to true
+
+            spawnVisualParticle("FIREWORKS_SPARK", {_hitPoint}, 15, 0.4, 0.4, 0.4, 0.08)
+            spawnVisualParticle("EXPLOSION_LARGE", {_hitPoint}, 2, 0.2, 0.2, 0.2, 0.05)
+            play sound "ENTITY_FIREWORK_BLAST" with volume 0.7 and pitch 1.7 at {_hitPoint}
+
+            set {_waveDmg} to 6.0
+            if {_waveIdx} <= 5:
+                set {_waveDmg} to 20.0
+
+            loop living entities in radius 2.5 of {_hitPoint}:
+                if loop-entity is not {_p}:
+                    set {_entId} to "%loop-entity.getEntityId()%"
+                    if {_hitEnts::%{_entId}%} is not set:
+                        set {_hitEnts::%{_entId}%} to true
+                        apply potion of blindness 1 to loop-entity for 1.5 seconds
+                        if {_waveIdx} <= 5:
+                            set {pika_quang_an::%uuid of loop-entity%} to System.currentTimeMillis() + 6000
+                        dealDevilFruitSkillDamage({_p}, loop-entity, {_waveDmg}, "pika", 3)
+
+            wait 1 tick
+
+# --- KỸ NĂNG TRÁI GORO GORO NO MI (SẤM SÉT) ---
+function castSkillGoro(p: player, skillNum: number):
+    set {_u} to uuid of {_p}
+    if {_skillNum} is 1:
+        # Chiêu 1: Lôi Phạt El Thor (66 ST + Slow III 1.5s, CD 4.0s)
+        if checkSkillCooldown({_p}, 1, 4.0) is false:
+            stop
+
+        # Nội tại Goro Goro: Tăng 10% Né Tránh trong 15s mỗi khi dùng chiêu (cộng dồn đến trần 70%, reset thời gian 15s)
+        set {_now} to System.currentTimeMillis()
+        set {_curGoroDodge} to ({df_goro_dodge::%{_u}%} ? 0.0)
+        set {_goroUntil} to ({df_goro_dodge_until::%{_u}%} ? 0)
+        if {_now} >= {_goroUntil}:
+            set {_curGoroDodge} to 0.0
+        add 10.0 to {_curGoroDodge}
+        if {_curGoroDodge} > 70.0:
+            set {_curGoroDodge} to 70.0
+        set {df_goro_dodge::%{_u}%} to {_curGoroDodge}
+        set {df_goro_dodge_until::%{_u}%} to {_now} + 15000
+        add 1 to {df_goro_dodge_seq::%{_u}%}
+        set {_seq} to {df_goro_dodge_seq::%{_u}%}
+
+        play sound "ENTITY_LIGHTNING_THUNDER" with volume 1.5 and pitch 1.0 at location of {_p}
+        send action bar "&9&l✦ LÔI PHẠT EL THOR! &b(+10%% Né: %{_curGoroDodge}%/70%% - 15s) ✦" to {_p}
+
+        set {_target} to {_p}'s target
+        if {_target} is not living entity:
+            set {_eye} to {_p}.getEyeLocation()
+            set {_dir} to {_eye}.getDirection().normalize()
+            loop 16 times:
+                set {_checkLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+                if block at {_checkLoc} is solid:
+                    set {_tLoc} to {_checkLoc}
+                    exit loop
+                loop all entities in radius 2.2 of {_checkLoc}:
+                    if loop-entity is living entity:
+                        if loop-entity is not {_p}:
+                            set {_target} to loop-entity
+                            exit loop
+                if {_target} is set:
+                    exit loop
+
+        if {_target} is set:
+            set {_tLoc} to location of {_target}
+        else if {_tLoc} is not set:
+            set {_eye} to {_p}.getEyeLocation()
+            set {_dir} to {_eye}.getDirection().normalize()
+            set {_tLoc} to {_eye}.clone().add({_dir}.clone().multiply(10))
+
+        strike lightning effect at {_tLoc}
+        play sound "ENTITY_LIGHTNING_IMPACT" with volume 1.8 and pitch 0.9 at {_tLoc}
+        spawnVisualParticle("CRIT_MAGIC", {_tLoc}, 35, 1.0, 2.0, 1.0, 0.1)
+        spawnVisualParticle("FIREWORKS_SPARK", {_tLoc}, 25, 0.8, 1.5, 0.8, 0.08)
+
+        loop living entities in radius 3.5 of {_tLoc}:
+            if loop-entity is not {_p}:
+                apply potion of slowness 3 to loop-entity for 1.5 seconds
+                dealDevilFruitSkillDamage({_p}, loop-entity, 66.0, "goro", 1)
+
+        wait 15 seconds
+        if {df_goro_dodge_seq::%{_u}%} is {_seq}:
+            if System.currentTimeMillis() >= {df_goro_dodge_until::%{_u}%}:
+                delete {df_goro_dodge::%{_u}%}
+                delete {df_goro_dodge_until::%{_u}%}
+                if {_p} is online:
+                    send action bar "&7✦ &oHiệu ứng Tăng Né Tránh (Goro) đã hết hiệu lực &7✦" to {_p}
+
+    else if {_skillNum} is 2:
+        # Chiêu 2: Lôi Thần Phóng Điện Sango (86 ST nón 12m, hút 15 Bá Khí, CD 8.0s)
+        if checkSkillCooldown({_p}, 2, 8.0) is false:
+            stop
+
+        # Nội tại Goro Goro: Tăng 10% Né Tránh trong 15s mỗi khi dùng chiêu (cộng dồn đến trần 70%, reset thời gian 15s)
+        set {_now} to System.currentTimeMillis()
+        set {_curGoroDodge} to ({df_goro_dodge::%{_u}%} ? 0.0)
+        set {_goroUntil} to ({df_goro_dodge_until::%{_u}%} ? 0)
+        if {_now} >= {_goroUntil}:
+            set {_curGoroDodge} to 0.0
+        add 10.0 to {_curGoroDodge}
+        if {_curGoroDodge} > 70.0:
+            set {_curGoroDodge} to 70.0
+        set {df_goro_dodge::%{_u}%} to {_curGoroDodge}
+        set {df_goro_dodge_until::%{_u}%} to {_now} + 15000
+        add 1 to {df_goro_dodge_seq::%{_u}%}
+        set {_seq} to {df_goro_dodge_seq::%{_u}%}
+
+        play sound "ENTITY_WITHER_SHOOT" with volume 1.2 and pitch 1.8 at location of {_p}
+        play sound "ENTITY_LIGHTNING_IMPACT" with volume 1.0 and pitch 1.5 at location of {_p}
+        send action bar "&9&l✦ LÔI THẦN SANGO! &b(+10%% Né: %{_curGoroDodge}%/70%% - 15s) ✦" to {_p}
+        set {_eye} to {_p}.getEyeLocation()
+        set {_dir} to {_eye}.getDirection().normalize()
+        delete {_hitMap::*}
+        loop 12 times:
+            set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+            if block at {_stepLoc} is solid:
+                spawnVisualParticle("FIREWORKS_SPARK", {_stepLoc}, 10, 0.3, 0.3, 0.3, 0.08)
+                exit loop
+            spawnVisualParticle("CRIT_MAGIC", {_stepLoc}, 8, 0.3, 0.3, 0.3, 0.08)
+            spawnVisualParticle("FIREWORKS_SPARK", {_stepLoc}, 6, 0.2, 0.2, 0.2, 0.05)
+            loop living entities in radius 2.2 of {_stepLoc}:
+                if loop-entity is not {_p}:
+                    set {_entId} to "%loop-entity.getEntityId()%"
+                    if {_hitMap::%{_entId}%} is not set:
+                        set {_hitMap::%{_entId}%} to true
+                        apply potion of slowness 4 to loop-entity for 1.5 seconds
+                        if loop-entity is a player:
+                            subtract 15 from {haki_energy::%uuid of loop-entity%}
+                        dealDevilFruitSkillDamage({_p}, loop-entity, 86.0, "goro", 2)
+
+        wait 15 seconds
+        if {df_goro_dodge_seq::%{_u}%} is {_seq}:
+            if System.currentTimeMillis() >= {df_goro_dodge_until::%{_u}%}:
+                delete {df_goro_dodge::%{_u}%}
+                delete {df_goro_dodge_until::%{_u}%}
+                if {_p} is online:
+                    send action bar "&7✦ &oHiệu ứng Tăng Né Tránh (Goro) đã hết hiệu lực &7✦" to {_p}
+
+    else if {_skillNum} is 3:
+        # Chiêu 3: Đại Lôi Nghinh Raigo (136 ST AoE 8.5m + Amaru 8s, CD 16.0s)
+        if checkSkillCooldown({_p}, 3, 16.0) is false:
+            stop
+
+        # Nội tại Goro Goro: Tăng 10% Né Tránh trong 15s mỗi khi dùng chiêu (cộng dồn đến trần 70%, reset thời gian 15s)
+        set {_now} to System.currentTimeMillis()
+        set {_curGoroDodge} to ({df_goro_dodge::%{_u}%} ? 0.0)
+        set {_goroUntil} to ({df_goro_dodge_until::%{_u}%} ? 0)
+        if {_now} >= {_goroUntil}:
+            set {_curGoroDodge} to 0.0
+        add 10.0 to {_curGoroDodge}
+        if {_curGoroDodge} > 70.0:
+            set {_curGoroDodge} to 70.0
+        set {df_goro_dodge::%{_u}%} to {_curGoroDodge}
+        set {df_goro_dodge_until::%{_u}%} to {_now} + 15000
+        add 1 to {df_goro_dodge_seq::%{_u}%}
+        set {_seq} to {df_goro_dodge_seq::%{_u}%}
+
+        play sound "ENTITY_LIGHTNING_IMPACT" with volume 2.0 and pitch 0.6 at location of {_p}
+        send action bar "&9&l✦ ĐẠI LÔI NGHINH RAIGO! &b(+10%% Né: %{_curGoroDodge}%/70%% - 15s) ✦" to {_p}
+        set {_pName} to name of {_p}
+        broadcastDualCard("&9&l☠ GORO GORO", "%{_pName}% giáng thế Đại Lôi Nghinh Raigo!", "Lôi đình vạn trượng giáng lâm hủy diệt toàn bộ khu vực!")
+
+        set {_target} to {_p}'s target
+        if {_target} is not living entity:
+            set {_eye} to {_p}.getEyeLocation()
+            set {_dir} to {_eye}.getDirection().normalize()
+            loop 20 times:
+                set {_checkLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+                if block at {_checkLoc} is solid:
+                    set {_center} to {_checkLoc}
+                    exit loop
+                loop all entities in radius 2.5 of {_checkLoc}:
+                    if loop-entity is living entity:
+                        if loop-entity is not {_p}:
+                            set {_target} to loop-entity
+                            exit loop
+                if {_target} is set:
+                    exit loop
+
+        if {_target} is set:
+            set {_center} to location of {_target}
+        else if {_center} is not set:
+            set {_eye} to {_p}.getEyeLocation()
+            set {_dir} to {_eye}.getDirection().normalize()
+            set {_center} to {_eye}.clone().add({_dir}.clone().multiply(10))
+
+        loop 5 times:
+            if {_p} is not online:
+                stop
+            set {_strikeLoc} to {_center}.clone()
+            add (random number between -5.0 and 5.0) to x-coordinate of {_strikeLoc}
+            add (random number between -5.0 and 5.0) to z-coordinate of {_strikeLoc}
+            strike lightning effect at {_strikeLoc}
+            spawnVisualParticle("CRIT_MAGIC", {_strikeLoc}, 25, 1.0, 2.0, 1.0, 0.1)
+            wait 2 ticks
+
+        loop living entities in radius 8.5 of {_center}:
+            if loop-entity is not {_p}:
+                dealDevilFruitSkillDamage({_p}, loop-entity, 136.0, "goro", 3)
+
+        set {goro_amaru_until::%{_u}%} to System.currentTimeMillis() + 8000
+        send action bar "&b&l✦ LÔI THẦN AMARU (+18%% ST Chiêu, Đánh tay sét lan trong 8s)! ✦" to {_p}
+        play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1.2 and pitch 1.4 to {_p}
+
+        wait 15 seconds
+        if {df_goro_dodge_seq::%{_u}%} is {_seq}:
+            if System.currentTimeMillis() >= {df_goro_dodge_until::%{_u}%}:
+                delete {df_goro_dodge::%{_u}%}
+                delete {df_goro_dodge_until::%{_u}%}
+                if {_p} is online:
+                    send action bar "&7✦ &oHiệu ứng Tăng Né Tránh (Goro) đã hết hiệu lực &7✦" to {_p}
+
+# --- KỸ NĂNG TRÁI TORI TORI: MODEL PHOENIX (PHƯỢNG HOÀNG) ---
+function castSkillPhoenix(p: player, skillNum: number):
+    set {_u} to uuid of {_p}
+    if {_skillNum} is 1:
+        # Chiêu 1: Phượng Hoàng Ấn Phoenix Goen (Lướt 9m, 64 ST, hồi 15% HP, CD 4.0s)
+        if checkSkillCooldown({_p}, 1, 4.0) is false:
+            stop
+
+        # Nội tại Phượng Hoàng: Hồi 15% Máu tối đa khi dùng bất cứ chiêu nào
+        if {_p} is alive:
+            if health of {_p} > 0:
+                heal {_p} by ((max health of {_p}) * 0.15)
+                spawnVisualParticle("HEART", location of {_p}, 8, 0.4, 0.8, 0.4, 0.05)
+
+        play sound "ENTITY_ENDERDRAGON_FLAP" with volume 1.5 and pitch 1.6 at location of {_p}
+        send action bar "&3&l✦ PHƯỢNG HOÀNG ẤN PHOENIX GOEN! (+15%% HP) ✦" to {_p}
+        set {_eye} to {_p}.getEyeLocation()
+        set {_dir} to {_eye}.getDirection().normalize()
+        push {_p} {_dir} at speed 1.4
+        loop 9 times:
+            set {_stepLoc} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("FLAME", {_stepLoc}, 5, 0.3, 0.3, 0.3, 0.05)
+            spawnVisualParticle("TOTEM", {_stepLoc}, 6, 0.3, 0.3, 0.3, 0.05)
+            spawnVisualParticle("DRAGON_BREATH", {_stepLoc}, 4, 0.2, 0.2, 0.2, 0.02)
+            loop living entities in radius 2.2 of {_stepLoc}:
+                if loop-entity is not {_p}:
+                    push loop-entity {_dir} at speed 0.8
+                    dealDevilFruitSkillDamage({_p}, loop-entity, 64.0, "phoenix", 1)
+
+    else if {_skillNum} is 2:
+        # Chiêu 2: Ngọn Lửa Tái Sinh Blue Bird (76 ST AoE 5.5m; hồi 15% HP + Regen II 4s, CD 9.0s)
+        if checkSkillCooldown({_p}, 2, 9.0) is false:
+            stop
+
+        # Nội tại Phượng Hoàng: Hồi 15% Máu tối đa khi dùng bất cứ chiêu nào
+        if {_p} is alive:
+            if health of {_p} > 0:
+                heal {_p} by ((max health of {_p}) * 0.15)
+                apply potion of regeneration 2 to {_p} for 4 seconds
+
+        play sound "ITEM_TOTEM_USE" with volume 1.0 and pitch 1.5 at location of {_p}
+        send action bar "&3&l✦ NGỌN LỬA TÁI SINH BLUE BIRD! (+15%% HP + Regen II) ✦" to {_p}
+        set {_loc} to location of {_p}
+        spawnVisualParticle("TOTEM", {_loc}, 40, 2.0, 0.8, 2.0, 0.1)
+        spawnVisualParticle("DRAGON_BREATH", {_loc}, 30, 2.0, 0.5, 2.0, 0.05)
+        spawnVisualParticle("HEART", {_loc}, 10, 1.0, 1.0, 1.0, 0.05)
+
+        set {_pCrew} to getCrewIslandUUID({_p})
+        loop living entities in radius 5.5 of {_loc}:
+            if loop-entity is not {_p}:
+                set {_isAlly} to false
+                if loop-entity is a player:
+                    if {_pCrew} is not "":
+                        if getCrewIslandUUID(loop-entity) is {_pCrew}:
+                            set {_isAlly} to true
+                if {_isAlly} is true:
+                    if loop-entity is alive:
+                        if health of loop-entity > 0:
+                            heal loop-entity by ((max health of loop-entity) * 0.10)
+                            apply potion of regeneration 2 to loop-entity for 4 seconds
+                            spawnVisualParticle("HEART", location of loop-entity, 5, 0.3, 0.5, 0.3, 0.05)
+                else:
+                    dealDevilFruitSkillDamage({_p}, loop-entity, 76.0, "phoenix", 2)
+
+    else if {_skillNum} is 3:
+        # Chiêu 3: Bất Tử Điểu Giáng Thế (130 ST AoE 7.5m, hồi 15% HP, giải debuff + Khiên 36 HP 6s, CD 17.0s)
+        if checkSkillCooldown({_p}, 3, 17.0) is false:
+            stop
+
+        # Nội tại Phượng Hoàng: Hồi 15% Máu tối đa khi dùng bất cứ chiêu nào
+        if {_p} is alive:
+            if health of {_p} > 0:
+                heal {_p} by ((max health of {_p}) * 0.15)
+                spawnVisualParticle("HEART", location of {_p}, 12, 0.5, 1.0, 0.5, 0.05)
+
+        play sound "ENTITY_WITHER_SPAWN" with volume 1.5 and pitch 1.8 at location of {_p}
+        send action bar "&3&l✦ BẤT TỬ ĐIỂU GIÁNG THẾ TENSEI NO SOEN! (+15%% HP) ✦" to {_p}
+        set {_pName} to name of {_p}
+        broadcastDualCard("&3&l✦ BẤT TỬ ĐIỂU", "%{_pName}% giải phóng Ngọn Lửa Tái Sinh Tensei no Soen!", "Biển lửa xanh quét sạch mọi nguyền rủa và ban phước lành!")
+        set {_loc} to location of {_p}
+        spawnVisualParticle("TOTEM", {_loc}, 60, 3.0, 1.2, 3.0, 0.15)
+        spawnVisualParticle("DRAGON_BREATH", {_loc}, 50, 3.0, 0.8, 3.0, 0.08)
+        spawnVisualParticle("EXPLOSION_HUGE", {_loc}, 3, 1.5, 0.5, 1.5, 0.05)
+
+        remove slowness from {_p}
+        remove poison from {_p}
+        remove wither from {_p}
+        remove blindness from {_p}
+        set {phoenix_shield_until::%{_u}%} to System.currentTimeMillis() + 6000
+        set {phoenix_shield_hp::%{_u}%} to 36.0
+
+        loop living entities in radius 7.5 of {_loc}:
+            if loop-entity is not {_p}:
+                dealDevilFruitSkillDamage({_p}, loop-entity, 130.0, "phoenix", 3)
+function useDevilFruitSkill(p: player, skillNum: number):
+    set {_u} to uuid of {_p}
+    set {_fruit} to {df_data::%{_u}%::fruit}
+
+    # 1. Kiểm tra sở hữu trái ác quỷ
+    set {_f_check} to {_fruit}
+    if {_f_check} is not "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+        send action bar "&cBạn chưa sở hữu Trái Ác Quỷ nào!" to {_p}
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+
+    # 2. Kiểm tra Lời nguyền Biển cả
+    if {df_in_water::%{_u}%} is true:
+        send action bar "&c&l☠ LỜI NGUYỀN BIỂN CẢ! &7Nước biển phong ấn sức mạnh của bạn!" to {_p}
+        play sound "BLOCK_FIRE_EXTINGUISH" with volume 1 and pitch 0.8 to {_p}
+        stop
+    set {_b} to block at {_p}
+    if {_b} is water or stationary water:
+        send action bar "&c&l☠ LỜI NGUYỀN BIỂN CẢ! &7Không thể thi triển kỹ năng dưới nước!" to {_p}
+        play sound "BLOCK_FIRE_EXTINGUISH" with volume 1 and pitch 0.8 to {_p}
+        stop
+
+    # 3. Kiểm tra Độ thông thạo
+    set {_mastery} to ({df_data::%{_u}%::mastery} ? 1)
+    if {_skillNum} is 2:
+        if {_mastery} < 25:
+            send action bar "&cChiêu 2 yêu cầu Độ Thông Thạo &eLv.25 &c(Hiện tại: &bLv.%{_mastery}%&c)!" to {_p}
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+    else if {_skillNum} is 3:
+        if {_mastery} < 60:
+            send action bar "&cChiêu 3 / Tuyệt Kỹ yêu cầu Độ Thông Thạo &eLv.60 &c(Hiện tại: &bLv.%{_mastery}%&c)!" to {_p}
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+            stop
+
+    # 4. Thi triển kỹ năng theo hệ
+    if {_fruit} is "mera":
+        castSkillMera({_p}, {_skillNum})
+    else if {_fruit} is "gomu":
+        castSkillGomu({_p}, {_skillNum})
+    else if {_fruit} is "ope":
+        castSkillOpe({_p}, {_skillNum})
+    else if {_fruit} is "seiryu":
+        castSkillSeiryu({_p}, {_skillNum})
+    else if {_fruit} is "gura":
+        castSkillGura({_p}, {_skillNum})
+    else if {_fruit} is "pika":
+        castSkillPika({_p}, {_skillNum})
+    else if {_fruit} is "goro":
+        castSkillGoro({_p}, {_skillNum})
+    else if {_fruit} is "phoenix":
+        castSkillPhoenix({_p}, {_skillNum})
+
+# ---------------------------------------------------------------------
+# 7. SỰ KIỆN ĂN TRÁI, UỐNG THUỐC, MỞ RƯƠNG & DÙNG LÕI ÁC QUỶ
+# ---------------------------------------------------------------------
+
+function eatDevilFruit(p: player, fruitId: text):
+    set {_fid} to {_fruitId}
+    if {_fid} is not "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+        stop
+
+    set {_u} to uuid of {_p}
+
+    # Dọn dẹp dữ liệu rác nếu fruit cũ bị rỗng/không hợp lệ
+    if {df_data::%{_u}%::fruit} is set:
+        set {_f_old} to {df_data::%{_u}%::fruit}
+        if {_f_old} is not "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+            delete {df_data::%{_u}%::*}
+            delete {df_boundman::%{_u}%}
+            delete {df_in_water::%{_u}%}
+
+    # 1. QUY TẮC 1 TRÁI DUY NHẤT: Ăn Trái Ác Quỷ thứ 2 khi đang có năng lực -> NỔ TUNG VÀ CHẾT!
+    if {df_data::%{_u}%::fruit} is set:
+        set {_curFruit} to {df_data::%{_u}%::fruit}
+        if {_curFruit} is "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+            # Trừ 1 trái ác quỷ trên tay kẻ tham lam
+            set {_heldFruit} to {_p}'s tool
+            if item amount of {_heldFruit} <= 1:
+                set {_p}'s tool to air
+            else:
+                set item amount of {_heldFruit} to (item amount of {_heldFruit} - 1)
+                set {_p}'s tool to {_heldFruit}
+
+            send title "&4&lNGUYỀN RỦA BIỂN CẢ!" with subtitle "&cBạn đã tham lam ăn Trái Ác Quỷ thứ 2..." to {_p} for 3 seconds
+            set {_loc} to location of {_p}
+            strike lightning effect at {_loc}
+            spawnVisualParticle("EXPLOSION_HUGE", {_loc}, 5, 0.5, 0.5, 0.5, 0.1)
+            spawnVisualParticle("FLAME", {_loc}, 50, 1.0, 1.0, 1.0, 0.2)
+            play sound "ENTITY_GENERIC_EXPLODE" with volume 2 and pitch 0.8 at {_loc}
+            broadcastDualCard("&4&l☠ LỜI NGUYỀN", "&e%name of {_p}% &7tham lam ăn Trái Ác Quỷ thứ 2 và đã &c&lNỔ TUNG TAN XÁC&7!", "Đại dương trừng phạt kẻ phá vỡ quy luật tự nhiên! Hãy dùng Thuốc Xóa Ác Quỷ để đổi trái an toàn.")
+            kill {_p}
+            stop
+
+    # 2. Ăn thành công Trái Ác Quỷ đầu tiên (hoặc sau khi đã thanh tẩy bằng Thuốc Xóa)
+    set {_heldFruit} to {_p}'s tool
+    if item amount of {_heldFruit} <= 1:
+        set {_p}'s tool to air
+    else:
+        set item amount of {_heldFruit} to (item amount of {_heldFruit} - 1)
+        set {_p}'s tool to {_heldFruit}
+    set {df_data::%{_u}%::fruit} to {_fruitId}
+    set {df_data::%{_u}%::mastery} to 1
+    set {df_data::%{_u}%::exp} to 0
+    set {df_data::%{_u}%::awakened} to false
+
+    # Tạm ẩn nội tại Võ Học khi ăn Trái Ác Quỷ & Tính lại chỉ số Liên Quân
+    delete {martial_bonus::%{_u}%::*}
+    delete {seiryu_hp_boost::%{_u}%}
+    delete {df_goro_dodge::%{_u}%}
+    delete {df_goro_dodge_until::%{_u}%}
+    delete {df_goro_dodge_seq::%{_u}%}
+    delete {ope_room_buff_until::%{_u}%}
+    delete {ope_room_seq::%{_u}%}
+    set {martial_awakened::%{_u}%} to false
+    recalcAoVBonuses({_p})
+
+    # Đồng bộ nội tại trái mới & thanh máu
+    updateDevilFruitPassives({_p})
+    recalcPlayerMaxHealth({_p})
+    registerFruitToPokedex({_p}, {_fruitId})
+    updatePlayerSidebar({_p})
+
+    set {_fname} to getDevilFruitDisplayName({_fruitId})
+    send title "&6&lHẤP THU THÀNH CÔNG!" with subtitle "&fBạn đã sở hữu %{_fname}%" to {_p} for 4 seconds
+    play sound "ENTITY_PLAYER_BURP" with volume 1 and pitch 1 to {_p}
+    play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1.2 to {_p}
+
+    set {_loc} to location of {_p}
+    add 1 to y-coordinate of {_loc}
+    spawnVisualParticle("FIREWORKS_SPARK", {_loc}, 50, 0.8, 1.0, 0.8, 0.15)
+    spawnVisualParticle("SPELL_WITCH", {_loc}, 30, 0.6, 0.8, 0.6, 0.1)
+
+    broadcastDualCard("&6&l✦ TRÁI ÁC QUỶ", "&e%name of {_p}% &fđã hấp thu thành công &6&l%{_fname}%&f!", "Sức mạnh thần thoại giáng lâm vào huyết mạch!")
+    sendSystemMsg({_p}, "training", "Hấp thu thành công &6&l%{_fname}%&f! Mở khóa Chiêu 1 (Lv.1).")
+    sendSystemMsg({_p}, "training", "Bấm phím &e[F]&f để bật Chế độ Chiến đấu & dùng phím &e[1-3]&f tung chiêu.")
+
+    # Kích hoạt trạng thái đồng bộ
+    updateDevilFruitPassives({_p})
+
+function consumeFruitRemover(p: player):
+    if {_p} is not online:
+        stop
+    set {_u} to uuid of {_p}
+    if {df_data::%{_u}%::fruit} is not set:
+        sendSystemMsg({_p}, "error", "Bạn chưa sở hữu Trái Ác Quỷ nào để thanh tẩy!")
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+
+    set {_curFruit} to {df_data::%{_u}%::fruit}
+    if {_curFruit} is "":
+        sendSystemMsg({_p}, "error", "Bạn chưa sở hữu Trái Ác Quỷ nào để thanh tẩy!")
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+
+    # Dọn dẹp toàn bộ dữ liệu Trái Ác Quỷ, nội tại và hiệu ứng
+    delete {df_data::%{_u}%::*}
+    delete {df_bonus::%{_u}%::hp}
+    delete {df_bonus::%{_u}%::def}
+    delete {df_boundman::%{_u}%}
+    delete {df_in_water::%{_u}%}
+    delete {goro_revive_cd::%{_u}%}
+    delete {goro_amaru_until::%{_u}%}
+    delete {df_goro_dodge::%{_u}%}
+    delete {df_goro_dodge_until::%{_u}%}
+    delete {df_goro_dodge_seq::%{_u}%}
+    delete {ope_room_buff_until::%{_u}%}
+    delete {ope_room_seq::%{_u}%}
+    delete {seiryu_hp_boost::%{_u}%}
+    remove resistance from {_p}
+    recalcPlayerMaxHealth({_p})
+
+    # Khôi phục nội tại Võ Học Vô Quả Giả & Tính lại chỉ số Liên Quân (+15% AD & HP)
+    if {martial_style::%{_u}%} is "kiem_dao":
+        set {martial_bonus::%{_u}%::crit_damage} to 15.0
+    else if {martial_style::%{_u}%} is "luc_thuc":
+        set {martial_bonus::%{_u}%::dodge} to 8.0
+    recalcAoVBonuses({_p})
+    updatePlayerSidebar({_p})
+
+    send title "&5&lTHANH TẨY THÀNH CÔNG!" with subtitle "&fBạn đã trở về trạng thái người bình thường" to {_p} for 3 seconds
+    play sound "ENTITY_PLAYER_SPLASH" with volume 1 and pitch 1.2 to {_p}
+    play sound "BLOCK_FIRE_EXTINGUISH" with volume 1 and pitch 0.8 to {_p}
+
+    set {_loc} to location of {_p}
+    add 1 to y-coordinate of {_loc}
+    spawnVisualParticle("SPELL_MOB", {_loc}, 30, 0.5, 0.8, 0.5, 0.1)
+    sendSystemMsg({_p}, "training", "Thanh tẩy hoàn tất! Lời nguyền biển cả biến mất, bạn có thể ăn Trái Ác Quỷ mới an toàn.")
+
+function openDevilFruitChest(p: player):
+    remove 1 of tool of {_p} from tool of {_p}
+    play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.5 to {_p}
+    set {_fruits::*} to "mera", "gomu", "ope", "seiryu"
+    set {_pick} to random element out of {_fruits::*}
+    set {_item} to getDevilFruitItem({_pick})
+    give 1 of {_item} to {_p}
+    set {_loc} to location of {_p}
+    add 1 to y-coordinate of {_loc}
+    spawnVisualParticle("FIREWORKS_SPARK", {_loc}, 30, 0.5, 0.5, 0.5, 0.1)
+    send title "&6&lRƯƠNG TRÁI ÁC QUỶ!" with subtitle "&fBạn nhận được %getDevilFruitDisplayName({_pick})%" to {_p} for 3 seconds
+    broadcastDualCard("&6&l✦ RƯƠNG THẦN", "&e%name of {_p}% &fđã mở Rương Trái Ác Quỷ thành công!", "Bảo vật nhận được: &6%getDevilFruitDisplayName({_pick})%&f!")
+
+# Sự kiện Chuột Phải: Ăn trái ác quỷ, mở Rương hoặc dùng Lõi Ác Quỷ khi tắt PK
+on rightclick:
+    # 0. Tránh xung đột tương tác khối (chest, workbench, anvil, door, gate, v.v.)
+    if clicked block is set:
+        set {_btype} to "%type of clicked block%"
+        if {_btype} contains "chest" or "workbench" or "crafting" or "anvil" or "door" or "gate" or "button" or "lever" or "furnace" or "hopper" or "dropper" or "dispenser":
+            stop
+
+    # 1. Các vật phẩm Resource Pack & Lõi Ác Quỷ (Ăn trái ác quỷ, Mở rương, Lõi Ác Quỷ)
+    set {_tool} to player's tool
+    if {_tool} is not set:
+        stop
+    if {_tool} is air:
+        stop
+    if type of {_tool} is air:
+        stop
+    set {_nbt} to nbt compound of {_tool}
+    set {_tag} to string tag "SkyblockItem" of {_nbt}
+
+    # Ăn Trái Ác Quỷ 3D (Hỗ trợ toàn bộ 8 Trái Ác Quỷ trực tiếp)
+    set {_dfTag} to string tag "DevilFruit" of {_nbt}
+    if {_dfTag} is "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+        cancel event
+        eatDevilFruit(player, {_dfTag})
+        stop
+
+    # Trái Ác Quỷ Chưa Giám Định -> Mở Phòng Thí Nghiệm Vegapunk
+    else if {_tag} is "unidentified_df":
+        cancel event
+        sendSystemMsg(player, "info", "Trái Ác Quỷ này chưa được giám định! Đang kết nối tới Phòng Thí Nghiệm Vegapunk...")
+        openAppraisalGUI(player)
+        stop
+
+    # Mở Rương Trái Ác Quỷ
+    else if {_tag} is "df_chest":
+        cancel event
+        if {df_click_lock::%uuid of player%} is set:
+            stop
+        set {df_click_lock::%uuid of player%} to true
+        openDevilFruitChest(player)
+        wait 5 ticks
+        delete {df_click_lock::%uuid of player%}
+        stop
+
+    # Uống / Sử dụng Thuốc Xóa Trái Ác Quỷ khi Nhấp Chuột Phải
+    else if {_tag} is "df_remover":
+        cancel event
+        set {_u} to uuid of player
+        if {df_data::%{_u}%::fruit} is not set:
+            sendSystemMsg(player, "error", "Bạn chưa sở hữu Trái Ác Quỷ nào để thanh tẩy!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+        set {_curFruit} to {df_data::%{_u}%::fruit}
+        if {_curFruit} is "":
+            sendSystemMsg(player, "error", "Bạn chưa sở hữu Trái Ác Quỷ nào để thanh tẩy!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+
+        # Trừ 1 Thuốc Xóa trên tay
+        if item amount of {_tool} <= 1:
+            set player's tool to air
+        else:
+            set item amount of {_tool} to (item amount of {_tool} - 1)
+            set player's tool to {_tool}
+
+        consumeFruitRemover(player)
+        stop
+
+# =====================================================================
+# BỘ ĐIỀU KHIỂN MOBA QUICK-CAST (PHÍM 1 -> 6) & KHÓA CỨNG Ô VẬT PHẨM
+# =====================================================================
+
+function triggerMOBAQuickSkill(p: player, skillNum: number):
+    set {_u} to uuid of {_p}
+    if {df_data::%{_u}%::fruit} is set:
+        useDevilFruitSkill({_p}, {_skillNum})
+    else if {martial_style::%{_u}%} is set:
+        useMartialSkill({_p}, {_skillNum})
+    else:
+        send action bar "&cBạn chưa có Trái Ác Quỷ hoặc Võ Học! Hãy gõ &e/vohoc &choặc ăn Trái Ác Quỷ." to {_p}
+        play sound "ENTITY_VILLAGER_NO" with volume 0.8 and pitch 1 to {_p}
+    updatePlayerSidebar({_p})
+
+on PlayerItemHeldEvent:
+    set {_p} to event.getPlayer()
+    set {_u} to uuid of {_p}
+    if {combat_mode::%{_u}%} is true:
+        set {_newSlot} to event.getNewSlot()
+        # Cho phép hệ thống tự chuyển con trỏ về Ô Neo số 9 (Index 8)
+        if {_newSlot} is 8:
+            stop
+
+        # Khóa cứng không cho đổi sang các ô khác (0 -> 7)
+        cancel event
+
+        # Chống dội phím (Debounce 3 ticks)
+        if {moba_qcast_lock::%{_u}%} is set:
+            stop
+        set {moba_qcast_lock::%{_u}%} to true
+
+        # Phím 1, 2, 3 (Slot 0, 1, 2): Tung Chiêu 1, 2, 3
+        if {_newSlot} is 0:
+            triggerMOBAQuickSkill({_p}, 1)
+        else if {_newSlot} is 1:
+            triggerMOBAQuickSkill({_p}, 2)
+        else if {_newSlot} is 2:
+            triggerMOBAQuickSkill({_p}, 3)
+
+        # Phím 4, 5, 6 (Slot 3, 4, 5): Kích hoạt Haki Quan Sát, Vũ Trang, Bá Vương
+        else if {_newSlot} is 3:
+            toggleKenbunshoku({_p})
+        else if {_newSlot} is 4:
+            toggleBusoshoku({_p})
+        else if {_newSlot} is 5:
+            activateHaoshoku({_p})
+
+        # Phím 7, 8 (Slot 6, 7) hoặc lăn chuột: Nhắc đang khóa ô
+        else:
+            send action bar "&c✖ Đang khóa ô Chiến Đấu! Bấm &e[1-3] &fTung Chiêu, &b[4-6] &fHaki, hoặc &e[F] &fđể mở khóa!" to {_p}
+            play sound "UI_BUTTON_CLICK" with volume 0.5 and pitch 0.8 to {_p}
+
+        wait 3 ticks
+        delete {moba_qcast_lock::%{_u}%}
+# Uống Thuốc Xóa Ác Quỷ (Nếu uống theo cơ chế Potion thông thường)
+on consume of potion:
+    event-item is set
+    event-item is not air
+    set {_tag} to string tag "SkyblockItem" of nbt compound of event-item
+    if {_tag} is "df_remover":
+        set {_u} to uuid of player
+        if {df_data::%{_u}%::fruit} is not set:
+            cancel event
+            sendSystemMsg(player, "error", "Bạn chưa sở hữu Trái Ác Quỷ nào để thanh tẩy!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+        set {_curFruit} to {df_data::%{_u}%::fruit}
+        if {_curFruit} is "":
+            cancel event
+            sendSystemMsg(player, "error", "Bạn chưa sở hữu Trái Ác Quỷ nào để thanh tẩy!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+        consumeFruitRemover(player)
+
+# ---------------------------------------------------------------------
+# 8. GIAO DIỆN GUI TRÁI ÁC QUỶ (/traiacquy)
+# ---------------------------------------------------------------------
+
+function getSkillName(fruit: text, num: number) :: text:
+    if {_fruit} is "mera":
+        if {_num} is 1:
+            return "Hỏa Quyền (Fire Fist)"
+        if {_num} is 2:
+            return "Hỏa Giới (Dai Enkai)"
+        return "Đại Hỏa Đế (Entei)"
+    if {_fruit} is "gomu":
+        if {_num} is 1:
+            return "Gomu Gomu no Pistol"
+        if {_num} is 2:
+            return "Gomu Gomu no Gatling"
+        return "Gear Fourth: Boundman"
+    if {_fruit} is "ope":
+        if {_num} is 1:
+            return "Không Gian ROOM"
+        if {_num} is 2:
+            return "Hoán Đổi Shambles"
+        return "Gamma Knife (Sát Thương Chuẩn)"
+    if {_fruit} is "seiryu":
+        if {_num} is 1:
+            return "Bolo Breath (Nhiệt Tức)"
+        if {_num} is 2:
+            return "Hoại Phong Kaifu"
+        return "Long Thần Giáng Thế"
+    if {_fruit} is "gura":
+        if {_num} is 1:
+            return "Không Chấn Kaishin"
+        if {_num} is 2:
+            return "Chấn Kích Kabutowari"
+        return "Nghiêng Trời Lệch Đất"
+    if {_fruit} is "pika":
+        if {_num} is 1:
+            return "Thiên Tùng Vân Kiếm"
+        if {_num} is 2:
+            return "Bát Chỉ Kính"
+        return "Bát Xích Khúc Ngọc"
+    if {_fruit} is "goro":
+        if {_num} is 1:
+            return "Lôi Phạt El Thor"
+        if {_num} is 2:
+            return "Lôi Thần Sango"
+        return "Đại Lôi Nghinh Raigo"
+    if {_fruit} is "phoenix":
+        if {_num} is 1:
+            return "Phượng Hoàng Ấn"
+        if {_num} is 2:
+            return "Ngọn Lửa Tái Sinh"
+        return "Bất Tử Điểu Giáng Thế"
+    return "Kỹ Năng Vô Danh"
+
+function getSkillDesc(fruit: text, num: number) :: text:
+    if {_fruit} is "mera":
+        if {_num} is 1:
+            return "Phóng hỏa diệm 14 block thiêu đốt kẻ địch. Sát thương gốc: 10 HP (5 Tim)."
+        if {_num} is 2:
+            return "Vòng lửa 5 block thiêu đốt và hất tung. Sát thương gốc: 14 HP (7 Tim)."
+        return "Tụ cầu lửa khổng lồ nổ tung 7 block. Sát thương gốc: 26 HP (13 Tim)."
+    if {_fruit} is "gomu":
+        if {_num} is 1:
+            return "Đấm co giãn 12 block kéo mục tiêu lại. Sát thương gốc: 10 HP (5 Tim)."
+        if {_num} is 2:
+            return "6 đợt liên hoàn đấm bão tố. Sát thương gốc: 2.4 HP x 6 = 14.4 HP (7.2 Tim)."
+        return "Cường hóa 15s: +40%% Giảm hồi chiêu Chiêu 1, 2, +20%% Sát thương kỹ năng, +40 DEF, Tốc độ II."
+    if {_fruit} is "ope":
+        if {_num} is 1:
+            return "Mở không gian ROOM 10 block trong 12s, hồi phục đồng minh và làm chậm địch."
+        if {_num} is 2:
+            return "Hoán đổi vị trí lập tức với mục tiêu. Sát thương gốc: 12 HP (6 Tim)."
+        return "Áp sát sau lưng chém Sát Thương Chuẩn xuyên giáp: 18 HP (9 Tim) + Wither II."
+    if {_fruit} is "seiryu":
+        if {_num} is 1:
+            return "Khạc nhiệt tức rồng thần 16 block. Sát thương gốc: 13 HP (6.5 Tim)."
+        if {_num} is 2:
+            return "Bão gió sắc bén thổi lùi kẻ địch 6 block. Sát thương gốc: 11 HP (5.5 Tim)."
+        return "Bay lượn 10s, hồi 20%% Máu và sấm sét liên hoàn: 5 HP x 5 = 25 HP (12.5 Tim)."
+    if {_fruit} is "gura":
+        if {_num} is 1:
+            return "Đấm nổ không gian 10m, đẩy lùi & giảm 15%% Giáp. Sát thương gốc: 15 HP."
+        if {_num} is 2:
+            return "Nắm đấm Sát Thương Chuẩn xuyên giáp 4.5m & làm choáng: 24 HP."
+        return "3 đợt xung kích 8m nghiêng ngả mặt đất và hất tung: 48 HP."
+    if {_fruit} is "pika":
+        if {_num} is 1:
+            return "Quét kiếm ánh sáng vòng cung 6m làm mù nhẹ 1.5s: 14 HP."
+        if {_num} is 2:
+            return "Tốc biến quang tốc 14m tới tâm ngắm & phát nổ 3.5m: 18 HP."
+        return "Bay lơ lửng phóng 12 luồng laser mưa ánh sáng 7m: 24 HP."
+    if {_fruit} is "goro":
+        if {_num} is 1:
+            return "Giáng cột sét thiên phạt 16m nổ điện 3.5m: 16 HP."
+        if {_num} is 2:
+            return "Phóng nón điện 9m, làm chậm & trừ 15 Bá Khí: 20 HP."
+        return "Tụ mây sấm giáng 5 tia sét nổ cực đại 8.5m: 44 HP."
+    if {_fruit} is "phoenix":
+        if {_num} is 1:
+            return "Lướt cánh lửa xanh 9m quét sát thương và đẩy lùi: 15 HP."
+        if {_num} is 2:
+            return "Vòng lửa xanh 5.5m gây 18 HP & hồi 20%% Máu đồng minh."
+        return "Đập cánh nổ biển lửa xanh 7.5m, giải hiệu ứng xấu & Giáp Hấp Thụ: 36 HP."
+    return ""
+
+function openDevilFruitGUI(p: player):
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G1_A", "&c&l✦ KHO NĂNG LỰC TRÁI ÁC QUỶ ✦", 4, red stained glass pane named " ", "UI_G1", "Năng Lực & Võ Học")
+
+    # Dọn dẹp dữ liệu rác nếu fruit không hợp lệ
+    set {_fruit} to {df_data::%{_u}%::fruit}
+    if {_fruit} is set:
+        if {_fruit} is not "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+            delete {df_data::%{_u}%::*}
+            delete {df_boundman::%{_u}%}
+            delete {df_in_water::%{_u}%}
+            delete {_fruit}
+
+    set {_mastery} to ({df_data::%{_u}%::mastery} ? 0)
+    set {_exp} to ({df_data::%{_u}%::exp} ? 0)
+    set {_awakened} to ({df_data::%{_u}%::awakened} ? false)
+    set {_req} to getDfRequiredExp({_mastery})
+
+    # Tính tổng CDR Liên Quân + Thức Tỉnh (Trần 40%)
+    set {_aovCdr} to ({aov_bonus::%{_u}%::cdr} ? 0.0)
+    set {_totalCdr} to {_aovCdr}
+    if {_awakened} is true:
+        add 20.0 to {_totalCdr}
+    if {_totalCdr} > 40.0:
+        set {_totalCdr} to 40.0
+
+    # Slot 4: Thông tin Trái Ác Quỷ hiện tại (Model 3D / Sách Vô Quả Giả)
+    if {_fruit} is set:
+        set {_statusText} to "&7Chưa Thức Tỉnh"
+        if {_awakened} is true:
+            set {_statusText} to "&6✦ ĐÃ THỨC TỈNH TỐI THƯỢNG ✦"
+        set {_dfName} to getDevilFruitDisplayName({_fruit})
+        set {_prog} to getProgressBar({_exp}, {_req})
+        set {_awakeBonus} to 0
+        if {_awakened} is true:
+            set {_awakeBonus} to 20
+        set {_item4} to makeCustomRPItem({_fruit}, "&6&l✦ %{_dfName}% &6&l✦", ("&8&m--------------------------------" and "&7Độ Thông Thạo: &bLv.%{_mastery}%/100" and "&7Tiến trình: %{_prog}% &e%{_exp}%/%{_req}% EXP" and "&7Trạng thái: %{_statusText}%" and "&7Giảm hồi chiêu: &b%{_totalCdr}%%% &8(AoV: %{_aovCdr}%%% + Thức Tỉnh: %{_awakeBonus}%%%)" and "" and "&e▶ Cầm Lõi Ác Quỷ hoặc bật PK [F] để thi triển chiêu!" and "&8&m--------------------------------"))
+        set slot 4 of {_inv} to {_item4}
+    else:
+        set {_item4} to book named "&a&l✦ BẠN ĐANG LÀ VÔ QUẢ GIẢ ✦" with lore ("&8&m--------------------------------" and "&7Bạn chưa ăn Trái Ác Quỷ nào." and "&bNội tại Vô Quả Giả kích hoạt:" and "&f• &bBá Chủ Biển Cả:&7 +Speed II & +15%% ST dưới nước" and "&f• &aTinh Thông AoV:&7 +15%% AD & HP từ khay đồ" and "" and "&e▶ Nhấp chuột để mở Menu Võ Học (/vohoc)!" and "&8&m--------------------------------")
+        set slot 4 of {_inv} to {_item4}
+
+    # Slot 11, 13, 15: 3 Chiêu Thức
+    if {_fruit} is set:
+        set {_awakeDamageBonusText} to "&7(Thức Tỉnh: &6+0%%&7)"
+        if {_awakened} is true:
+            set {_awakeDamageBonusText} to "&7(Thức Tỉnh: &6+25%% Sát Thương &a✔&7)"
+
+        # 3 Chiêu Thức tính thời gian hồi chiêu động
+        set {_baseCd1} to getFruitSkillBaseCooldown({_fruit}, 1, {_awakened})
+        set {_baseCd2} to getFruitSkillBaseCooldown({_fruit}, 2, {_awakened})
+        set {_baseCd3} to getFruitSkillBaseCooldown({_fruit}, 3, {_awakened})
+        set {_cd1} to roundOneDecimal({_baseCd1} * (1.0 - ({_totalCdr} / 100.0)))
+        set {_cd2} to roundOneDecimal({_baseCd2} * (1.0 - ({_totalCdr} / 100.0)))
+        set {_cd3} to roundOneDecimal({_baseCd3} * (1.0 - ({_totalCdr} / 100.0)))
+
+        # Chiêu 1 - Slot 11
+        set {_s1Name} to getSkillName({_fruit}, 1)
+        set {_s1Desc} to getSkillDesc({_fruit}, 1)
+        set {_item11} to makeCustomRPItem("skill_slot_1", "&e&lChiêu 1: &f%{_s1Name}%", ("&8&m--------------------------------" and "&7Thao tác: Bấm &e[F]&7 bật PK &f▶&7 Bấm &e[Phím 1]" and "&7Yêu cầu: &bĐộ Thông Thạo Lv.1 &a✔" and "&7Hồi chiêu: &e%{_cd1}%s &8(Gốc: %{_baseCd1}%s, CDR: %{_totalCdr}%%%)" and "&7Hệ số Thức Tỉnh: %{_awakeDamageBonusText}%" and "" and "&fMô tả & hiệu lực:" and "&7%{_s1Desc}%" and "&8&m--------------------------------"))
+        set slot 11 of {_inv} to {_item11}
+
+        # Chiêu 2 - Slot 13
+        set {_s2Name} to getSkillName({_fruit}, 2)
+        set {_s2Desc} to getSkillDesc({_fruit}, 2)
+        if {_mastery} >= 25:
+            set {_item13} to makeCustomRPItem("skill_slot_2", "&e&lChiêu 2: &f%{_s2Name}%", ("&8&m--------------------------------" and "&7Thao tác: Bấm &e[F]&7 bật PK &f▶&7 Bấm &e[Phím 2]" and "&7Yêu cầu: &bĐộ Thông Thạo Lv.25 &a✔" and "&7Hồi chiêu: &e%{_cd2}%s &8(Gốc: %{_baseCd2}%s, CDR: %{_totalCdr}%%%)" and "&7Hệ số Thức Tỉnh: %{_awakeDamageBonusText}%" and "" and "&fMô tả & hiệu lực:" and "&7%{_s2Desc}%" and "&8&m--------------------------------"))
+        else:
+            set {_item13} to coal named "&c&lChiêu 2: &7&m%{_s2Name}% &c[ĐANG KHÓA]" with lore ("&8&m--------------------------------" and "&cChưa mở khóa! Yêu cầu Độ Thông Thạo &eLv.25" and "&7Hiện tại: &bLv.%{_mastery}%/25" and "&8&m--------------------------------")
+        set slot 13 of {_inv} to {_item13}
+
+        # Chiêu 3 - Slot 15 (Tuyệt Kỹ - Nhãn True Damage cho Ope/Gura)
+        set {_s3Name} to getSkillName({_fruit}, 3)
+        set {_s3Desc} to getSkillDesc({_fruit}, 3)
+        set {_trueDmgTag} to ""
+        if {_fruit} is "ope" or "gura":
+            set {_trueDmgTag} to "&d&l✦ SÁT THƯƠNG CHUẨN (TRUE DAMAGE)"
+        if {_mastery} >= 60:
+            if {_trueDmgTag} is not "":
+                set {_item15} to makeCustomRPItem("skill_slot_3", "&6&lChiêu 3: &e%{_s3Name}% &6[TUYỆT KỸ]", ("&8&m--------------------------------" and "&7Thao tác: Bấm &e[F]&7 bật PK &f▶&7 Bấm &e[Phím 3]" and "&7Yêu cầu: &bĐộ Thông Thạo Lv.60 &a✔" and "%{_trueDmgTag}%" and "&7Hồi chiêu: &e%{_cd3}%s &8(Gốc: %{_baseCd3}%s, CDR: %{_totalCdr}%%%)" and "&7Hệ số Thức Tỉnh: %{_awakeDamageBonusText}%" and "" and "&fMô tả & hiệu lực:" and "&7%{_s3Desc}%" and "&8&m--------------------------------"))
+            else:
+                set {_item15} to makeCustomRPItem("skill_slot_3", "&6&lChiêu 3: &e%{_s3Name}% &6[TUYỆT KỸ]", ("&8&m--------------------------------" and "&7Thao tác: Bấm &e[F]&7 bật PK &f▶&7 Bấm &e[Phím 3]" and "&7Yêu cầu: &bĐộ Thông Thạo Lv.60 &a✔" and "&7Hồi chiêu: &e%{_cd3}%s &8(Gốc: %{_baseCd3}%s, CDR: %{_totalCdr}%%%)" and "&7Hệ số Thức Tỉnh: %{_awakeDamageBonusText}%" and "" and "&fMô tả & hiệu lực:" and "&7%{_s3Desc}%" and "&8&m--------------------------------"))
+        else:
+            set {_item15} to coal named "&c&lChiêu 3: &7&m%{_s3Name}% &c[ĐANG KHÓA]" with lore ("&8&m--------------------------------" and "&cChưa mở khóa! Yêu cầu Độ Thông Thạo &eLv.60" and "&7Hiện tại: &bLv.%{_mastery}%/60" and "&8&m--------------------------------")
+        set slot 15 of {_inv} to {_item15}
+    else:
+        set {_lockItem} to coal named "&7&lKỸ NĂNG CHƯA MỞ KHÓA" with lore ("&7Hãy ăn Trái Ác Quỷ để kích hoạt các kỹ năng.")
+        set slot 11 of {_inv} to {_lockItem}
+        set slot 13 of {_inv} to {_lockItem}
+        set slot 15 of {_inv} to {_lockItem}
+
+    # Slot 21: Thẻ Canon & Lời Nguyền Nước Biển
+    set slot 21 of {_inv} to book named "&e&l✦ &6&lQUY TẮC & LỜI NGUYỀN BIỂN CẢ &e&l✦" with lore ("&8&m--------------------------------" and "&71. &cQuy tắc 1 Trái:&f Ăn trái thứ 2 lập tức &cNỔ CHẾT&f!" and "&72. &bLời Nguyền Biển Cả:&f Đứng trong nước bị phong ấn" and "&f   kỹ năng và nhận &cSlowness III, Weakness II&f." and "&73. &eCân Bằng PvP:&f Trần Chí Mạng Kỹ Năng tối đa &ex1.4&f." and "&74. &dThuốc Xóa Ác Quỷ:&f Thanh tẩy tại &e/vegapunk &fan toàn." and "&8&m--------------------------------")
+
+    # Slot 23: Nút Kích Hoạt Thức Tỉnh (Đá Thức Tỉnh 3D hoặc Bùa Thức Tỉnh Tinh Tú)
+    if {_awakened} is true:
+        set slot 23 of {_inv} to makeCustomRPItem("skill_awaken", "&6&l✦ &e&lĐÃ THỨC TỈNH SỨC MẠNH &6&l✦", ("&8&m--------------------------------" and "&aTrái Ác Quỷ của bạn đã đạt cảnh giới tối thượng!" and "&f• &c+25%% Sát thương kỹ năng &a(Kích hoạt)" and "&f• &b-20%% Hồi chiêu kỹ năng &a(Kích hoạt)" and "&8&m--------------------------------"))
+    else:
+        set {_canLvl} to "&c✘ (Cần Lv.100)"
+        if {_mastery} >= 100:
+            set {_canLvl} to "&a✔"
+        set slot 23 of {_inv} to makeCustomRPItem("skill_awaken", "&6&l✦ &e&lTHỨC TỈNH TRÁI ÁC QUỶ &6&l✦", ("&8&m--------------------------------" and "&7Điều kiện Thức Tỉnh:" and "&f• Độ Thông Thạo: &bLv.100 %{_canLvl}%" and "&f• Vật phẩm: &61x Đá Thức Tỉnh &7hoặc &e1x Bùa Thức Tỉnh" and "" and "&aHiệu quả sau thức tỉnh:" and "&f• &c+25%% Sát thương kỹ năng" and "&f• &b-20%% Thời gian hồi chiêu" and "" and "&e▶ Nhấp chuột để tiến hành Thức Tỉnh!" and "&8&m--------------------------------"))
+
+    # Slot 31: Thông tin CDR & Giảm tiêu hao
+    set {_awakeBonus} to 0
+    if {_awakened} is true:
+        set {_awakeBonus} to 20
+    set slot 31 of {_inv} to makeCustomRPItem("flag_dragon", "&b&l✦ GIẢM THỜI GIAN HỒI CHIÊU (CDR) ✦", ("&8&m--------------------------------" and "&7Tổng CDR hiện tại: &b%{_totalCdr}%%% &8(Tối đa: 40%%)" and "&f• &eCDR từ Trang bị AoV: &a%{_aovCdr}%%%" and "&f• &eCDR từ Thức Tỉnh Ác Quỷ: &6+%{_awakeBonus}%%%" and "" and "&7Mọi kỹ năng Trái Ác Quỷ & Võ Học đều nhận lợi ích!" and "&8&m--------------------------------"))
+
+    openStandardUI({_p}, {_inv}, "UI_G1_A", "UI_G1")
+
+# Chống kéo thả GUI UI_G1_A qua Reflect
+on InventoryDragEvent:
+    set {_who} to event.getWhoClicked()
+    set {_u} to uuid of {_who}
+    if {ui_active::%{_u}%} is "UI_G1_A":
+        cancel event
+
+# Xử lý nhấp chuột trong GUI /traiacquy (UI_G1_A)
+on inventory click:
+    set {_u} to uuid of player
+    if {ui_active::%{_u}%} is not "UI_G1_A":
+        stop
+    cancel event
+    if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+        player.updateInventory()
+        stop
+    if clicked inventory is not player's current inventory:
+        stop
+    set {_slot} to index of event-slot
+    if {_slot} is 27 or 28 or 35:
+        stop
+
+    # Slot 4: Mở menu Võ Học nếu là Vô Quả Giả
+    if {_slot} is 4:
+        if {df_data::%{_u}%::fruit} is not set:
+            wait 1 tick
+            openMartialGUI(player)
+            stop
+
+    # Slot 23: Thức Tỉnh Trái Ác Quỷ
+    else if {_slot} is 23:
+        if {df_data::%{_u}%::fruit} is not set:
+            sendSystemMsg(player, "error", "Bạn chưa sở hữu Trái Ác Quỷ nào cả!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+        if {df_data::%{_u}%::awakened} is true:
+            sendSystemMsg(player, "error", "Trái Ác Quỷ của bạn đã Thức Tỉnh từ trước rồi!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+        if ({df_data::%{_u}%::mastery} ? 0) < 100:
+            sendSystemMsg(player, "error", "Cần đạt Mastery &bLv.100&c để Thức Tỉnh! (Hiện tại: &eLv.%{df_data::%{_u}%::mastery}%&c)")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+
+        # Kiểm tra và trừ Bùa Thức Tỉnh hoặc Đá Thức Tỉnh trong túi đồ (slot-based)
+        set {_foundItem} to false
+        loop integers from 0 to 40:
+            set {_item} to slot loop-integer of player's inventory
+            if {_item} is set:
+                if {_item} is not air:
+                    if type of {_item} is not air:
+                        set {_tag} to string tag "SkyblockItem" of nbt compound of {_item}
+                        if {_tag} is "awakening_talisman" or "awakening_stone":
+                            set {_amt} to item amount of {_item}
+                            if {_amt} <= 1:
+                                set slot loop-integer of player's inventory to air
+                            else:
+                                set item amount of (slot loop-integer of player's inventory) to ({_amt} - 1)
+                            set {_foundItem} to true
+                            exit loop
+
+        if {_foundItem} is false:
+            if player's offhand tool is set:
+                if player's offhand tool is not air:
+                    if type of player's offhand tool is not air:
+                        set {_tag} to string tag "SkyblockItem" of nbt compound of player's offhand tool
+                        if {_tag} is "awakening_talisman" or "awakening_stone":
+                            set {_amt} to item amount of player's offhand tool
+                            if {_amt} <= 1:
+                                set player's offhand tool to air
+                            else:
+                                set item amount of player's offhand tool to ({_amt} - 1)
+                            set {_foundItem} to true
+
+        if {_foundItem} is true:
+            set {df_data::%{_u}%::awakened} to true
+            updateDevilFruitPassives(player)
+            recalcPlayerMaxHealth(player)
+            updatePlayerSidebar(player)
+            broadcastDualCard("&6&l✦ THỨC TỈNH", "&e%name of player% &fđã thức tỉnh thành công &6&l✦ %getDevilFruitDisplayName({df_data::%{_u}%::fruit})% ✦&f!", "Nhận vĩnh viễn &a+25%% Sát Thương Kỹ Năng &e-20%% Thời Gian Hồi Chiêu&f!")
+            send title "&6&l✦ THỨC TỈNH THÀNH CÔNG! ✦" with subtitle "&eNhận +25%% Sát Thương Kỹ Năng & -20%% Hồi Chiêu!" to player for 4 seconds
+            play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to player
+            set {_loc} to location of player
+            add 1 to y-coordinate of {_loc}
+            spawnVisualParticle("FIREWORKS_SPARK", {_loc}, 60, 1.0, 1.2, 1.0, 0.2)
+            spawnVisualParticle("END_ROD", {_loc}, 40, 0.8, 1.0, 0.8, 0.1)
+            wait 1 tick
+            openDevilFruitGUI(player)
+        else:
+            sendSystemMsg(player, "error", "Cần có &61x Đá Thức Tỉnh &choặc &e1x Bùa Thức Tỉnh&c trong túi đồ!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+
+# ---------------------------------------------------------------------
+# 9. LỆNH NGƯỜI CHƠI & LỆNH QUẢN TRỊ ADMIN
+# ---------------------------------------------------------------------
+
+command /traiacquy:
+    aliases: /df, /devilfruit
+    trigger:
+        openDevilFruitGUI(player)
+
+command /dfadmin <text> [<player>] [<text>] [<number>]:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        set {_action} to arg-1
+        set {_target} to player
+        if arg-2 is set:
+            set {_target} to arg-2
+
+        if {_action} is "givefruit":
+            if arg-3 is "unidentified" or "traibian":
+                giveUnidentifiedFruit({_target})
+                send "&a[DFAdmin] &7Đã trao &dTrái Ác Quỷ Chưa Giám Định &7cho &e%name of {_target}%&7!" to sender
+                stop
+            set {_validFruit} to false
+            if arg-3 is "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+                set {_validFruit} to true
+            if {_validFruit} is false:
+                send "&cCú pháp: /dfadmin givefruit <player> <mera|gomu|ope|seiryu|gura|pika|goro|phoenix|unidentified>" to sender
+                stop
+            set {_i} to getDevilFruitItem(arg-3)
+            give 1 of {_i} to {_target}
+            send "&a[DFAdmin] &7Đã trao &6%getDevilFruitDisplayName(arg-3)% &7cho &e%name of {_target}%&7!" to sender
+
+        else if {_action} is "givecore" or "giveunidentified":
+            giveUnidentifiedFruit({_target})
+            send "&a[DFAdmin] &7Đã trao &dTrái Ác Quỷ Chưa Giám Định &7cho &e%name of {_target}%&7!" to sender
+
+        else if {_action} is "givestone":
+            set {_i} to getAwakeningStoneItem()
+            give 1 of {_i} to {_target}
+            send "&a[DFAdmin] &7Đã trao &6Đá Thức Tỉnh &7cho &e%name of {_target}%&7!" to sender
+
+        else if {_action} is "giveremover":
+            set {_i} to getFruitRemoverItem()
+            give 1 of {_i} to {_target}
+            send "&a[DFAdmin] &7Đã trao &dThuốc Xóa Ác Quỷ &7cho &e%name of {_target}%&7!" to sender
+
+        else if {_action} is "givechest":
+            set {_i} to getRandomFruitChestItem()
+            give 1 of {_i} to {_target}
+            send "&a[DFAdmin] &7Đã trao &6Rương Trái Ác Quỷ &7cho &e%name of {_target}%&7!" to sender
+
+        else if {_action} is "setmastery":
+            set {_num} to arg-4
+            if {_num} is not set:
+                set {_num} to (arg-3 parsed as number)
+            if {_num} is not set:
+                send "&cCú pháp: /dfadmin setmastery <player> <level (1-100)>" to sender
+                stop
+            set {_u} to uuid of {_target}
+            set {_lvl} to round({_num})
+            if {_lvl} < 1:
+                set {_lvl} to 1
+            if {_lvl} > 100:
+                set {_lvl} to 100
+            set {df_data::%{_u}%::mastery} to {_lvl}
+            set {df_data::%{_u}%::exp} to 0
+            send "&a[DFAdmin] &7Đã đặt Độ Thông Thạo của &e%name of {_target}% &7thành &bLv.%{_lvl}%&7!" to sender
+
+        else if {_action} is "info":
+            set {_u} to uuid of {_target}
+            set {_f} to ({df_data::%{_u}%::fruit} ? "Chưa có")
+            set {_m} to ({df_data::%{_u}%::mastery} ? 0)
+            set {_e} to ({df_data::%{_u}%::exp} ? 0)
+            set {_reqExp} to getDfRequiredExp({_m})
+            set {_awk} to ({df_data::%{_u}%::awakened} ? false)
+            send "&8&m----------------------------------------" to sender
+            send "&6&l[DFAdmin] THÔNG TIN NĂNG LỰC: &e%name of {_target}%" to sender
+            send "&7• Trái Ác Quỷ: &6%getDevilFruitDisplayName({_f})% &8(%{_f}%)" to sender
+            send "&7• Độ Thông Thạo: &bLv.%{_m}%/100" to sender
+            send "&7• Kinh Nghiệm: &e%{_e}%/%{_reqExp}% EXP" to sender
+            send "&7• Trạng thái Thức Tỉnh: &f%{_awk}%" to sender
+            send "&8&m----------------------------------------" to sender
+
+        else if {_action} is "setfruit":
+            set {_validFruit} to false
+            if arg-3 is "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+                set {_validFruit} to true
+            if {_validFruit} is false:
+                send "&cCú pháp: /dfadmin setfruit <player> <mera|gomu|ope|seiryu|gura|pika|goro|phoenix>" to sender
+                stop
+            set {_u} to uuid of {_target}
+            delete {seiryu_hp_boost::%{_u}%}
+            delete {df_goro_dodge::%{_u}%}
+            delete {df_goro_dodge_until::%{_u}%}
+            delete {df_goro_dodge_seq::%{_u}%}
+            delete {ope_room_buff_until::%{_u}%}
+            delete {ope_room_seq::%{_u}%}
+            set {df_data::%{_u}%::fruit} to arg-3
+            set {df_data::%{_u}%::mastery} to 1
+            set {df_data::%{_u}%::exp} to 0
+            set {df_data::%{_u}%::awakened} to false
+            set {martial_awakened::%{_u}%} to false
+            updateDevilFruitPassives({_target})
+            recalcPlayerMaxHealth({_target})
+            updatePlayerSidebar({_target})
+            send "&a[DFAdmin] &7Đã gán trái &6%getDevilFruitDisplayName(arg-3)% &7cho &e%name of {_target}%&7!" to sender
+
+        else if {_action} is "awaken":
+            set {_u} to uuid of {_target}
+            if {df_data::%{_u}%::fruit} is not "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+                send "&cNgười chơi chưa có Trái Ác Quỷ!" to sender
+                stop
+            set {df_data::%{_u}%::awakened} to true
+            set {martial_awakened::%{_u}%} to false
+            updateDevilFruitPassives({_target})
+            recalcPlayerMaxHealth({_target})
+            updatePlayerSidebar({_target})
+            send "&a[DFAdmin] &7Đã Thức Tỉnh Trái Ác Quỷ cho &e%name of {_target}%&7!" to sender
+
+        else if {_action} is "unawaken":
+            set {_u} to uuid of {_target}
+            set {df_data::%{_u}%::awakened} to false
+            set {martial_awakened::%{_u}%} to false
+            updateDevilFruitPassives({_target})
+            recalcPlayerMaxHealth({_target})
+            updatePlayerSidebar({_target})
+            send "&a[DFAdmin] &7Đã hủy Thức Tỉnh Trái Ác Quỷ cho &e%name of {_target}%&7!" to sender
+
+        else if {_action} is "resetfruit":
+            consumeFruitRemover({_target})
+            send "&a[DFAdmin] &7Đã xóa sạch Trái Ác Quỷ của &e%name of {_target}%&7!" to sender
+
+        else if {_action} is "menu":
+            openDevilFruitGUI({_target})
+
+        else:
+            send "&8&m----------------------------------------" to sender
+            send "&6&lLỆNH QUẢN TRỊ TRÁI ÁC QUỶ (/dfadmin):" to sender
+            send "&e• /dfadmin givefruit <player> <mera|gomu|ope|seiryu>" to sender
+            send "&e• /dfadmin givecore <player>" to sender
+            send "&e• /dfadmin givestone <player>" to sender
+            send "&e• /dfadmin giveremover <player>" to sender
+            send "&e• /dfadmin givechest <player>" to sender
+            send "&e• /dfadmin setmastery <player> <1-100>" to sender
+            send "&e• /dfadmin setfruit <player> <mera|gomu|ope|seiryu>" to sender
+            send "&e• /dfadmin awaken <player> &7- Thức tỉnh trái ác quỷ (+20%% CDR)" to sender
+            send "&e• /dfadmin unawaken <player> &7- Hủy thức tỉnh trái ác quỷ" to sender
+            send "&e• /dfadmin resetfruit <player>" to sender
+            send "&e• /dfadmin info [player]" to sender
+            send "&e• /dfadmin menu [player]" to sender
+            send "&8&m----------------------------------------" to sender
+
+# ---------------------------------------------------------------------
+# 10. HÀM CẦU NỐI PLACEHOLDER CHO 04_papi_bridge & SCOREBOARD
+# ---------------------------------------------------------------------
+
+function getDevilFruitPapiName(u: text) :: text:
+    if {df_data::%{_u}%::fruit} is not "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+        return "&7Chưa có"
+    set {_fruit} to {df_data::%{_u}%::fruit}
+    set {_name} to "&7Chưa có"
+    if {_fruit} is "mera":
+        set {_name} to "&6Mera Mera"
+    else if {_fruit} is "gomu":
+        set {_name} to "&dGomu Gomu"
+    else if {_fruit} is "ope":
+        set {_name} to "&cOpe Ope"
+    else if {_fruit} is "seiryu":
+        set {_name} to "&bThanh Long"
+    else if {_fruit} is "gura":
+        set {_name} to "&fGura Gura"
+    else if {_fruit} is "pika":
+        set {_name} to "&ePika Pika"
+    else if {_fruit} is "goro":
+        set {_name} to "&9Goro Goro"
+    else if {_fruit} is "phoenix":
+        set {_name} to "&3Phượng Hoàng"
+    if {df_data::%{_u}%::awakened} is true:
+        return "%{_name}% &e✦"
+    return {_name}
+
+function getDevilFruitPapiFullName(u: text) :: text:
+    if {df_data::%{_u}%::fruit} is not "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+        return "&7Chưa có"
+    set {_fruit} to {df_data::%{_u}%::fruit}
+    set {_name} to getDevilFruitDisplayName({_fruit})
+    if {df_data::%{_u}%::awakened} is true:
+        return "%{_name}% &6(✦)"
+    return {_name}
+
+function getDevilFruitPapiMastery(u: text) :: text:
+    if {df_data::%{_u}%::fruit} is not "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+        return "0"
+    if {df_data::%{_u}%::mastery} is not set:
+        return "0"
+    return "%{df_data::%{_u}%::mastery}%"
+
+function getDevilFruitPapiAwakened(u: text) :: text:
+    if {df_data::%{_u}%::fruit} is not "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+        return "&7Chưa"
+    if {df_data::%{_u}%::awakened} is true:
+        return "&6Đã Thức Tỉnh"
+    return "&7Chưa"
+
+function getDevilFruitPapiExp(u: text) :: text:
+    if {df_data::%{_u}%::fruit} is not "mera" or "gomu" or "ope" or "seiryu" or "gura" or "pika" or "goro" or "phoenix":
+        return "0"
+    if {df_data::%{_u}%::exp} is not set:
+        return "0"
+    return "%{df_data::%{_u}%::exp}%"
+
+# =====================================================================
+# 11. HỆ THỐNG VÕ HỌC ĐẠI TÔNG SƯ (VÔ QUẢ GIẢ - PHASE 9 & 10 SPEC)
+# 2 Nhánh: Kiếm Đạo Đại Tông Sư (kiem_dao) & Lục Thức Hải Quân (luc_thuc)
+# Độ thông thạo Mastery Lv.1-100, Thức Tỉnh bằng Đá Thức Tỉnh Ánh Sao
+# Tích hợp chung phím F + Chuột Phải khi bật /chiendau
+# =====================================================================
+
+function initMartialData(p: player):
+    set {_u} to uuid of {_p}
+    if {martial_mastery::%{_u}%} is not set:
+        set {martial_mastery::%{_u}%} to 1
+    if {martial_exp::%{_u}%} is not set:
+        set {martial_exp::%{_u}%} to 0
+    if {martial_awakened::%{_u}%} is not set:
+        set {martial_awakened::%{_u}%} to false
+
+function getMartialStyleName(style: text) :: text:
+    if {_style} is "kiem_dao":
+        return "&aKiếm Đạo Đại Tông Sư"
+    if {_style} is "luc_thuc":
+        return "&eLục Thức Hải Quân"
+    return "&7Chưa Chọn Võ Học"
+
+function setMartialStyle(p: player, style: text):
+    set {_u} to uuid of {_p}
+    initMartialData({_p})
+    set {martial_style::%{_u}%} to {_style}
+
+    # Kích hoạt nội tại nếu là Vô Quả Giả
+    set {_isNoDf} to false
+    if {df_data::%{_u}%::fruit} is not set:
+        set {_isNoDf} to true
+    else if {df_data::%{_u}%::fruit} is "none" or "":
+        set {_isNoDf} to true
+
+    if {_isNoDf} is true:
+        delete {martial_bonus::%{_u}%::*}
+        if {_style} is "kiem_dao":
+            set {martial_bonus::%{_u}%::crit_damage} to 15.0
+            sendSystemMsg({_p}, "training", "Gia nhập &a&lKiếm Đạo Đại Tông Sư&f! Kích hoạt nội tại &c+15%% ST Chí Mạng&f.")
+        else if {_style} is "luc_thuc":
+            set {martial_bonus::%{_u}%::dodge} to 8.0
+            sendSystemMsg({_p}, "training", "Gia nhập &e&lLục Thức Hải Quân&f! Kích hoạt nội tại &b+8%% Né Tránh & Speed I&f.")
+        recalcPlayerMaxHealth({_p})
+    else:
+        sendSystemMsg({_p}, "training", "Đã ghi nhận môn phái &f%getMartialStyleName({_style})%&f (Nội tại kích hoạt khi thanh tẩy Trái Ác Quỷ).")
+
+    play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1.2 to {_p}
+    set {_loc} to location of {_p}
+    add 1 to y-coordinate of {_loc}
+    spawnVisualParticle("FIREWORKS_SPARK", {_loc}, 30, 0.5, 0.8, 0.5, 0.1)
+    updatePlayerSidebar({_p})
+
+function getMartialSkillName(style: text, slot: number) :: text:
+    if {_style} is "kiem_dao":
+        if {_slot} is 1:
+            return "Phi Trảm (Flying Slash)"
+        if {_slot} is 2:
+            return "Cư Hợp Trảm (Iai Slash)"
+        return "Tam Thiên Thế Giới"
+    if {_style} is "luc_thuc":
+        if {_slot} is 1:
+            return "Soru & Shigan"
+        if {_slot} is 2:
+            return "Tekkai Kempo (Thiết Khối)"
+        return "Rokuogan (Lục Vương Thương)"
+    return "Kỹ Năng Võ Học"
+
+function getMartialSkillDesc(style: text, slot: number) :: text:
+    if {_style} is "kiem_dao":
+        if {_slot} is 1:
+            return "Phóng kiếm khí bay 12 block theo hướng nhìn. Sát thương gốc: 8 HP (4 Tim)."
+        if {_slot} is 2:
+            return "Lướt nhanh 8 block xuyên qua mục tiêu tung 4 lần chém liên hoàn, mỗi lần gây 3.5 HP (tổng 14 HP), làm chậm & mù quáng 1.5s."
+        return "Xoay kiếm bão tố liên hoàn 360 độ quanh 6 block + xuất huyết Wither II. Sát thương: 25 HP (12.5 Tim)."
+    if {_style} is "luc_thuc":
+        if {_slot} is 1:
+            return "Soru lướt nhanh 6 block tung Chỉ Thương xuyên thấu đẩy lùi. Sát thương gốc: 9 HP (4.5 Tim)."
+        if {_slot} is 2:
+            return "Vận Thiết Khối trong 3.5s: Nhận Resistance III & Phản lại 35%% sát thương nhận vào."
+        return "Nén sóng xung kích hình nón 7 block hất tung & choáng địch. Sát thương: 24 HP (12 Tim)."
+    return ""
+
+function getMartialRequiredExp(lvl: number) :: number:
+    if {_lvl} < 1:
+        return 50
+    if {_lvl} >= 100:
+        return 999999
+    return round({_lvl} * 40)
+
+function addMartialExp(p: player, amount: number):
+    set {_u} to uuid of {_p}
+    if {martial_style::%{_u}%} is not set:
+        stop
+    initMartialData({_p})
+    if {martial_mastery::%{_u}%} >= 100:
+        stop
+
+    set {_isUuid} to getCrewIslandUUID({_p})
+    if hasCrewFlag({_isUuid}, "hoa_long") is true:
+        set {_amount} to round({_amount} * 1.2)
+
+    add {_amount} to {martial_exp::%{_u}%}
+
+    while {martial_exp::%{_u}%} >= getMartialRequiredExp({martial_mastery::%{_u}%}):
+        set {_req} to getMartialRequiredExp({martial_mastery::%{_u}%})
+        remove {_req} from {martial_exp::%{_u}%}
+        add 1 to {martial_mastery::%{_u}%}
+
+        if {martial_mastery::%{_u}%} >= 100:
+            set {martial_mastery::%{_u}%} to 100
+            set {martial_exp::%{_u}%} to 0
+            send title "&6&l✦ ĐẠT MASTERY VÕ HỌC LV.100! ✦" with subtitle "&eHãy tiến hành Thức Tỉnh trong &f/vohoc&e!" to {_p} for 4 seconds
+            broadcastDualCard("&6&l✦ ĐỈNH CAO", "&e%name of {_p}% &fđã luyện &6%getMartialStyleName({martial_style::%{_u}%})% &fđạt &b&lMastery Lv.100 &ftối đa!", "Đại tông sư võ học tái xuất giang hồ, sẵn sàng Thức Tỉnh!")
+            play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to {_p}
+            exit loop
+
+        set {_curLvl} to {martial_mastery::%{_u}%}
+        send title "&6&lVÕ HỌC THĂNG CẤP!" with subtitle "&eĐộ thông thạo đã tăng lên &bLv.%{_curLvl}%&e!" to {_p} for 2 seconds
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.2 to {_p}
+
+        if {_curLvl} is 25:
+            sendSystemMsg({_p}, "training", "Võ học thăng cấp Lv.25! Đã mở khóa &eChiêu 2 &f(Phím [2] trong Chiến đấu)!")
+        else if {_curLvl} is 60:
+            sendSystemMsg({_p}, "training", "Võ học thăng cấp Lv.60! Đã mở khóa &eChiêu 3 - Tuyệt Kỹ &f(Phím [3] trong Chiến đấu)!")
+
+function getMartialSkillCooldown(p: player, baseCd: number) :: number:
+    set {_u} to uuid of {_p}
+    set {_cdr} to ({aov_bonus::%{_u}%::cdr} ? 0.0)
+    set {_fruit} to {df_data::%{_u}%::fruit}
+    if {_fruit} is not set:
+        if {martial_awakened::%{_u}%} is true:
+            add 20.0 to {_cdr}
+    else if {_fruit} is "" or "none":
+        if {martial_awakened::%{_u}%} is true:
+            add 20.0 to {_cdr}
+    # Giới hạn trần giảm hồi chiêu 40% (Section 3.3 Phase 15)
+    if {_cdr} > 40.0:
+        set {_cdr} to 40.0
+    set {_actual} to {_baseCd} * (1.0 - ({_cdr} / 100.0))
+    if {_actual} < 1.0:
+        set {_actual} to 1.0
+    return roundOneDecimal({_actual})
+
+function checkMartialSkillCooldown(p: player, skillNum: number, baseCd: number) :: boolean:
+    set {_u} to uuid of {_p}
+    set {_style} to {martial_style::%{_u}%}
+    set {_isAwakened} to ({martial_awakened::%{_u}%} ? false)
+    set {_stdBase} to getFruitSkillBaseCooldown({_style}, {_skillNum}, {_isAwakened})
+    if {_stdBase} > 0:
+        set {_baseCd} to {_stdBase}
+    set {_cdSec} to getMartialSkillCooldown({_p}, {_baseCd})
+    set {_nowMs} to System.currentTimeMillis()
+    if {martial_cd_ms::%{_u}%::skill%{_skillNum}%} is set:
+        set {_passed} to ({_nowMs} - {martial_cd_ms::%{_u}%::skill%{_skillNum}%}) / 1000
+        if {_passed} < {_cdSec}:
+            set {_rem} to round({_cdSec} - {_passed})
+            if {_rem} < 1:
+                set {_rem} to 1
+            send action bar "&c&l◷ Chiêu %{_skillNum}% đang hồi! &8(Còn %{_rem}%s)" to {_p}
+            play sound "BLOCK_NOTE_BASS" with volume 0.8 and pitch 1 to {_p}
+            return false
+    set {martial_cd_ms::%{_u}%::skill%{_skillNum}%} to {_nowMs}
+    set {martial_cd_duration::%{_u}%::skill%{_skillNum}%} to {_cdSec}
+    return true
+
+function dealMartialSkillDamage(p: player, vic: entity, rawDmg: number, style: text, skillNum: number, flatTrue: number = 0):
+    if {_vic} is not living entity:
+        stop
+    if {_vic} is {_p}:
+        stop
+    if {_vic} is dead:
+        stop
+
+    if {_vic} is a player:
+        set {_pCrew} to getCrewIslandUUID({_p})
+        set {_vCrew} to getCrewIslandUUID({_vic})
+        if {_pCrew} is not "":
+            if {_pCrew} is {_vCrew}:
+                stop
+
+    set {_u} to uuid of {_p}
+    set {_vicU} to uuid of {_vic}
+
+    # 0. Kiểm tra Né Tránh Kỹ Năng Võ Học (Dodge vs Accuracy, Bỏ trần 70%)
+    if {_vic} is a player:
+        set {_vic_dodge} to getTalentTotal({_vic}, "dodge")
+        set {_att_acc} to getTalentTotal({_p}, "accuracy")
+        set {_net_dodge} to {_vic_dodge} - {_att_acc}
+        if {_net_dodge} > 100.0:
+            set {_net_dodge} to 100.0
+        if {_net_dodge} > 0.0:
+            set {_roll_dodge} to random number between 0 and 100
+            if {_roll_dodge} <= {_net_dodge}:
+                spawnPacketDamageHolo(location of {_vic}, "&7&l» NÉ", {_vicU})
+                send action bar "&b&l✦ NÉ KỸ NĂNG VÕ HỌC! ✦" to {_vic}
+                send action bar "&7&o* Đối phương đã né tránh kỹ năng! *" to {_p}
+                play sound "ENTITY_ENDERDRAGON_FLAP" with volume 1 and pitch 1.8 to {_vic}
+                play sound "ENTITY_ENDERDRAGON_FLAP" with volume 1 and pitch 1.8 to {_p}
+                set {_vloc} to location of {_vic}
+                add 1 to y-coordinate of {_vloc}
+                spawnVisualParticle("CLOUD", {_vloc}, 15, 0.4, 0.5, 0.4, 0.05)
+                spawnVisualParticle("SMOKE_NORMAL", {_vloc}, 10, 0.3, 0.4, 0.3, 0.02)
+
+                # Haki Quan Sát né đòn: Phản công quan sát (hồi 5 Bá Khí và +15% ST trong 3s)
+                if {haki_active::%{_vicU}%::ken} is true:
+                    add 5 to {haki_energy::%{_vicU}%}
+                    if {haki_energy::%{_vicU}%} > {haki_max_energy::%{_vicU}%}:
+                        set {haki_energy::%{_vicU}%} to {haki_max_energy::%{_vicU}%}
+                    set {ken_counter_buff::%{_vicU}%} to (System.currentTimeMillis() + 3000)
+                    addHakiExp({_vic}, 10)
+                stop
+
+    # Logia 38% Né Tránh trước đòn không bọc Haki Vũ Trang
+    if {_vic} is a player:
+        set {_vicFruit} to {df_data::%{_vicU}%::fruit}
+        if {_vicFruit} is "mera" or "pika" or "goro":
+            if {haki_active::%{_u}%::buso} is not true:
+                set {_rollLogia} to random number between 0 and 100
+                if {_rollLogia} <= 38:
+                    spawnPacketDamageHolo(location of {_vic}, "&e&l✦ LOGIA", {_vicU})
+                    send action bar "&b&l✦ LOGIA NÉ ĐÒN! &7(Cần Haki Vũ Trang)" to {_vic}
+                    send action bar "&7&o* Mục tiêu là Logia! Bật Haki Vũ Trang để tấn công! *" to {_p}
+                    play sound "ENTITY_ENDERDRAGON_FLAP" with volume 1 and pitch 1.8 to {_vic}
+                    stop
+
+    set {_sumBonus} to 0.0
+
+    # Thức tỉnh Võ Học (+25%)
+    if {martial_awakened::%{_u}%} is true:
+        add 25.0 to {_sumBonus}
+
+    # Nanh Fenrir (AoV): +22% khi mục tiêu < 50% máu
+    set {_fenrirTrueBonus} to 1.0
+    if {aov_bonus::%{_u}%::has_fenrir} is true:
+        if health of {_vic} < ((max health of {_vic}) / 2):
+            add 22.0 to {_sumBonus}
+            set {_fenrirTrueBonus} to 1.1
+
+    # Phản Công Kenbunshoku: +15% trong 3s
+    if {ken_counter_buff::%{_u}%} is set:
+        if System.currentTimeMillis() < {ken_counter_buff::%{_u}%}:
+            add 15.0 to {_sumBonus}
+            delete {ken_counter_buff::%{_u}%}
+
+    # Dưới nước / trời mưa: +20% Sát thương cho Vô Quả Giả
+    if {df_water_buff::%{_u}%} is true:
+        add 20.0 to {_sumBonus}
+    else if block at {_p} is water or stationary water:
+        add 20.0 to {_sumBonus}
+
+    # Thừa CDR chuyển hóa
+    add ({aov_bonus::%{_u}%::cdr_overflow} ? 0.0) to {_sumBonus}
+
+    set {_dmg} to {_rawDmg} * (1.0 + ({_sumBonus} / 100.0))
+
+    # Chí Mạng Võ Học (Trần tối đa x1.25 cho kỹ năng)
+    set {_isCrit} to false
+    set {_cc} to getTalentTotal({_p}, "crit_chance")
+    set {_cd} to getTalentTotal({_p}, "crit_damage")
+    if {_cc} > 0:
+        set {_roll_crit} to random number between 0 and 100
+        if {_roll_crit} <= {_cc}:
+            set {_isCrit} to true
+            set {_critRate} to {_cd} / 100.0
+            if {_critRate} > 1.25:
+                set {_critRate} to 1.25
+            set {_dmg} to {_dmg} * {_critRate}
+            send action bar "&c&l⚡ CHÍ MẠNG VÕ HỌC! &e(%roundOneDecimal({_dmg})% Sát thương)" to {_p}
+            play sound "ENTITY_PLAYER_ATTACK_CRIT" with volume 1 and pitch 0.8 to {_p}
+            set {_vloc} to location of {_vic}
+            add 1 to y-coordinate of {_vloc}
+            spawnVisualParticle("CRIT_MAGIC", {_vloc}, 15, 0.4, 0.5, 0.4, 0.08)
+
+    # Xuyên Giáp & DEF (Trần 55%, chỉ duy nhất Nội tại ROOM Chiêu 1 Trái Ope được phép vượt trần)
+    set {_pen} to ({aov_bonus::%{_u}%::armor_pen} ? 0.0) + ({haki_bonus::%{_u}%::armor_pen} ? 0.0) + getMeitoArmorPen({_p})
+    if {_pen} > 55.0:
+        set {_pen} to 55.0
+    # Nội tại Chiêu 1 Ope (ROOM): Duy nhất được phép phá vỡ giới hạn trần 55% (+35% Xuyên Giáp)
+    if {ope_room_buff_until::%{_u}%} is set:
+        if System.currentTimeMillis() < {ope_room_buff_until::%{_u}%}:
+            add 35.0 to {_pen}
+        else:
+            delete {ope_room_buff_until::%{_u}%}
+            delete {ope_room_seq::%{_u}%}
+    if {_pen} > 100.0:
+        set {_pen} to 100.0
+
+    set {_vicDef} to 0.0
+    if {_vic} is a player:
+        set {_vicDef} to getPlayerTotalDEF({_vic})
+    else if {dummy_type::%{_vicU}%} is set:
+        set {_dType} to {dummy_type::%{_vicU}%}
+        if {_dType} is "boss":
+            set {_vicDef} to 150.0
+    else if {boss_event::active} is true:
+        if uuid of {_vic} is {boss_event::uuid}:
+            set {_vicDef} to ({boss_event::def} ? 120.0)
+
+    set {_finalDmg} to calculateEffectiveDamage({_dmg}, {_pen}, {_vicDef})
+
+    # Cộng Sát Thương Chuẩn
+    if {_flatTrue} > 0:
+        set {_trueDmg} to {_flatTrue} * {_fenrirTrueBonus}
+        add {_trueDmg} to {_finalDmg}
+
+    # Miễn thương từ Trái Mera (Hỏa Thần: 40% Miễn Thương trong 10s)
+    if {_vic} is a player:
+        if {mera_dmg_reduction_until::%{_vicU}%} is set:
+            if System.currentTimeMillis() < {mera_dmg_reduction_until::%{_vicU}%}:
+                set {_finalDmg} to {_finalDmg} * 0.60
+            else:
+                delete {mera_dmg_reduction_until::%{_vicU}%}
+
+    # Bù nhìn
+    if {dummy_type::%{_vicU}%} is set:
+        set {_hasPenSkill} to false
+        if {_pen} > 0:
+            set {_hasPenSkill} to true
+        if {_flatTrue} > 0:
+            set {_hasPenSkill} to true
+        handleCombatDummyDirectDamage({_p}, {_vic}, {_finalDmg}, {_isCrit}, {_hasPenSkill})
+        addMartialExp({_p}, 8)
+        stop
+
+    set {_isTrueDamage} to false
+    if {_isTrue} is true:
+        set {_isTrueDamage} to true
+    if {_flatTrue} > 0:
+        set {_isTrueDamage} to true
+
+    # 5. Gây sát thương thực tế (Gắn nguồn từ người chơi, tự tuân thủ WorldGuard PvP)
+    set {_tagDmg} to "normal"
+    if {_isCrit} is true:
+        set {_tagDmg} to "crit"
+    else if {_isTrueDamage} is true:
+        set {_tagDmg} to "true"
+    else if {haki_active::%{_u}%::buso} is true:
+        set {_tagDmg} to "haki"
+
+    if applySkillDamage({_p}, {_vic}, {_finalDmg}, {_tagDmg}) is false:
+        stop
+    set {_vloc} to location of {_vic}
+    add 1 to y-coordinate of {_vloc}
+    spawnVisualParticle("CRIT_MAGIC", {_vloc}, 10, 0.3, 0.4, 0.3, 0.05)
+
+    set {last_combat::%{_u}%} to now
+    if {_vic} is a player:
+        set {last_combat::%{_vicU}%} to now
+        updatePlayerSidebar({_vic})
+    updatePlayerSidebar({_p})
+
+    addMartialExp({_p}, 8)
+
+# ---------------------------------------------------------------------
+# KỸ NĂNG KIẾM ĐẠO ĐẠI TÔNG SƯ
+# ---------------------------------------------------------------------
+
+function useKiemDaoSkill(p: player, slot: number):
+    set {_u} to uuid of {_p}
+    set {_loc} to location of {_p}
+    set {_eye} to {_p}.getEyeLocation()
+    set {_dir} to {_eye}.getDirection().normalize()
+
+    # Lấy ATK của Kiếm
+    set {_swordAtk} to getMeitoBaseAtk({_p})
+    if {_swordAtk} <= 0:
+        set {_swordAtk} to 7.0
+
+    if {_slot} is 1:
+        # Chiêu 1: Phi Trảm (38 ST + 100% ATK Kiếm, CD 3.5s)
+        if checkMartialSkillCooldown({_p}, 1, 3.5) is false:
+            stop
+        play sound "ENTITY_PLAYER_ATTACK_SWEEP" with volume 1.2 and pitch 1.2 at {_loc}
+        set {_hit} to false
+        set {_k1Dmg} to 38.0 + {_swordAtk}
+        loop 12 times:
+            set {_pt} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("SWEEP_ATTACK", {_pt}, 2, 0.2, 0.2, 0.2, 0.02)
+            spawnVisualParticle("CRIT", {_pt}, 3, 0.1, 0.1, 0.1, 0.02)
+            loop entities in radius 1.8 around {_pt}:
+                if loop-entity is not {_p}:
+                    if loop-entity is a living entity:
+                        dealMartialSkillDamage({_p}, loop-entity, {_k1Dmg}, "kiem_dao", 1)
+                        push loop-entity {_dir} at speed 0.4
+                        set {_hit} to true
+            if {_hit} is true:
+                exit loop
+        send action bar "&a⚔ Phi Trảm xuất kích! (%{_k1Dmg}% ST)" to {_p}
+        addMartialExp({_p}, 6)
+
+    else if {_slot} is 2:
+        # Chiêu 2: Cư Hợp Trảm (60 ST + 100% ATK Kiếm chia 4 nhát, CD 7.5s)
+        if checkMartialSkillCooldown({_p}, 2, 7.5) is false:
+            stop
+        play sound "ENTITY_PLAYER_ATTACK_SWEEP" with volume 1.5 and pitch 0.8 at {_loc}
+        play sound "ENTITY_IRONGOLEM_ATTACK" with volume 1.2 and pitch 1.4 at {_loc}
+        push {_p} {_dir} at speed 1.6
+        set {_hitDmg} to 15.0 + ({_swordAtk} * 0.25)
+        loop 8 times:
+            set {_pt} to {_loc}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("SWEEP_ATTACK", {_pt}, 4, 0.3, 0.3, 0.3, 0.05)
+            spawnVisualParticle("SMOKE_LARGE", {_pt}, 2, 0.2, 0.2, 0.2, 0.02)
+            loop entities in radius 2.2 around {_pt}:
+                if loop-entity is not {_p}:
+                    if loop-entity is a living entity:
+                        set {_entId} to uuid of loop-entity
+                        if ({_hitCount::%{_entId}%} ? 0) < 4:
+                            add 1 to {_hitCount::%{_entId}%}
+                            dealMartialSkillDamage({_p}, loop-entity, {_hitDmg}, "kiem_dao", 2)
+                            apply potion of slowness 2 to loop-entity for 1.5 seconds
+                            apply potion of blindness to loop-entity for 1.5 seconds
+        send action bar "&a⚔ Cư Hợp Trảm: 4 nhát chém liên hoàn chớp nhoáng!" to {_p}
+        addMartialExp({_p}, 12)
+
+    else if {_slot} is 3:
+        # Chiêu 3: Tam Thiên Thế Giới (98 ST + 120% ATK Kiếm AoE 6m, CD 15.0s)
+        if checkMartialSkillCooldown({_p}, 3, 15.0) is false:
+            stop
+        play sound "ENTITY_ENDERDRAGON_GROWL" with volume 1.5 and pitch 1.3 at {_loc}
+        play sound "ENTITY_PLAYER_ATTACK_STRONG" with volume 1.5 and pitch 0.8 at {_loc}
+        spawnVisualParticle("FIREWORKS_SPARK", {_loc}, 50, 1.2, 0.8, 1.2, 0.15)
+        spawnVisualParticle("CRIT_MAGIC", {_loc}, 40, 1.0, 1.0, 1.0, 0.1)
+        set {_k3Dmg} to 98.0 + ({_swordAtk} * 1.2)
+        loop entities in radius 6.0 around {_p}:
+            if loop-entity is not {_p}:
+                if loop-entity is a living entity:
+                    dealMartialSkillDamage({_p}, loop-entity, {_k3Dmg}, "kiem_dao", 3)
+                    apply potion of wither 2 to loop-entity for 4 seconds
+                    set {_eloc} to location of loop-entity
+                    spawnVisualParticle("SWEEP_ATTACK", {_eloc}, 8, 0.5, 0.5, 0.5, 0.05)
+        send title "&a&lTAM THIÊN THẾ GIỚI!" with subtitle "&cKiếm bão trảm phá vạn vật!" to {_p} for 2 seconds
+        send action bar "&a&l⚔ TAM THIÊN THẾ GIỚI: BÃO KIẾM CHÉM NÁT ĐỊCH THỦ! ⚔" to {_p}
+        addMartialExp({_p}, 25)
+
+# ---------------------------------------------------------------------
+# KỸ NĂNG LỤC THỨC HẢI QUÂN
+# ---------------------------------------------------------------------
+
+function useLucThucSkill(p: player, slot: number):
+    set {_u} to uuid of {_p}
+    set {_loc} to location of {_p}
+    set {_eye} to {_p}.getEyeLocation()
+    set {_dir} to {_eye}.getDirection().normalize()
+
+    # Tính ATK quyền cước
+    set {_bonusAtk} to ({aov_bonus::%{_u}%::damage} ? 0.0) + ({haki_bonus::%{_u}%::flat_damage} ? 0.0) + 5.0
+
+    if {_slot} is 1:
+        # Chiêu 1: Soru & Shigan (44 ST + 18 Chuẩn + 80% ATK, CD 3.5s)
+        if checkMartialSkillCooldown({_p}, 1, 3.5) is false:
+            stop
+        play sound "ENTITY_BAT_TAKEOFF" with volume 1.2 and pitch 1.5 at {_loc}
+        play sound "ENTITY_IRONGOLEM_ATTACK" with volume 1.2 and pitch 1.8 at {_loc}
+        push {_p} {_dir} at speed 1.3
+        set {_targetFound} to false
+        set {_lt1Dmg} to 44.0 + ({_bonusAtk} * 0.8)
+        loop 6 times:
+            set {_pt} to {_eye}.clone().add({_dir}.clone().multiply(loop-number))
+            spawnVisualParticle("EXPLOSION_NORMAL", {_pt}, 2, 0.1, 0.1, 0.1, 0.02)
+            spawnVisualParticle("CRIT", {_pt}, 3, 0.1, 0.1, 0.1, 0.05)
+            loop entities in radius 2.0 around {_pt}:
+                if loop-entity is not {_p}:
+                    if loop-entity is a living entity:
+                        dealMartialSkillDamage({_p}, loop-entity, {_lt1Dmg}, "luc_thuc", 1, 18.0)
+                        push loop-entity {_dir} at speed 0.8
+                        set {_targetFound} to true
+            if {_targetFound} is true:
+                exit loop
+        send action bar "&e⚡ Soru & Shigan: Chỉ Thương xuyên thấu!" to {_p}
+        addMartialExp({_p}, 6)
+
+    else if {_slot} is 2:
+        # Chiêu 2: Tekkai Kempo (64 ST + 100% ATK, Phản 35% ST & +80 DEF trong 3.5s, CD 7.5s)
+        if checkMartialSkillCooldown({_p}, 2, 7.5) is false:
+            stop
+        play sound "BLOCK_ANVIL_USE" with volume 1.2 and pitch 1.2 at {_loc}
+        play sound "ENTITY_IRONGOLEM_STEP" with volume 1.5 and pitch 0.8 at {_loc}
+        apply potion of slowness 1 to {_p} for 3.5 seconds
+        set {tekkai_active::%{_u}%} to true
+        spawnVisualParticle("CRIT_MAGIC", {_loc}, 25, 0.6, 1.0, 0.6, 0.08)
+        send action bar "&8&l❖ THIẾT KHỐI GỒNG CỨNG: Phản 35%% ST & +80 DEF trong 3.5s! ❖" to {_p}
+
+        set {_lt2Dmg} to 64.0 + {_bonusAtk}
+        loop entities in radius 3.5 around {_loc}:
+            if loop-entity is not {_p}:
+                if loop-entity is a living entity:
+                    dealMartialSkillDamage({_p}, loop-entity, {_lt2Dmg}, "luc_thuc", 2)
+
+        wait 70 ticks
+        delete {tekkai_active::%{_u}%}
+        addMartialExp({_p}, 12)
+
+    else if {_slot} is 3:
+        # Chiêu 3: Rokuogan (85 ST + 34 Chuẩn + 100% ATK AoE 6.5m, CD 15.0s)
+        if checkMartialSkillCooldown({_p}, 3, 15.0) is false:
+            stop
+        play sound "ENTITY_GENERIC_EXPLODE" with volume 1.8 and pitch 0.8 at {_loc}
+        play sound "ENTITY_ZOMBIE_ATTACK_IRON_DOOR" with volume 1.5 and pitch 1.2 at {_loc}
+        set {_front} to {_loc}.clone().add({_dir}.clone().multiply(2.5))
+        spawnVisualParticle("EXPLOSION_HUGE", {_front}, 3, 0.5, 0.5, 0.5, 0.05)
+        spawnVisualParticle("CLOUD", {_front}, 40, 1.0, 1.0, 1.0, 0.15)
+        set {_lt3Dmg} to 85.0 + {_bonusAtk}
+        loop entities in radius 6.5 around {_front}:
+            if loop-entity is not {_p}:
+                if loop-entity is a living entity:
+                    dealMartialSkillDamage({_p}, loop-entity, {_lt3Dmg}, "luc_thuc", 3, 34.0)
+                    apply potion of slowness 4 to loop-entity for 2 seconds
+                    push loop-entity upward at speed 0.7
+                    push loop-entity {_dir} at speed 1.2
+        send title "&e&lROKUOGAN!" with subtitle "&6Lục Vương Thương xung kích tối thượng!" to {_p} for 2 seconds
+        send action bar "&e&l⚡ ROKUOGAN: SÓNG XUNG KÍCH PHÁ HUỶ MỤC TIÊU! ⚡" to {_p}
+        addMartialExp({_p}, 25)
+
+# ---------------------------------------------------------------------
+# ĐIỀU PHỐI VÕ HỌC TỔNG QUÁT (useMartialSkill)
+# ---------------------------------------------------------------------
+
+function useMartialSkill(p: player, slot: number):
+    set {_u} to uuid of {_p}
+    # Kiểm tra Trái Ác Quỷ (Vô Quả Giả mới dùng được võ học)
+    if {df_data::%{_u}%::fruit} is set:
+        if {df_data::%{_u}%::fruit} is not "none":
+            if {df_data::%{_u}%::fruit} is not "":
+                send action bar "&cBạn đang mang năng lực Trái Ác Quỷ nên không thể dùng Võ Học!" to {_p}
+                play sound "ENTITY_VILLAGER_NO" with volume 0.8 and pitch 1 to {_p}
+                stop
+
+    set {_style} to {martial_style::%{_u}%}
+    if {_style} is not set:
+        send action bar "&cBạn chưa chọn Võ Học! Hãy gõ /vohoc để gia nhập môn phái." to {_p}
+        play sound "ENTITY_VILLAGER_NO" with volume 0.8 and pitch 1 to {_p}
+        stop
+
+    initMartialData({_p})
+    set {_mastery} to {martial_mastery::%{_u}%}
+
+    # Kiểm tra cấp độ mở chiêu
+    if {_slot} is 2:
+        if {_mastery} < 25:
+            send action bar "&c&l◷ Chiêu 2 yêu cầu Độ Thông Thạo Võ Học Lv.25! (Hiện tại: Lv.%{_mastery}%)" to {_p}
+            play sound "BLOCK_NOTE_BASS" with volume 0.8 and pitch 1 to {_p}
+            stop
+    else if {_slot} is 3:
+        if {_mastery} < 60:
+            send action bar "&c&l◷ Chiêu 3 yêu cầu Độ Thông Thạo Võ Học Lv.60! (Hiện tại: Lv.%{_mastery}%)" to {_p}
+            play sound "BLOCK_NOTE_BASS" with volume 0.8 and pitch 1 to {_p}
+            stop
+
+    if {_style} is "kiem_dao":
+        useKiemDaoSkill({_p}, {_slot})
+    else if {_style} is "luc_thuc":
+        useLucThucSkill({_p}, {_slot})
+
+# ---------------------------------------------------------------------
+# GIAO DIỆN GUI VÕ HỌC ĐẠI TÔNG SƯ (/vohoc)
+# ---------------------------------------------------------------------
+
+function openMartialGUI(p: player):
+    set {_u} to uuid of {_p}
+    initMartialData({_p})
+    set {_inv} to createStandardUI({_p}, "UI_G1_B", "&a&l✦ VÕ HỌC ĐẠI TÔNG SƯ ✦", 4, lime stained glass pane named " ", "UI_G1", "Năng Lực & Võ Học")
+
+    set {_style} to {martial_style::%{_u}%}
+    set {_mastery} to {martial_mastery::%{_u}%}
+    set {_exp} to {martial_exp::%{_u}%}
+    set {_req} to getMartialRequiredExp({_mastery})
+    set {_prog} to getProgressBar({_exp}, {_req})
+    set {_awakened} to {martial_awakened::%{_u}%}
+
+    # Slot 12: Kiếm Đạo Đại Tông Sư
+    set {_kdState} to "&e▶ Nhấp chuột để gia nhập môn phái!"
+    if {_style} is "kiem_dao":
+        set {_kdState} to "&a✔ ĐANG THEO HỌC MÔN PHÁI NÀY"
+    delete {_loreKd::*}
+    set {_loreKd::1} to "&8&m----------------------------------------"
+    set {_loreKd::2} to "&7Bậc thầy sử dụng kiếm thuật thượng thừa,"
+    set {_loreKd::3} to "&7luyện kiếm khí chém đứt mây trời và sắt thép."
+    set {_loreKd::4} to ""
+    set {_loreKd::5} to "&6&l✦ NỘI TẠI MÔN PHÁI:"
+    set {_loreKd::6} to "&f• &c+15%% Sát thương Chí Mạng &7thường trực."
+    set {_loreKd::7} to ""
+    set {_loreKd::8} to "&6&l✦ BỘ KỸ NĂNG KIẾM ĐẠO:"
+    set {_loreKd::9} to "&f• &eChiêu 1: &aPhi Trảm &8(Phím [1] / Chuột Phải - CD 5s - Lv.1)"
+    set {_loreKd::10} to "  &7Phóng kiếm khí tầm xa 12 block gây 8 HP sát thương."
+    set {_loreKd::11} to "&f• &eChiêu 2: &aCư Hợp Trảm &8(Phím [2] - CD 10s - Lv.25)"
+    set {_loreKd::12} to "  &7Lướt 8 block tung 4 lần chém liên hoàn (3.5 HP/lần, tổng 14 HP) + Choáng."
+    set {_loreKd::13} to "&f• &eChiêu 3: &6Tam Thiên Thế Giới &8(Phím [3] Tuyệt Kỹ - CD 25s - Lv.60)"
+    set {_loreKd::14} to "  &7Bão kiếm 360 độ quét sạch 6 block gây 25 HP + Xuất huyết."
+    set {_loreKd::15} to ""
+    set {_loreKd::16} to "%{_kdState}%"
+    set {_loreKd::17} to "&8&m----------------------------------------"
+    set slot 12 of {_inv} to makeCustomRPItem("kiem_dao", "&a&l✦ KIẾM ĐẠO ĐẠI TÔNG SƯ ✦", {_loreKd::*})
+
+    # Slot 14: Lục Thức Hải Quân
+    set {_ltState} to "&e▶ Nhấp chuột để gia nhập môn phái!"
+    if {_style} is "luc_thuc":
+        set {_ltState} to "&a✔ ĐANG THEO HỌC MÔN PHÁI NÀY"
+    delete {_loreLt::*}
+    set {_loreLt::1} to "&8&m----------------------------------------"
+    set {_loreLt::2} to "&7Tuyệt kỹ võ học thể thuật tối thượng,"
+    set {_loreLt::3} to "&7rèn luyện thân thể đạt đến cảnh giới phi phàm."
+    set {_loreLt::4} to ""
+    set {_loreLt::5} to "&6&l✦ NỘI TẠI MÔN PHÁI:"
+    set {_loreLt::6} to "&f• &b+8%% Né Tránh & Hiệu ứng Speed I &7thường trực."
+    set {_loreLt::7} to ""
+    set {_loreLt::8} to "&6&l✦ BỘ KỸ NĂNG LỤC THỨC:"
+    set {_loreLt::9} to "&f• &eChiêu 1: &eSoru & Shigan &8(Phím [1] / Chuột Phải - CD 5s - Lv.1)"
+    set {_loreLt::10} to "  &7Lướt nhanh 6 block tung Chỉ Thương gây 9 HP đẩy lùi."
+    set {_loreLt::11} to "&f• &eChiêu 2: &eTekkai Kempo &8(Phím [2] - CD 12s - Lv.25)"
+    set {_loreLt::12} to "  &7Hóa thép 3.5s nhận Resistance III & Phản 35%% sát thương."
+    set {_loreLt::13} to "&f• &eChiêu 3: &6Rokuogan &8(Phím [3] Tuyệt Kỹ - CD 28s - Lv.60)"
+    set {_loreLt::14} to "  &7Nén xung kích hình nón 7 block gây 24 HP hất tung & choáng địch."
+    set {_loreLt::15} to ""
+    set {_loreLt::16} to "%{_ltState}%"
+    set {_loreLt::17} to "&8&m----------------------------------------"
+    set slot 14 of {_inv} to makeCustomRPItem("luc_thuc", "&e&l✦ LỤC THỨC HẢI QUÂN ✦", {_loreLt::*})
+
+    # Slot 22: Thức Tỉnh Võ Học
+    if {_awakened} is true:
+        set slot 22 of {_inv} to makeCustomRPItem("skill_awaken", "&6&l✦ &e&lĐÃ THỨC TỈNH VÕ HỌC &6&l✦", ("&8&m--------------------------------" and "&aVõ công của bạn đã đạt cảnh giới tối thượng!" and "&f• &c+25%% Sát thương kỹ năng võ học &a(Kích hoạt)" and "&f• &b-20%% Hồi chiêu kỹ năng võ học &a(Kích hoạt)" and "&8&m--------------------------------"))
+    else:
+        set {_canLvl} to "&c✘ (Cần Lv.100)"
+        if {_mastery} >= 100:
+            set {_canLvl} to "&a✔"
+        set slot 22 of {_inv} to makeCustomRPItem("skill_awaken", "&6&l✦ &e&lTHỨC TỈNH VÕ HỌC &6&l✦", ("&8&m--------------------------------" and "&7Điều kiện Thức Tỉnh:" and "&f• Độ Thông Thạo: &bLv.100 %{_canLvl}%" and "&f• Vật phẩm: &61x Đá Thức Tỉnh &7hoặc &e1x Bùa Thức Tỉnh" and "" and "&aHiệu quả sau thức tỉnh:" and "&f• &c+25%% Sát thương kỹ năng võ học" and "&f• &b-20%% Thời gian hồi chiêu võ học" and "" and "&e▶ Nhấp chuột để tiến hành Thức Tỉnh!" and "&8&m--------------------------------"))
+
+    # Slot 31: Thông tin tu luyện & Nội tại Vô Quả Giả
+    set {_sName} to getMartialStyleName({_style})
+    set {_awakeText} to "&7Chưa Thức Tỉnh"
+    if {_awakened} is true:
+        set {_awakeText} to "&6✦ ĐÃ THỨC TỈNH VÕ HỌC ✦"
+    delete {_lore31::*}
+    set {_lore31::1} to "&8&m----------------------------------------"
+    set {_lore31::2} to "&7Môn phái hiện tại: %{_sName}%"
+    set {_lore31::3} to "&7Độ Thông Thạo: &bLv.%{_mastery}%/100"
+    set {_lore31::4} to "&7Tiến trình: %{_prog}% &e%{_exp}%/%{_req}% EXP"
+    set {_lore31::5} to "&7Cảnh giới: %{_awakeText}%"
+    set {_lore31::6} to ""
+    set {_lore31::7} to "&b&l✦ NỘI TẠI VÔ QUẢ GIẢ:"
+    set {_lore31::8} to "&f• &bBá Chủ Biển Cả:&7 +Speed II & +15%% ST dưới nước"
+    set {_lore31::9} to "&f• &aTinh Thông AoV:&7 +15%% AD & HP từ khay đồ Liên Quân"
+    set {_lore31::10} to ""
+    set {_lore31::11} to "&e▶ Bấm [F] bật Chế Độ Chiến Đấu (/chiendau) ▶ Phím [1-3] tung chiêu!"
+    set {_lore31::12} to "&8&m----------------------------------------"
+    set slot 31 of {_inv} to makeGlowingItem(nether star, "&6&l✦ THÔNG TIN VÕ HỌC & TIẾN TRÌNH ✦", {_lore31::*})
+
+    openStandardUI({_p}, {_inv}, "UI_G1_B", "UI_G1")
+
+# Chống kéo thả GUI UI_G1_B qua Reflect
+on InventoryDragEvent:
+    set {_who} to event.getWhoClicked()
+    set {_u} to uuid of {_who}
+    if {ui_active::%{_u}%} is "UI_G1_B":
+        cancel event
+
+# Xử lý nhấp chuột trong GUI /vohoc (UI_G1_B)
+on inventory click:
+    set {_u} to uuid of player
+    if {ui_active::%{_u}%} is not "UI_G1_B":
+        stop
+    cancel event
+    if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+        player.updateInventory()
+        stop
+    if clicked inventory is not player's current inventory:
+        stop
+    set {_slot} to index of event-slot
+    if {_slot} is 27 or 28 or 35:
+        stop
+
+    # Slot 12: Chọn Kiếm Đạo
+    if {_slot} is 12:
+        if {martial_style::%{_u}%} is "kiem_dao":
+            sendSystemMsg(player, "error", "Bạn đang theo học Kiếm Đạo rồi!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+        else:
+            setMartialStyle(player, "kiem_dao")
+            wait 1 tick
+            openMartialGUI(player)
+
+    # Slot 14: Chọn Lục Thức
+    else if {_slot} is 14:
+        if {martial_style::%{_u}%} is "luc_thuc":
+            sendSystemMsg(player, "error", "Bạn đang theo học Lục Thức rồi!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+        else:
+            setMartialStyle(player, "luc_thuc")
+            wait 1 tick
+            openMartialGUI(player)
+
+    # Slot 22: Thức Tỉnh Võ Học
+    else if {_slot} is 22:
+        if {martial_style::%{_u}%} is not set:
+            sendSystemMsg(player, "error", "Bạn chưa chọn môn phái Võ Học nào cả!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+        if {martial_awakened::%{_u}%} is true:
+            sendSystemMsg(player, "error", "Võ học của bạn đã Thức Tỉnh từ trước rồi!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+        if ({martial_mastery::%{_u}%} ? 0) < 100:
+            sendSystemMsg(player, "error", "Cần đạt Mastery &bLv.100&c để Thức Tỉnh! (Hiện tại: &eLv.%{martial_mastery::%{_u}%}%&c)")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+
+        # Kiểm tra và trừ Bùa Thức Tỉnh hoặc Đá Thức Tỉnh trong túi đồ
+        set {_foundItem} to false
+        loop integers from 0 to 40:
+            set {_item} to slot loop-integer of player's inventory
+            if {_item} is set:
+                if {_item} is not air:
+                    if type of {_item} is not air:
+                        set {_tag} to string tag "SkyblockItem" of nbt compound of {_item}
+                        if {_tag} is "awakening_talisman" or "awakening_stone":
+                            set {_amt} to item amount of {_item}
+                            if {_amt} <= 1:
+                                set slot loop-integer of player's inventory to air
+                            else:
+                                set item amount of (slot loop-integer of player's inventory) to ({_amt} - 1)
+                            set {_foundItem} to true
+                            exit loop
+
+        if {_foundItem} is false:
+            if player's offhand tool is set:
+                if player's offhand tool is not air:
+                    if type of player's offhand tool is not air:
+                        set {_tag} to string tag "SkyblockItem" of nbt compound of player's offhand tool
+                        if {_tag} is "awakening_talisman" or "awakening_stone":
+                            set {_amt} to item amount of player's offhand tool
+                            if {_amt} <= 1:
+                                set player's offhand tool to air
+                            else:
+                                set item amount of player's offhand tool to ({_amt} - 1)
+                            set {_foundItem} to true
+
+        if {_foundItem} is true:
+            set {martial_awakened::%{_u}%} to true
+            broadcastDualCard("&6&l✦ THỨC TỈNH", "&e%name of player% &fđã thức tỉnh thành công cảnh giới tối thượng của &a&l✦ %getMartialStyleName({martial_style::%{_u}%})% ✦&f!", "Nhận vĩnh viễn &a+25%% Sát Thương Kỹ Năng &e-20%% Thời Gian Hồi Chiêu&f!")
+            send title "&6&l✦ THỨC TỈNH VÕ HỌC THÀNH CÔNG! ✦" with subtitle "&eNhận +25%% ST Kỹ Năng & -20%% Hồi Chiêu!" to player for 4 seconds
+            play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to player
+            set {_loc} to location of player
+            add 1 to y-coordinate of {_loc}
+            spawnVisualParticle("FIREWORKS_SPARK", {_loc}, 60, 1.0, 1.2, 1.0, 0.2)
+            spawnVisualParticle("END_ROD", {_loc}, 40, 0.8, 1.0, 0.8, 0.1)
+            wait 1 tick
+            openMartialGUI(player)
+        else:
+            sendSystemMsg(player, "error", "Cần có &61x Đá Thức Tỉnh &choặc &e1x Bùa Thức Tỉnh&c trong túi đồ!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+
+# ---------------------------------------------------------------------
+# LỆNH NGƯỜI CHƠI & LỆNH ADMIN VÕ HỌC
+# ---------------------------------------------------------------------
+
+command /vohoc:
+    aliases: /martial, /vohocdo
+    trigger:
+        openMartialGUI(player)
+
+command /vohocadmin <text> [<text>] [<text>]:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        set {_action} to arg-1
+
+        if {_action} is "setmastery":
+            set {_target} to player
+            set {_rawLvl} to "1"
+            if arg-3 is set:
+                set {_p} to arg-2 parsed as offline player
+                if {_p} is set:
+                    set {_target} to {_p}
+                set {_rawLvl} to arg-3
+            else if arg-2 is set:
+                set {_numCheck} to arg-2 parsed as number
+                if {_numCheck} is set:
+                    set {_rawLvl} to arg-2
+                else:
+                    set {_p} to arg-2 parsed as offline player
+                    if {_p} is set:
+                        set {_target} to {_p}
+                    set {_rawLvl} to "100"
+            set {_u} to uuid of {_target}
+            set {_lvl} to {_rawLvl} parsed as number
+            if {_lvl} is not set:
+                set {_lvl} to 1
+            if {_lvl} < 1:
+                set {_lvl} to 1
+            if {_lvl} > 100:
+                set {_lvl} to 100
+            set {martial_mastery::%{_u}%} to {_lvl}
+            set {martial_exp::%{_u}%} to 0
+            send "&a[Võ Học Admin] &7Đã đặt Mastery của &e%name of {_target}% &7thành &bLv.%{_lvl}%/100&7!" to sender
+            if {_target} is not sender:
+                if {_target} is online:
+                    send "&a[Võ Học] &7Độ Thông Thạo của bạn đã được Admin đặt thành &bLv.%{_lvl}%/100&7!" to {_target}
+
+        else if {_action} is "setstyle":
+            set {_target} to player
+            set {_style} to "kiem_dao"
+            if arg-3 is set:
+                set {_p} to arg-2 parsed as offline player
+                if {_p} is set:
+                    set {_target} to {_p}
+                set {_style} to arg-3
+            else if arg-2 is set:
+                if arg-2 is "kiem_dao" or "luc_thuc":
+                    set {_style} to arg-2
+                else:
+                    set {_p} to arg-2 parsed as offline player
+                    if {_p} is set:
+                        set {_target} to {_p}
+            if {_style} is "kiem_dao" or "luc_thuc":
+                setMartialStyle({_target}, {_style})
+                send "&a[Võ Học Admin] &7Đã đặt môn phái của &e%name of {_target}% &7thành &f%{_style}%&7!" to sender
+            else:
+                send "&c[Võ Học Admin] &7Môn phái không hợp lệ! Dùng: kiem_dao hoặc luc_thuc" to sender
+
+        else if {_action} is "awaken":
+            set {_target} to player
+            if arg-2 is set:
+                set {_p} to arg-2 parsed as offline player
+                if {_p} is set:
+                    set {_target} to {_p}
+            set {_u} to uuid of {_target}
+            set {martial_awakened::%{_u}%} to true
+            if {_target} is online:
+                updatePlayerSidebar({_target})
+            send "&a[Võ Học Admin] &7Đã Thức Tỉnh võ học cho &e%name of {_target}%&7!" to sender
+            if {_target} is not sender:
+                if {_target} is online:
+                    send "&6&l[VÕ HỌC] &fVõ học của bạn đã được Admin &6Thức Tỉnh&f!" to {_target}
+
+        else if {_action} is "unawaken":
+            set {_target} to player
+            if arg-2 is set:
+                set {_p} to arg-2 parsed as offline player
+                if {_p} is set:
+                    set {_target} to {_p}
+            set {_u} to uuid of {_target}
+            set {martial_awakened::%{_u}%} to false
+            if {_target} is online:
+                updatePlayerSidebar({_target})
+            send "&a[Võ Học Admin] &7Đã hủy Thức Tỉnh võ học cho &e%name of {_target}%&7!" to sender
+
+        else if {_action} is "reset":
+            set {_target} to player
+            if arg-2 is set:
+                set {_p} to arg-2 parsed as offline player
+                if {_p} is set:
+                    set {_target} to {_p}
+            set {_u} to uuid of {_target}
+            delete {martial_style::%{_u}%}
+            delete {martial_mastery::%{_u}%}
+            delete {martial_exp::%{_u}%}
+            delete {martial_awakened::%{_u}%}
+            delete {martial_bonus::%{_u}%::*}
+            delete {tekkai_active::%{_u}%}
+            if {_target} is online:
+                updatePlayerSidebar({_target})
+            send "&a[Võ Học Admin] &7Đã reset toàn bộ dữ liệu Võ Học của &e%name of {_target}%&7!" to sender
+
+        else:
+            send "&8&m----------------------------------------" to sender
+            send "&6&lLỆNH QUẢN TRỊ VÕ HỌC (/vohocadmin):" to sender
+            send "&e• /vohocadmin setmastery [<player>] <1-100> &7- Đặt cấp độ Thông Thạo" to sender
+            send "&e• /vohocadmin setstyle [<player>] <kiem_dao|luc_thuc> &7- Đổi môn phái" to sender
+            send "&e• /vohocadmin awaken [<player>] &7- Thức tỉnh võ học (+20%% CDR)" to sender
+            send "&e• /vohocadmin unawaken [<player>] &7- Hủy thức tỉnh võ học" to sender
+            send "&e• /vohocadmin reset [<player>] &7- Xóa toàn bộ dữ liệu võ học" to sender
+            send "&8&m----------------------------------------" to sender

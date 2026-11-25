@@ -1,0 +1,125 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+# The mission file to use
+mission-file: BlocksMissions
+
+# Whether the mission should be given when completing all requirements.
+auto-reward: true
+
+# Nhiệm vụ Đồng Lòng Băng Hải Tặc (Co-op Island Mission)
+island: true
+
+# Should block counts of players get reset when completing the mission?
+reset-after-finish: true
+
+# Whether only naturally spawned blocks should be counted towards the mission or not.
+only-natural-blocks: true
+
+# Rewards given when completing the mission.
+rewards:
+  commands:
+    - 'eco give %player% 25000'
+    - 'talentadmin addpoints %player% 5'
+    - 'is admin msg %player% &e&lThợ Mỏ | &7Hoàn thành xuất sắc nhiệm vụ Thợ Mỏ III!'
+    - 'is admin msg %player% &e&lThợ Mỏ | &7Hãy cùng biến bạn thành thợ mỏ chuyên nghiệp!'
+    - 'is admin msg %player% &e&lThợ Mỏ | &7&oXem nhiệm vụ tiếp theo tại lệnh /is missions'
+
+# List of required missions that must be completed before completing this one.
+required-missions:
+  - 'miner_1'
+  - 'miner_2'
+
+# List of all required blocks must be gathered in order to complete the mission.
+required-blocks:
+  '1':
+    types:
+      - 'COAL_ORE'
+    amount: 64
+  '2':
+    types:
+      - 'IRON_ORE'
+    amount: 64
+
+# Icons used in the menus.
+icons:
+  locked:
+    type: PAPER
+    name: '&aThợ Mỏ III'
+    lore:
+      - '&7Tôi sẵn sàng thu mua sắt và than từ bạn.'
+      - '&7Khai thác x64 Quặng Than và x64 Quặng Sắt.'
+      - ''
+      - '&6Yêu Cầu Khối:'
+      - '&8 - &7x64 Quặng Than'
+      - '&8 - &7x64 Quặng Sắt'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7$25,000'
+      - ''
+      - '&6Quặng Than đã đào: &7{value_coal_ore}/64'
+      - '&6Quặng Sắt đã đào: &7{value_iron_ore}/64'
+      - '&c&l ✘ &7Chưa Mở Khóa'
+    amount: 3
+  not-completed:
+    type: PAPER
+    name: '&aThợ Mỏ III'
+    lore:
+      - '&7Tôi sẵn sàng thu mua sắt và than từ bạn.'
+      - '&7Khai thác x64 Quặng Than và x64 Quặng Sắt.'
+      - ''
+      - '&6Yêu Cầu Khối:'
+      - '&8 - &7x64 Quặng Than'
+      - '&8 - &7x64 Quặng Sắt'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7$25,000'
+      - ''
+      - '&6Quặng Than đã đào: &7{value_coal_ore}/64'
+      - '&6Quặng Sắt đã đào: &7{value_iron_ore}/64'
+      - '&6Tiến độ: &7{0}%'
+      - '&c&l ✘ &7Chưa Hoàn Thành'
+    amount: 3
+  can-complete:
+    type: PAPER
+    name: '&aThợ Mỏ III'
+    lore:
+      - '&7Tôi sẵn sàng thu mua sắt và than từ bạn.'
+      - '&7Khai thác x64 Quặng Than và x64 Quặng Sắt.'
+      - ''
+      - '&6Yêu Cầu Khối:'
+      - '&8 - &7x64 Quặng Than'
+      - '&8 - &7x64 Quặng Sắt'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7$25,000'
+      - ''
+      - '&6Quặng Than đã đào: &764/64'
+      - '&6Quặng Sắt đã đào: &764/64'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Nhấp để nhận phần thưởng.'
+    amount: 3
+    glow: true
+  completed:
+    type: MAP
+    name: '&aThợ Mỏ III'
+    lore:
+      - '&7Tôi sẵn sàng thu mua sắt và than từ bạn.'
+      - '&7Khai thác x64 Quặng Than và x64 Quặng Sắt.'
+      - ''
+      - '&6Phần Thưởng:'
+      - '&8 - &d+5 Điểm Thiên Phú'
+      - '&8 - &7$25,000'
+      - ''
+      - '&6Quặng Than đã đào: &764/64'
+      - '&6Quặng Sắt đã đào: &764/64'
+      - '&6Tiến độ: &7100%'
+      - '&a&l ✔ &7Đã Nhận Thưởng.'
+    amount: 3

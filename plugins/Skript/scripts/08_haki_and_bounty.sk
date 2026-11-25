@@ -1,0 +1,1163 @@
+# =====================================================================
+# HỆ THỐNG HAKI & TIỀN TRUY NÃ ONE PIECE (PAPER 1.12.2 - SKRIPT 2.6.4 + REFLECT)
+# STUDIO MASTER SPECIFICATION — CHẶNG 4 (08_haki_and_bounty.sk)
+# 1. GUI /haki: Haki Quan Sát, Haki Vũ Trang (khắc chế Logia), Haki Bá Vương
+#    Kết nối trực tiếp vào hệ thống Thiên Phú (dodge, accuracy, crit_damage)
+# 2. Hệ thống Tiền Truy Nã /truyna (/bounty) bằng Đầu 3D Wanted Poster
+#    Tăng Beri khi diệt Boss (+5M) và diệt PvP (+10M), săn nhận Money + TP
+# =====================================================================
+
+import:
+    org.black_ixx.playerpoints.PlayerPoints
+    java.lang.System
+    java.util.UUID
+    java.nio.charset.StandardCharsets
+    org.bukkit.Bukkit
+    org.bukkit.Material
+    org.bukkit.Particle
+    org.bukkit.Location
+    org.bukkit.util.Vector
+    org.bukkit.entity.Player
+    org.bukkit.entity.LivingEntity
+    org.bukkit.entity.Monster
+    org.bukkit.entity.Entity
+    org.bukkit.event.inventory.InventoryDragEvent
+
+# ---------------------------------------------------------------------
+# 1. HÀM KHỞI TẠO & ĐỊNH DẠNG DỮ LIỆU HAKI & BOUNTY
+# ---------------------------------------------------------------------
+
+function formatBeri(n: number) :: text:
+    if {_n} is not set:
+        return "0"
+    if {_n} >= 1000000000:
+        set {_v} to (round(({_n} / 1000000000) * 10)) / 10
+        return "%{_v}%B"
+    if {_n} >= 1000000:
+        set {_v} to (round(({_n} / 1000000) * 10)) / 10
+        return "%{_v}%M"
+    if {_n} >= 1000:
+        set {_v} to (round(({_n} / 1000) * 10)) / 10
+        return "%{_v}%K"
+    return "%round({_n})%"
+
+function formatBeriComma(n: number) :: text:
+    if {_n} is not set:
+        return "0"
+    set {_s} to "%round({_n})%"
+    set {_len} to length of {_s}
+    if {_len} <= 3:
+        return {_s}
+    set {_res} to ""
+    set {_cnt} to 0
+    loop integers from {_len} to 1:
+        set {_char} to subtext of {_s} from character loop-integer to loop-integer
+        set {_res} to "%{_char}%%{_res}%"
+        add 1 to {_cnt}
+        if {_cnt} is 3:
+            if loop-integer > 1:
+                set {_res} to ",%{_res}%"
+            set {_cnt} to 0
+    return {_res}
+
+function getPirateTitle(b: number) :: text:
+    if {_b} is not set:
+        set {_b} to 0
+    if {_b} >= 3000000000:
+        return "&6&l✦ VUA HẢI TẶC ✦"
+    if {_b} >= 1500000000:
+        return "&c&lTỨ HOÀNG"
+    if {_b} >= 500000000:
+        return "&5&lTứ Hoàng Đại Tướng"
+    if {_b} >= 150000000:
+        return "&d&lThất Vũ Hải"
+    if {_b} >= 50000000:
+        return "&9&lĐại Hải Tặc"
+    if {_b} >= 20000000:
+        return "&b&lSiêu Tân Tinh"
+    if {_b} >= 5000000:
+        return "&a&lHải Tặc Nổi Danh"
+    return "&7Tân Binh Hải Tặc"
+
+function addBounty(p: player, amt: number):
+    initHakiData({_p})
+    set {_u} to uuid of {_p}
+    add {_amt} to {bounty::%{_u}%}
+    set {_newB} to {bounty::%{_u}%}
+    play sound "ENTITY_PLAYER_LEVELUP" with volume 0.8 and pitch 1.2 to {_p}
+    send action bar "&6&l[TIỀN TRUY NÃ] &fTăng &a+%{_amt}% Beri&f! Hiện tại: &e%formatBeriComma({_newB})% Beri" to {_p}
+
+# Cầu nối PAPI cho 04_papi_bridge.sk
+function getHakiPapiStatus(u: text) :: text:
+    if {haki_exhausted::%{_u}%} is true:
+        return "&c[Suy Kiệt]"
+    set {_buso} to {haki_active::%{_u}%::buso}
+    set {_ken} to {haki_active::%{_u}%::ken}
+    if {_buso} is true:
+        if {_ken} is true:
+            return "&b[Ken] &8[Buso]"
+        return "&8&l[Vũ Trang]"
+    if {_ken} is true:
+        return "&b&l[Quan Sát]"
+    return "&7[Bình Thường]"
+
+function getBountyPapiFormatted(u: text) :: text:
+    if {bounty::%{_u}%} is not set:
+        return "1.0M"
+    return formatBeri({bounty::%{_u}%})
+
+# Tạo đầu 3D người chơi cho Wanted Poster
+function makePlayerHeadPoster(pName: text, title: text, lore: texts) :: item:
+    set {_item} to 1 of player head
+    set data value of {_item} to 3
+    set damage of {_item} to 3
+    if {_title} is set:
+        set name of {_item} to colored {_title}
+    if {_lore::*} is set:
+        set lore of {_item} to {_lore::*}
+    add "{SkullOwner:""%{_pName}%"",HideFlags:63}" to nbt of {_item}
+    return {_item}
+
+# ---------------------------------------------------------------------
+# 2. LOGIC KÍCH HOẠT 3 LOẠI HAKI (THANH HẠN MỨC BÁ KHÍ & MASTERY LV.1-100)
+# ---------------------------------------------------------------------
+
+# 1. Haki Quan Sát (Kenbunshoku Haki) — Bật / Tắt Tự Do (Toggle)
+# Tiêu hao: 4.0 * mult Bá Khí/s + 2.0 * mult khi né đòn (+10 EXP)
+# Hiệu ứng: +25% Né Tránh (+35% ở Lv.100 Thấu Thị), +20% Chính Xác, quét Glowing 15m
+function toggleKenbunshoku(p: player):
+    initHakiData({_p})
+    set {_u} to uuid of {_p}
+
+    if {haki_exhausted::%{_u}%} is true:
+        send action bar "&c[Haki Quan Sát] &4Bạn đang bị Suy Kiệt Bá Khí, không thể bật!" to {_p}
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+
+    if {haki_active::%{_u}%::ken} is true:
+        # Tắt Haki Quan Sát
+        delete {haki_active::%{_u}%::ken}
+        delete {haki_bonus::%{_u}%::dodge}
+        delete {haki_bonus::%{_u}%::accuracy}
+
+        play sound "BLOCK_BEACON_DEACTIVATE" with volume 0.8 and pitch 1.2 to {_p}
+        send action bar "&b&l✦ HAKI QUAN SÁT: &c&lĐÃ TẮT" to {_p}
+        send title "&b&lHAKI QUAN SÁT" with subtitle "&cĐã thu hồi bản năng thấu thị!" to {_p} for 1.5 seconds
+        updatePlayerSidebar({_p})
+
+    else:
+        # Kiểm tra Bá Khí
+        if ({haki_energy::%{_u}%} ? 0) <= 0:
+            send action bar "&c[Haki Quan Sát] &7Bá Khí của bạn đã cạn kiệt!" to {_p}
+            play sound "ENTITY_VILLAGER_NO" with volume 0.8 and pitch 1 to {_p}
+            stop
+
+        set {haki_active::%{_u}%::ken} to true
+        set {_lv} to {haki_mastery::%{_u}%} ? 1
+        if {_lv} >= 100:
+            set {haki_bonus::%{_u}%::dodge} to 35.0
+        else:
+            set {haki_bonus::%{_u}%::dodge} to 25.0
+        set {haki_bonus::%{_u}%::accuracy} to 25.0
+
+        loop living entities in radius 15 around {_p}:
+            if loop-entity is not {_p}:
+                apply glowing 1 to loop-entity for 5 seconds
+
+        play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.8 to {_p}
+        play sound "BLOCK_BEACON_ACTIVATE" with volume 1 and pitch 1.4 to {_p}
+
+        set {_loc} to location of {_p}
+        add 1 to y-coordinate of {_loc}
+        spawnVisualParticle("ENCHANTMENT_TABLE", {_loc}, 30, 0.6, 0.8, 0.6, 0.1)
+        spawnVisualParticle("SPELL_MOB", {_loc}, 15, 0.4, 0.5, 0.4, 0.05)
+
+        set {_dodgeTxt} to "+25%%"
+        if {_lv} >= 100:
+            set {_dodgeTxt} to "+35%% (Thấu Thị)"
+        send action bar "&b&l✦ HAKI QUAN SÁT: &a&lĐÃ BẬT &7(%{_dodgeTxt}% Né, +25%% CX, Quét 15m)" to {_p}
+        send title "&b&lHAKI QUAN SÁT" with subtitle "&fBản năng thấu thị chiến trường &a[ON]&f!" to {_p} for 2 seconds
+        updatePlayerSidebar({_p})
+
+function activateKenbunshoku(p: player):
+    toggleKenbunshoku({_p})
+
+# 2. Haki Vũ Trang (Busoshoku Haki) — Bật / Tắt Tự Do (Toggle)
+# Tiêu hao: 3.0 * mult Bá Khí/s + 1.5 * mult khi đánh trúng (+4 EXP)
+# Hiệu ứng: Đánh xuyên Logia, +35% ST Chí Mạng, +1.5 ST Gốc, Lv.60 Ryuo +15% Xuyên Giáp
+function toggleBusoshoku(p: player):
+    initHakiData({_p})
+    set {_u} to uuid of {_p}
+
+    if {haki_exhausted::%{_u}%} is true:
+        send action bar "&c[Haki Vũ Trang] &4Bạn đang bị Suy Kiệt Bá Khí, không thể bật!" to {_p}
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+
+    if {haki_active::%{_u}%::buso} is true:
+        # Tắt Haki Vũ Trang
+        delete {haki_active::%{_u}%::buso}
+        delete {haki_bonus::%{_u}%::crit_damage}
+        delete {haki_bonus::%{_u}%::flat_damage}
+        delete {haki_bonus::%{_u}%::def}
+        delete {haki_bonus::%{_u}%::armor_pen}
+
+        play sound "BLOCK_IRON_TRAPDOOR_CLOSE" with volume 1 and pitch 0.8 to {_p}
+        send action bar "&8&l❖ HAKI VŨ TRANG: &c&lĐÃ TẮT" to {_p}
+        send title "&8&lHAKI VŨ TRANG" with subtitle "&cĐã thu hồi lớp giáp Hắc Sắc!" to {_p} for 1.5 seconds
+        syncMeitoVisual({_p})
+        updatePlayerSidebar({_p})
+
+    else:
+        # Kiểm tra Bá Khí
+        if ({haki_energy::%{_u}%} ? 0) <= 0:
+            send action bar "&c[Haki Vũ Trang] &7Bá Khí của bạn đã cạn kiệt!" to {_p}
+            play sound "ENTITY_VILLAGER_NO" with volume 0.8 and pitch 1 to {_p}
+            stop
+
+        set {haki_active::%{_u}%::buso} to true
+        set {haki_bonus::%{_u}%::crit_damage} to 35.0
+        set {_lv} to {haki_mastery::%{_u}%} ? 1
+        set {haki_bonus::%{_u}%::flat_damage} to 6.0 + round({_lv} * 0.08)
+        set {haki_bonus::%{_u}%::def} to round({_lv} * 0.55)
+        if {_lv} >= 60:
+            set {haki_bonus::%{_u}%::armor_pen} to 12.0
+
+        play sound "BLOCK_ANVIL_USE" with volume 1 and pitch 1.3 to {_p}
+        play sound "ENTITY_IRONGOLEM_ATTACK" with volume 1 and pitch 0.9 to {_p}
+
+        set {_loc} to location of {_p}
+        add 1 to y-coordinate of {_loc}
+        spawnVisualParticle("SMOKE_LARGE", {_loc}, 25, 0.4, 0.6, 0.4, 0.05)
+
+        set {_ryuoTxt} to ""
+        if {_lv} >= 60:
+            set {_ryuoTxt} to ", &c+12%% Ryuo Xuyên Giáp"
+        set {_defAmt} to {haki_bonus::%{_u}%::def}
+        set {_atkAmt} to {haki_bonus::%{_u}%::flat_damage}
+        send action bar "&8&l❖ HAKI VŨ TRANG: &a&lĐÃ BẬT &7(+%{_atkAmt}% ATK, +%{_defAmt}% DEF%{_ryuoTxt}%)" to {_p}
+        send title "&8&lHAKI VŨ TRANG" with subtitle "&7Cánh tay hắc hóa, đòn đánh phủ giáp kiên cố!" to {_p} for 2 seconds
+        syncMeitoVisual({_p})
+        updatePlayerSidebar({_p})
+
+# 3. Haki Bá Vương (Haoshoku Haki) — Phóng Thích Tức Thì (Burst)
+# Không Cooldown (khóa 2s chống kẹt phím) | Tiêu hao: 80 * mult Bá Khí (+15 EXP trúng đích)
+# Hiệu ứng: Choáng Slowness V + Blindness 3s, 16 HP sát thương chuẩn, sấm sét giả, hất văng 10m
+function activateHaoshoku(p: player):
+    initHakiData({_p})
+    set {_u} to uuid of {_p}
+
+    if {haki_exhausted::%{_u}%} is true:
+        send action bar "&c[Haki Bá Vương] &4Bạn đang bị Suy Kiệt Bá Khí!" to {_p}
+        play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+        stop
+
+    # Khóa 2s chống kẹt phím
+    set {_nowMs} to System.currentTimeMillis()
+    if {haki_cd_ms::%{_u}%::hao} is set:
+        set {_passed} to ({_nowMs} - {haki_cd_ms::%{_u}%::hao}) / 1000
+        if {_passed} < 2:
+            stop
+
+    # Tiêu hao năng lượng
+    set {_costMult} to getHakiCostMult({_p})
+    set {_cost} to 80.0 * {_costMult}
+    if ({haki_energy::%{_u}%} ? 0) < {_cost}:
+        send action bar "&c[Haki Bá Vương] &7Không đủ Bá Khí! Cần &e%round({_cost})% &7(Có: &e%round({haki_energy::%{_u}%})%&7)" to {_p}
+        play sound "ENTITY_VILLAGER_NO" with volume 0.8 and pitch 1 to {_p}
+        stop
+
+    subtract {_cost} from {haki_energy::%{_u}%}
+    set {haki_cd_ms::%{_u}%::hao} to {_nowMs}
+    if {haki_energy::%{_u}%} <= 0:
+        triggerHakiExhaustion({_p})
+
+    # Âm thanh & Sấm sét chấn động
+    play sound "ENTITY_LIGHTNING_THUNDER" with volume 2.0 and pitch 0.8 at location of {_p}
+    play sound "ENTITY_WITHER_SPAWN" with volume 1.5 and pitch 1.4 at location of {_p}
+    strike lightning effect at location of {_p}
+
+    # Hạt khí bộc phát lan rộng 10 block
+    set {_loc} to location of {_p}
+    add 1 to y-coordinate of {_loc}
+    spawnVisualParticle("DRAGON_BREATH", {_loc}, 40, 1.2, 0.8, 1.2, 0.1)
+    spawnVisualParticle("SMOKE_LARGE", {_loc}, 35, 1.5, 0.6, 1.5, 0.15)
+    spawnVisualParticle("EXPLOSION_LARGE", {_loc}, 8, 1.0, 0.5, 1.0, 0.05)
+
+    send action bar "&4&l⚔ HAKI BÁ VƯƠNG: BÁ KHÍ KINH THIÊN ĐỘNG ĐỊA! ⚔" to {_p}
+    send title "&4&lHAKI BÁ VƯƠNG" with subtitle "&cKhí chất bậc đế vương làm vạn vật quy phục!" to {_p} for 2 seconds
+    broadcastDualCard("&4&l⚔ BÁ VƯƠNG", "&c%name of {_p}% &7đã giải phóng &4&lHaki Bá Vương&7!", "Bá khí kinh thiên động địa làm rung chuyển cả chiến trường!")
+
+    # Bán kính ảnh hưởng: 10m (12m nếu cầm Gryphon) & Sát thương cơ bản (55 HP, 68.75 HP nếu cầm Gryphon)
+    set {_rad} to 10
+    set {_haoBase} to 55.0
+    set {_activeMeito} to getPlayerActiveMeito({_p})
+    if isValidItem({_activeMeito}) is true:
+        set {_mKey} to string tag "SigWeaponId" of nbt compound of {_activeMeito}
+        if {_mKey} is "gryphon":
+            set {_rad} to 12
+            set {_haoBase} to 68.75
+
+    # Tác động lên mọi sinh vật trong bán kính
+    set {_hitCount} to 0
+    loop living entities in radius {_rad} around {_p}:
+        if loop-entity is not {_p}:
+            set {_loopU} to uuid of loop-entity
+            set {_isImmune} to false
+            if {hao_stun_immune::%{_loopU}%} is set:
+                if {_nowMs} < {hao_stun_immune::%{_loopU}%}:
+                    set {_isImmune} to true
+
+            if {_isImmune} is false:
+                # Choáng 1.8s
+                apply slowness 5 to loop-entity for 1.8 seconds
+                apply blindness 1 to loop-entity for 1.8 seconds
+                set {hao_stun_immune::%{_loopU}%} to {_nowMs} + 8000
+                set {hao_def_shred::%{_loopU}%} to {_nowMs} + 4000
+
+            # Gây Sát Thương Tinh Thần (Đơn vị damage tính bằng Tim: 1 damage = 2 HP)
+            if {dummy_type::%{_loopU}%} is set:
+                set {_effDummyDmg} to {_haoBase}
+                if {dummy_type::%{_loopU}%} is "boss":
+                    set {_effDummyDmg} to calculateEffectiveDamage({_haoBase}, 0, 150.0)
+                handleCombatDummyDirectDamage({_p}, loop-entity, {_effDummyDmg}, false, true)
+            else if loop-entity is a player:
+                set {_vicDef} to getPlayerTotalDEF(loop-entity)
+                set {_effDmg} to calculateEffectiveDamage({_haoBase}, 0, {_vicDef})
+                applySkillDamage({_p}, loop-entity, {_effDmg}, "haki")
+            else:
+                applySkillDamage({_p}, loop-entity, {_haoBase}, "haki")
+
+            # Hất văng nhẹ ra xa
+            set {_v} to loop-entity's location's vector.subtract({_p}'s location's vector).normalize().multiply(0.8)
+            set y of {_v} to 0.35
+            set velocity of loop-entity to {_v}
+
+            # Sét giả tại vị trí mục tiêu
+            strike lightning effect at location of loop-entity
+            set {_vloc} to location of loop-entity
+            add 1 to y-coordinate of {_vloc}
+            spawnVisualParticle("CRIT_MAGIC", {_vloc}, 15, 0.4, 0.6, 0.4, 0.08)
+
+            if loop-entity is a player:
+                if {_isImmune} is false:
+                    send title "&4&lÁP BỨC BÁ KHÍ!" with subtitle "&cBạn bị tê liệt trước khí chất của %name of {_p}%!" to loop-entity for 2 seconds
+                play sound "BLOCK_ANVIL_LAND" with volume 1 and pitch 0.6 to loop-entity
+
+            add 1 to {_hitCount}
+
+    if {_hitCount} > 0:
+        addHakiExp({_p}, 15)
+        sendSystemMsg({_p}, "combat", "Áp chế thành công &e%{_hitCount}% &fđịch thủ xung quanh! &b(+15 Haki EXP)")
+    else:
+        sendSystemMsg({_p}, "combat", "Không có địch thủ nào trong bán kính ảnh hưởng (%{_rad}%m).")
+    updatePlayerSidebar({_p})
+
+# ---------------------------------------------------------------------
+# 3. VÒNG LẶP HỒI KHÍ, TIÊU HAO & SỰ KIỆN CHIẾN ĐẤU
+# ---------------------------------------------------------------------
+
+# Vòng lặp định kỳ mỗi giây: Hồi phục Bá Khí / Tiêu hao Haki duy trì / Phạt Suy Kiệt
+every 1 second:
+    loop all players:
+        set {_p} to loop-player
+        if {_p} is not alive:
+            continue
+        if health of {_p} <= 0:
+            continue
+        set {_u} to uuid of {_p}
+        initHakiData({_p})
+
+        # 1. Xử lý trạng thái Cạn Kiệt Bá Khí (Suy Kiệt)
+        if {haki_exhausted::%{_u}%} is true:
+            set {_nowMs} to System.currentTimeMillis()
+            set {_dur} to {haki_exhausted_duration::%{_u}%} ? 5.0
+            set {_passed} to ({_nowMs} - {haki_exhausted_time::%{_u}%}) / 1000
+            if {_passed} >= {_dur}:
+                delete {haki_exhausted::%{_u}%}
+                delete {haki_exhausted_time::%{_u}%}
+                delete {haki_exhausted_duration::%{_u}%}
+                send action bar "&a&l✔ BÁ KHÍ ĐÃ BẮT ĐẦU HỒI PHỤC!" to {_p}
+                play sound "ENTITY_EXPERIENCE_ORB_PICKUP" with volume 0.8 and pitch 1.5 to {_p}
+                updatePlayerSidebar({_p})
+
+        else:
+            # 2. Tiêu hao duy trì của Quan Sát & Vũ Trang
+            set {_costMult} to getHakiCostMult({_p})
+            set {_drain} to 0.0
+
+            if {haki_active::%{_u}%::ken} is true:
+                add (4.0 * {_costMult}) to {_drain}
+                loop living entities in radius 15 around {_p}:
+                    if loop-entity-2 is not {_p}:
+                        apply glowing 1 to loop-entity-2 for 2 seconds
+
+            if {haki_active::%{_u}%::buso} is true:
+                set {_busoDrain} to 3.0 * {_costMult}
+                set {_activeMeito} to getPlayerActiveMeito({_p})
+                if isValidItem({_activeMeito}) is true:
+                    set {_nbtM} to nbt compound of {_activeMeito}
+                    set {_mWid} to string tag "SigWeaponId" of {_nbtM}
+                    if {_mWid} is "enma":
+                        add 3.0 to {_busoDrain}
+                    if {_mWid} is "wado_ichimonji":
+                        set {_busoDrain} to {_busoDrain} * 0.9
+                    if byte tag "SigBlackBlade" of {_nbtM} is 1:
+                        set {_busoDrain} to {_busoDrain} * 0.7
+                add {_busoDrain} to {_drain}
+                set {_bloc} to location of {_p}
+                add 0.8 to y-coordinate of {_bloc}
+                spawnVisualParticle("SMOKE_LARGE", {_bloc}, 3, 0.3, 0.4, 0.3, 0.02)
+
+            if {_drain} > 0:
+                subtract {_drain} from {haki_energy::%{_u}%}
+                if {haki_energy::%{_u}%} <= 0:
+                    triggerHakiExhaustion({_p})
+
+            else:
+                # 3. Hồi phục Bá Khí (khi tắt cả Ken và Buso)
+                set {_maxE} to {haki_max_energy::%{_u}%} ? 102
+                if {haki_energy::%{_u}%} < {_maxE}:
+                    set {_lv} to {haki_mastery::%{_u}%} ? 1
+                    set {_inCombat} to false
+                    if {last_combat::%{_u}%} is set:
+                        if difference between {last_combat::%{_u}%} and now <= 5 seconds:
+                            set {_inCombat} to true
+                    set {_regen} to 6.0 * (1 + ({_lv} * 0.01))
+                    if {_inCombat} is true:
+                        set {_regen} to 2.5 * (1 + ({_lv} * 0.01))
+                    if {martial_style::%{_u}%} is "kiem_dao" or "luc_thuc":
+                        set {_regen} to {_regen} * 1.3
+                    add {_regen} to {haki_energy::%{_u}%}
+                    if {haki_energy::%{_u}%} > {_maxE}:
+                        set {haki_energy::%{_u}%} to {_maxE}
+
+# Hiệu ứng khi đánh trúng mục tiêu với Haki Vũ Trang
+on damage:
+    if {skill_exact_dmg::%uuid of victim%} is set:
+        stop
+    if attacker is a player:
+        set {_attU} to uuid of attacker
+        if {haki_active::%{_attU}%::buso} is true:
+            set {_vloc} to location of victim
+            add 1 to y-coordinate of {_vloc}
+            spawnVisualParticle("SMOKE_LARGE", {_vloc}, 8, 0.3, 0.4, 0.3, 0.05)
+            if {haki_bonus::%{_attU}%::armor_pen} > 0:
+                spawnVisualParticle("CRIT_MAGIC", {_vloc}, 10, 0.3, 0.5, 0.3, 0.08)
+            play sound "ENTITY_IRONGOLEM_ATTACK" with volume 0.8 and pitch 1.3 to attacker
+
+# Sự kiện săn người chơi PvP nhận Tiền Truy Nã & Money
+on death of player:
+    if attacker is a player:
+        if attacker is not victim:
+            set {_attU} to uuid of attacker
+            set {_vicU} to uuid of victim
+
+            # Cooldown 10 phút chống farm kill lặp giữa cùng 2 người chơi
+            set {_pairKey} to "%{_attU}%_%{_vicU}%"
+            set {_nowMs} to System.currentTimeMillis()
+            if {bounty_kill_cd::%{_pairKey}%} is set:
+                if {_nowMs} < {bounty_kill_cd::%{_pairKey}%}:
+                    set {_remMin} to round(({bounty_kill_cd::%{_pairKey}%} - {_nowMs}) / 60000)
+                    if {_remMin} < 1:
+                        set {_remMin} to 1
+                    send action bar "&c[PvP Bounty] Chờ &e%{_remMin}%p&c nữa mới có thể nhận lại thưởng hạ gục người chơi này!" to attacker
+                    stop
+            set {bounty_kill_cd::%{_pairKey}%} to {_nowMs} + 600000
+
+            initHakiData(attacker)
+            initHakiData(victim)
+
+            # Cộng +10,000,000 Beri cho kẻ săn lùng
+            addBounty(attacker, 10000000)
+            add 1 to {pvp_kills::%{_attU}%}
+
+            # Thưởng EXP Thông thạo Haki & Hắc Kiếm Danh Kiếm
+            addHakiExp(attacker, 15)
+            addMeitoHakiExp(attacker, 25)
+
+            # Thưởng Money bằng 10% Tiền truy nã của nạn nhân (tối thiểu 10,000$, tối đa 250,000$)
+            set {_vicBounty} to {bounty::%{_vicU}%}
+            set {_rewardMoney} to round({_vicBounty} * 0.1)
+            if {_rewardMoney} < 10000:
+                set {_rewardMoney} to 10000
+            if {_rewardMoney} > 250000:
+                set {_rewardMoney} to 250000
+
+            # Cộng Money qua Vault
+            execute console command "eco give %name of attacker% %{_rewardMoney}%"
+
+            # Thưởng Điểm Thiên Phú
+            add 2 to {talent::%{_attU}%::points}
+
+            # Nạn nhân bị giảm 10% tiền truy nã (không giảm dưới 1,000,000 Beri)
+            set {_lostBounty} to round({_vicBounty} * 0.1)
+            remove {_lostBounty} from {bounty::%{_vicU}%}
+            if {bounty::%{_vicU}%} < 1000000:
+                set {bounty::%{_vicU}%} to 1000000
+
+            # Âm thanh chúc mừng
+            play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1 and pitch 1 to attacker
+
+            # Thông báo chiến tích toàn máy chủ
+            broadcastDualCard("&4&l☠ TRUY NÃ", "&e%name of attacker% &7đã săn hạ gục &c%name of victim% &7(&6%formatBeriComma({_vicBounty})% Beri&7)!", "Thưởng: &e$%{_rewardMoney}% &8┃ &6+2 Điểm TP &8┃ &b+15 Haki EXP &8┃ &e+10M Beri")
+
+# ---------------------------------------------------------------------
+# 4. GIAO DIỆN GUI /haki (4 HÀNG - 36 Ô)
+# ---------------------------------------------------------------------
+
+function getHakiSlotItem(p: player, slot: number) :: item:
+    set {_u} to uuid of {_p}
+    delete {_lore::*}
+    set {_nowMs} to System.currentTimeMillis()
+
+    if {_slot} is 11:
+        # Haki Quan Sát (Kenbunshoku)
+        set {_status} to "&c✖ ĐANG TẮT [OFF]"
+        set {_toggleHint} to "&e▶ Nhấp Chuột để &a&lBẬT Haki Quan Sát&e!"
+        if {haki_exhausted::%{_u}%} is true:
+            set {_status} to "&4⚠ ĐANG SUY KIỆT BÁ KHÍ"
+            set {_toggleHint} to "&cĐang bị phạt suy kiệt, không thể bật!"
+        else if {haki_active::%{_u}%::ken} is true:
+            set {_status} to "&b✔ ĐANG BẬT [ON]"
+            set {_toggleHint} to "&e▶ Nhấp Chuột để &c&lTẮT Haki Quan Sát&e!"
+
+        set {_lv} to {haki_mastery::%{_u}%} ? 1
+        set {_costMult} to getHakiCostMult({_p})
+        set {_drainSec} to (round((4.0 * {_costMult}) * 10)) / 10
+        set {_drainHit} to (round((2.0 * {_costMult}) * 10)) / 10
+
+        set {_lore::1} to "&8&m----------------------------------------"
+        set {_lore::2} to "&7Loại Haki: &bNhận Thức & Thấu Thị &8(Observation)"
+        set {_lore::3} to "&7Trạng thái: %{_status}%"
+        set {_lore::4} to ""
+        set {_lore::5} to "&b&l✦ HIỆU QUẢ KHI BẬT (BẬT/TẮT TỰ DO):"
+        set {_lore::6} to "&f• &e+25.0%% &7Tỷ lệ Né Tránh &8(Dodge)&7."
+        if {_lv} >= 100:
+            set {_lore::7} to "&f• &b&lThấu Thị Tương Lai (Lv.100): &e+10.0%% &7Né Tránh &8(Tổng +35%%)&7."
+        else:
+            set {_lore::7} to "&f• &8Đột phá Lv.100: Mở khóa Thấu Thị (+10%% Né Tránh)."
+        set {_lore::8} to "&f• &e+25.0%% &7Chính Xác &8(Accuracy) &7đánh xuyên né kẻ địch."
+        set {_lore::9} to "&f• &bĐịnh Vị Thấu Thị: &7Phát sáng &bGlowing &7kẻ thù trong &e15m&7."
+        set {_lore::10} to ""
+        set {_lore::11} to "&7Tiêu hao: &e%{_drainSec}% Bá Khí/giây &7+ &e%{_drainHit}% khi né &8(EXP: +10)"
+        set {_lore::12} to ""
+        set {_lore::13} to {_toggleHint}
+        set {_lore::14} to "&8&m----------------------------------------"
+        return makeCustomRPItem("haki_ken", "&b&l✦ HAKI QUAN SÁT &3(Kenbunshoku)", {_lore::*})
+
+    else if {_slot} is 13:
+        # Haki Vũ Trang (Busoshoku)
+        set {_status} to "&c✖ ĐANG TẮT [OFF]"
+        set {_toggleHint} to "&e▶ Nhấp Chuột để &a&lBẬT Haki Vũ Trang&e!"
+        if {haki_exhausted::%{_u}%} is true:
+            set {_status} to "&4✖ ĐANG SUY KIỆT BÁ KHÍ"
+            set {_toggleHint} to "&cĐang bị phạt suy kiệt, không thể bật!"
+        else if {haki_active::%{_u}%::buso} is true:
+            set {_status} to "&a✔ ĐANG BẬT [ON]"
+            set {_toggleHint} to "&e▶ Nhấp Chuột để &c&lTẮT Haki Vũ Trang&e!"
+
+        set {_lv} to {haki_mastery::%{_u}%} ? 1
+        set {_costMult} to getHakiCostMult({_p})
+        set {_drainSec} to (round((3.0 * {_costMult}) * 10)) / 10
+        set {_drainHit} to (round((1.5 * {_costMult}) * 10)) / 10
+
+        set {_lore::1} to "&8&m----------------------------------------"
+        set {_lore::2} to "&7Loại Haki: &8Cường Hóa & Vũ Trang &8(Armament)"
+        set {_lore::3} to "&7Trạng thái: %{_status}%"
+        set {_lore::4} to ""
+        set {_lore::5} to "&8&l✦ NỘI TẠI HẮC SẮC VŨ TRANG (BẬT/TẮT TỰ DO):"
+        set {_lore::6} to "&f• &c&lĐÁNH XUYÊN LOGIA: &7Bỏ qua hoàn toàn miễn nhiễm sát thương"
+        set {_lore::7} to "  &7của kẻ sở hữu Trái Ác Quỷ Hệ Logia &6(Mera Mera)&7."
+        set {_lore::8} to "&f• &e+35.0%% &cSát Thương Chí Mạng &8(Crit Damage)&7."
+        set {_lore::9} to "&f• &e+1.5 Sát Thương Gốc &7cho toàn bộ đòn đánh."
+        if {_lv} >= 60:
+            set {_lore::10} to "&f• &c&lLưu Anh - Ryuo (Lv.60): &e+15.0%% &cXuyên Giáp &7đòn đánh!"
+        else:
+            set {_lore::10} to "&f• &8Đột phá Lv.60: Mở khóa Lưu Anh Ryuo (+15%% Xuyên Giáp)."
+        set {_lore::11} to ""
+        set {_lore::12} to "&7Tiêu hao: &e%{_drainSec}% Bá Khí/giây &7+ &e%{_drainHit}% khi đánh &8(EXP: +4)"
+        set {_lore::13} to ""
+        set {_lore::14} to {_toggleHint}
+        set {_lore::15} to "&8&m----------------------------------------"
+        return makeCustomRPItem("haki_buso", "&8&l❖ HAKI VŨ TRANG &7(Busoshoku)", {_lore::*})
+
+    else if {_slot} is 15:
+        # Haki Bá Vương (Haoshoku)
+        set {_status} to "&a✔ SẴN SÀNG GIẢI PHÓNG"
+        set {_hint} to "&4▶ Nhấp Chuột để GIẢI PHÓNG Haki Bá Vương!"
+        if {haki_exhausted::%{_u}%} is true:
+            set {_status} to "&4✖ ĐANG SUY KIỆT BÁ KHÍ"
+            set {_hint} to "&cĐang bị phạt suy kiệt, không thể dùng!"
+        else if {haki_cd_ms::%{_u}%::hao} is set:
+            set {_passed} to ({_nowMs} - {haki_cd_ms::%{_u}%::hao}) / 1000
+            if {_passed} < 2:
+                set {_rem} to round(2 - {_passed})
+                if {_rem} < 1:
+                    set {_rem} to 1
+                set {_status} to "&c◷ ĐANG KHÓA PHÍM (%{_rem}%s)"
+                set {_hint} to "&cĐang khóa chống kẹt phím (2s)!"
+
+        set {_lv} to {haki_mastery::%{_u}%} ? 1
+        set {_costMult} to getHakiCostMult({_p})
+        set {_cost} to round(80.0 * {_costMult})
+
+        if ({haki_energy::%{_u}%} ? 0) < {_cost}:
+            if {_status} is "&a✔ SẴN SÀNG GIẢI PHÓNG":
+                set {_status} to "&7✖ KHÔNG ĐỦ BÁ KHÍ"
+                set {_hint} to "&cThiếu Bá Khí (Cần %{_cost}%)!"
+
+        set {_lore::1} to "&8&m----------------------------------------"
+        set {_lore::2} to "&7Loại Haki: &4Khí Chất Đế Vương &8(Conqueror's)"
+        set {_lore::3} to "&7Trạng thái: %{_status}%"
+        set {_lore::4} to ""
+        set {_lore::5} to "&4&l✦ UY LỰC BÁ KHÍ KINH THIÊN (BÁN KÍNH 10 BLOCK):"
+        set {_lore::6} to "&f• &cTê Liệt Tuyệt Đối: &7Làm choáng mọi mục tiêu xung quanh với"
+        set {_lore::7} to "  &eSlowness V&7, &8Blindness (3s) &7và &2Nausea (10s)&7."
+        set {_lore::8} to "&f• &cSát Thương Tinh Thần: &7Giáng thẳng &c16 HP Sát thương chuẩn&7."
+        set {_lore::9} to "&f• &eThiên Lôi Cuồng Nộ: &7Sét thần giáng xuống rung chuyển đất trời."
+        set {_lore::10} to "&f• &bĐẩy Lùi: &7Hất tung toàn bộ kẻ địch dạt ra xa."
+        set {_lore::11} to ""
+        set {_lore::12} to "&7Tiêu hao: &c%{_cost}% Bá Khí &8(Gốc 80, giảm ở Lv cao) | &bEXP: +15"
+        set {_lore::13} to "&7Cơ chế: &fKhông Cooldown &8(Chỉ khóa 2s chống kẹt phím)"
+        set {_lore::14} to ""
+        set {_lore::15} to {_hint}
+        set {_lore::16} to "&8&m----------------------------------------"
+        return makeCustomRPItem("haki_hao", "&4&l⚔ HAKI BÁ VƯƠNG &c(Haoshoku)", {_lore::*})
+
+    return air
+
+function getHakiProfileItem(p: player) :: item:
+    set {_u} to uuid of {_p}
+    initHakiData({_p})
+    set {_lv} to {haki_mastery::%{_u}%} ? 1
+    set {_exp} to {haki_exp::%{_u}%} ? 0
+    set {_reqExp} to 100 + ({_lv} * 45)
+    set {_curE} to round({haki_energy::%{_u}%} ? 0)
+    set {_maxE} to round({haki_max_energy::%{_u}%} ? 102)
+    set {_mult} to (round((1 - ({_lv} * 0.003)) * 1000)) / 10
+    set {_saved} to (round((100 - {_mult}) * 10)) / 10
+
+    delete {_lore::*}
+    set {_lore::1} to "&8&m----------------------------------------"
+    set {_lore::2} to "&7Người dùng: &f&l%name of {_p}%"
+    set {_lore::3} to "&7Tiền truy nã: &6&l%formatBeriComma({bounty::%{_u}%})% Beri"
+    set {_lore::4} to "&7Danh xưng: %getPirateTitle({bounty::%{_u}%})%"
+    set {_lore::5} to ""
+    set {_lore::6} to "&b&l✦ ĐỘ THÔNG THẠO HAKI:"
+    set {_lore::7} to "&f• Cấp độ: &e&lLv.%{_lv}% / 100"
+    set {_lore::8} to "&f• Tiến trình: &a%{_exp}% / %{_reqExp}% EXP"
+    set {_lore::9} to "&f• Hạn mức Bá Khí: &b%{_curE}% / %{_maxE}%"
+    set {_lore::10} to "&f• Tốc độ hồi: &a6.0/s &7(ngoài giao tranh) &8| &e2.5/s &7(trong giao tranh)"
+    set {_lore::11} to "&f• Giảm tiêu hao: &e-%{_saved}%%% &7chi phí năng lượng"
+    set {_lore::12} to ""
+    set {_lore::13} to "&e&l✦ TRẠNG THÁI HIỆN TẠI:"
+    set {_exTxt} to "&aBình thường"
+    if {haki_exhausted::%{_u}%} is true:
+        set {_exTxt} to "&c&lCẠN KIỆT (Suy Kiệt)"
+    set {_kenTxt} to "&7Đang tắt"
+    if {haki_active::%{_u}%::ken} is true:
+        set {_kenTxt} to "&bĐANG BẬT"
+    set {_busoTxt} to "&7Đang tắt"
+    if {haki_active::%{_u}%::buso} is true:
+        set {_busoTxt} to "&aĐANG BẬT"
+    set {_lore::14} to "&f• Thể trạng: %{_exTxt}%"
+    set {_lore::15} to "&f• Quan Sát: %{_kenTxt}%"
+    set {_lore::16} to "&f• Vũ Trang: %{_busoTxt}%"
+    set {_lore::17} to "&f• Bá Vương: &4Sẵn sàng"
+    set {_lore::18} to "&8&m----------------------------------------"
+    return makePlayerHeadPoster(name of {_p}, "&e&lHỒ SƠ HAKI NHÂN VẬT", {_lore::*})
+
+function getWantedPosterItem() :: item:
+    delete {_lore::*}
+    set {_lore::1} to "&8&m----------------------------------------"
+    set {_lore::2} to "&7Loại: &cLệnh Treo Thưởng &8(Tiêu Hao)"
+    set {_lore::3} to "&7Công dụng: &fDùng để đặt thêm Tiền Truy Nã Beri"
+    set {_lore::4} to "&7lên đối thủ không đội trời chung trên biển."
+    set {_lore::5} to ""
+    set {_lore::6} to "&6&l✦ THAO TÁC SỬ DỤNG:"
+    set {_lore::7} to "&f• Cầm trên tay & gõ: &e/settruyna <player> <beri>"
+    set {_lore::8} to "&f• Người hạ gục mục tiêu sẽ nhận 10%% số Beri này!"
+    set {_lore::9} to "&8&m----------------------------------------"
+    set {_item} to makeCustomRPItem("bounty_poster", "&c&l✦ LỆNH TRUY NÃ WANTED POSTER ✦", {_lore::*})
+    set string tag "SkyblockItem" of nbt compound of {_item} to "bounty_poster"
+    return {_item}
+
+function openHakiGUI(p: player):
+    initHakiData({_p})
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G2_A", "&b&l✦ HỆ THỐNG HAKI BA MÀU ✦", 4, light blue stained glass pane named " ", "UI_G2", "Bá Khí & Chiến Trường")
+
+    # Slot 11: Haki Quan Sát (Observation)
+    set slot 11 of {_inv} to getHakiSlotItem({_p}, 11)
+
+    # Slot 13: Haki Vũ Trang (Armament)
+    set slot 13 of {_inv} to getHakiSlotItem({_p}, 13)
+
+    # Slot 15: Haki Bá Vương (Conqueror)
+    set slot 15 of {_inv} to getHakiSlotItem({_p}, 15)
+
+    # Slot 22: Hồ Sơ Bá Khí Cá Nhân
+    set slot 22 of {_inv} to getHakiProfileItem({_p})
+
+    openStandardUI({_p}, {_inv}, "UI_G2_A", "UI_G2")
+
+# ---------------------------------------------------------------------
+# 5. GIAO DIỆN BẢNG TRUY NÃ HẢI TẶC /truyna (UI_G2_B - 54 Ô)
+# ---------------------------------------------------------------------
+
+function openBountyGUI(p: player):
+    initHakiData({_p})
+    set {_u} to uuid of {_p}
+    set {_inv} to createStandardUI({_p}, "UI_G2_B", "&4&l✦ BẢNG TRUY NÃ WANTED ✦", 6, brown stained glass pane named " ", "UI_G2", "Bá Khí & Chiến Trường")
+
+    # Thu thập danh sách người chơi online & những người có Bounty
+    delete {_pList::*}
+    loop all players:
+        initHakiData(loop-player)
+        add loop-player to {_pList::*}
+
+    # Sắp xếp theo Tiền Truy Nã giảm dần (Selection sort Skript)
+    set {_size} to size of {_pList::*}
+    if {_size} > 1:
+        loop integers from 1 to {_size}:
+            set {_maxIdx} to loop-integer-1
+            set {_maxB} to {bounty::%uuid of {_pList::%{_maxIdx}%}%} ? 1000000
+            loop integers from (loop-integer-1 + 1) to {_size}:
+                set {_curB} to {bounty::%uuid of {_pList::%loop-integer-2%}%} ? 1000000
+                if {_curB} > {_maxB}:
+                    set {_maxB} to {_curB}
+                    set {_maxIdx} to loop-integer-2
+            if {_maxIdx} is not loop-integer-1:
+                set {_tmp} to {_pList::%loop-integer-1%}
+                set {_pList::%loop-integer-1%} to {_pList::%{_maxIdx}%}
+                set {_pList::%{_maxIdx}%} to {_tmp}
+
+    # Điền Wanted Poster vào các ô giữa (Tối đa 28 poster)
+    set {_slotIdx} to 10
+    set {_rankNum} to 1
+    loop {_pList::*}:
+        if {_slotIdx} is 17 or 18 or 26 or 27 or 35 or 36 or 44:
+            add 2 to {_slotIdx}
+        if {_slotIdx} > 43:
+            exit loop
+
+        set {_pirate} to loop-value
+        set {_pU} to uuid of {_pirate}
+        set {_bVal} to {bounty::%{_pU}%} ? 1000000
+
+        # Phần thưởng khi săn hạ gục
+        set {_rewMoney} to round({_bVal} * 0.1)
+        if {_rewMoney} < 10000:
+            set {_rewMoney} to 10000
+        if {_rewMoney} > 250000:
+            set {_rewMoney} to 250000
+
+        set {_onlineStatus} to "&cNgoại tuyến"
+        if {_pirate} is online:
+            set {_onlineStatus} to "&aĐang hoạt động"
+
+        set {_locText} to "Không rõ"
+        if {_pirate} is online:
+            set {_locText} to "&f%world of {_pirate}% &7(&eX: %round(x-coordinate of {_pirate})%&7, &eZ: %round(z-coordinate of {_pirate})%&7)"
+
+        delete {_lore::*}
+        set {_lore::1} to "&8&m----------------------------------------"
+        set {_lore::2} to "&4&l               DEAD OR ALIVE"
+        set {_lore::3} to ""
+        set {_lore::4} to "&7Hải Tặc: &f&l%name of {_pirate}% &8(Top %{_rankNum}%)"
+        set {_lore::5} to "&7Danh hiệu: %getPirateTitle({_bVal})%"
+        set {_lore::6} to "&7Tiền truy nã: &6&l%formatBeriComma({_bVal})% BERI"
+        set {_lore::7} to ""
+        set {_lore::8} to "&e&l✦ PHẦN THƯỞNG KHI SĂN HẠ GỤC:"
+        set {_lore::9} to "&f• Tiền thưởng: &a$%{_rewMoney}%"
+        set {_lore::10} to "&f• Thiên phú: &6+2 Điểm Thiên Phú"
+        set {_lore::11} to "&f• Danh vọng: &e+10,000,000 Beri cho bản thân"
+        set {_lore::12} to ""
+        set {_lore::13} to "&7Trạng thái: %{_onlineStatus}%"
+        set {_lore::14} to "&7Vị trí: %{_locText}%"
+        set {_lore::15} to ""
+        set {_lore::16} to "&e▶ Nhấp chuột để đặt La Bàn truy vết Hải Tặc này!"
+        set {_lore::17} to "&8&m----------------------------------------"
+
+        set {_posterItem} to makePlayerHeadPoster(name of {_pirate}, "&c&l☠ WANTED: &f&l%name of {_pirate}% &c&l☠", {_lore::*})
+        set string tag "TargetPirate" of nbt compound of {_posterItem} to name of {_pirate}
+        set slot {_slotIdx} of {_inv} to {_posterItem}
+
+        add 1 to {_slotIdx}
+        add 1 to {_rankNum}
+
+    # Slot 48: Mua / Sử dụng Wanted Poster (bounty_poster ID 56)
+    delete {_wLore::*}
+    set {_wLore::1} to "&8&m----------------------------------------"
+    set {_wLore::2} to "&7Vật phẩm đặc quyền của Thợ Săn Tiền Thưởng,"
+    set {_wLore::3} to "&7dùng để treo giá truy nã lên kẻ thù truyền kiếp."
+    set {_wLore::4} to ""
+    set {_wLore::5} to "&6&l✦ GIÁ MUA LỆNH TRUY NÃ:"
+    set {_wLore::6} to "&f• Giá: &610 Coin &8(Đổi tại /nganhang)"
+    set {_wLore::7} to ""
+    set {_wLore::8} to "&e▶ Nhấp chuột để mua Wanted Poster!"
+    set {_wLore::9} to "&8&m----------------------------------------"
+    set {_wItem} to makeCustomRPItem("bounty_poster", "&c&l✦ MUA LỆNH TRUY NÃ WANTED POSTER ✦", {_wLore::*})
+    set slot 48 of {_inv} to {_wItem}
+
+    # Slot 49: Lệnh Truy Nã của chính người chơi
+    delete {_lore::*}
+    set {_myB} to {bounty::%{_u}%} ? 1000000
+    set {_myKills} to {pvp_kills::%{_u}%} ? 0
+    set {_lore::1} to "&8&m----------------------------------------"
+    set {_lore::2} to "&7Hải Tặc: &f&l%name of {_p}%"
+    set {_lore::3} to "&7Tiền truy nã hiện tại: &6&l%formatBeriComma({_myB})% BERI"
+    set {_lore::4} to "&7Danh xưng: %getPirateTitle({_myB})%"
+    set {_lore::5} to "&7Mạng PvP đã hạ: &c%{_myKills}% Kills"
+    set {_lore::6} to ""
+    set {_lore::7} to "&eSăn lùng các Hải Tặc khác hoặc hạ Boss Đô Đốc"
+    set {_lore::8} to "&eđể nâng cao mức Tiền Truy Nã trên toàn Đại Hải Trình!"
+    set {_lore::9} to "&8&m----------------------------------------"
+    set slot 49 of {_inv} to makePlayerHeadPoster(name of {_p}, "&e&l✦ LỆNH TRUY NÃ CỦA BẠN ✦", {_lore::*})
+
+    openStandardUI({_p}, {_inv}, "UI_G2_B", "UI_G2")
+
+# ---------------------------------------------------------------------
+# 6. BẢO VỆ CHỐNG KÉO THẢ & XỬ LÝ NHẤP CHUỘT TRONG GUI
+# ---------------------------------------------------------------------
+
+on InventoryDragEvent:
+    set {_who} to event.getWhoClicked()
+    if {_who} is a player:
+        set {_active} to {ui_active::%uuid of {_who}%}
+        if {_active} is "UI_G2_A" or "UI_G2_B":
+            cancel event
+
+on inventory click:
+    set {_active} to {ui_active::%uuid of player%}
+
+    # 1. Xử lý GUI /haki (UI_G2_A)
+    if {_active} is "UI_G2_A":
+        cancel event
+        if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+            player.updateInventory()
+        if clicked inventory is not player's current inventory:
+            stop
+        set {_slot} to index of event-slot
+        if {_slot} is 27 or 28 or 35:
+            stop
+        set {_p} to player
+
+        # Slot 11: Haki Quan Sát
+        if {_slot} is 11:
+            activateKenbunshoku({_p})
+            set slot 11 of player's current inventory to getHakiSlotItem({_p}, 11)
+            set slot 22 of player's current inventory to getHakiProfileItem({_p})
+
+        # Slot 13: Haki Vũ Trang (Cập nhật In-place)
+        else if {_slot} is 13:
+            toggleBusoshoku({_p})
+            set slot 13 of player's current inventory to getHakiSlotItem({_p}, 13)
+            set slot 22 of player's current inventory to getHakiProfileItem({_p})
+
+        # Slot 15: Haki Bá Vương
+        else if {_slot} is 15:
+            activateHaoshoku({_p})
+            set slot 15 of player's current inventory to getHakiSlotItem({_p}, 15)
+            set slot 22 of player's current inventory to getHakiProfileItem({_p})
+
+    # 2. Xử lý GUI /truyna (UI_G2_B)
+    else if {_active} is "UI_G2_B":
+        cancel event
+        if "%click type%" contains "SHIFT" or "NUMBER" or "DOUBLE" or "SWAP" or "DROP":
+            player.updateInventory()
+        if clicked inventory is not player's current inventory:
+            stop
+        set {_slot} to index of event-slot
+        if {_slot} is 45 or 46 or 53:
+            stop
+        set {_p} to player
+        set {_clickType} to "%click type%"
+
+        # Slot 48: Mua Wanted Poster (10 Coin)
+        if {_slot} is 48:
+            if getCoinBalance({_p}) < 10:
+                sendSystemMsg({_p}, "error", "Bạn thiếu Coin! Cần 10 Coin để mua Wanted Poster (Đổi tại /nganhang).")
+                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+                stop
+            takeCoinBalance({_p}, 10)
+            set {_poster} to getWantedPosterItem()
+            giveItemSafely({_p}, {_poster})
+            sendSystemMsg({_p}, "economy", "Đã thanh toán 10 Coin mua Wanted Poster thành công!")
+            play sound "ITEM_ARMOR_EQUIP_IRON" with volume 1 and pitch 1.2 to {_p}
+            wait 1 tick
+            openBountyGUI({_p})
+
+        # Bấm vào Poster Hải Tặc để dò tìm La Bàn
+        else:
+            set {_item} to slot {_slot} of player's current inventory
+            if {_item} is set:
+                if {_item} is not air:
+                    if type of {_item} is not air:
+                        set {_targetName} to string tag "TargetPirate" of nbt compound of {_item}
+                        if {_targetName} is set:
+                            set {_target} to {_targetName} parsed as player
+                            if {_target} is online:
+                                set {_p}'s compass target to location of {_target}
+                                play sound "ITEM_ARMOR_EQUIP_IRON" with volume 1 and pitch 1.2 to {_p}
+                                sendSystemMsg({_p}, "crew", "La bàn đã định vị &c&l%{_targetName}%&f tại &e%world of {_target}% &7(X: %round(x-coordinate of {_target})%, Y: %round(y-coordinate of {_target})%, Z: %round(z-coordinate of {_target})%)")
+                            else:
+                                sendSystemMsg({_p}, "error", "Hải tặc &e%{_targetName}% &cđang ngoại tuyến hoặc ở thế giới khác!")
+                                play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to {_p}
+
+# ---------------------------------------------------------------------
+# 7. HỆ THỐNG LỆNH /haki VÀ /truyna (/bounty)
+# ---------------------------------------------------------------------
+
+command /haki [<text>]:
+    aliases: /hakis
+    trigger:
+        initHakiData(player)
+        if arg-1 is not set:
+            openHakiGUI(player)
+            stop
+
+        if arg-1 is "ken" or "quansat":
+            activateKenbunshoku(player)
+        else if arg-1 is "buso" or "vutrang":
+            toggleBusoshoku(player)
+        else if arg-1 is "hao" or "bavuong":
+            activateHaoshoku(player)
+        else:
+            send "&6&l✦ HỆ THỐNG HAKI ONE PIECE ✦" to player
+            send "&e• /haki &7- Mở giao diện Kho Báu Haki" to player
+            send "&e• /haki ken &7- Bật/Tắt Haki Quan Sát (Né Tránh + Chính Xác)" to player
+            send "&e• /haki buso &7- Bật/Tắt Haki Vũ Trang (Khắc chế Logia + Chí Mạng)" to player
+            send "&e• /haki hao &7- Phóng thích Haki Bá Vương (Làm choáng diện rộng)" to player
+
+command /truyna [<text>] [<player>] [<number>]:
+    aliases: /bounty, /wanted
+    trigger:
+        initHakiData(player)
+
+        # Mở GUI mặc định
+        if arg-1 is not set:
+            openBountyGUI(player)
+            stop
+
+        # Lệnh xem Top trong chat
+        if arg-1 is "top":
+            send "&4&l✦ BẢNG XẾP HẠNG TIỀN TRUY NÃ HẢI TẶC ✦" to player
+            send "&8&m----------------------------------------" to player
+            delete {_pList::*}
+            loop all players:
+                initHakiData(loop-player)
+                add loop-player to {_pList::*}
+            set {_size} to size of {_pList::*}
+            if {_size} > 1:
+                loop integers from 1 to {_size}:
+                    set {_maxIdx} to loop-integer-1
+                    set {_maxB} to {bounty::%uuid of {_pList::%{_maxIdx}%}%}
+                    loop integers from (loop-integer-1 + 1) to {_size}:
+                        set {_curB} to {bounty::%uuid of {_pList::%loop-integer-2%}%}
+                        if {_curB} > {_maxB}:
+                            set {_maxB} to {_curB}
+                            set {_maxIdx} to loop-integer-2
+                    if {_maxIdx} is not loop-integer-1:
+                        set {_tmp} to {_pList::%loop-integer-1%}
+                        set {_pList::%loop-integer-1%} to {_pList::%{_maxIdx}%}
+                        set {_pList::%{_maxIdx}%} to {_tmp}
+            set {_rank} to 1
+            loop {_pList::*}:
+                if {_rank} > 10:
+                    exit loop
+                set {_bVal} to {bounty::%uuid of loop-value%}
+                send "&e##%{_rank}% &f%name of loop-value% &8- &6%formatBeriComma({_bVal})% Beri &8(%getPirateTitle({_bVal})%&8)" to player
+                add 1 to {_rank}
+            send "&8&m----------------------------------------" to player
+            stop
+
+        # Kiểm tra tiền truy nã người khác
+        if arg-1 is "check":
+            set {_t} to player
+            if arg-2 is set:
+                set {_t} to arg-2
+            initHakiData({_t})
+            set {_b} to {bounty::%uuid of {_t}%}
+            sendSystemMsg(player, "economy", "Hải tặc &e%name of {_t}% &fhiện có: &6%formatBeriComma({_b})% Beri &7(%getPirateTitle({_b})%&7)")
+            stop
+
+        # Lệnh Admin quản lý Bounty
+        if player has permission "op":
+            if arg-1 is "set":
+                if arg-2 is set:
+                    if arg-3 is set:
+                        set {bounty::%uuid of arg-2%} to arg-3
+                        send "&a[WantedAdmin] &7Đã đặt Tiền Truy Nã của &e%name of arg-2% &7thành &6%formatBeriComma(arg-3)% Beri&7!" to player
+                        stop
+            else if arg-1 is "add":
+                if arg-2 is set:
+                    if arg-3 is set:
+                        addBounty(arg-2, arg-3)
+                        send "&a[WantedAdmin] &7Đã cộng &6+%formatBeriComma(arg-3)% Beri &7cho &e%name of arg-2%&7!" to player
+                        stop
+            else if arg-1 is "reset":
+                if arg-2 is set:
+                    set {bounty::%uuid of arg-2%} to 1000000
+                    send "&a[WantedAdmin] &7Đã đặt lại Tiền Truy Nã của &e%name of arg-2% &7về mức khởi điểm 1,000,000 Beri!" to player
+                    stop
+
+        send "&cCú pháp: /truyna [top|check [player]]" to player
+        if player has permission "op":
+            send "&cAdmin: /truyna <set|add|reset> <player> [amount]" to player
+
+command /hakiadmin [<text>] [<player>] [<number>]:
+    permission: op
+    permission message: &cBạn không có quyền sử dụng lệnh này!
+    trigger:
+        if arg-1 is not set:
+            send "&6&l✦ HỆ THỐNG QUẢN TRỊ BÁ KHÍ & HAKI ✦" to player
+            send "&e• /hakiadmin setlevel <player> <1-100> &7- Đặt cấp Thông thạo Haki" to player
+            send "&e• /hakiadmin addexp <player> <amount> &7- Cộng EXP Thông thạo Haki" to player
+            send "&e• /hakiadmin refill <player> &7- Hồi đầy Bá Khí & xóa Suy Kiệt" to player
+            send "&e• /hakiadmin info <player> &7- Xem thông số Bá Khí của người chơi" to player
+            stop
+
+        if arg-2 is not set:
+            send "&cVui lòng chỉ định người chơi!" to player
+            stop
+
+        set {_t} to arg-2
+        set {_tu} to uuid of {_t}
+        initHakiData({_t})
+
+        if arg-1 is "setlevel":
+            if arg-3 is not set:
+                send "&cVui lòng nhập cấp độ (1-100)!" to player
+                stop
+            set {_nlv} to round(arg-3)
+            if {_nlv} < 1:
+                set {_nlv} to 1
+            if {_nlv} > 100:
+                set {_nlv} to 100
+            set {haki_mastery::%{_tu}%} to {_nlv}
+            set {haki_max_energy::%{_tu}%} to 100 + ({_nlv} * 2)
+            set {haki_exp::%{_tu}%} to 0
+            if {haki_energy::%{_tu}%} > {haki_max_energy::%{_tu}%}:
+                set {haki_energy::%{_tu}%} to {haki_max_energy::%{_tu}%}
+            if {haki_active::%{_tu}%::buso} is true:
+                if {_nlv} >= 60:
+                    set {haki_bonus::%{_tu}%::armor_pen} to 15.0
+                else:
+                    delete {haki_bonus::%{_tu}%::armor_pen}
+            if {haki_active::%{_tu}%::ken} is true:
+                if {_nlv} >= 100:
+                    set {haki_bonus::%{_tu}%::dodge} to 35.0
+                else:
+                    set {haki_bonus::%{_tu}%::dodge} to 25.0
+            send "&a[HakiAdmin] &7Đã đặt Haki Mastery của &e%name of {_t}% &7thành &e&lLv.%{_nlv}% &7(Max Khí: &b%{haki_max_energy::%{_tu}%}%&7)!" to player
+            send "&a[Haki] &7Quản trị viên đã đặt cấp Thông Thạo Haki của bạn thành &e&lLv.%{_nlv}%&7!" to {_t}
+            updatePlayerSidebar({_t})
+
+        else if arg-1 is "addexp":
+            if arg-3 is not set:
+                send "&cVui lòng nhập số EXP!" to player
+                stop
+            addHakiExp({_t}, arg-3)
+            send "&a[HakiAdmin] &7Đã cộng &e+%arg-3% Haki EXP &7cho &e%name of {_t}%&7!" to player
+
+        else if arg-1 is "refill":
+            delete {haki_exhausted::%{_tu}%}
+            delete {haki_exhausted_time::%{_tu}%}
+            delete {haki_exhausted_duration::%{_tu}%}
+            set {haki_energy::%{_tu}%} to {haki_max_energy::%{_tu}%}
+            send "&a[HakiAdmin] &7Đã hồi đầy Bá Khí & xóa Suy Kiệt cho &e%name of {_t}% &7(&b%{haki_energy::%{_tu}%}%/%{haki_max_energy::%{_tu}%}%&7)!" to player
+            send "&a[Haki] &7Bá Khí của bạn đã được hồi đầy!" to {_t}
+            play sound "ENTITY_PLAYER_LEVELUP" with volume 1 and pitch 1.8 to {_t}
+            updatePlayerSidebar({_t})
+
+        else if arg-1 is "info":
+            set {_lv} to {haki_mastery::%{_tu}%} ? 1
+            set {_maxE} to {haki_max_energy::%{_tu}%} ? 102
+            set {_curE} to (round(({haki_energy::%{_tu}%} ? {_maxE}) * 10)) / 10
+            set {_exp} to {haki_exp::%{_tu}%} ? 0
+            set {_reqExp} to 100 + ({_lv} * 45)
+            set {_mult} to (round((1 - ({_lv} * 0.003)) * 1000)) / 10
+            set {_exTxt} to "&aBình thường"
+            if {haki_exhausted::%{_tu}%} is true:
+                set {_exTxt} to "&cĐang Suy Kiệt"
+            send "&6&l✦ THÔNG TIN BÁ KHÍ: &e%name of {_t}% &6&l✦" to player
+            send "&f• Cấp Thông Thạo: &eLv.%{_lv}%/100 &8(EXP: &a%{_exp}%/%{_reqExp}%&8)" to player
+            send "&f• Năng Lượng Bá Khí: &b%{_curE}%/%{_maxE}%" to player
+            send "&f• Giảm tiêu hao: &e%{_mult}%%% chi phí gốc" to player
+            send "&f• Trạng thái Suy Kiệt: %{_exTxt}%" to player
+            send "&f• Haki Quan Sát: %({haki_active::%{_tu}%::ken} ? false)%" to player
+            send "&f• Haki Vũ Trang: %({haki_active::%{_tu}%::buso} ? false)%" to player
+            if {_lv} >= 60:
+                send "&f• Lưu Anh (Ryuo Lv.60): &aĐã mở khóa (+15%% Xuyên Giáp)" to player
+            if {_lv} >= 100:
+                send "&f• Thấu Thị (Lv.100): &aĐã mở khóa (+10%% Né Tránh)" to player
+
+# ---------------------------------------------------------------------
+# BẢO VỆ VŨ KHÍ & TÚI ĐỒ KHI ĐANG BẬT CHẾ ĐỘ CHIẾN ĐẤU (/chiendau)
+# (Phím 4, 5, 6 bật Haki đã được tích hợp trực tiếp tại PlayerItemHeldEvent)
+# ---------------------------------------------------------------------
+
+# Sự kiện Phím Q (Vứt đồ): Chặn 100% việc rơi vũ khí khi đang giao tranh
+on drop:
+    if {combat_mode::%uuid of player%} is true:
+        cancel event
+        send action bar "&c&l✖ Đang trong Chế độ Chiến đấu! Bấm &e[F]&c để tắt trước khi vứt đồ." to player
+
+# Chặn di chuyển/đổi chỗ vũ khí trong túi đồ khi đang khóa Ô Neo Chiến Đấu
+on inventory click:
+    if {combat_mode::%uuid of player%} is true:
+        if {ui_active::%uuid of player%} is set:
+            stop
+        cancel event
+        send action bar "&c&l✖ Hãy bấm phím &e[F]&c để tắt Chiến đấu trước khi sắp xếp túi đồ!" to player
+command /settruyna [<player>] [<number>]:
+    aliases: /treothuong
+    trigger:
+        if arg-1 is not set:
+            send "&cCú pháp: /settruyna <tên người chơi> <số tiền Beri>" to player
+            stop
+        if arg-1 is player:
+            sendSystemMsg(player, "error", "Bạn không thể tự treo thưởng chính mình!")
+            stop
+        if arg-2 is not set:
+            send "&cCần nhập số tiền Beri muốn đặt thêm truy nã!" to player
+            stop
+        set {_bAmt} to round(arg-2)
+        if {_bAmt} < 100000:
+            sendSystemMsg(player, "error", "Mức tiền truy nã tối thiểu phải từ 100,000 Beri!")
+            stop
+
+        # Kiểm tra tiền TRƯỚC khi quét túi đồ
+        if player's balance < {_bAmt}:
+            sendSystemMsg(player, "economy", "Bạn không đủ tiền! Cần &a$%{_bAmt}%&f để đặt cược số Beri này.")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+
+        # Kiểm tra và trừ Wanted Poster trong túi đồ
+        set {_foundPoster} to false
+        loop integers from 0 to 40:
+            set {_it} to slot loop-integer of player's inventory
+            if {_it} is set:
+                if {_it} is not air:
+                    if type of {_it} is not air:
+                        if string tag "SkyblockItem" of nbt compound of {_it} is "bounty_poster":
+                            set {_amt} to item amount of {_it}
+                            if {_amt} <= 1:
+                                set slot loop-integer of player's inventory to air
+                            else:
+                                set item amount of (slot loop-integer of player's inventory) to ({_amt} - 1)
+                            set {_foundPoster} to true
+                            exit loop
+
+        if {_foundPoster} is false:
+            sendSystemMsg(player, "warning", "Bạn cần có &c1x Wanted Poster &7(Mua tại /truyna) để đặt lệnh truy nã!")
+            play sound "ENTITY_VILLAGER_NO" with volume 1 and pitch 1 to player
+            stop
+
+        remove {_bAmt} from player's balance
+        initHakiData(arg-1)
+        add {_bAmt} to {bounty::%uuid of arg-1%}
+        broadcastDualCard("&4&l☠ LỆNH TRUY NÃ MỚI", "&c%name of player% &fđã treo thưởng thêm &6+%formatBeriComma({_bAmt})% Beri &fcho đầu của &e%name of arg-1%&f!", "Tổng mức Tiền Truy Nã hiện tại: &e&l%formatBeriComma({bounty::%uuid of arg-1%})% BERI&f!")
+        play sound "UI_TOAST_CHALLENGE_COMPLETE" with volume 1.5 and pitch 0.8 to player

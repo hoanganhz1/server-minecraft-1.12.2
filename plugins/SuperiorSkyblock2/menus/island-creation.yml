@@ -1,0 +1,54 @@
+######################################################
+##                                                  ##
+##                SuperiorSkyblock 2                ##
+##                Developed by Ome_R                ##
+##                                                  ##
+######################################################
+
+title: '&lChọn Mẫu Đảo Mới...'
+previous-menu: true
+
+pattern:
+  - '~ ~ ~ ~ ~ ~ ~ ~ ~'
+  - '# # # # @ # # # #'
+  - '~ ~ ~ ~ ~ ~ ~ ~ ~'
+
+items:
+  '@':
+    schematic: 'island'
+    biome: PLAINS
+    spawn-offset: '0, 0, 0'
+    access:
+      type: SKULL_ITEM
+      data: 3
+      skull: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk1ZDM3OTkzZTU5NDA4MjY3ODQ3MmJmOWQ4NjgyMzQxM2MyNTBkNDMzMmEyYzdkOGM1MmRlNDk3NmIzNjIifX19'
+      name: '&eĐảo Cơ Bản &a(Mở khóa)'
+      lore:
+        - '&7Hòn đảo Skyblock cổ điển với cây cối và rương đồ khởi đầu!'
+        - '&7 '
+        - '&7&o(( &f&oChuột Trái &7&ođể tạo hòn đảo. ))'
+        - '&7&o(( &f&oChuột Phải &7&ođể xem trước hòn đảo. ))'
+    no-access:
+      type: SKULL_ITEM
+      data: 3
+      skull: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzk1ZDM3OTkzZTU5NDA4MjY3ODQ3MmJmOWQ4NjgyMzQxM2MyNTBkNDMzMmEyYzdkOGM1MmRlNDk3NmIzNjIifX19'
+      name: '&eĐảo Cơ Bản &c(Chưa mở khóa)'
+      lore:
+        - '&7Hòn đảo Skyblock cổ điển với cây cối và rương đồ khởi đầu!'
+        - '&7 '
+        - '&7&o(( &f&oChuột Phải &7&ođể xem trước hòn đảo. ))'
+  '~':
+    type: STAINED_GLASS_PANE
+    data: 15
+    name: '&f'
+
+sounds:
+  '@':
+    access:
+      type: BLOCK_PORTAL_AMBIENT
+      volume: 1
+      pitch: 0.2
+    no-access:
+      type: BLOCK_ANVIL_PLACE
+      volume: 0.2
+      pitch: 0.2
